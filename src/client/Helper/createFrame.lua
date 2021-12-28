@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local Shake = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Shake"))
 
 local Arkeframe = require(script.Parent.Parent.Components.Arkeframe)
 
@@ -17,7 +18,7 @@ local Light = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Particles")
 
 local TWEEN_LENGTH = 3
 local HEIGHT = 300
-local EXPLOSIONS = 15
+local EXPLOSIONS = 17
 
 local function emit(p)
     for _, emitter in pairs(p:GetChildren()) do
@@ -36,6 +37,13 @@ end
 local function lightAnimation(position)
     local light = Light:Clone()
     light.Position = position
+
+    local entry = Instance.new("Sound")
+    entry.SoundId = "rbxassetid://337163436"
+    entry.Volume = 3
+    entry.Parent = light
+    entry:Play()
+
     light.Parent = workspace
 
     local t1 = TweenService:Create(light.ParticleEmitter, TweenInfo.new(2), {Rate = 20})
@@ -59,15 +67,31 @@ end
 local function createFrame(cframe: CFrame)
     local internalCleaner = Trove.new()
 
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://6555423202"
-    sound.Parent = game.SoundService
-    sound:Stop()
-
-    local c = (cframe + Vector3.new(40, HEIGHT, 0)) * CFrame.Angles(0, math.pi, 0)
+    local c = (cframe + Vector3.new(60, HEIGHT, 0)) * CFrame.Angles(0, math.pi, 0)
     local frame = ArkeframeModel:Clone() :: Model
     frame:SetPrimaryPartCFrame(c)
-    frame.HumanoidRootPart.Anchored = true
+    frame.HumanoidRootPart.Anchored = false
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://6555423202"
+    sound.Volume = 11
+    sound.Parent = frame.HumanoidRootPart
+    sound:Stop()
+
+    local entry = Instance.new("Sound")
+    entry.SoundId = "rbxassetid://337163436"
+    entry.Volume = 5
+    entry.Parent = frame.HumanoidRootPart
+    entry:Play()
+
+    local explosionSound = Instance.new("Sound")
+    explosionSound.SoundId = "rbxassetid://335657174"
+    explosionSound.Parent = frame.HumanoidRootPart
+    explosionSound.Volume = 5
+    explosionSound:Stop()
+
+    internalCleaner:Add(entry)
+    internalCleaner:Add(explosionSound)
 
     task.spawn(function()
         add(frame.LeftKnee)
@@ -94,8 +118,9 @@ local function createFrame(cframe: CFrame)
     -- end)
 
     local gyro = Instance.new("BodyGyro")
-    gyro.P = 4000
-    gyro.MaxTorque = Vector3.new(4000, 0, 4000)
+    gyro.P = 10000
+    gyro.MaxTorque = Vector3.new(10000, 10000, 10000)
+    gyro.D = 100
     gyro.Parent = frame.HumanoidRootPart
     internalCleaner:BindToRenderStep("TitanLookAt", 100, function(dt)
         -- this line could break if the player dies while summoning
@@ -106,18 +131,25 @@ local function createFrame(cframe: CFrame)
     t:Play()
 
     task.spawn(function()
-        Explosion:Clone().Parent = frame.HumanoidRootPart
-        Smoke:Clone().Parent = frame.HumanoidRootPart
+        Explosion:Clone().Parent = frame.LeftBackFoot
+        Smoke:Clone().Parent = frame.LeftBackFoot
+        Explosion:Clone().Parent = frame.RightBackFoot
+        Smoke:Clone().Parent = frame.RightBackFoot
         task.wait(1)
         for i = 0, EXPLOSIONS do
             task.wait(0.1)
-            emit(frame.HumanoidRootPart)
+            explosionSound:Stop()
+            emit(frame.RightBackFoot)
+            emit(frame.LeftBackFoot)
+            explosionSound:Play()
         end
     end)
 
     task.delay(TWEEN_LENGTH - 0.2, function()
         frameComponent:StopAnimation("Fall")
         frameComponent:PlayAnimation("Idle_Slam")
+
+        frame.HumanoidRootPart.Anchored = true
     end)
     
     t.Completed:Wait()
@@ -129,8 +161,37 @@ local function createFrame(cframe: CFrame)
     end)
 
     sound:Play()
+    sound.Stopped:Connect(function()
+        sound:Destroy()
+    end)
+    entry:Stop()
 
     internalCleaner:Clean()
+
+    local priority = Enum.RenderPriority.Last.Value
+
+    if (frame.HumanoidRootPart.Position - Camera.CFrame.Position).Magnitude < 150 then
+        local camStart = Camera.CFrame
+
+        local shake = Shake.new()
+        shake.FadeInTime = 0
+        shake.FadeOutTime = .75
+        shake.Frequency = 0.075
+        shake.Amplitude = 4
+        shake.RotationInfluence = Vector3.new(0.15, 0.15, 0.15)
+
+        shake:Start()
+        shake:BindToRenderStep(Shake.NextRenderName(), priority, function(pos, rot, isDone)
+            local distance = (frame.HumanoidRootPart.Position - Camera.CFrame.Position).Magnitude / 150
+            rot = Shake.InverseSquare(rot, distance)
+            pos = Shake.InverseSquare(pos, distance)
+            Camera.CFrame *= CFrame.new(pos) * CFrame.Angles(rot.X, rot.Y, rot.Z)
+
+            -- if isDone then
+            --     Camera.CFrame = camStart
+            -- end
+        end)
+    end   
 end
 
 return createFrame
