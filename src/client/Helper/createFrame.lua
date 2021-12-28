@@ -67,7 +67,8 @@ end
 local function createFrame(cframe: CFrame)
     local internalCleaner = Trove.new()
 
-    local c = (cframe + Vector3.new(60, HEIGHT, 0)) * CFrame.Angles(0, math.pi, 0)
+    local lookVector = cframe.LookVector
+    local c = (cframe + (Vector3.new(0, HEIGHT, 0) + (lookVector * 60))) * CFrame.Angles(0, math.pi, 0)
     local frame = ArkeframeModel:Clone() :: Model
     frame:SetPrimaryPartCFrame(c)
     frame.HumanoidRootPart.Anchored = false
