@@ -1,0 +1,9 @@
+{
+    "robloxLsp.diagnostics.disable": [
+        "trailing-space",
+        "unused-local"
+    ],
+    "cSpell.words": [
+        "cframe"
+    ]
+}

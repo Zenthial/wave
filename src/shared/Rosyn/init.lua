@@ -612,6 +612,4 @@ function Rosyn._Invariant()
     return true
 end
 
-Rosyn.WaitForComponent = Rosyn.AwaitComponent -- Backward compatibility
-
 return Rosyn
