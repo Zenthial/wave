@@ -41,11 +41,6 @@ function Arkeframe:Initial()
     for key, val in pairs(ANIMATION_IDS) do
         self.Animations[key] = animator:LoadAnimation(createAnimation(val))
     end
-
-    self:PlayAnimation("Fall")
-    task.wait(1)
-    self:PlayAnimation("Idle_Slam")
-    self:StopAnimation("Fall")
 end
 
 function Arkeframe:PlayAnimation(Name: string)

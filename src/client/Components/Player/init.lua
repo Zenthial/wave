@@ -4,13 +4,7 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 
-local Arkeframe = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Arkeframe")
-
-local function createFrame(cframe: CFrame)
-    local frame = Arkeframe:Clone() :: Model
-    frame:SetPrimaryPartCFrame(cframe + Vector3.new(0, 100, 0))
-    frame.Parent = workspace
-end
+local createFrame = require(script.Parent.Parent.Helper.createFrame)
 
 local Player = {}
 Player.__index = Player
