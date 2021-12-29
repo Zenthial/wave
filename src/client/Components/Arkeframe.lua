@@ -1,14 +1,23 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 
+local MainHUD = require(script.Parent.UI.MainHUD)
+
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
 local ANIMATION_IDS = {
     Fall = 8380919597,
-    Idle_Slam = 8380920708
+    Idle_Slam = 8380920708,
+    Pickup = 8390388861
 }
+local PROMPT_DISTANCE = 20
+local PICKUP_KEYCODE = Enum.KeyCode.X
 
 local function createAnimation(id): Animation
     local animation = Instance.new("Animation")
@@ -23,6 +32,8 @@ Arkeframe.__index = Arkeframe
 function Arkeframe.new(root: Model)
     return setmetatable({
         Root = root,
+
+        Active = false, -- says if the titan is being piloted or not
 
         HumanoidRootPart = root:WaitForChild("HumanoidRootPart"),
         Humanoid = root:WaitForChild("Humanoid") :: Humanoid,
@@ -41,12 +52,60 @@ function Arkeframe:Initial()
     for key, val in pairs(ANIMATION_IDS) do
         self.Animations[key] = animator:LoadAnimation(createAnimation(val))
     end
+
+    local mainHUD = PlayerGui:WaitForChild("MainHUD")
+    local mainHUDComponent = Rosyn.GetComponent(mainHUD, MainHUD) :: typeof(MainHUD)
+
+    local nearTitan = false
+    local inputComponent = nil
+    self.Cleaner:BindToRenderStep("TitanCheckIfNear", 100, function()
+        if Player.Character then
+            local char = Player.Character
+            local dist = (self.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
+            if dist <= PROMPT_DISTANCE and self.Active == false then
+                if not nearTitan then
+                    nearTitan = true
+                    inputComponent = mainHUDComponent:PromptKeyboardInput("Enter the Arkeframe", PICKUP_KEYCODE.Name)
+                end
+
+                if Input.Keyboard:IsKeyDown(PICKUP_KEYCODE) then
+                    self:Pickup()
+                end
+            else
+                if nearTitan then
+                    nearTitan = false
+                    if inputComponent then
+                        inputComponent:Destroy()
+                    end
+                end
+            end
+        end
+    end)
 end
 
-function Arkeframe:PlayAnimation(Name: string)
+function Arkeframe:Pickup()
+    self.Active = true
+    local camera = workspace.CurrentCamera
+    camera.CameraType = Enum.CameraType.Scriptable
+    TweenService:Create(camera, TweenInfo.new(0.2), {CFrame = self.Root.Camera.CFrame}):Play()
+    task.wait(0.2)
+    self:StopAnimation("Idle_Slam")
+    RunService:BindToRenderStep("TitanPickupCamera", 100, function()
+        camera.CFrame = self.Root.Camera.CFrame
+    end)
+    self:PlayAnimation("Pickup").Stopped:Wait()
+    RunService:UnbindFromRenderStep("TitanPickupCamera")
+end
+
+function Arkeframe:PlayAnimation(Name: string): AnimationTrack
     local track = self.Animations[Name] :: AnimationTrack
-    self.ActiveAnimations[Name] = track
-    track:Play()
+    if track ~= nil then
+        self.ActiveAnimations[Name] = track
+        track:Play()
+        return track
+    else
+        error("Animation "..Name.." does not exist")
+    end
 end
 
 function Arkeframe:StopAnimation(Name: string)
