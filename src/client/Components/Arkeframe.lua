@@ -14,7 +14,11 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 local ANIMATION_IDS = {
     Fall = 8380919597,
     Idle_Slam = 8380920708,
-    Pickup = 8390388861
+    Pickup = 8390388861,
+    Default = 8396419394
+}
+local VOICELINES = {
+    Welcome = "rbxassetid://8396443461"
 }
 local PROMPT_DISTANCE = 20
 local PICKUP_KEYCODE = Enum.KeyCode.X
@@ -54,18 +58,18 @@ function Arkeframe:Initial()
     end
 
     local mainHUD = PlayerGui:WaitForChild("MainHUD")
-    local mainHUDComponent = Rosyn.GetComponent(mainHUD, MainHUD) :: typeof(MainHUD)
+    self.mainHUDComponent = Rosyn.GetComponent(mainHUD, MainHUD) :: typeof(MainHUD)
 
     local nearTitan = false
     local inputComponent = nil
     self.Cleaner:BindToRenderStep("TitanCheckIfNear", 100, function()
-        if Player.Character then
+        if Player.Character and self.Active == false then
             local char = Player.Character
             local dist = (self.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
-            if dist <= PROMPT_DISTANCE and self.Active == false then
+            if dist <= PROMPT_DISTANCE then
                 if not nearTitan then
                     nearTitan = true
-                    inputComponent = mainHUDComponent:PromptKeyboardInput("Enter the Arkeframe", PICKUP_KEYCODE.Name)
+                    inputComponent = self.mainHUDComponent:PromptKeyboardInput("Enter the Arkeframe", PICKUP_KEYCODE.Name)
                 end
 
                 if Input.Keyboard:IsKeyDown(PICKUP_KEYCODE) then
@@ -93,8 +97,34 @@ function Arkeframe:Pickup()
     RunService:BindToRenderStep("TitanPickupCamera", 100, function()
         camera.CFrame = self.Root.Camera.CFrame
     end)
-    self:PlayAnimation("Pickup").Stopped:Wait()
+    local t = self:PlayAnimation("Pickup")
+    task.wait(t.Length)
     RunService:UnbindFromRenderStep("TitanPickupCamera")
+    self:Startup()
+end
+
+function Arkeframe:Startup()
+    self:PlayLocalSound(VOICELINES.Welcome)
+    self:PlayAnimation("Default")
+    
+    -- local save = Player.Character
+    -- save.Parent = ReplicatedStorage
+    -- Player.Character = self.Root
+    
+    -- Player.CameraMode = Enum.CameraMode.LockFirstPerson
+    local camera = workspace.CurrentCamera
+    camera.CameraType = Enum.CameraType.Scriptable
+    camera.CFrame = self.Root.Camera.CFrame
+end
+
+function Arkeframe:PlayLocalSound(soundId)
+    local sound = Instance.new("Sound")
+    sound.SoundId = soundId
+    sound.Looped = false
+    sound.Volume = 10
+    sound.Stopped:Connect(function() sound:Destroy() end)
+    sound.Parent = game.SoundService
+    sound:Play()
 end
 
 function Arkeframe:PlayAnimation(Name: string): AnimationTrack
