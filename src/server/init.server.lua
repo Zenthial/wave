@@ -16,6 +16,8 @@ local PLAYER_TAG = "Player"
 
 Players.PlayerAdded:Connect(function(player: Player)
     CollectionService:AddTag(player, PLAYER_TAG)
+
+    CollectionService:AddTag(player.Character, "Sprint")
 end)
 
 

@@ -2,10 +2,10 @@
 -- 1/10/2022
 ---------------------------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
-local clientComm = require(Modules.ServerComm)
-local enableSprint = clientComm:GetFunction("EnableSprint")
-local disableSprint = clientComm:GetFunction("EnableSprint")
+local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
+local clientComm = require(Modules.ClientComm)
+local enableSprint = clientComm.GetComm():GetFunction("EnableSprint")
+local disableSprint = clientComm.GetComm():GetFunction("DisableSprint")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
@@ -32,9 +32,9 @@ end
 
 ---------------------------------------------------------------------------------
 
-function Sprint.new(humanoid : Humanoid)
+function Sprint.new(root: Model)
     return setmetatable({
-        Humanoid = humanoid :: Humanoid,
+        Humanoid = root.Humanoid :: Humanoid,
         Cleaner = Trove.new() :: typeof(Trove),
         Keyboard = Input.Keyboard.new() :: typeof(Input.Keyboard)
     }, Sprint)

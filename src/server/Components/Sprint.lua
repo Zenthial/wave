@@ -19,14 +19,14 @@ Sprint.__index = Sprint
 ---------------------------------------------------------------------------------------------
 
 serverComm.GetComm():BindFunction("EnableSprint", function(player: Player) 
-    local sprintComp = player.Character and Rosyn.GetComponentsFromInstance(player.Character)
+    local sprintComp = player.Character and Rosyn.GetComponent(player.Character, Sprint)
     if (sprintComp == nil) then return end
 
     sprintComp:EnableSprint()
 end)
 
-serverComm.GetComm():BindFunction("Disableprint", function(player: Player) 
-    local sprintComp = player.Character and Rosyn.GetComponentsFromInstance(player.Character)
+serverComm.GetComm():BindFunction("DisableSprint", function(player: Player) 
+    local sprintComp = player.Character and Rosyn.GetComponent(player.Character, Sprint)
     if (sprintComp == nil) then return end
 
     sprintComp:DisableSprint()
@@ -34,21 +34,20 @@ end)
 
 ---------------------------------------------------------------------------------------------
 
-function Sprint.new(humanoid : Humanoid)
+function Sprint.new(root: Model)
     return setmetatable({
-        Humanoid = humanoid :: Humanoid,
+        Humanoid = root.Humanoid :: Humanoid,
         Cleaner = Trove.new() :: typeof(Trove),
     }, Sprint)
 end
 
 function Sprint:Initial()
     self.Humanoid:SetAttribute("Sprinting", false)
-    self.Humanoid:SetAttribute("CanSprint", false)
+    self.Humanoid:SetAttribute("CanSprint", true)
 end
 
 function Sprint:EnableSprint()
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
-
     self.Humanoid:SetAttribute("Sprinting", true)
     self.Humanoid.WalkSpeed = 22
 end
