@@ -49,7 +49,7 @@ end
 function Sprint:EnableSprint()
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
     self.Humanoid:SetAttribute("Sprinting", true)
-    self.Humanoid.WalkSpeed = 22
+    self.Humanoid.WalkSpeed = 25
 end
 
 function Sprint:DisableSprint()
