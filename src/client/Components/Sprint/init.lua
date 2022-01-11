@@ -1,3 +1,12 @@
+-- By Preston (seliso)
+-- 1/10/2022
+---------------------------------------------------------------------------------------------
+
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+local clientComm = require(Modules.ServerComm)
+local enableSprint = clientComm:GetFunction("EnableSprint")
+local disableSprint = clientComm:GetFunction("EnableSprint")
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
@@ -15,9 +24,9 @@ local function setSprint(self, action: boolean)
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
 
     if (action == true) then
-        self.Humanoid:SetAttribute("Sprinting", true)
+        enableSprint()
     else
-        self.Humanoid:SetAttribute("Sprinting", false)
+        disableSprint()
     end
 end
 
@@ -32,8 +41,6 @@ function Sprint.new(humanoid : Humanoid)
 end
 
 function Sprint:Initial()
-    self.Humanoid:SetAttribute("Sprinting", false)
-    self.Humanoid:SetAttribute("CanSprint", false)
 
     self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
@@ -53,6 +60,6 @@ function Sprint:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Sprint", {Sprint}):AwaitComponentInit("Player")
+Rosyn.Register("Sprint", {Sprint})
 
 return Sprint
