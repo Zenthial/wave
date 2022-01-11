@@ -9,6 +9,7 @@ Util.WaitForChildTimeout = 60
 Util.DefaultCommFolderName = "__comm__"
 Util.None = newproxy()
 
+---@diagnostic disable-next-line: undefined-type
 function Util.GetCommSubFolder(parent: Instance, subFolderName: string): Option.Option
 	local subFolder: Instance = nil
 	if Util.IsServer then
