@@ -3,5 +3,4 @@ export type AnimationData = {
     TrackId: number,
     MarkerSignals: {[string]: () -> ()}
 }
-
 return nil
