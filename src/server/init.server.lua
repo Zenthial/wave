@@ -19,6 +19,7 @@ local function playerAdded(player: Player)
 
     local function characterAdded(character) 
         CollectionService:AddTag(character, "Sprint")
+        CollectionService:AddTag(character, "Animation")
     end
     if (player.Character) then
         characterAdded(player.Character)

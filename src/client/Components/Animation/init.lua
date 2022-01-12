@@ -87,6 +87,8 @@ function Animation:Play(animationName: string)
         return 
     end
     self.AnimationTracks[animationName]:Play()
+
+    return self
 end
 
 function Animation:Stop(animationName: string)
@@ -98,6 +100,8 @@ function Animation:Stop(animationName: string)
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
     end
+
+    return self
 end
 
 function Animation:DestroyTrack(animationName: string)
