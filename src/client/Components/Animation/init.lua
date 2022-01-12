@@ -88,7 +88,7 @@ function Animation:Play(animationName: string)
     end
     self.AnimationTracks[animationName]:Play()
 
-    return self
+    return self.AnimationTracks[animationName]
 end
 
 function Animation:Stop(animationName: string)

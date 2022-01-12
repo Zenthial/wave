@@ -15,6 +15,8 @@ local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
+local camera = workspace.CurrentCamera
+
 local Sprint = {}
 Sprint.__index = Sprint
 
@@ -25,8 +27,10 @@ local function setSprint(self, action: boolean)
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
 
     if (action == true) then
+        camera.FieldOfView = 85
         enableSprint()
     else
+        camera.FieldOfView = 70
         disableSprint()
     end
 end
