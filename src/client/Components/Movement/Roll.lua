@@ -2,6 +2,8 @@
 -- 1/11/2022
 ---------------------------------------------------------------------------------------------
 
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
@@ -27,6 +29,6 @@ function Roll:Destroy()
 end
 
 
-Rosyn.Register("Roll", {Roll})
+Rosyn.Register("Roll", {Roll}, workspace)
 
 return Roll

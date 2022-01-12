@@ -48,7 +48,7 @@ function Animation.new(root: Model)
         Animator = nil :: Animator,
         AnimationTracks = {},
         AnimationFolder = createFolder(root),
-        Cleaner = Trove.new() :: typeof(Trove),
+        MarkerSignals = {},
     }, Animation)
 end
 
@@ -57,7 +57,10 @@ function Animation:Initial()
 end
 
 function Animation:Destroy()
-    self.Cleaner:Destroy()
+    for _, cleaner in pairs(self.MarkerSignals) do
+        cleaner:Destroy()
+    end
+    self.AnimationFolder:Destroy()
 end
 
 function Animation:Load(data: Types.AnimationData)
@@ -68,15 +71,18 @@ function Animation:Load(data: Types.AnimationData)
     local track = self.Animator:LoadAnimation(animation)
     self.AnimationTracks[data.Name] = track
 
+    if (#data.MarkerSignals <= 0 ) then return self end
+
+    self.MarkerSignals[data.Name.."Signals"] = Trove.new()
     for str, func in pairs(data.MarkerSignals) do
-        self.Cleaner:Add(track:GetMarkerReachedSignal(str):Connect(func))
+        self.MarkerSignals[data.Name.."Signals"]:Add(track:GetMarkerReachedSignal(str):Connect(func))
     end
 
     return self
 end
 
 function Animation:Play(animationName: string)
-    if (self.AnimationTracks[animationName]) then 
+    if (self.AnimationTracks[animationName]) then
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
@@ -91,6 +97,22 @@ function Animation:Stop(animationName: string)
 
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
+    end
+end
+
+function Animation:DestroyTrack(animationName: string)
+    if (self.AnimationTracks[animationName]) then 
+        warn("Animation: ".. animationName .." has already been removed or never existed!")
+        return 
+    end
+
+    self.AnimationTracks[animationName]:Destroy()
+    self.AnimationTracks[animationName] = nil
+    if (self.AnimationFolder:FindFirstChild(animationName)) then self.AnimationFolder:FindFirstChild(animationName):Destroy() end
+
+    if (self.MarkerSignals[animationName.."Signals"]) then
+        self.MarkerSignals[animationName.."Signals"]:Destroy()
+        self.MarkerSignals[animationName.."Signals"] = nil
     end
 end
 

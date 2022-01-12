@@ -2,7 +2,8 @@
 -- 1/10/2022
 ---------------------------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+
 local clientComm = require(Modules.ClientComm)
 local enableSprint = clientComm.GetComm():GetFunction("EnableSprint")
 local disableSprint = clientComm.GetComm():GetFunction("DisableSprint")
@@ -60,6 +61,6 @@ function Sprint:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Sprint", {Sprint})
+Rosyn.Register("Sprint", {Sprint}, workspace)
 
 return Sprint
