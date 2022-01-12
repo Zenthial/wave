@@ -41,7 +41,7 @@ local function createFolder(parent): Folder
     return folder
 end
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------
 
 function Animation.new(root: Model)
     return setmetatable({
