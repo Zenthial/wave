@@ -77,7 +77,7 @@ function Animation:LoadAnimation(data: types.AnimationDataTab)
     return self
 end
 
-function Animation:PlayAnimation(animationName: string)
+function Animation:Play(animationName: string)
     if (self.AnimationTracks[animationName]) then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
         return 
@@ -85,12 +85,12 @@ function Animation:PlayAnimation(animationName: string)
     self.AnimationTracks[animationName]:Play()
 end
 
-function Animation:StopAnimation(animationName: string)
+function Animation:Stop(animationName: string)
     if (self.AnimationTracks[animationName]) then 
         warn("Unable to stop animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
-    
+
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
     end
