@@ -25,12 +25,10 @@ local function playerAdded(player: Player)
     end
     player.CharacterAdded:Connect(characterAdded)
 end
-
 for _,player in pairs(game.Players:GetPlayers()) do
     playerAdded(player)
 end
 Players.PlayerAdded:Connect(playerAdded)
-
 
 for _, module in pairs(script:GetDescendants()) do
     if module:IsA("ModuleScript") then
