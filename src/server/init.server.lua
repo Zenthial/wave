@@ -14,11 +14,22 @@ local PLAYER_TAG = "Player"
 ------------------------------------------------------------------------
 --Setup
 
-Players.PlayerAdded:Connect(function(player: Player)
+local function playerAdded(player: Player)
     CollectionService:AddTag(player, PLAYER_TAG)
 
-    CollectionService:AddTag(player.Character, "Sprint")
-end)
+    local function characterAdded(character) 
+        CollectionService:AddTag(character, "Sprint")
+    end
+    if (player.Character) then
+        characterAdded(player.Character)
+    end
+    player.CharacterAdded:Connect(characterAdded)
+end
+
+for _,player in pairs(game.Players:GetPlayers()) do
+    playerAdded(player)
+end
+Players.PlayerAdded:Connect(playerAdded)
 
 
 for _, module in pairs(script:GetDescendants()) do
