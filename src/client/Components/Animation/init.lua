@@ -9,7 +9,6 @@ local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
-local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 local Types = require(Shared:WaitForChild("Types"))
 
 local Animation = {}
