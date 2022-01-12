@@ -1,4 +1,4 @@
-export type AnimationDataTab = { 
+export type AnimationData = { 
     Name: string,
     TrackId: number,
     MarkerSignals: {[string]: () -> ()}

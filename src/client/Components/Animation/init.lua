@@ -10,8 +10,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
-
-local types = require(script:WaitForChild("Types"))
+local Types = require(Shared:WaitForChild("Types"))
 
 local Animation = {}
 Animation.__index = Animation
@@ -46,8 +45,8 @@ end
 
 function Animation.new(root: Model)
     return setmetatable({
-        Root = root,
-        Animator = nil,
+        Root = root :: Model,
+        Animator = nil :: Animator,
         AnimationTracks = {},
         AnimationFolder = createFolder(root),
         Cleaner = Trove.new() :: typeof(Trove),
@@ -62,7 +61,7 @@ function Animation:Destroy()
     self.Cleaner:Destroy()
 end
 
-function Animation:LoadAnimation(data: types.AnimationDataTab)
+function Animation:Load(data: Types.AnimationData)
     local animation = createAnimation(data.TrackId)
     animation.Name = data.Name
     animation.Parent = self.AnimationFolder
