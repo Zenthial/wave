@@ -56,6 +56,10 @@ function Sprint:Initial()
 
 end
 
+function Sprint:SetSprint(sprint: boolean)
+    setSprint(self, sprint)
+end
+
 function Sprint:Destroy()
     self.Cleaner:Destroy()
 end

@@ -75,12 +75,14 @@ function Animation:Load(data: Types.AnimationData)
     return self
 end
 
-function Animation:Play(animationName: string)
+function Animation:Play(animationName: string): AnimationTrack
     if (self.AnimationTracks[animationName]) then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
     self.AnimationTracks[animationName]:Play()
+
+    return self.AnimationTracks[animationName]
 end
 
 function Animation:Stop(animationName: string)
