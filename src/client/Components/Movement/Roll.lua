@@ -2,6 +2,8 @@
 -- 1/11/2022
 ---------------------------------------------------------------------------------------------
 
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
@@ -13,6 +15,7 @@ local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 local Roll = {}
 Roll._index = Roll
 
+---------------------------------------------------------------------------------
 
 function Roll.new()
     return setmetatable({}, Roll)
@@ -27,6 +30,6 @@ function Roll:Destroy()
 end
 
 
-Rosyn.Register("Roll", {Roll})
+Rosyn.Register("Roll", {Roll}, workspace)
 
 return Roll

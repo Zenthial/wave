@@ -2,7 +2,8 @@
 -- 1/10/2022
 ---------------------------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+
 local clientComm = require(Modules.ClientComm)
 local enableSprint = clientComm.GetComm():GetFunction("EnableSprint")
 local disableSprint = clientComm.GetComm():GetFunction("DisableSprint")
@@ -14,6 +15,8 @@ local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
+local camera = workspace.CurrentCamera
+
 local Sprint = {}
 Sprint.__index = Sprint
 
@@ -24,8 +27,10 @@ local function setSprint(self, action: boolean)
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
 
     if (action == true) then
+        camera.FieldOfView = 85
         enableSprint()
     else
+        camera.FieldOfView = 70
         disableSprint()
     end
 end
@@ -64,6 +69,6 @@ function Sprint:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Sprint", {Sprint})
+Rosyn.Register("Sprint", {Sprint}, workspace)
 
 return Sprint
