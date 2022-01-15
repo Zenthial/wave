@@ -23,8 +23,8 @@ function Battery.new(heatRate: number, coolTime: number, coolWait: number, batte
         CurrentBattery = 100;
 
         Events = {
-            Overheating = Signal.new();
-            HeatChanged = Signal.new();
+            Reloading = Signal.new();
+            AmmoChanged = Signal.new();
         }
 
     }, Battery)
@@ -56,6 +56,11 @@ function Battery:CanFire(): boolean
     return (not (self.CurrentBattery == 0) and not self.Overheated)
 end
 
+-- abstract function that all ammo modules have to decrease their ammo. should just call another function
+function Battery:Fire()
+    self:Heat()
+end
+
 function Battery:Heat()
     if self.ShotsTable.NumShots % self.ShotsDeplete then
         self:DepleteBattery()
@@ -68,12 +73,12 @@ function Battery:Heat()
         self.CurrentHeat = 100
         self.Overheated = true
 
-        self.Events.Overheating:Fire(true)
+        self.Events.Reloading:Fire(true)
     else
         self.CurrentHeat = newHeatRate
     end
 
-    self.Events.HeatChanged:Fire(self.CurrentHeat)
+    self.Events.AmmoChanged:Fire(self.CurrentHeat)
 
     if not self.Overheated then
         task.wait(self.CoolWait)
@@ -96,14 +101,14 @@ function Battery:Heat()
         local newHeat = self.CurrentHeat - coolRate
         if newHeat <= 0 then
             self.Overheated = false
-            self.Events.Overheating:Fire(false) -- set battery color somewhere
+            self.Events.Reloading:Fire(false) -- set battery color somewhere
             
             newHeat = 0
             loopActive = false
         end
 
         self.CurrentHeat = newHeat
-        self.Events.HeatChanged:Fire(self.CurrentHeat)
+        self.Events.AmmoChanged:Fire(self.CurrentHeat)
     end
 end
 

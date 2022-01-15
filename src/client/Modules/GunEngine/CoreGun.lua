@@ -21,10 +21,15 @@ type ShotsTable = {
     Headshots: number,
     LastShot: LastShotData
 }
+type GunModelAdditionalInfo = {
+    Barrel: Part,
+    Grip: Part
+}
+type GunModel = Model & GunModelAdditionalInfo
 
-local function getAttackModule(stats: WeaponStats, gunType: string): table
+local function getAttackModule(stats: WeaponStats, gunType: string, model: GunModel): table
     if gunType == "Auto" then
-        return require(AttackModules.Auto).new(stats)
+        return require(AttackModules.Auto).new(stats, model)
     end
 end
 
@@ -37,7 +42,7 @@ end
 local CoreGun = {}
 CoreGun.__index = CoreGun
 
-function CoreGun.new(weaponStats: WeaponStats)
+function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local storedShots: ShotsTable = {
         NumShots = 0,
         HitShots = 0,
@@ -46,20 +51,41 @@ function CoreGun.new(weaponStats: WeaponStats)
     }
 
     local ammoModule = getAmmoModule(weaponStats, weaponStats.AmmoType, storedShots)
-    local attackModule = getAttackModule(weaponStats, weaponStats.GunType)
+    local attackModule = getAttackModule(weaponStats, weaponStats.GunType, gunModel)
+
+    local cleaner = Trove.new();
+
+    cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
+        attackModule:CanFire(bool)
+    end))
+
+    cleaner:Add(attackModule.Events.Attacked:Connect(function()
+        ammoModule:Fire()
+    end))
     
     return setmetatable({
+        Model = gunModel,
+
         WeaponStats = weaponStats,
         StoredShots = storedShots,
         
         AttackModule = attackModule,
+        AmmoModule = ammoModule,
 
-        Cleaner = Trove.new(),
+        Cleaner = cleaner,
     }, CoreGun)
 end
 
 function CoreGun:Attack()
-    self.AttackModule:Attack()
+    if self.AmmoModule:CanFire() then
+        self.AttackModule:Attack()
+    end
+end
+
+function CoreGun:Reload()
+    if self.WeaponStats.AmmoType ~= "Battery" then
+        self.AmmoModule:Reload()
+    end
 end
 
 function CoreGun:Destroy()
