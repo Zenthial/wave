@@ -4,19 +4,13 @@ local Signal = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChil
 local Mouse = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input")).Mouse
 
 type WeaponStats = WeaponStatsModule.WeaponStats
-type GunModelAdditionalInfo = {
-    Barrel: Part,
-    Grip: Part
-}
-type GunModel = Model & GunModelAdditionalInfo
 
 local Auto = {}
 Auto.__index = Auto
 
-function Auto.new(stats: WeaponStats, rayModule: table, gunModel: GunModel)
+function Auto.new(stats: WeaponStats, rayModule: table)
     local self = setmetatable({
         WeaponStats = stats,
-        Model = gunModel,
         RayModule = rayModule,
 
         CanFire = true,
@@ -42,7 +36,7 @@ function Auto:Attack()
 
     while mouse:IsLeftDown() and self.CanFire and not self.Shooting do
         self.Shooting = true
-        task.spawn(function() self.RayModule:Shoot() end)
+        task.spawn(function() self.RayModule:Hitscan() self.RayModule:Draw() end)
         self.Events.Attacked:Fire()
         task.wait(1/self.WeaponStats.FireRate)
     end
