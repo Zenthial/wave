@@ -14,6 +14,8 @@ export type WeaponStats = {
     HeadshotMultiplier: number,
     VehicleMultiplier: number,
 
+    ChargeWait: number, -- think MSI
+
     FireMode: string,
     BulletType: string, -- for things like the msi, pbw, anything else
     NumBarrels: number,
@@ -31,10 +33,35 @@ export type WeaponStats = {
     ReloadTime: number | nil,
 
     -- if battery based
-    BatteryDepletionRate: number,
+    BatteryDepletionMin: number,
+    BatteryDepletionMax: number,
+    ShotsDeplete: number,
+
     HeatRate: number,
     CoolTime: number,
     CoolWait: number,
+}
+
+local GunTypes = {
+    Auto = "Auto",
+    Semi = "Semi",
+}
+
+local FireMode = {
+    Single = "Single",
+    Shotgun = "Shotgun",
+    Burst = "Burst",
+}
+
+local BulletType = {
+    Ray = "Ray",
+    Lighting = "Lighting",
+    Projectile = "Projectile",
+}
+
+local AmmoType = {
+    Battery = "Battery",
+    Ammo = "Ammo"
 }
 
 return {
@@ -47,7 +74,7 @@ return {
         
         WeaponCost = 0, -- backwards armory compatibility?    
         
-        GunType = "Auto",
+        GunType = GunTypes.Auto,
         
         DamageCalculationFunction = function(damage, _)
             return damage
@@ -56,8 +83,10 @@ return {
         HeadshotMultiplier = 1.7,
         VehicleMultiplier = 1,
 
-        FireMode = "Single",
-        BulletType = "Ray", -- for things like the msi, pbw, anything else
+        ChargeWait = 0,
+
+        FireMode = FireMode.Single,
+        BulletType = BulletType.Ray, -- for things like the msi, pbw, anything else
         NumBarrels = 1,
 
         EquipTime = 0.3,
@@ -66,14 +95,17 @@ return {
         MaxSpread = 2.5,
         MinSpread = 0.5,
         
-        AmmoType = "Battery", -- battery, default ammo
+        AmmoType = AmmoType.Battery, -- battery, default ammo
         
         -- if default ammo
         Ammo = nil,
         ReloadTime = nil,
 
         -- if battery based
-        BatteryDepletionRate = 10,
+        BatteryDepletionMin = 2,
+        BatteryDepletionMax = 3,
+        ShotsDeplete = 10,
+
         HeatRate = 2,
         CoolTime = 3,
         CoolWait = 0.3,
