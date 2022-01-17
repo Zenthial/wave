@@ -1,9 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
+
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
+
+local Mouse = require(script.Mouse)
 
 local createFrame = require(script.Parent.Parent.Helper.createFrame)
 
@@ -26,6 +30,10 @@ function Player:Initial()
             createFrame(self.Player.Character.HumanoidRootPart.CFrame)
         end
     end))
+
+    CollectionService:AddTag(self.Player, "Mouse")
+
+    local MouseComponent = Rosyn.AwaitComponentInit(Mouse, self.Player)
 end
 
 function Player:Destroy()

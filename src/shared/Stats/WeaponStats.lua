@@ -1,3 +1,5 @@
+local BulletAssets = game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Bullets")
+
 export type WeaponStats = {
     Name: string,
     FullName: string,
@@ -18,6 +20,7 @@ export type WeaponStats = {
 
     FireMode: string,
     BulletType: string, -- for things like the msi, pbw, anything else
+    BulletModel: Model | BasePart,
     NumBarrels: number,
 
     EquipTime: number,
@@ -64,6 +67,10 @@ local AmmoType = {
     Ammo = "Ammo"
 }
 
+local Bullets = {
+    Default = BulletAssets:WaitForChild("Default")
+}
+
 return {
     ["W17"] = {
         Name = "W17",
@@ -87,6 +94,7 @@ return {
 
         FireMode = FireMode.Single,
         BulletType = BulletType.Ray, -- for things like the msi, pbw, anything else
+        BulletModel = Bullets.Default,
         NumBarrels = 1,
 
         EquipTime = 0.3,
