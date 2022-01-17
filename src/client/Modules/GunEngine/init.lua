@@ -23,3 +23,5 @@ local GunEngine = {}
 function GunEngine:CreateGun(weaponStats: WeaponStats): Gun
     return CoreGun.new(weaponStats)
 end
+
+return GunEngine
