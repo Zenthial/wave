@@ -33,7 +33,7 @@ function Player:Initial()
 
     CollectionService:AddTag(self.Player, "Mouse")
 
-    local MouseComponent = Rosyn.AwaitComponentInit(Mouse, self.Player)
+    local MouseComponent = Rosyn.AwaitComponentInit(self.Player, Mouse)
 
     local player = self.Player :: Player
     player.CameraMaxZoomDistance = 25

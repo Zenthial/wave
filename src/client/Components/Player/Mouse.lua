@@ -10,8 +10,6 @@ local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 local WeaponStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("WeaponStats"))
 type WeaponStats = WeaponStatsModule.WeaponStats
 
-local Player = game.Players.LocalPlayer
-
 local RAYCAST_MAX_DISTANCE = 2000
 local DEFAULT_AIMBUFF = 3
 local DEFAULT_RECOIL = 0
@@ -19,9 +17,9 @@ local DEFAULT_RECOIL = 0
 local Mouse = {}
 Mouse.__index = Mouse
 
-function Mouse.new(root: any)
+function Mouse.new(Player: Player)
     return setmetatable({
-        Root = root,
+        Player = Player,
 
         MouseObject = Player:GetMouse(),
 
@@ -56,7 +54,7 @@ function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming
 end
 
 function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: boolean, currentRecoil: number?, aimBuff: number?)
-    local character = Player.Character
+    local character = self.Player.Character
     if not character then return end
     local head = character:FindFirstChild("Head") :: BasePart
     if not head then return end
