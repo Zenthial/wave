@@ -7,7 +7,7 @@ local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
-local WeaponStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("WeaponStats"))
+local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 type WeaponStats = WeaponStatsModule.WeaponStats
 
 local RAYCAST_MAX_DISTANCE = 2000

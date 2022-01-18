@@ -1,8 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local WeaponStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("WeaponStats"))
-local HolsterStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("HolsterStats"))
+local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local HolsterStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("HolsterStats"))
 
 -- its inverse because part0 and part1 are reversed
 local function inverseWeld(part0: BasePart, part1: BasePart, c0: CFrame?, c1: CFrame?)
