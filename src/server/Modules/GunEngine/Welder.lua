@@ -4,7 +4,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local WeaponStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("WeaponStats"))
 local HolsterStatsModule = require(Shared:WaitForChild("Stats"):WaitForChild("HolsterStats"))
 
--- its inverse because the weld goes in part0, rather than part1
+-- its inverse because part0 and part1 are reversed
 local function inverseWeld(part0: BasePart, part1: BasePart, c0: CFrame?, c1: CFrame?)
     if part0 and part1 then
         local weld = part0:FindChild("HandleWeld") :: ManualWeld
@@ -13,8 +13,8 @@ local function inverseWeld(part0: BasePart, part1: BasePart, c0: CFrame?, c1: CF
             weld.Name = "HandleWeld"
         end
 
-        weld.Part0 = part0
-        weld.Part1 = part1
+        weld.Part0 = part1
+        weld.Part1 = part0
 
         if c0 then
             weld.C0 = c0
@@ -23,7 +23,7 @@ local function inverseWeld(part0: BasePart, part1: BasePart, c0: CFrame?, c1: CF
             weld.C1 = c1
         end
         
-        weld.Parent = part1
+        weld.Parent = part0
     end
 end
 
