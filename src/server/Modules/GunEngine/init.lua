@@ -1,7 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ServerComm = require(script.Parent.ServerComm)
+local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
+local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 
+local Health = require(game.ServerScriptService.Server.Components.Character.Health)
+
+local ServerComm = require(script.Parent.ServerComm)
 local Welder = require(script.Welder)
 
 local GunEngine = {}
@@ -22,6 +26,12 @@ function GunEngine:Start()
         -- an intelligent exploiter could possibly give themselves a different cosmetic appearance if someone has a cool weapon, but it wouldn't do much else
         local result = Welder:WeldWeapon(player, weapon, toBack)
         return result
+    end)
+
+    comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
+        local healthComponent = Rosyn.GetComponent(healthComponentPart, Health) :: typeof(Health)
+
+
     end)
 
     local bulletFolder = Instance.new("Folder")

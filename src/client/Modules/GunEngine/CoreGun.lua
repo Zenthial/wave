@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -70,6 +71,16 @@ local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
     end
 end
 
+local function recursivelyFindHealthComponent(part: BasePart)
+    if CollectionService:HasTag(part, "Health") then
+        return part
+    elseif part.Parent ~= workspace then
+        return recursivelyFindHealthComponent(part.Parent)
+    else
+        return nil
+    end
+end
+
 local CoreGun = {}
 CoreGun.__index = CoreGun
 
@@ -83,13 +94,18 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     local mutableStats = {
         AimBuff = 3,
-        Aiming = false,
         CurrentRecoil = 0,
+
+        Equipped = false,
+        Aiming = false,
     }
 
     local bulletModule = getBulletModule(gunModel, weaponStats)
     local ammoModule = getAmmoModule(weaponStats, storedShots)
     local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats)
+    
+    local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
+    local attemptDamageDealFunction = comm:GetFunction("AttemptDamageDeal") :: (BasePart, string) -> boolean
 
     local cleaner = Trove.new();
 
@@ -100,6 +116,14 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
         ammoModule:Fire()
     end))
+
+    cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
+        local healthComponentPart = recursivelyFindHealthComponent(hitPart)
+        if healthComponentPart ~= nil then
+            attemptDamageDealFunction(healthComponentPart, weaponStats.Name)
+        end
+    end))
+
     
     return setmetatable({
         Model = gunModel,
@@ -112,16 +136,26 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         AmmoModule = ammoModule,
         BulletModule = bulletModule,
 
+        WeldWeaponFunction = weldWeaponFunction,
+
         Cleaner = cleaner,
     }, CoreGun)
 end
 
 function CoreGun:Equip()
-    
+    local result = self.WeldWeaponFunction(self.Model, false) :: boolean
+    if result == false then
+        error("Weld failed, does this weapon have stats?")
+    end
+    self.MutableStats.Equipped = true
 end
 
 function CoreGun:Unequip()
-    
+    local result = self.WeldWeaponFunction(self.Model, true) :: boolean
+    if result == false then
+        error("Weld failed, does this weapon have stats?")
+    end
+    self.MutableStats.Equipped = false
 end
 
 function CoreGun:Attack()

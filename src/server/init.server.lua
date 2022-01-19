@@ -16,14 +16,17 @@ local PLAYER_TAG = "Player"
 
 local function playerAdded(player: Player)
     CollectionService:AddTag(player, PLAYER_TAG)
+    CollectionService:AddTag(player, "Health")
 
     local function characterAdded(character) 
         CollectionService:AddTag(character, "Sprint")
         CollectionService:AddTag(character, "Animation")
     end
+
     if (player.Character) then
         characterAdded(player.Character)
     end
+    
     player.CharacterAdded:Connect(characterAdded)
 end
 
