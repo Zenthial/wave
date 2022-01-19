@@ -12,6 +12,8 @@ local ClientComm = {
     Comm = comm.ClientComm.new(ReplicatedStorage, true)
 }
 
+export type ClientComm = typeof(comm.ClientComm)
+
 -----------------------------------------------------------------------------
 
 return {

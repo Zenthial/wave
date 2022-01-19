@@ -8,6 +8,7 @@ local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local AttackModules = script.Parent.AttackModules
 local AmmoModules = script.Parent.AmmoModules
+local BulletModules = script.Parent.BulletModules
 
 type WeaponStats = WeaponStatsModule.WeaponStats
 type LastShotData = {
@@ -27,15 +28,40 @@ type GunModelAdditionalInfo = {
 }
 type GunModel = Model & GunModelAdditionalInfo
 
-local function getAttackModule(stats: WeaponStats, gunType: string, model: GunModel): table
-    if gunType == "Auto" then
-        return require(AttackModules.Auto).new(stats, model)
+local LoadedModules = {
+    Attack = {},
+    Ammo = {},
+    Bullet = {}
+}
+
+local function loadModulesOfType(tble, folder)
+    for _, v in pairs(folder:GetChildren()) do
+        tble[v.Name] = require(v)
     end
 end
 
-local function getAmmoModule(stats: WeaponStats, ammoType: string, shotsTable: ShotsTable): table
-    if ammoType == "Battery" then
-        return require(AmmoModules.Battery).new(stats.HeatRate, stats.CoolTime, stats.CoolWait, shotsTable)
+loadModulesOfType(LoadedModules.Attack, AttackModules)
+loadModulesOfType(LoadedModules.Ammo, AmmoModules)
+loadModulesOfType(LoadedModules.Bullet, BulletModules)
+
+local function getAttackModule(stats: WeaponStats, bulletModule: table, gunModel, mutableStats): table
+    local mod = LoadedModules.Attack[stats.GunType]
+    if mod then
+        return mod.new(stats, bulletModule, gunModel, mutableStats)
+    end
+end
+
+local function getAmmoModule(stats: WeaponStats, shotsTable: ShotsTable): table
+    local mod = LoadedModules.Ammo[stats.AmmoType]
+    if mod then
+        return mod.new(stats.HeatRate, stats.CoolTime, stats.CoolWait, shotsTable)
+    end
+end
+
+local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
+    local mod = LoadedModules.Bullet[stats.BulletType]
+    if mod then
+        return mod.new(gunModel, stats)
     end
 end
 
@@ -50,8 +76,15 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         LastShot = nil :: LastShotData
     }
 
-    local ammoModule = getAmmoModule(weaponStats, weaponStats.AmmoType, storedShots)
-    local attackModule = getAttackModule(weaponStats, weaponStats.GunType, gunModel)
+    local mutableStats = {
+        AimBuff = 3,
+        Aiming = false,
+        CurrentRecoil = 0,
+    }
+
+    local bulletModule = getBulletModule(gunModel, weaponStats)
+    local ammoModule = getAmmoModule(weaponStats, storedShots)
+    local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats)
 
     local cleaner = Trove.new();
 
@@ -68,9 +101,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
         WeaponStats = weaponStats,
         StoredShots = storedShots,
+        MutableStats = mutableStats,
         
         AttackModule = attackModule,
         AmmoModule = ammoModule,
+        BulletModule = bulletModule,
 
         Cleaner = cleaner,
     }, CoreGun)

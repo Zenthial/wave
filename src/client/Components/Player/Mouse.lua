@@ -53,7 +53,7 @@ function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming
 	return Vector3.new(x,y,z)
 end
 
-function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: boolean, currentRecoil: number?, aimBuff: number?)
+function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: boolean, currentRecoil: number?, aimBuff: number?): (BasePart, Vector3)
     local character = self.Player.Character
     if not character then return end
     local head = character:FindFirstChild("Head") :: BasePart

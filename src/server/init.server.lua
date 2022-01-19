@@ -26,13 +26,23 @@ local function playerAdded(player: Player)
     end
     player.CharacterAdded:Connect(characterAdded)
 end
+
 for _,player in pairs(game.Players:GetPlayers()) do
     playerAdded(player)
 end
+
 Players.PlayerAdded:Connect(playerAdded)
+
+local modules = {}
 
 for _, module in pairs(script:GetDescendants()) do
     if module:IsA("ModuleScript") then
-        require(module)
+        local m = require(module)
+        modules[module.Name] = m
+        if m["Start"] ~= nil then
+            task.spawn(function()
+                m:Start()
+            end)
+        end
     end
 end

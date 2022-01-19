@@ -1,23 +1,38 @@
 local WeaponStatsModule = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local Rosyn = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Mouse = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input")).Mouse
 
+local MouseComponentModule = require(script.Parent.Parent.Parent.Parent.Components.Player.Mouse)
+
+local Player = game.Players.LocalPlayer
+
 type WeaponStats = WeaponStatsModule.WeaponStats
+type GunModelAdditionalInfo = {
+    Barrel: Part,
+    Grip: Part
+}
+type GunModel = Model & GunModelAdditionalInfo
 
 local Auto = {}
 Auto.__index = Auto
 
-function Auto.new(stats: WeaponStats, rayModule: table)
+function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats)
     local self = setmetatable({
         WeaponStats = stats,
-        RayModule = rayModule,
+        BulletModule = bulletModule,
+        MutableStats = mutableStats,
+
+        GunModel = gunModel,
 
         CanFire = true,
         Shooting = true,
 
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
+
+        MouseComponent = Rosyn.AwaitComponentInit(Player, MouseComponentModule) :: typeof(MouseComponentModule),
 
         Events = {
             Attacked = Signal.new(),
@@ -32,11 +47,19 @@ function Auto:SetCanFire(bool: boolean)
 end
 
 function Auto:Attack()
-    local mouse = self.Mouse :: Mouse
+    local mouse = self.MouseComponent :: typeof(MouseComponentModule)
 
     while mouse:IsLeftDown() and self.CanFire and not self.Shooting do
         self.Shooting = true
-        task.spawn(function() self.RayModule:Hitscan() self.RayModule:Draw() end)
+        task.spawn(function()
+            local gunModel = self.Model :: GunModel
+            if gunModel.Barrel ~= nil then            
+                local mouseComponent = self.MouseComponent :: typeof(Mouse)
+                local hit: BasePart, target: Vector3 = mouseComponent:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
+                
+                self.BulletModule:Draw(target)
+            end
+        end)
         self.Events.Attacked:Fire()
         task.wait(1/self.WeaponStats.FireRate)
     end
