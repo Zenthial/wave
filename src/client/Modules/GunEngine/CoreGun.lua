@@ -6,6 +6,9 @@ local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
+local ClientComm = require(script.Parent.Parent.ClientComm)
+local comm = ClientComm.GetClientComm()
+
 local AttackModules = script.Parent.AttackModules
 local AmmoModules = script.Parent.AmmoModules
 local BulletModules = script.Parent.BulletModules
@@ -27,6 +30,8 @@ type GunModelAdditionalInfo = {
     Grip: Part
 }
 type GunModel = Model & GunModelAdditionalInfo
+
+-- this block needs to be improved
 
 local LoadedModules = {
     Attack = {},
@@ -109,6 +114,14 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
         Cleaner = cleaner,
     }, CoreGun)
+end
+
+function CoreGun:Equip()
+    
+end
+
+function CoreGun:Unequip()
+    
 end
 
 function CoreGun:Attack()

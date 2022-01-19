@@ -36,7 +36,8 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
 
         Events = {
             Attacked = Signal.new(),
-            TriggerReload = Signal.new()
+            TriggerReload = Signal.new(),
+            CheckHitPart = Signal.new()
         }
     }, Auto)
     return self
@@ -51,15 +52,20 @@ function Auto:Attack()
 
     while mouse:IsLeftDown() and self.CanFire and not self.Shooting do
         self.Shooting = true
+
         task.spawn(function()
             local gunModel = self.Model :: GunModel
             if gunModel.Barrel ~= nil then            
-                local mouseComponent = self.MouseComponent :: typeof(Mouse)
-                local hit: BasePart, target: Vector3 = mouseComponent:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
+                local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
                 
+                if hit ~= nil then
+                    self.Events.CheckHitPart:Fire(hit)
+                end
+
                 self.BulletModule:Draw(target)
             end
         end)
+
         self.Events.Attacked:Fire()
         task.wait(1/self.WeaponStats.FireRate)
     end
