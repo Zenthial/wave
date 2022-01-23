@@ -6,25 +6,25 @@ local HolsterStatsModule = require(Shared:WaitForChild("Configurations"):WaitFor
 
 -- its inverse because part0 and part1 are reversed
 local function inverseWeld(part0: BasePart, part1: BasePart, c0: CFrame?, c1: CFrame?)
-    if part0 and part1 then
-        local weld = part0:FindChild("HandleWeld") :: ManualWeld
-        if not weld then
-            weld = Instance.new("ManualWeld")
-            weld.Name = "HandleWeld"
-        end
-
-        weld.Part0 = part1
-        weld.Part1 = part0
-
-        if c0 then
-            weld.C0 = c0
-        end
-        if c1 then
-            weld.C1 = c1
-        end
-        
-        weld.Parent = part0
+    assert(part0, "Part0 does not exist")
+    assert(part1, "Part1 does not exist")
+    local weld = part0:FindFirstChild("HandleWeld") :: ManualWeld
+    if not weld then
+        weld = Instance.new("ManualWeld")
+        weld.Name = "HandleWeld"
     end
+
+    weld.Part0 = part1
+    weld.Part1 = part0
+
+    if c0 then
+        weld.C0 = c0
+    end
+    if c1 then
+        weld.C1 = c1
+    end
+    
+    weld.Parent = part0
 end
 
 local Welder = {}

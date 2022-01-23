@@ -32,7 +32,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
 
-        MouseComponent = Rosyn.AwaitComponentInit(Player, MouseComponentModule) :: typeof(MouseComponentModule),
+        MouseComponent = Rosyn.GetComponent(Player, MouseComponentModule) :: typeof(MouseComponentModule),
 
         Events = {
             Attacked = Signal.new(),

@@ -31,8 +31,6 @@ function Player:Initial()
         end
     end))
 
-    CollectionService:AddTag(self.Player, "Mouse")
-
     local MouseComponent = Rosyn.AwaitComponentInit(self.Player, Mouse)
 
     local player = self.Player :: Player

@@ -80,6 +80,6 @@ function Mouse:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Mouse", {Mouse})
+Rosyn.Register("Player", {Mouse})
 
 return Mouse

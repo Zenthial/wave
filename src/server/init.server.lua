@@ -2,10 +2,6 @@
 -- after the tech demo, this probably won't need to be touched
 
 --Shared
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
-local Util = Shared:WaitForChild("Util", 5)
-
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
@@ -39,13 +35,19 @@ Players.PlayerAdded:Connect(playerAdded)
 local modules = {}
 
 for _, module in pairs(script:GetDescendants()) do
-    if module:IsA("ModuleScript") then
-        local m = require(module)
-        modules[module.Name] = m
-        if m["Start"] ~= nil then
-            task.spawn(function()
-                m:Start()
-            end)
+    task.spawn(function()
+        if module:IsA("ModuleScript") then
+            local m = require(module)
+            modules[module.Name] = m
+            if typeof(m) == "table" then
+                if m["Start"] ~= nil then
+                    task.spawn(function()
+                        m:Start()
+                    end)
+                end
+            end
         end
-    end
+    end)
 end
+
+print(modules)

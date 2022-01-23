@@ -47,8 +47,10 @@ function GunEngine:Start()
     end)
 end
 
-function GunEngine:CreateGun(weaponStats: WeaponStats): Gun
-    return CoreGun.new(weaponStats)
+function GunEngine:CreateGun(weaponName: string, model): Gun
+    local stats = WeaponStatsModule[weaponName]
+    assert(stats, "No weapon stats for ".. weaponName)
+    return CoreGun.new(stats, model)
 end
 
 return GunEngine

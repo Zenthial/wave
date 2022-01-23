@@ -27,7 +27,7 @@ function Ray.new(gunModel: GunModel, weaponStats)
         Model = gunModel,
         WeaponStats = weaponStats,
 
-        MouseComponent = Rosyn.AwaitComponentInit(Mouse, Player),
+        MouseComponent = Rosyn.GetComponent(Player, Mouse),
 
         Cleaner = Trove.new()
     }, Ray)

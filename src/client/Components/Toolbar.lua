@@ -21,7 +21,7 @@ local Toolbar = {}
 Toolbar.__index = Toolbar
 
 function Toolbar.new(root: any)
-    return setmetatable({
+    local self = {
         Root = root,
 
         Slots = table.create(3),
@@ -41,10 +41,8 @@ function Toolbar.new(root: any)
         Cleaner = Trove.new() :: typeof(Trove),
         Input = Input.Keyboard.new() :: typeof(Input.Keyboard),
 
-    }, Toolbar)
-end
+    }
 
-function Toolbar:Initial()
     local cleaner = self.Cleaner :: typeof(Trove)
     local input = self.Input :: typeof(Input.Keyboard)
 
@@ -52,13 +50,21 @@ function Toolbar:Initial()
         local index = table.find(self.ToolbarKeys, keyCode)
         
         if index then
+            if self.EquippedTool ~= nil then
+                self.EquippedTool:Unequip()
+            end
+            
             self.EquippedSlot = index
-            self.EquippedTool:Unequip()
             self.EquippedTool = self.Slots[index]
             self.EquippedTool:Equip()
         end
     end))
 
+    return setmetatable(self, Toolbar)
+end
+
+function Toolbar:SetKeys(keys)
+    self.ToolbarKeys = keys
 end
 
 function Toolbar:Add(item: any, slot: number?): boolean
@@ -118,7 +124,5 @@ end
 function Toolbar:Destroy()
     self.Cleaner:Destroy()
 end
-
-Rosyn.Register("Toolbar", {Toolbar})
 
 return Toolbar
