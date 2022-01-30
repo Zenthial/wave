@@ -6,12 +6,11 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local BehaviorTrees = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("BehaviorTrees")
-local TreeCreator = require(BehaviorTrees.TreeCreator)
+local TreeCreator = require(BehaviorTrees.BehaviorTreeCreator)
 
 local WeaponStatsTable = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 
 local Animation = require(script.Parent.Animation)
-local CoreGun = require(script.Parent.Parent.Modules.GunEngine.CoreGun)
 
 local Player = game.Players.LocalPlayer
 
@@ -41,7 +40,7 @@ type AnimationTreeStruct = {
     ReloadPlaying: boolean,
 
     WeaponEquipped: boolean,
-    EquippedWeaponPointer: typeof(CoreGun),
+    EquippedWeaponPointer: any, -- CoreGun but cannot define it without recursively requiring
 
     Animator: typeof(Animation),
 
@@ -67,12 +66,13 @@ function AnimationTree.new(root: any)
             RollingChanged = Signal.new(),
 
             EquipChanged = Signal.new(),
+            UnequipChanged = Signal.new(),
         }
     }, AnimationTree)
 end
 
 function AnimationTree:Initial()
-    local state: AnimationTreeStruct = {
+    local State: AnimationTreeStruct = {
         Equipping = 0,
 
         SprintActive = false,
@@ -101,14 +101,14 @@ function AnimationTree:Initial()
 
     local cleaner = self.Cleaner :: typeof(Trove)
     cleaner:Add(Player.CharacterAdded:Connect(function(character)
-        state.Animator = Rosyn.AwaitComponentInit(character, Animation)
+        State.Animator = Rosyn.AwaitComponentInit(character, Animation)
     end))
 
-    self.State = state
-    self:StartTree()
+    self.State = State
+    self:InitTree()
 end
 
-function AnimationTree:EquipWeapon(weapon: typeof(CoreGun))
+function AnimationTree:EquipWeapon(weapon)
     self.State.Equipping = 1
 
     self.State.WeaponEquipped = true
@@ -145,20 +145,23 @@ function AnimationTree:SetReload(bool: boolean)
 end
 
 
-function AnimationTree:StartTree()
+function AnimationTree:InitTree()
     task.spawn(function()
         local cleaner = self.Cleaner :: typeof(Trove)
 
-        local animationTree = TreeCreator:Create(BehaviorTrees.Trees.AnimationTree)
         -- tree payload to pass possible additional data
-        local treePayload = {
-            State = self.State
+        local treeState = {
+            Tree = self,
+            Blackboard = self.State,
         }
+
+        local animationTree = TreeCreator:Create(BehaviorTrees.Trees.PlayerAnimationTree)
+        print(animationTree)
 
         local treeRunning = false
         local function update(_, _dt)
             if treeRunning then return end
-            local result = animationTree:Run(treePayload)
+            local result = animationTree:Run(treeState)
             treeRunning = (result == 3)
         end
 
@@ -173,6 +176,6 @@ function AnimationTree:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("AnimationTree", {AnimationTree})
+Rosyn.Register("AnimationTree", {AnimationTree}, workspace)
 
 return AnimationTree

@@ -11,6 +11,7 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local AnimationTree = require(script.Parent.Parent.Parent.Components.AnimationTree)
+local Animator = require(script.Parent.Parent.Parent.Components.Animation)
 
 local ClientComm = require(script.Parent.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()
@@ -115,14 +116,19 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
     local character = Player.Character or Player.CharacterAdded:Wait()
-    local animationTree = Rosyn.AwaitComponent(character, AnimationTree)
+    local animationTreeComponent = Rosyn.AwaitComponent(character, AnimationTree)
+    local animationComponent = Rosyn.AwaitComponent(character, Animator) :: typeof(Animator)
+
+    for _, animationData in pairs(weaponStats.Animations) do
+        animationComponent:Load(animationData)
+    end
 
     local cleaner = Trove.new();
 
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
         attackModule:CanFire(bool)
 
-        animationTree:SetReload(bool)
+        animationTreeComponent:SetReload(bool)
     end))
 
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
@@ -150,7 +156,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
         WeldWeaponFunction = weldWeaponFunction,
 
-        AnimationTree = animationTree,
+        AnimationTree = animationTreeComponent,
 
         Cleaner = cleaner,
     }, CoreGun)

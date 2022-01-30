@@ -50,18 +50,21 @@ function Toolbar.new(size: number)
 
     cleaner:Add(input.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         local index = table.find(self.ToolbarKeys, keyCode)
-        
-        if self.EquippedTool ~= nil then
-            self.EquippedTool:Unequip()
-            self.EquippedTool = nil
-        end
 
-        if index and self.EquippedSlot ~= index then
-            self.EquippedSlot = index
-            self.EquippedTool = self.Slots[index]
-            self.EquippedTool:Equip()
-        else
-            self.EquippedSlot = nil
+
+        if index then
+            if self.EquippedTool ~= nil then
+                self.EquippedTool:Unequip()
+                self.EquippedTool = nil
+            end
+
+            if self.EquippedSlot ~= index and self.Slots[index] ~= false then
+                self.EquippedSlot = index
+                self.EquippedTool = self.Slots[index]
+                self.EquippedTool:Equip()
+            else
+                self.EquippedSlot = nil
+            end
         end
     end))
 

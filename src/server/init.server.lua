@@ -26,7 +26,7 @@ local function playerAdded(player: Player)
 
     local function characterAdded(character) 
         for _, tag in pairs(CHARACTER_TAGS) do
-            CollectionService:AddTag(player, tag)
+            CollectionService:AddTag(character, tag)
         end
     end
 

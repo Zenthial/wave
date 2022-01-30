@@ -22,7 +22,7 @@ local function findAnimator(root: Model): Animator?
             return obj;
         end
     end
-    warn("Animator not found in object: ".. root.ClassName.." : ".. root.Name.. " under: "..root.Parent)
+    warn("Animator not found in object: ".. root.ClassName.." : ".. root.Name.. " under: "..root.Parent.Name)
     return nil;
 end
 
@@ -54,6 +54,10 @@ end
 
 function Animation:Initial()
     self.Animator = findAnimator(self.Root)
+    if self.Animator == nil then
+        local humanoid = self.Root:WaitForChild("Humanoid", 30)
+        self.Animator = humanoid:WaitForChild("Animator", 30)
+    end
 end
 
 function Animation:Destroy()
@@ -120,6 +124,6 @@ function Animation:DestroyTrack(animationName: string)
     end
 end
 
-Rosyn.Register("Animator", {Animation})
+Rosyn.Register("Animator", {Animation}, workspace)
 
 return Animation

@@ -1,4 +1,10 @@
-local BulletAssets = game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Bullets")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BulletAssets = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Bullets")
+
+local Types = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Types"))
+local AnimationData = require(script.Parent.Parent.Modules.AnimationData)
+
+type AnimationData = Types.AnimationData
 
 type HandleWeld = {
     Limb: string,
@@ -53,6 +59,8 @@ export type WeaponStats = {
     HeatRate: number,
     CoolTime: number,
     CoolWait: number,
+
+    Animations: {AnimationData}
 }
 
 local GunTypes = {
@@ -146,5 +154,12 @@ return {
         HeatRate = 2,
         CoolTime = 3,
         CoolWait = 0.3,
+
+        Animations = {
+            AnimationData.new("W17Equip", 1429821058),
+            AnimationData.new("W17Hold", 1429816077),
+            AnimationData.new("W17Sprint", 8681795992),
+            AnimationData.new("W17Melee", 1427432032),
+        }
     }
 }
