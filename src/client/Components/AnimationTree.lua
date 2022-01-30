@@ -20,6 +20,8 @@ type ActiveAnimationsStruct = {
 }
 
 type AnimationTreeStruct = {
+    Equipping: number, -- 0 = not equipping, 1 = equipping, -1 = unequipping
+    
     SprintActive: boolean,
     SprintPlaying: boolean,
 
@@ -52,6 +54,8 @@ end
 
 function AnimationTree:Initial()
     local state: AnimationTreeStruct = {
+        Equipping = 0,
+        
         SprintActive = false,
         SprintPlaying = false,
 
