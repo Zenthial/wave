@@ -603,6 +603,7 @@ function task.run(obj)
 	local Blackboard = obj.Blackboard
 	
 	if Blackboard.Equipping == 1 then
+		print("Equipping")
 		return SUCCESS
 	end
 	
@@ -1135,7 +1136,7 @@ return task
           </BinaryString>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.5999999046325684</double>
+          <double name="Value">0.6999999284744263</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="90">
@@ -1147,7 +1148,7 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>529</Y>
+            <Y>701</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -1161,7 +1162,7 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-281</Y>
+            <Y>-454</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>

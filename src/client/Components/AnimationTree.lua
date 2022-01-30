@@ -51,6 +51,7 @@ local AnimationTree = {}
 AnimationTree.__index = AnimationTree
 
 function AnimationTree.new(root: any)
+    print(root)
     return setmetatable({
         Root = root,
 

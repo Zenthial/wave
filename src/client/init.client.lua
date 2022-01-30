@@ -1,4 +1,8 @@
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+
 local Player = game.Players.LocalPlayer
 
 local function characterAdded(character) 
@@ -36,3 +40,5 @@ local ClientComm = comm.GetClientComm()
 ClientComm:GetSignal("PlayerLoaded"):Fire()
 
 print("done")
+
+print(Rosyn.GetComponentsFromInstance(Player.Character or Player.CharacterAdded:Wait()))
