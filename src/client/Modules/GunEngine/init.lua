@@ -30,7 +30,7 @@ function GunEngine:Start()
         requiredBulletModules[v.Name] = require(v)    
     end
 
-    local comm = ClientComm.GetClientComm() :: ClientComm.ClientComm
+    local comm = ClientComm.GetClientComm()
     local raySignal = comm:GetSignal("DrawRay")
 
     raySignal:Connect(function(startPosition: Vector3, endPosition: Vector3, weaponName: string)

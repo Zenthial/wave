@@ -105,7 +105,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
-    local attemptDamageDealFunction = comm:GetFunction("AttemptDamageDeal") :: (BasePart, string) -> boolean
+    local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
     local cleaner = Trove.new();
 
@@ -120,7 +120,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
         local healthComponentPart = recursivelyFindHealthComponent(hitPart)
         if healthComponentPart ~= nil then
-            attemptDamageDealFunction(healthComponentPart, weaponStats.Name)
+            attemptDealDamageFunction(healthComponentPart, weaponStats.Name)
         end
     end))
 

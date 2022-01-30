@@ -27,10 +27,10 @@ local function setSprint(self, action: boolean)
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
 
     if (action == true) then
-        camera.FieldOfView = 85
+        -- camera.FieldOfView = 85
         enableSprint()
     else
-        camera.FieldOfView = 70
+        -- camera.FieldOfView = 70
         disableSprint()
     end
 end

@@ -29,8 +29,7 @@ end
 
 local Welder = {}
 
-function Welder:WeldWeapon(player: Player, weapon: Model, toBack: boolean)
-    local character = player.Character
+function Welder:WeldWeapon(character: Model, weapon: Model, toBack: boolean)
     if not character then return false end
 
     local weaponStats = WeaponStatsModule[weapon.Name] :: WeaponStatsModule.WeaponStats
@@ -46,6 +45,7 @@ function Welder:WeldWeapon(player: Player, weapon: Model, toBack: boolean)
             inverseWeld(handle, limb, holsters[i].C0, holsters[i].C1)
         end
     else 
+        print(false)
         return false
     end
 

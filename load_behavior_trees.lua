@@ -1,3 +1,5 @@
+---@diagnostic disable: undefined-global
+
 local game = remodel.readPlaceFile("behavior_trees.rbxl")
 
 remodel.createDirAll("src/shared/BehaviorTrees")

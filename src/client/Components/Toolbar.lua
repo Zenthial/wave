@@ -20,11 +20,9 @@ end
 local Toolbar = {}
 Toolbar.__index = Toolbar
 
-function Toolbar.new(root: any)
+function Toolbar.new(size: number)
     local self = {
-        Root = root,
-
-        Slots = table.create(3),
+        Slots = table.create(size),
         ToolbarKeys = {
             Enum.KeyCode.One,
             Enum.KeyCode.Two,
@@ -43,20 +41,27 @@ function Toolbar.new(root: any)
 
     }
 
+    for i = 1, size do
+        self.Slots[i] = false
+    end
+
     local cleaner = self.Cleaner :: typeof(Trove)
     local input = self.Input :: typeof(Input.Keyboard)
 
     cleaner:Add(input.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         local index = table.find(self.ToolbarKeys, keyCode)
         
-        if index then
-            if self.EquippedTool ~= nil then
-                self.EquippedTool:Unequip()
-            end
-            
+        if self.EquippedTool ~= nil then
+            self.EquippedTool:Unequip()
+            self.EquippedTool = nil
+        end
+
+        if index and self.EquippedSlot ~= index then
             self.EquippedSlot = index
             self.EquippedTool = self.Slots[index]
             self.EquippedTool:Equip()
+        else
+            self.EquippedSlot = nil
         end
     end))
 
@@ -78,8 +83,11 @@ function Toolbar:Add(item: any, slot: number?): boolean
     else
         local tableFull = true
         local freeSlot = -1
+
+        print(self.Slots)
         for i, v in ipairs(self.Slots) do
-            if v == nil then
+            print(i, v)
+            if v == false then
                 tableFull = false
                 freeSlot = i
                 break;

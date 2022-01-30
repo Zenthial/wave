@@ -14,19 +14,17 @@ Player.CharacterAdded:Connect(characterAdded)
 local modules = {}
 
 for _, module in pairs(script:GetDescendants()) do
-    task.spawn(function()
-        if module:IsA("ModuleScript") then
-            local m = require(module)
-            modules[module.Name] = m
-            if typeof(m) == "table" then
-                if m["Start"] ~= nil then
-                    task.spawn(function()
-                        m:Start()
-                    end)
-                end
+    if module:IsA("ModuleScript") then
+        local m = require(module)
+        modules[module.Name] = m
+        if typeof(m) == "table" then
+            if m["Start"] ~= nil then
+                task.spawn(function()
+                    m:Start()
+                end)
             end
         end
-    end)
+    end
 end
 
 local comm = modules["ClientComm"]
@@ -35,6 +33,6 @@ repeat
 until comm ~= nil
 local ClientComm = comm.GetClientComm()
 
-ClientComm:GetSignal("PlayedLoaded"):Fire()
+ClientComm:GetSignal("PlayerLoaded"):Fire()
 
 print("done")
