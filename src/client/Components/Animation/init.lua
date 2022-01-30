@@ -120,4 +120,6 @@ function Animation:DestroyTrack(animationName: string)
     end
 end
 
+Rosyn.Register("Animator", {Animation})
+
 return Animation

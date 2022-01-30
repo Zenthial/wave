@@ -5,18 +5,29 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
-local PLAYER_TAG = "Player"
+local PLAYER_TAGS = {
+    "Player",
+    "Health"
+}
+
+local CHARACTER_TAGS = {
+    "Sprint",
+    "AnimationTree",
+    "Animator",
+}
 
 ------------------------------------------------------------------------
 --Setup
 
 local function playerAdded(player: Player)
-    CollectionService:AddTag(player, PLAYER_TAG)
-    CollectionService:AddTag(player, "Health")
+    for _, tag in pairs(PLAYER_TAGS) do
+        CollectionService:AddTag(player, tag)
+    end
 
     local function characterAdded(character) 
-        CollectionService:AddTag(character, "Sprint")
-        CollectionService:AddTag(character, "Animation")
+        for _, tag in pairs(CHARACTER_TAGS) do
+            CollectionService:AddTag(player, tag)
+        end
     end
 
     if (player.Character) then

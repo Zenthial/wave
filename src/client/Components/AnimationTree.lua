@@ -3,20 +3,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util", 5):WaitForChild("Trove", 5))
+local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local BehaviorTrees = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("BehaviorTrees")
 local TreeCreator = require(BehaviorTrees.TreeCreator)
+
+local WeaponStatsTable = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 
 local Animation = require(script.Parent.Animation)
 local CoreGun = require(script.Parent.Parent.Modules.GunEngine.CoreGun)
 
 local Player = game.Players.LocalPlayer
 
+type WeaponStats = WeaponStatsTable.WeaponStats
+
 type ActiveAnimationsStruct = {
     SprintAnimationName: string,
     CrouchAnimationName: string,
     RollAnimationName: string,
-    ReloadAnimationName: string
+    ReloadAnimationName: string,
+    EquipAnimationName: string,
+    HoldAnimationName: string
 }
 
 type AnimationTreeStruct = {
@@ -48,14 +55,26 @@ function AnimationTree.new(root: any)
     return setmetatable({
         Root = root,
 
-        Cleaner = Trove.new()
+        Cleaner = Trove.new(),
+
+        Events = {
+            SprintChanged = Signal.new(),
+
+            CrouchChanged = Signal.new(),
+
+            ReloadChanged = Signal.new(),
+
+            RollingChanged = Signal.new(),
+
+            EquipChanged = Signal.new(),
+        }
     }, AnimationTree)
 end
 
 function AnimationTree:Initial()
     local state: AnimationTreeStruct = {
         Equipping = 0,
-        
+
         SprintActive = false,
         SprintPlaying = false,
 
@@ -88,6 +107,43 @@ function AnimationTree:Initial()
     self.State = state
     self:StartTree()
 end
+
+function AnimationTree:EquipWeapon(weapon: typeof(CoreGun))
+    self.State.Equipping = 1
+
+    self.State.WeaponEquipped = true
+    self.State.EquippedWeaponPointer = weapon
+
+    self.Events.EquipChanged:Fire(true)
+end
+
+function AnimationTree:UnequipWeapon()
+    self.State.Equipping = -1
+
+    self.State.WeaponEquipped = false
+    self.State.EquippedWeaponPointer = nil
+
+    self.Events.UnequipChanged:Fire(false)
+end
+
+function AnimationTree:SetSprint(bool: boolean)
+    self.State.SprintActive = bool
+
+    self.Events.SprintChanged:Fire(bool)
+end
+
+function AnimationTree:SetCrouch(bool: boolean)
+    self.State.CrouchActive = bool
+
+    self.Events.CrouchChanged:Fire(bool)
+end
+
+function AnimationTree:SetReload(bool: boolean)
+    self.State.ReloadActive = bool
+
+    self.Events.ReloadChanged:Fire(bool)
+end
+
 
 function AnimationTree:StartTree()
     task.spawn(function()
