@@ -129,7 +129,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.43480714608871446,0,0.5158783160484407,0</string>
+              <string name="Value">0.4348901362957301,0,0.5163056758116478,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="15">
@@ -230,7 +230,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.41001235594940433,0,0.5444704225494164,0</string>
+              <string name="Value">0.4100951293592987,0,0.544897783306996,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="27">
@@ -331,7 +331,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.43002821901505345,0,0.5347051436300065,0</string>
+              <string name="Value">0.4301110574609468,0,0.5351323997143485,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="36">
@@ -422,7 +422,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.42445623996212073,0,0.5486437672922104,0</string>
+              <string name="Value">0.4245390988944338,0,0.5490711281949303,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="46">
@@ -559,7 +559,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4374378394163194,0,0.5484403602083403,0</string>
+              <string name="Value">0.4375208178035558,0,0.5488676428537694,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="53">
@@ -706,7 +706,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.45161521849374725,0,0.5446935226037916,0</string>
+              <string name="Value">0.45169815736808827,0,0.5451208833691302,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="60">
@@ -797,7 +797,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4431581753999804,0,0.5584878615659815,0</string>
+              <string name="Value">0.44324116526860174,0,0.5589152141165895,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="70">
@@ -934,7 +934,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.45912811590867236,0,0.5586162842955472,0</string>
+              <string name="Value">0.45921108486953527,0,0.5590435792497676,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="77">
@@ -1082,7 +1082,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4928422889169326,0,0.5033238080609308,0</string>
+              <string name="Value">0.4929252695353458,0,0.5037511414967716,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="84">
@@ -1173,7 +1173,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4629061675202135,0,0.5330301108562087,0</string>
+              <string name="Value">0.4629891679852289,0,0.5334573929657019,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="94">
@@ -1274,7 +1274,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5147006116078456,0,0.5376390484565319,0</string>
+              <string name="Value">0.5147836998806568,0,0.5380662611705662,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="104">
@@ -1365,7 +1365,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5075877604682152,0,0.5532264910708681,0</string>
+              <string name="Value">0.5076707173351137,0,0.5536537738827486,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="114">
@@ -1466,7 +1466,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5200361996799224,0,0.5534100747672099,0</string>
+              <string name="Value">0.5201193383881189,0,0.5538374358356918,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="123">
@@ -1568,6 +1568,9 @@ function task.run(obj)
 	Blackboard.Animator:Stop("GlobalCrouch")
 	Blackboard.ActiveAnimations.CrouchAnimationName = nil
 	
+	Blackboard.CrouchPlaying = false
+	Blackboard.CrouchActive = false
+	
 	return SUCCESS
 end
 return task
@@ -1602,7 +1605,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4884706339289893,0,0.5183913216687188,0</string>
+              <string name="Value">0.4885536320918102,0,0.5188185511022951,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="130">
@@ -1723,7 +1726,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4752519866060982,0,0.552497938106863,0</string>
+              <string name="Value">0.4753349447832833,0,0.5529252817546857,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="145">
@@ -1824,7 +1827,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4752519866060982,0,0.5352818042343104,0</string>
+              <string name="Value">0.4753349447832833,0,0.5357090168663647,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="154">
@@ -1905,7 +1908,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4882867686492578,0,0.5350603126565547,0</string>
+              <string name="Value">0.48836974655889304,0,0.5354875861421857,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="161">
@@ -2006,7 +2009,7 @@ return task
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5015563208223225,0,0.5369774863701169,0</string>
+              <string name="Value">0.5016393285852128,0,0.5374048207837027,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="170">
@@ -2108,6 +2111,8 @@ function task.run(obj)
 	local animation = Blackboard.Animator:Play(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Sprint") :: AnimationTrack
 	Blackboard.ActiveAnimations.SprintAnimationName = Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Sprint"
 	
+	Blackboard.SprintPlaying = true
+	
 	Blackboard.Animator:Stop(Blackboard.ActiveAnimations.HoldAnimationName)
 	
 	return SUCCESS
@@ -2127,7 +2132,7 @@ return task
           </BinaryString>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.3999999165534973</double>
+          <double name="Value">0.49999991059303284</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="176">
@@ -2139,7 +2144,7 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>107</Y>
+            <Y>43</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -2153,7 +2158,7 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-169</Y>
+            <Y>-142</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
