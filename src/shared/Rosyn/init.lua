@@ -102,6 +102,7 @@ function Rosyn.Register(Tag: string, Components: {ComponentClass}, AncestorTarge
     local Trace = debug.traceback()
 
     local function HandleCreation(Item: Instance)
+        task.wait()
         if (Registered[Item]) then
             -- Sometimes GetTagged and GetInstanceAddedSignal can activate on the same frame, so debounce to prevent duplicate component warnings
             -- Thanks Roblox

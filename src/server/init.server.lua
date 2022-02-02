@@ -29,6 +29,8 @@ local function playerAdded(player: Player)
             print(tag)
             CollectionService:AddTag(character, tag)
         end
+
+        print(CollectionService:GetTags(character))
     end
 
     if (player.Character) then
@@ -61,5 +63,3 @@ for _, module in pairs(script:GetDescendants()) do
         end
     end)
 end
-
-print(modules)

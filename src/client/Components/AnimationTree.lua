@@ -47,11 +47,13 @@ type AnimationTreeStruct = {
     ActiveAnimations: ActiveAnimationsStruct
 }
 
+local i = 0
+
 local AnimationTree = {}
 AnimationTree.__index = AnimationTree
 
 function AnimationTree.new(root: any)
-    print(root)
+    
     return setmetatable({
         Root = root,
 
@@ -73,6 +75,8 @@ function AnimationTree.new(root: any)
 end
 
 function AnimationTree:Initial()
+    i += 1
+    print(i)
     local State: AnimationTreeStruct = {
         Equipping = 0,
 
@@ -122,7 +126,7 @@ function AnimationTree:UnequipWeapon()
     self.State.Equipping = -1
 
     self.State.WeaponEquipped = false
-    self.State.EquippedWeaponPointer = nil
+    -- self.State.EquippedWeaponPointer = nil
 
     self.Events.UnequipChanged:Fire(false)
 end

@@ -75,6 +75,8 @@ function Animation:Load(data: Types.AnimationData)
     local track = self.Animator:LoadAnimation(animation)
     self.AnimationTracks[data.Name] = track
 
+    print("Loaded ".. data.Name)
+
     if (#data.MarkerSignals <= 0 ) then return self end
 
     self.MarkerSignals[data.Name.."Signals"] = Trove.new()
@@ -86,8 +88,9 @@ function Animation:Load(data: Types.AnimationData)
 end
 
 function Animation:Play(animationName: string): AnimationTrack
-    if (self.AnimationTracks[animationName]) then 
+    if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
+        print(self.AnimationTracks)
         return 
     end
     self.AnimationTracks[animationName]:Play()
@@ -96,7 +99,7 @@ function Animation:Play(animationName: string): AnimationTrack
 end
 
 function Animation:Stop(animationName: string)
-    if (self.AnimationTracks[animationName]) then 
+    if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to stop animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
@@ -109,7 +112,7 @@ function Animation:Stop(animationName: string)
 end
 
 function Animation:DestroyTrack(animationName: string)
-    if (self.AnimationTracks[animationName]) then 
+    if (self.AnimationTracks[animationName] == nil) then 
         warn("Animation: ".. animationName .." has already been removed or never existed!")
         return 
     end

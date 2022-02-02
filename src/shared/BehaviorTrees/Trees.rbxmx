@@ -142,7 +142,7 @@
             </Properties>
             <Item class="ObjectValue" referent="15">
               <Properties>
-                <string name="Name">1</string>
+                <string name="Name">2</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
@@ -152,7 +152,7 @@
             </Item>
             <Item class="ObjectValue" referent="17">
               <Properties>
-                <string name="Name">2</string>
+                <string name="Name">3</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
@@ -162,7 +162,7 @@
             </Item>
             <Item class="ObjectValue" referent="19">
               <Properties>
-                <string name="Name">3</string>
+                <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
@@ -205,9 +205,9 @@
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="16">
+        <Item class="Folder" referent="20">
           <Properties>
-            <string name="Name">IsNotRolling</string>
+            <string name="Name">IsRolling</string>
             <BinaryString name="AttributesSerialize">
             </BinaryString>
             <int64 name="SourceAssetId">-1</int64>
@@ -220,7 +220,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Invert</string>
+              <string name="Value">Blackboard Query</string>
             </Properties>
           </Item>
           <Item class="StringValue" referent="25">
@@ -230,7 +230,7 @@
               </BinaryString>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4333463924385147,0,0.5357135114926372,0</string>
+              <string name="Value">0.4333524706291697,0,0.5512624656930795,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="26">
@@ -241,89 +241,8 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="27">
-              <Properties>
-                <string name="Name">1</string>
-                <BinaryString name="AttributesSerialize">
-                </BinaryString>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">28</Ref>
-              </Properties>
-            </Item>
           </Item>
-          <Item class="Vector3Value" referent="29">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>92</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="30">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="31">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize">
-                </BinaryString>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">3</int64>
-              </Properties>
-            </Item>
-          </Item>
-        </Item>
-        <Item class="Folder" referent="28">
-          <Properties>
-            <string name="Name">IsRolling</string>
-            <BinaryString name="AttributesSerialize">
-            </BinaryString>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="32">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Blackboard Query</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="33">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4333524706291697,0,0.5512624656930795,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="34">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-          </Item>
-          <Item class="Vector3Value" referent="35">
+          <Item class="Vector3Value" referent="27">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize">
@@ -337,7 +256,7 @@
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="36">
+          <Item class="Folder" referent="28">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize">
@@ -345,17 +264,17 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="37">
+            <Item class="IntValue" referent="29">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">4</int64>
+                <int64 name="Value">3</int64>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="38">
+            <Item class="StringValue" referent="30">
               <Properties>
                 <string name="Name">Value</string>
                 <BinaryString name="AttributesSerialize">
@@ -365,7 +284,7 @@
                 <string name="Value">true</string>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="39">
+            <Item class="StringValue" referent="31">
               <Properties>
                 <string name="Name">Key</string>
                 <BinaryString name="AttributesSerialize">
@@ -375,7 +294,7 @@
                 <string name="Value">Rolling</string>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="40">
+            <Item class="StringValue" referent="32">
               <Properties>
                 <string name="Name">Board</string>
                 <BinaryString name="AttributesSerialize">
@@ -387,7 +306,7 @@
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="18">
+        <Item class="Folder" referent="16">
           <Properties>
             <string name="Name">Equipping?</string>
             <BinaryString name="AttributesSerialize">
@@ -395,7 +314,7 @@
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="41">
+          <Item class="StringValue" referent="33">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize">
@@ -405,7 +324,7 @@
               <string name="Value">Sequence</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="42">
+          <Item class="StringValue" referent="34">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize">
@@ -415,7 +334,7 @@
               <string name="Value">0.4582095014546461,0,0.5376986323602292,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="43">
+          <Item class="Folder" referent="35">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize">
@@ -423,28 +342,28 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="44">
+            <Item class="ObjectValue" referent="36">
               <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">45</Ref>
+                <Ref name="Value">37</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="46">
+            <Item class="ObjectValue" referent="38">
               <Properties>
                 <string name="Name">2</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">47</Ref>
+                <Ref name="Value">39</Ref>
               </Properties>
             </Item>
           </Item>
-          <Item class="Vector3Value" referent="48">
+          <Item class="Vector3Value" referent="40">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize">
@@ -458,7 +377,7 @@
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="49">
+          <Item class="Folder" referent="41">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize">
@@ -466,7 +385,78 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="50">
+            <Item class="IntValue" referent="42">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize">
+                </BinaryString>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">4</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="37">
+          <Properties>
+            <string name="Name">IsEquipping</string>
+            <BinaryString name="AttributesSerialize">
+            </BinaryString>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="43">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Task</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="44">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.4526376916166488,0,0.5516371972513889,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="45">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+          <Item class="Vector3Value" referent="46">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="47">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="48">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize">
@@ -477,78 +467,7 @@
               </Properties>
             </Item>
           </Item>
-        </Item>
-        <Item class="Folder" referent="45">
-          <Properties>
-            <string name="Name">IsEquipping</string>
-            <BinaryString name="AttributesSerialize">
-            </BinaryString>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="51">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Task</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="52">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4526376916166488,0,0.5516371972513889,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="53">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-          </Item>
-          <Item class="Vector3Value" referent="54">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>92</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="55">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="56">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize">
-                </BinaryString>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">6</int64>
-              </Properties>
-            </Item>
-          </Item>
-          <Item class="ModuleScript" referent="57">
+          <Item class="ModuleScript" referent="49">
             <Properties>
               <string name="Name">IsEquipping</string>
               <BinaryString name="AttributesSerialize">
@@ -616,7 +535,7 @@ return task
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="47">
+        <Item class="Folder" referent="39">
           <Properties>
             <string name="Name">PlayEquip</string>
             <BinaryString name="AttributesSerialize">
@@ -624,7 +543,7 @@ return task
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="58">
+          <Item class="StringValue" referent="50">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize">
@@ -634,7 +553,7 @@ return task
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="59">
+          <Item class="StringValue" referent="51">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize">
@@ -644,7 +563,7 @@ return task
               <string name="Value">0.46561928861126717,0,0.5514339785594427,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="60">
+          <Item class="Folder" referent="52">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize">
@@ -653,7 +572,7 @@ return task
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="61">
+          <Item class="Vector3Value" referent="53">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize">
@@ -667,7 +586,7 @@ return task
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="62">
+          <Item class="Folder" referent="54">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize">
@@ -675,18 +594,18 @@ return task
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="63">
+            <Item class="IntValue" referent="55">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">7</int64>
+                <int64 name="Value">6</int64>
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="64">
+          <Item class="ModuleScript" referent="56">
             <Properties>
               <string name="Name">PlayEquip</string>
               <BinaryString name="AttributesSerialize">
@@ -696,7 +615,9 @@ return task
                 </null>
               </Content>
               <BinaryString name="ScriptGuid"><![CDATA[e0JGRjk0OTM1LUE5RDMtNEExQi1BMDNFLThDMjNBM0U5N0FCOX0=]]></BinaryString>
-              <string name="Source"><![CDATA[local task = {}		
+              <string name="Source"><![CDATA[local wait = task.wait
+
+local task = {}		
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
@@ -743,7 +664,9 @@ function task.run(obj)
 	local animation = Blackboard.Animator:Play(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip") :: AnimationTrack
 	Blackboard.ActiveAnimations.EquipAnimationName = Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip"
 
-	animation.Stopped:Wait()
+	wait(Blackboard.EquippedWeaponPointer.WeaponStats.EquipTime)
+	Blackboard.Animator:Stop(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip")
+	Blackboard.ActiveAnimations.EquipAnimationName = Blackboard.EquippedWeaponPointer.WeaponStats.Name .. ""
 
 	Blackboard.Equipping = 0
 
@@ -759,7 +682,7 @@ return task
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="20">
+        <Item class="Folder" referent="18">
           <Properties>
             <string name="Name">Unequipping?</string>
             <BinaryString name="AttributesSerialize">
@@ -767,7 +690,7 @@ return task
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="65">
+          <Item class="StringValue" referent="57">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize">
@@ -777,7 +700,7 @@ return task
               <string name="Value">Sequence</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="66">
+          <Item class="StringValue" referent="58">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize">
@@ -787,7 +710,7 @@ return task
               <string name="Value">0.487196122546589,0,0.5375967911617837,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="67">
+          <Item class="Folder" referent="59">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize">
@@ -795,28 +718,28 @@ return task
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="68">
+            <Item class="ObjectValue" referent="60">
               <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">69</Ref>
+                <Ref name="Value">61</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="70">
+            <Item class="ObjectValue" referent="62">
               <Properties>
                 <string name="Name">2</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">71</Ref>
+                <Ref name="Value">63</Ref>
               </Properties>
             </Item>
           </Item>
-          <Item class="Vector3Value" referent="72">
+          <Item class="Vector3Value" referent="64">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize">
@@ -830,7 +753,7 @@ return task
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="73">
+          <Item class="Folder" referent="65">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize">
@@ -838,7 +761,78 @@ return task
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="74">
+            <Item class="IntValue" referent="66">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize">
+                </BinaryString>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">7</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="61">
+          <Properties>
+            <string name="Name">IsUnequipping</string>
+            <BinaryString name="AttributesSerialize">
+            </BinaryString>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="67">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Task</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="68">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.47873933328191637,0,0.5513905641840097,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="69">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+          <Item class="Vector3Value" referent="70">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="71">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize">
+              </BinaryString>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="72">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize">
@@ -849,78 +843,7 @@ return task
               </Properties>
             </Item>
           </Item>
-        </Item>
-        <Item class="Folder" referent="69">
-          <Properties>
-            <string name="Name">IsUnequipping</string>
-            <BinaryString name="AttributesSerialize">
-            </BinaryString>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="75">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Task</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="76">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.47873933328191637,0,0.5513905641840097,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="77">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-          </Item>
-          <Item class="Vector3Value" referent="78">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>92</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="79">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize">
-              </BinaryString>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="80">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize">
-                </BinaryString>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">9</int64>
-              </Properties>
-            </Item>
-          </Item>
-          <Item class="ModuleScript" referent="81">
+          <Item class="ModuleScript" referent="73">
             <Properties>
               <string name="Name">IsUnequipping</string>
               <BinaryString name="AttributesSerialize">
@@ -987,7 +910,7 @@ return task
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="71">
+        <Item class="Folder" referent="63">
           <Properties>
             <string name="Name">PlayUnequip</string>
             <BinaryString name="AttributesSerialize">
@@ -995,7 +918,7 @@ return task
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="82">
+          <Item class="StringValue" referent="74">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize">
@@ -1005,7 +928,7 @@ return task
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="83">
+          <Item class="StringValue" referent="75">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize">
@@ -1015,7 +938,7 @@ return task
               <string name="Value">0.494709542853878,0,0.5515194161954748,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="84">
+          <Item class="Folder" referent="76">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize">
@@ -1024,7 +947,7 @@ return task
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="85">
+          <Item class="Vector3Value" referent="77">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize">
@@ -1038,7 +961,7 @@ return task
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="86">
+          <Item class="Folder" referent="78">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize">
@@ -1046,18 +969,18 @@ return task
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="87">
+            <Item class="IntValue" referent="79">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize">
                 </BinaryString>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">10</int64>
+                <int64 name="Value">9</int64>
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="88">
+          <Item class="ModuleScript" referent="80">
             <Properties>
               <string name="Name">PlayUnequip</string>
               <BinaryString name="AttributesSerialize">
@@ -1067,7 +990,9 @@ return task
                 </null>
               </Content>
               <BinaryString name="ScriptGuid"><![CDATA[ezFEMkMwNkVDLUM3NDQtNEI5NC1CRDk3LTlFNjEyN0I3NTZCQ30=]]></BinaryString>
-              <string name="Source"><![CDATA[local task = {}		
+              <string name="Source"><![CDATA[local wait = task.wait
+
+local task = {}		
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
@@ -1114,10 +1039,15 @@ function task.run(obj)
 	Blackboard.Animator:Stop(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Hold")
 	Blackboard.ActiveAnimations.HoldAnimationName = nil
 
-	local animation = Blackboard.Animator:Play(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Unequip") :: AnimationTrack
-	Blackboard.ActiveAnimations.EquipAnimationName = Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Unequip"
-
-	animation.Stopped:Wait()
+	local animation = Blackboard.Animator:Play(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip") :: AnimationTrack
+	Blackboard.ActiveAnimations.EquipAnimationName = Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip"
+	
+	wait(Blackboard.EquippedWeaponPointer.WeaponStats.EquipTime)
+	Blackboard.Animator:Stop(Blackboard.EquippedWeaponPointer.WeaponStats.Name .. "Equip")
+	
+	Blackboard.Equipping = 0
+	
+	Blackboard.ActiveAnimations.EquipAnimationName = ""
 
 	return SUCCESS
 end
@@ -1129,17 +1059,17 @@ return task
           </Item>
         </Item>
       </Item>
-      <Item class="NumberValue" referent="89">
+      <Item class="NumberValue" referent="81">
         <Properties>
           <string name="Name">Zoom</string>
           <BinaryString name="AttributesSerialize">
           </BinaryString>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.6999999284744263</double>
+          <double name="Value">0.8999999761581421</double>
         </Properties>
       </Item>
-      <Item class="Vector3Value" referent="90">
+      <Item class="Vector3Value" referent="82">
         <Properties>
           <string name="Name">WorkspaceX</string>
           <BinaryString name="AttributesSerialize">
@@ -1148,12 +1078,12 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>701</Y>
+            <Y>465</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
       </Item>
-      <Item class="Vector3Value" referent="91">
+      <Item class="Vector3Value" referent="83">
         <Properties>
           <string name="Name">WorkspaceY</string>
           <BinaryString name="AttributesSerialize">
@@ -1162,7 +1092,7 @@ return task
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-454</Y>
+            <Y>-594</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>

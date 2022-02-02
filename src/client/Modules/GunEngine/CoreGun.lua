@@ -116,10 +116,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
     local character = Player.Character or Player.CharacterAdded:Wait()
-    local animationTreeComponent = Rosyn.AwaitComponent(character, AnimationTree)
-    local animationComponent = Rosyn.AwaitComponent(character, Animator) :: typeof(Animator)
+    local animationTreeComponent = Rosyn.AwaitComponentInit(character, AnimationTree) :: typeof(AnimationTree)
+    local animationComponent = Rosyn.AwaitComponentInit(character, Animator) :: typeof(Animator)
 
     for _, animationData in pairs(weaponStats.Animations) do
+        print("Loading " .. animationData.Name)
         animationComponent:Load(animationData)
     end
 
