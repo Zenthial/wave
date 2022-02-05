@@ -36,6 +36,7 @@ function Health:Initial()
     self.MaxShield = DEFAULT_HEALTH_STATS.MAX_SHIELD
 
     self.MaxTotalHealth = self.MaxHealth + self.MaxShield
+    self.Root:SetAttribute("MaxTotalHealth", self.MaxTotalHealth)
     
     self.RechargeTime = DEFAULT_HEALTH_STATS.RECHARGE_TIME
     self.RechargeWait = DEFAULT_HEALTH_STATS.RECHARGE_WAIT

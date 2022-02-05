@@ -7,13 +7,12 @@ local Players = game:GetService("Players")
 
 local PLAYER_TAGS = {
     "Player",
-    "Health"
+    "Health",
+    "Nametag"
 }
 
 local CHARACTER_TAGS = {
-    "Sprint",
-    "AnimationTree",
-    "Animator",
+    "Movement",
 }
 
 ------------------------------------------------------------------------

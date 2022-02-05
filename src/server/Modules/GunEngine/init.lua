@@ -1,9 +1,12 @@
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 
 local Health = require(game.ServerScriptService.Server.Components.Character.Health)
 
@@ -11,6 +14,18 @@ local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
 
 local Welder = require(script.Welder)
+
+local GUN_ENGINE_ATTRIBUTES = {
+    NumWeaponsEquipped = 0,
+    HasPrimaryWeapon = false,
+    Spotted = false,
+}
+
+local function setupPlayer(player: Player)
+    for attributeName, value in pairs(GUN_ENGINE_ATTRIBUTES) do
+        player:SetAttribute(attributeName, value)
+    end
+end
 
 local drawRaySignal = comm:CreateSignal("DrawRay")
 
@@ -38,7 +53,13 @@ end)
 local GunEngine = {}
 
 function GunEngine:Start()
-    print("start")
+    for _, player in pairs(Players:GetPlayers()) do
+        setupPlayer(player)
+    end
+
+    local cleaner = Trove.new()
+    cleaner:Add(Players.PlayerAdded:Connect(setupPlayer))
+
     local bulletFolder = Instance.new("Folder")
     bulletFolder.Name = "Bullets"
     bulletFolder.Parent = workspace
@@ -48,8 +69,6 @@ function GunEngine:Start()
         -- something like LastShot = tick(), if currentShot - LastShot < fireRate then kick, though probably would just want to watch them
         drawRaySignal:FireExcept(player, startPosition, endPosition, weaponName)
     end)
-
-    print("bound functions")
 end
 
 function GunEngine:WeldWeapon(character: Model, weapon: Model, toBack: boolean)

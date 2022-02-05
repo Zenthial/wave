@@ -11,6 +11,7 @@ local TreeCreator = require(BehaviorTrees.BehaviorTreeCreator)
 local WeaponStatsTable = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 
 local Animation = require(script.Parent.Animation)
+local Sprint = require(script.Parent.Movement)
 
 local Player = game.Players.LocalPlayer
 
@@ -47,13 +48,10 @@ type AnimationTreeStruct = {
     ActiveAnimations: ActiveAnimationsStruct
 }
 
-local i = 0
-
 local AnimationTree = {}
 AnimationTree.__index = AnimationTree
 
 function AnimationTree.new(root: any)
-    
     return setmetatable({
         Root = root,
 
@@ -75,8 +73,6 @@ function AnimationTree.new(root: any)
 end
 
 function AnimationTree:Initial()
-    i += 1
-    print(i)
     local State: AnimationTreeStruct = {
         Equipping = 0,
 
@@ -103,11 +99,27 @@ function AnimationTree:Initial()
 
         Animator = Rosyn.AwaitComponentInit(Player.Character or Player.CharacterAdded:Wait(), Animation)
     }
-
+    
     local cleaner = self.Cleaner :: typeof(Trove)
+    
+    local function sprintHandle(char)
+        local sprintComponent = Rosyn.AwaitComponentInit(char, Sprint)
+
+        cleaner:Add(sprintComponent.Events.SprintChanged:Connect(function(bool)
+            print(bool)
+            State.SprintActive = bool
+        end))
+    end
+
     cleaner:Add(Player.CharacterAdded:Connect(function(character)
         State.Animator = Rosyn.AwaitComponentInit(character, Animation)
+         
+        sprintHandle(character)
     end))
+
+    if Player.Character then
+        sprintHandle(Player.Character)
+    end
 
     self.State = State
     self:InitTree()
