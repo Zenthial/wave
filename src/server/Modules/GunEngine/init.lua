@@ -19,6 +19,8 @@ local GUN_ENGINE_ATTRIBUTES = {
     NumWeaponsEquipped = 0,
     HasPrimaryWeapon = false,
     Spotted = false,
+    Restrained = false,
+    PlacingDeployable = false,
 }
 
 local function setupPlayer(player: Player)

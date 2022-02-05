@@ -46,16 +46,27 @@ end
 function Movement:EnableSprint()
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
     self.Humanoid:SetAttribute("Sprinting", true)
-    self.Humanoid.WalkSpeed = 25
+    self:UpdateWalkspeed()
 end
 
 function Movement:DisableSprint()
     self.Humanoid:SetAttribute("Sprinting", false)
-    self.Humanoid.WalkSpeed = 16
+    self:UpdateWalkspeed()
+end
+
+function Movement:EnableCrouch()
+    if (self.Humanoid:GetAttribute("CanCrouch") == false) then return end
+    self.Humanoid:SetAttribute("Crouching", true)
+    self:UpdateWalkspeed()
+end
+
+function Movement:DisableCrouch()
+    self.Humanoid:SetAttribute("Crouching", false)
+    self:UpdateWalkspeed()
 end
 
 function Movement:UpdateWalkspeed()
-    if not self.Character:GetAttribute("CharacterAvailable") or self.Character:GetAttribute("PlacingDeployable") or self.Character:GetAttribute("Restrainted") then
+    if not self.Character:GetAttribute("CharacterAvailable") or self.Character:GetAttribute("PlacingDeployable") or self.Character:GetAttribute("Restrained") then
 		self.Humanoid.WalkSpeed = 0
 	else
 		self.Humanoid.WalkSpeed = 16
@@ -73,7 +84,7 @@ function Movement:UpdateWalkspeed()
 		end
 		
 		if self.Character:GetAttribute("NumWeaponsEquipped") > 0 then
-			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - self.Character:GetAttribute("weaponstats").walkspeedreduce
+			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed -- subtract walkspeed reduce of equipped weapon
 		end
 		
 		if not self.Character:GetAttribute("HasPrimaryWeapon") then
