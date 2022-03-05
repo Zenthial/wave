@@ -33,9 +33,11 @@ end
 
 function Health:Initial()
     self.MaxHealth = DEFAULT_HEALTH_STATS.MAX_HEALTH
-    self.MaxShield = DEFAULT_HEALTH_STATS.MAX_SHIELD
+    self.Root:SetAttribute("MaxHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH)
+    self.MaxShields = DEFAULT_HEALTH_STATS.MAX_SHIELD
+    self.Root:SetAttribute("MaxShields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
 
-    self.MaxTotalHealth = self.MaxHealth + self.MaxShield
+    self.MaxTotalHealth = self.MaxHealth + self.MaxShields
     self.Root:SetAttribute("MaxTotalHealth", self.MaxTotalHealth)
     
     self.RechargeTime = DEFAULT_HEALTH_STATS.RECHARGE_TIME
@@ -43,7 +45,7 @@ function Health:Initial()
     
     self:SetHealth(DEFAULT_HEALTH_STATS.MAX_HEALTH)
     self:SetShields(DEFAULT_HEALTH_STATS.MAX_SHIELD)
-    self:SetTrueHealth(self.MaxHealth + self.MaxShield)
+    self:SetTotalHealth(self.MaxHealth + self.MaxShields)
     
     self.LastTotal = self.TotalHealth
     self.DamageTime = tick()
@@ -66,10 +68,10 @@ function Health:Initial()
         local damage = previousTotalHealth - currentTotalHealth
         local availableDamage = damage -- overwritten down the line
     
-        local lastHealth = math.clamp(currentTotalHealth, 0, self.MaxTotalHealth) - self.Shield :: number
+        local lastHealth = math.clamp(currentTotalHealth, 0, self.MaxTotalHealth) - self.Shields :: number
         local lastShield = math.clamp(previousTotalHealth, 0, self.MaxTotalHealth) - self.Health :: number
 
-        local newShield = self.Shield
+        local newShield = self.Shields
         local newHealth = self.Health
 
         if damage > 0 then
@@ -78,9 +80,9 @@ function Health:Initial()
 
         if damage > 0 and currentTotalHealth > 0 or currentTotalHealth - damage > self.MaxHealth or self.Charging then
             if damage > 0 then
-                availableDamage = -(self.Shield - damage)
+                availableDamage = -(self.Shields - damage)
 
-                if self.Shield > 0 and self.Shield - damage <= 0 then
+                if self.Shields > 0 and self.Shields - damage <= 0 then
                     self.ShieldModelComponent:ShieldEmpty()
                 end
 
@@ -96,13 +98,15 @@ function Health:Initial()
 
             if newShield < 0 then
                 newShield = 0
-            elseif newShield > self.MaxShield then
-                newShield = self.MaxShield
+            elseif newShield > self.MaxShields then
+                newShield = self.MaxShields
             else
-                self.ShieldModelComponent:UpdateShieldTransparency(newShield/self.MaxShield)
-                task.delay(0.2, function()
-                    self.ShieldModelComponent:UpdateShieldTransparency(1)
-                end)
+                if self.ShieldModelComponent ~= nil then
+                    self.ShieldModelComponent:UpdateShieldTransparency(newShield/self.MaxShields)
+                    task.delay(0.2, function()
+                        self.ShieldModelComponent:UpdateShieldTransparency(1)
+                    end)
+                end
             end
         end
 
@@ -120,7 +124,7 @@ function Health:Initial()
 
         if self.TotalHealth == self.MaxTotalHealth then
             newHealth = self.MaxHealth
-            newShield = self.MaxShield
+            newShield = self.MaxShields
         end
 
         self.LastTotal = currentTotalHealth
@@ -186,6 +190,6 @@ function Health:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Health", {Health}, workspace)
+Rosyn.Register("Health", {Health})
 
 return Health

@@ -20,7 +20,7 @@ function MainHUD.new(root: any)
 end
 
 function MainHUD:Initial()
-
+    
 end
 
 function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
