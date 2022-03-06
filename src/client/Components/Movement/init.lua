@@ -77,6 +77,10 @@ function Movement:SetSprint(sprint: boolean)
     setSprint(self, sprint)
 end
 
+function Movement:SetCrouch(crouch: boolean)
+    setCrouch(self, crouch)
+end
+
 function Movement:Destroy()
     self.Cleaner:Destroy()
 end

@@ -4,10 +4,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local CoreGun = require(script.CoreGun)
+local CoreSkill = require(script.Skills.CoreSkill)
 local BulletModules = script.BulletModules
 
 local ClientComm = require(script.Parent.ClientComm)
@@ -33,7 +35,7 @@ function GunEngine:Start()
     local comm = ClientComm.GetClientComm()
     local raySignal = comm:GetSignal("DrawRay")
 
-    raySignal:Connect(function(startPosition: Vector3, endPosition: Vector3, weaponName: string)
+    Cleaner:Add(raySignal:Connect(function(startPosition: Vector3, endPosition: Vector3, weaponName: string)
         local weaponStats = WeaponStatsModule[weaponName]
 
         if weaponStats then
@@ -44,13 +46,19 @@ function GunEngine:Start()
         else
             error("WeaponStats don't exist??")
         end
-    end)
+    end))
 end
 
 function GunEngine:CreateGun(weaponName: string, model): Gun
     local stats = WeaponStatsModule[weaponName]
     assert(stats, "No weapon stats for ".. weaponName)
     return CoreGun.new(stats, model)
+end
+
+function GunEngine:CreateSkill(skillName: string, model)
+    local stats = SkillStatsModule[skillName]
+    assert(stats, "No skill stats for ".. skillName)
+    return CoreSkill.new(stats, model)
 end
 
 return GunEngine

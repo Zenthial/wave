@@ -16,8 +16,11 @@ function ShieldModel.new(root: any)
 end
 
 function ShieldModel:Initial()
-    print("binding")
     self.Model = makeShieldModel(self.Root)
+
+    self.__call = function()
+        return self.Model
+    end
 
     self:UpdateShieldTransparency(1)
 end
