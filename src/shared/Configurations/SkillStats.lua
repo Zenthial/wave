@@ -155,6 +155,7 @@ return {
 		energyregen					= 2,
 		energymin					= 30
 	},
+	
 	["SP0T-R"] = {	
 		name						= "SP0T-R",
 		fullname					= "Hostile Detection Module",		
@@ -178,6 +179,7 @@ return {
 		energyregen					= 1,
 		energymin					= 99
 	},
+
 	["JET-P"] = {	
 		name						= "JET-P",
 		fullname					= "Vertical Boost Jets",
@@ -201,6 +203,7 @@ return {
 		energyregen					= 3,
 		energymin					= 12,
 	},
+
 	["D0DG-P"] = {	
 		name						= "D0DG-P",
 		fullname					= "Horizontal Boost Jets",		
@@ -222,6 +225,7 @@ return {
 		energyregen					= 3,
 		energymin					= 99
 	},
+
 	["TEST"] = {	
 		name						= "TEST",
 		fullname					= "TEST Boost Jets",		

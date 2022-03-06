@@ -67,7 +67,6 @@ function Health:Initial()
         self.TotalHealth = self.Root:GetAttribute("TotalHealth")
         local currentTotalHealth = math.clamp(self.TotalHealth, 0, self.MaxTotalHealth) :: number
         local previousTotalHealth = self.LastTotal :: number
-        print(previousTotalHealth, currentTotalHealth)
 
         local damage = previousTotalHealth - currentTotalHealth
         local availableDamage = damage -- overwritten down the line
@@ -113,7 +112,7 @@ function Health:Initial()
                 end
             end
         end
-        print(newShield)
+
         if not self.Charging and (newShield <= 0 or damage < 0) then
 			newHealth -= availableDamage
 		end
@@ -178,7 +177,7 @@ function Health:RegenShield(lastDamageTime: number)
                 while self.Shields < self.MaxShields and lastDamageTime >= self.DamageTime do
                     self:SetTotalHealth(self.TotalHealth + 1)
                     lastShield = self.Shields
-                    task.wait(0.2)
+                    task.wait(0.15)
                 end
                 self.Charging = false
                 self:RegenShield(tick())

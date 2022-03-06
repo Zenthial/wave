@@ -55,14 +55,18 @@ function Toolbar.new(size: number)
 
         if index then
             if self.EquippedTool ~= nil then
-                self.EquippedTool:Unequip()
+                if self.EquippedTool.Unequip ~= nil then
+                    self.EquippedTool:Unequip()
+                end
                 self.EquippedTool = nil
             end
 
             if self.EquippedSlot ~= index and self.Slots[index] ~= false then
                 self.EquippedSlot = index
                 self.EquippedTool = self.Slots[index]
-                self.EquippedTool:Equip()
+                if self.EquippedTool.Equip ~= nil then
+                    self.EquippedTool:Equip()
+                end
             else
                 self.EquippedSlot = nil
             end

@@ -44,6 +44,9 @@ function Inventory:Initial()
         until self.Root:GetAttribute("Loaded") == true and self.Character ~= nil
     end
 
+    self.Root:SetAttribute("EquippedWeapon", "") -- on the toolbars, have an event that fires when equipped and unequipped to increment the thing
+    self.Root:SetAttribute("EquippedSkill", "") -- on the toolbars, have an event that fires when equipped and unequipped to increment the thing
+
     self:LoadInventory(InventoryStats)
 end
 
@@ -81,6 +84,7 @@ function Inventory:LoadInventory(inv: InventoryType)
                     error("failed to weld")
                 end
 
+                self.Root:SetAttribute("EquippedSkill", name)
                 SetWeaponSignal:Fire(self.Root, key, name, model)
             end
         end
