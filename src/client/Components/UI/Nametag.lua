@@ -69,6 +69,7 @@ end
 ]=]
 local Nametag = {}
 Nametag.__index = Nametag
+Nametag.__Tag = "Nametag"
 
 function Nametag.new(player: any)
     print(player)

@@ -6,6 +6,7 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 
 local BodyGyro = {}
 BodyGyro.__index = BodyGyro
+BodyGyro.__Tag = "BodyGyro"
 
 function BodyGyro.new(root: any)
     local hrp = root:FindFirstChild("HumanoidRootPart")

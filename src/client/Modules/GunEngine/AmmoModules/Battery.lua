@@ -3,6 +3,7 @@ local Trove = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild
 
 local Battery = {}
 Battery.__index = Battery
+Battery.__Tag = "Battery"
 
 function Battery.new(heatRate: number, coolTime: number, coolWait: number, batteryMin: number, batteryMax: number, shotsDeplete: number, shotsTable)
     local self = setmetatable({

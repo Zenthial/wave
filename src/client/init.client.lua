@@ -5,14 +5,14 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 
 local Player = game.Players.LocalPlayer
 
-local CHAT_TAGS = {
+local CHARACTER_TAGS = {
     "AnimationTree",
     "Animator",
     "BodyGyro"
 }
 
 local function characterAdded(character)
-    for _, tag in pairs(CHAT_TAGS) do
+    for _, tag in pairs(CHARACTER_TAGs) do
         CollectionService:AddTag(character, tag)
     end
 end
@@ -22,8 +22,6 @@ if (Player.Character) then
 end
 
 Player.CharacterAdded:Connect(characterAdded)
-
-print("here1")
 
 local modules = {}
 
@@ -41,7 +39,6 @@ for _, module in pairs(script:GetDescendants()) do
     end
 end
 
-print("her2")
 local comm = modules["ClientComm"]
 repeat
     print(comm)

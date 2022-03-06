@@ -5,14 +5,13 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
+local Components = script.Components
+local CharacterComponents = Components.Character:GetDescendants()
+
 local PLAYER_TAGS = {
     "Player",
     "Health",
     "Nametag"
-}
-
-local CHARACTER_TAGS = {
-    "Movement",
 }
 
 ------------------------------------------------------------------------
@@ -24,12 +23,9 @@ local function playerAdded(player: Player)
     end
 
     local function characterAdded(character) 
-        for _, tag in pairs(CHARACTER_TAGS) do
-            print(tag)
-            CollectionService:AddTag(character, tag)
+        for _, component in pairs(CharacterComponents) do
+            CollectionService:AddTag(character, component.Name)
         end
-
-        print(CollectionService:GetTags(character))
     end
 
     if (player.Character) then

@@ -11,6 +11,7 @@ local KeyboardInputPromptObject = ReplicatedStorage:WaitForChild("Assets"):WaitF
 
 local MainHUD = {}
 MainHUD.__index = MainHUD
+MainHUD.__Tag = "MainHUD"
 
 function MainHUD.new(root: any)
     return setmetatable({

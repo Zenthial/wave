@@ -19,6 +19,7 @@ local SetWeaponSignal = ServerComm:CreateSignal("SetWeapon")
 
 local Inventory = {}
 Inventory.__index = Inventory
+Inventory.__Tag = "Inventory"
 
 function Inventory.new(root: any)
     print("inventory")

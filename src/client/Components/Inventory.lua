@@ -15,6 +15,7 @@ local ClientComm = comm.GetClientComm()
 
 local Inventory = {}
 Inventory.__index = Inventory
+Inventory.__Tag = "Inventory"
 
 function Inventory.new(root: any)
     return setmetatable({

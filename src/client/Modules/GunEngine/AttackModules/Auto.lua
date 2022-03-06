@@ -17,6 +17,7 @@ type GunModel = Model & GunModelAdditionalInfo
 
 local Auto = {}
 Auto.__index = Auto
+Auto.__Tag = "Auto"
 
 function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats)
     local self = setmetatable({

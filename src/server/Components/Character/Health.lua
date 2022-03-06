@@ -16,6 +16,7 @@ local DEFAULT_HEALTH_STATS = {
 
 local Health = {}
 Health.__index = Health
+Health.__Tag = "Health"
 
 function Health.new(root: any)
     return setmetatable({
@@ -51,19 +52,21 @@ function Health:Initial()
     self.DamageTime = tick()
     self.Charging = false
 
-    if self.Root.Character then
+    if self.Root.Character ~= nil then
         self.Character = self.Root.Character
-        self.ShieldModelComponent = Rosyn.GetComponent(self.Character, ShieldModel)
+        self.ShieldModelComponent = Rosyn.AwaitComponentInit(self.Character, ShieldModel)
     end
 
     self.Cleaner:Add(self.Root.CharacterAdded:Connect(function(char)
         self.Character = char
-        self.ShieldModelComponent = Rosyn.GetComponent(self.Character, ShieldModel)
+        self.ShieldModelComponent = Rosyn.AwaitComponentInit(self.Character, ShieldModel)
     end))
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("TotalHealth"):Connect(function()
+        self.TotalHealth = self.Root:GetAttribute("TotalHealth")
         local currentTotalHealth = math.clamp(self.TotalHealth, 0, self.MaxTotalHealth) :: number
         local previousTotalHealth = self.LastTotal :: number
+        print(previousTotalHealth, currentTotalHealth)
 
         local damage = previousTotalHealth - currentTotalHealth
         local availableDamage = damage -- overwritten down the line
@@ -109,7 +112,7 @@ function Health:Initial()
                 end
             end
         end
-
+        print(newShield)
         if not self.Charging and (newShield <= 0 or damage < 0) then
 			newHealth -= availableDamage
 		end
@@ -128,6 +131,7 @@ function Health:Initial()
         end
 
         self.LastTotal = currentTotalHealth
+        print(string.format("setting new health %d and shields %d", newHealth, newShield))
         self:SetHealth(newHealth)
         self:SetShields(newShield)
 

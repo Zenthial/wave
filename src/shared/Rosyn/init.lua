@@ -20,11 +20,11 @@ local TestService = game:GetService("TestService")
 local CollectionService = game:GetService("CollectionService")
 
 local CheckYield = require(script:WaitForChild("CheckYield"))
-local Cleaner = require(script.Parent:WaitForChild("Cleaner"))
-local Signal = require(script.Parent:WaitForChild("Signal"))
+local Cleaner = require(script.Parent.util:WaitForChild("Cleaner"))
+local Signal = require(script.Parent.util:WaitForChild("Signal"))
 
 local ERR_NO_INITIAL = "Component %s on %s does not contain an 'Initial' method"
-local ERR_INIT_FAILED = "Component %s Initial call failed on %s\n%s\n"
+local ERR_INIT_FAILED = "Component %s of class %s Initial call failed on %s\n%s\n"
 local ERR_WAIT_TIMEOUT = "Component %s on %s timed out"
 local ERR_NO_TAG_GIVEN = "No tag given!"
 local ERR_NO_OBJECT_GIVEN = "No object given!"
@@ -502,7 +502,7 @@ function Rosyn._AddComponent(Object: Instance, ComponentClass: ComponentClass)
 
         if (not Success) then
             Rosyn.ComponentClassInitializationFailed:Fire(ComponentName, Object, Result)
-            TestService:Error(ERR_INIT_FAILED:format(ComponentName, Object:GetFullName(), Result))
+            TestService:Error(ERR_INIT_FAILED:format(ComponentName, ComponentClass.__Tag, Object:GetFullName(), Result))
         end
         -- TODO: maybe we pcall and timeout the Initial and ensure Destroy is always called after
         -- Otherwise we have to use the "retroactive" cleaner pattern

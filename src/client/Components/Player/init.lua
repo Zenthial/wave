@@ -13,6 +13,7 @@ local createFrame = require(script.Parent.Parent.Helper.createFrame)
 
 local Player = {}
 Player.__index = Player
+Player.__Tag = "ClientPlayer"
 
 function Player.new(player: Player)
     return setmetatable({

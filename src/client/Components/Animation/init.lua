@@ -13,6 +13,7 @@ local Types = require(Shared:WaitForChild("Types"))
 
 local Animation = {}
 Animation.__index = Animation
+Animation.__Tag = "Animation"
 
 ------------------------------------------------------------------------
 

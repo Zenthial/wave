@@ -13,6 +13,7 @@ local playerLoadedSignal = ServerComm:CreateSignal("PlayerLoaded")
 
 local Player = {}
 Player.__index = Player
+Player.__Tag = "ServerPlayer"
 
 function Player.new(player: Player)
     return setmetatable({

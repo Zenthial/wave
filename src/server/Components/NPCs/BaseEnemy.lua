@@ -17,6 +17,7 @@ type ClosestPlayerArray = {
 
 local BaseEnemy = {}
 BaseEnemy.__index = BaseEnemy
+BaseEnemy.__Tag = "BaseEnemy"
 
 function BaseEnemy.new(root: Model)
     return setmetatable({

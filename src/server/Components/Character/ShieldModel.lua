@@ -7,6 +7,7 @@ local makeShieldModel = require(ServerScriptService.Server.Helper.makeShieldMode
 
 local ShieldModel = {}
 ShieldModel.__index = ShieldModel
+ShieldModel.__Tag = "ShieldModel"
 
 function ShieldModel.new(root: any)
     return setmetatable({
@@ -15,6 +16,7 @@ function ShieldModel.new(root: any)
 end
 
 function ShieldModel:Initial()
+    print("binding")
     self.Model = makeShieldModel(self.Root)
 
     self:UpdateShieldTransparency(1)
@@ -60,6 +62,6 @@ function ShieldModel:Destroy()
     self.Model:Destroy()
 end
 
-Rosyn.Register("ShieldModel", {ShieldModel})
+Rosyn.Register("ShieldModel", {ShieldModel}, workspace)
 
 return ShieldModel

@@ -21,6 +21,7 @@ type GunModel = Model & GunModelAdditionalInfo
 
 local Ray = {}
 Ray.__index = Ray
+Ray.__Tag = "Ray"
 
 function Ray.new(gunModel: GunModel, weaponStats)
     local self = setmetatable({

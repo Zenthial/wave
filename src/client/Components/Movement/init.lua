@@ -31,6 +31,7 @@ end
 
 local Movement = {}
 Movement.__index = Movement
+Movement.__Tag = "Movement"
 
 function Movement.new(root: any)
     return setmetatable({

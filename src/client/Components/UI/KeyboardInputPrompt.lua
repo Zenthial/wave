@@ -12,6 +12,7 @@ local TWEEN_TIME = 0.25
 
 local KeyboardInputPrompt = {}
 KeyboardInputPrompt.__index = KeyboardInputPrompt
+KeyboardInputPrompt.__Tag = "KeyboardInputPrompt"
 
 function KeyboardInputPrompt.new(root: any)
     return setmetatable({

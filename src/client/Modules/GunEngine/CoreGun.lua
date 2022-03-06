@@ -91,6 +91,7 @@ end
 
 local CoreGun = {}
 CoreGun.__index = CoreGun
+CoreGun.__Tag = "CoreGun"
 
 function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local storedShots: ShotsTable = {

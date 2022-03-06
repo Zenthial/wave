@@ -9,6 +9,7 @@ local Player = Players.LocalPlayer
 
 local ShieldUI = {}
 ShieldUI.__index = ShieldUI
+ShieldUI.__Tag = "ShieldUI"
 
 --[[
     Shield UI structure

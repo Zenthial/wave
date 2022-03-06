@@ -16,6 +16,7 @@ local DEFAULT_RECOIL = 0
 
 local Mouse = {}
 Mouse.__index = Mouse
+Mouse.__Tag = "Mouse"
 
 function Mouse.new(Player: Player)
     return setmetatable({

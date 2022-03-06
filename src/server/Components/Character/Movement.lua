@@ -14,6 +14,7 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 
 local Movement = {}
 Movement.__index = Movement
+Movement.__Tag = "Movement"
 
 serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean) 
     local MovementComp = player.Character and Rosyn.GetComponent(player.Character, Movement)

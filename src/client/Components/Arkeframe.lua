@@ -32,6 +32,7 @@ end
 
 local Arkeframe = {}
 Arkeframe.__index = Arkeframe
+Arkeframe.__Tag = "Arkeframe"
 
 function Arkeframe.new(root: Model)
     return setmetatable({

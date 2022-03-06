@@ -19,6 +19,7 @@ end
 
 local Toolbar = {}
 Toolbar.__index = Toolbar
+Toolbar.__Tag = "Toolbar"
 
 function Toolbar.new(size: number)
     local self = {
