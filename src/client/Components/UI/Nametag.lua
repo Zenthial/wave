@@ -83,7 +83,6 @@ end
 function Nametag:Initial()
     local player = self.Player :: Player
     if player == LocalPlayer then
-        self:Destroy()
         return
     end
 

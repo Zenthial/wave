@@ -8,6 +8,7 @@ local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
 
 local clientComm = require(Modules.ClientComm)
 local toggleSprint = clientComm.GetComm():GetFunction("ToggleSprint")
+local toggleCrouch = clientComm.GetComm():GetFunction("ToggleCrouch")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -22,11 +23,16 @@ local function setSprint(self, action: boolean)
     if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
 
     self.Events.SprintChanged:Fire(action)
+    self.State.Sprinting = action
     toggleSprint(action)
 end
 
 local function setCrouch(self, action: boolean)
-    
+    if (self.Humanoid:GetAttribute("CanCrouch") == false) then return end
+
+    self.Events.CrouchChanged:Fire(action)
+    self.State.Crouching = action
+    toggleCrouch(action)
 end
 
 local Movement = {}
@@ -39,6 +45,11 @@ function Movement.new(root: any)
         Cleaner = Trove.new() :: typeof(Trove),
         Keyboard = Input.Keyboard.new() :: typeof(Input.Keyboard),
 
+        State = {
+            Crouching = false,
+            Sprinting = false,
+        },
+
         Events = {
             SprintChanged = Signal.new(),
             CrouchChanged = Signal.new(),
@@ -47,10 +58,11 @@ function Movement.new(root: any)
 end
 
 function Movement:Initial()
-
     self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
             setSprint(self, true)
+        elseif (keyCode == Enum.KeyCode.C) then
+            setCrouch(self, not self.State.Crouching)
         end
     end))
 
@@ -59,7 +71,6 @@ function Movement:Initial()
             setSprint(self, false)
         end
     end))
-
 end
 
 function Movement:SetSprint(sprint: boolean)

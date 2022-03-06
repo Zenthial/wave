@@ -8,7 +8,7 @@ local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 
-local Health = require(game.ServerScriptService.Server.Components.Character.Health)
+local Health = require(game.ServerScriptService.Server.Components.Player.Health)
 
 local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()

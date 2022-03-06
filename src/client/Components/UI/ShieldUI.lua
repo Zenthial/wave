@@ -30,18 +30,20 @@ end
 function ShieldUI:Initial()
     local maxShields = Player:GetAttribute("MaxShields")
 
+    self.Root.Shield.Fill.UIGradient.Offset = Vector2.new(-0.5, 0)
+    self.Root.Shield.Fill2.UIGradient.Offset = Vector2.new(0.5, 0)
+
     local shieldsChangedSignal = Player:GetAttributeChangedSignal("Shields")
     self.Cleaner:Add(shieldsChangedSignal:Connect(function()
         local currentShieldsValue = Player:GetAttribute("Shields")
         local tweenValue = (currentShieldsValue/maxShields) - 0.5 -- subtract 0.5 cause the gradient goes from -0.5 to 0.5 rather than 0 to 1
-        print(tweenValue)
-        TweenService:Create(self.Root.Shield.Fill.UIGradient, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {Offset = Vector2.new(-tweenValue, 0)}):Play()
-        TweenService:Create(self.Root.Shield.Fill2.UIGradient, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {Offset = Vector2.new(tweenValue, 0)}):Play()
-    end))
+        TweenService:Create(self.Root.Shield.Fill.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Offset = Vector2.new(-tweenValue, 0)}):Play()
+        TweenService:Create(self.Root.Shield.Fill2.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Offset = Vector2.new(tweenValue, 0)}):Play()
+    end))   
 end
 
 function ShieldUI:Destroy()
-    self.Cleaner:Clean()
+    self.Cleaner:Destroy()
 end
 
 Rosyn.Register("ShieldUI", {ShieldUI})

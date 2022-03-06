@@ -5,7 +5,7 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local ShieldModel = require(script.Parent.ShieldModel)
+local ShieldModel = require(script.Parent.Parent.Character.ShieldModel)
 
 local DEFAULT_HEALTH_STATS = {
     MAX_HEALTH = 75,
@@ -62,6 +62,7 @@ function Health:Initial()
         self.ShieldModelComponent = Rosyn.AwaitComponentInit(self.Character, ShieldModel)
     end))
 
+    -- lots of legacy wace trash here
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("TotalHealth"):Connect(function()
         self.TotalHealth = self.Root:GetAttribute("TotalHealth")
         local currentTotalHealth = math.clamp(self.TotalHealth, 0, self.MaxTotalHealth) :: number
@@ -81,15 +82,15 @@ function Health:Initial()
             self.DamageTime = tick()
         end
 
-        if damage > 0 and currentTotalHealth > 0 or currentTotalHealth - damage > self.MaxHealth or self.Charging then
+        if (damage > 0 and currentTotalHealth > 0) or (currentTotalHealth - damage > self.MaxHealth) or self.Charging then
             if damage > 0 then
+                newShield = self.Shields - damage
                 availableDamage = -(self.Shields - damage)
 
                 if self.Shields > 0 and self.Shields - damage <= 0 then
                     self.ShieldModelComponent:ShieldEmpty()
                 end
 
-                newShield -= availableDamage
             elseif self.Charging then
                 availableDamage = damage
                 newShield -= availableDamage

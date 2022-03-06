@@ -12,7 +12,7 @@ local CHARACTER_TAGS = {
 }
 
 local function characterAdded(character)
-    for _, tag in pairs(CHARACTER_TAGs) do
+    for _, tag in pairs(CHARACTER_TAGS) do
         CollectionService:AddTag(character, tag)
     end
 end
@@ -47,7 +47,3 @@ until comm ~= nil
 local ClientComm = comm.GetClientComm()
 
 ClientComm:GetSignal("PlayerLoaded"):Fire()
-
-print("done")
-
-print(Rosyn.GetComponentsFromInstance(Player.Character or Player.CharacterAdded:Wait()))

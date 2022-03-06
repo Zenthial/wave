@@ -6,6 +6,8 @@ type ComponentClass = {
     new: (Instance) -> ComponentInstance,
     Initial: () -> (),
     Destroy: () -> (),
+
+    __Tag: string
 }
 
 type InstanceToComponents = {[Instance]: {[ComponentClass]: ComponentInstance}}
@@ -39,7 +41,7 @@ local ERR_COMPONENT_ALREADY_PRESENT = "Component %s already present on %s"
 local ERR_COMPONENT_DESTROY_YIELDED = "Component destructor %s yielded or threw an error on %s"
 local ERR_COMPONENT_CLASS_NOT_TABLE = "ComponentClass was not an table!"
 local ERR_TYPE_FIELD_INCORRECT_TYPE = "Type field in component should be a string"
-local WARN_COMPONENT_LIFECYCLE_ALREDY_ENDED = "Component lifecycle ended before Initial call completed - %s on %s"
+local WARN_COMPONENT_LIFECYCLE_ALREADY_ENDED = "Component %s lifecycle ended before Initial call completed - %s on %s"
 
 local WARN_MULTIPLE_REGISTER = "Register attempted to create duplicate component: %s\n\n%s"
 local WARN_NO_DESTROY_METHOD = "No Destroy method found on component %s - make sure Destroy cleans up any potential connections to events"
@@ -493,7 +495,7 @@ function Rosyn._AddComponent(Object: Instance, ComponentClass: ComponentClass)
         end)
 
         if (table.isfrozen(NewComponent)) then
-            warn(WARN_COMPONENT_LIFECYCLE_ALREDY_ENDED:format(ComponentName, Object:GetFullName()))
+            warn(WARN_COMPONENT_LIFECYCLE_ALREADY_ENDED:format(ComponentClass.__Tag, ComponentName, Object:GetFullName()))
             return
         end
 

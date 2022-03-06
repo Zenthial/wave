@@ -93,7 +93,8 @@ function AnimationTree:Initial()
 
         ActiveAnimations = {
             SprintAnimationName = nil,
-            CrouchAnimationName = nil,
+            CrouchAnimationMiddleName = nil,
+            CrouchAnimationBottomName = nil,
             RollAnimationName = nil,
             ReloadAnimationName = nil
         },
@@ -107,8 +108,11 @@ function AnimationTree:Initial()
         local movementComponent = Rosyn.AwaitComponentInit(char, Movement)
 
         cleaner:Add(movementComponent.Events.SprintChanged:Connect(function(bool)
-            print(bool)
             State.SprintActive = bool
+        end))
+
+        cleaner:Add(movementComponent.Events.CrouchChanged:Connect(function(bool)
+            State.CrouchActive = bool
         end))
     end
 
@@ -162,7 +166,6 @@ function AnimationTree:SetReload(bool: boolean)
     self.Events.ReloadChanged:Fire(bool)
 end
 
-
 function AnimationTree:InitTree()
     task.spawn(function()
         local cleaner = self.Cleaner :: typeof(Trove)
@@ -174,7 +177,6 @@ function AnimationTree:InitTree()
         }
 
         local animationTree = TreeCreator:Create(BehaviorTrees.Trees.PlayerAnimationTree)
-        print(animationTree)
 
         local treeRunning = false
         local function update(_, _dt)

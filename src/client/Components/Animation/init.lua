@@ -2,14 +2,18 @@
 -- 1/11/2022
 ------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
+local Modules = script.Parent.Parent:WaitForChild("Modules")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
+local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
-local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
+local Configurations = Shared:WaitForChild("Configurations")
+
+local Rosyn = require(Shared:WaitForChild("Rosyn"))
+local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local Types = require(Shared:WaitForChild("Types"))
+
+local DefaultAnimations = require(Configurations.DefaultAnimations) :: {[string]: Types.AnimationData}
 
 local Animation = {}
 Animation.__index = Animation
@@ -59,6 +63,10 @@ function Animation:Initial()
         local humanoid = self.Root:WaitForChild("Humanoid", 30)
         self.Animator = humanoid:WaitForChild("Animator", 30)
     end
+
+    for _, animationData in pairs(DefaultAnimations) do
+        self:Load(animationData)
+    end
 end
 
 function Animation:Destroy()
@@ -95,6 +103,7 @@ function Animation:Play(animationName: string): AnimationTrack
         return 
     end
     self.AnimationTracks[animationName]:Play()
+    print(string.format("Playing %s", animationName))
 
     return self.AnimationTracks[animationName]
 end
@@ -107,6 +116,7 @@ function Animation:Stop(animationName: string)
 
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
+        print(string.format("Stopping %s", animationName))
     end
 
     return self
