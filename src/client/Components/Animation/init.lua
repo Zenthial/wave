@@ -99,11 +99,13 @@ end
 function Animation:Play(animationName: string): AnimationTrack
     if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
-        print(self.AnimationTracks)
         return 
     end
-    self.AnimationTracks[animationName]:Play()
-    print(string.format("Playing %s", animationName))
+    
+    if (not self.AnimationTracks[animationName].IsPlaying == true) then
+        self.AnimationTracks[animationName]:Play()
+        print(string.format("Playing %s", animationName))
+    end
 
     return self.AnimationTracks[animationName]
 end
