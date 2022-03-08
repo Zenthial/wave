@@ -37,6 +37,7 @@ return function(username: string, username_color: Color3, tags: {[string]: Color
     textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     textLabel.TextScaled = true
     textLabel.TextSize = 22
+    textLabel.TextStrokeTransparency = ChatStats.DefaultChatStroke
     textLabel.TextTransparency = 1
     textLabel.TextWrapped = true
     textLabel.TextXAlignment = Enum.TextXAlignment.Left

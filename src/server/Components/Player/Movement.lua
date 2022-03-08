@@ -42,7 +42,6 @@ end)
 function Movement.new(root: Model)
     return setmetatable({
         Player = root,
-        Humanoid = root.Humanoid :: Humanoid,
         
         Cleaner = Trove.new() :: typeof(Trove),
     }, Movement)
@@ -120,6 +119,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Movement}, workspace)
+Rosyn.Register("Player", {Movement}, Players)
 
 return Movement;

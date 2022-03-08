@@ -1,6 +1,6 @@
 local module = {	
 	Lines 						= 50,                        -- Maximum lines of chat in the window at any time
-	TagColor					= Color3.fromRGB(170, 170, 255), -- Color of specialized tag
+	TagColor					= Color3.fromRGB(133, 133, 231), -- Color of specialized tag
 	NameBuffer 					= 2,                         -- Distance between tag label and name label
 	TextBuffer 					= 10,                        -- Distance between name label and text label
 	TextSize					= "Size18",                  -- Default text size
@@ -9,6 +9,7 @@ local module = {
 	DefaultChatText				= [[PRESS '%s' TO CHAT]],      -- Text displayed when not focused on text box (fred you forgot add the regex)
 	DefaultChatFocusedText		= [[PRESS '%s' TO TOGGLE TEAMCHAT]],      -- Text displayed when not focused on text box (fred you forgot add the regex)
 	DefaultChatTextFadeInTime	= 0.01,                      -- Time it takes for default chat text to fade in
+	DefaultChatStroke			= .65,
 	TeamChatSign				= "[TEAM]",                  -- String placed after name when a message is in teamchat
 	MinimumMessageSize			= 1,                         -- Minimum message size to send message; if message isn't long enough, unfocus text box
 	TeamColors					= {                          -- Name tag color based on teamcolor (New colors need to be manually supported here, wtf)
