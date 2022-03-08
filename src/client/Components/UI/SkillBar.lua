@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
 local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
@@ -43,6 +44,6 @@ function SkillBar:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("SkillBar", {SkillBar})
+Rosyn.Register("SkillBar", {SkillBar}, PlayerGui)
 
 return SkillBar

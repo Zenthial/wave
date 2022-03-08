@@ -104,27 +104,15 @@ function AnimationTree:Initial()
     
     local cleaner = self.Cleaner :: typeof(Trove)
     
-    local function sprintHandle(char)
-        local movementComponent = Rosyn.AwaitComponentInit(char, Movement)
+    local movementComponent = Rosyn.AwaitComponentInit(Player, Movement)
 
-        cleaner:Add(movementComponent.Events.SprintChanged:Connect(function(bool)
-            State.SprintActive = bool
-        end))
-
-        cleaner:Add(movementComponent.Events.CrouchChanged:Connect(function(bool)
-            State.CrouchActive = bool
-        end))
-    end
-
-    cleaner:Add(Player.CharacterAdded:Connect(function(character)
-        State.Animator = Rosyn.AwaitComponentInit(character, Animation)
-         
-        sprintHandle(character)
+    cleaner:Add(movementComponent.Events.SprintChanged:Connect(function(bool)
+        State.SprintActive = bool
     end))
 
-    if Player.Character then
-        sprintHandle(Player.Character)
-    end
+    cleaner:Add(movementComponent.Events.CrouchChanged:Connect(function(bool)
+        State.CrouchActive = bool
+    end))
 
     self.State = State
     self:InitTree()

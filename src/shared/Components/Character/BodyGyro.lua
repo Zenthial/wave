@@ -27,7 +27,7 @@ function BodyGyro.new(root: any)
 end
 
 function BodyGyro:Initial()
-    self:SetGyro(true)
+    self:SetGyro(false)
 end
 
 function BodyGyro:SetGyro(bool: boolean)

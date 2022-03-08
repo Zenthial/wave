@@ -6,6 +6,7 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local ShieldUI = {}
 ShieldUI.__index = ShieldUI
@@ -46,6 +47,6 @@ function ShieldUI:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("ShieldUI", {ShieldUI})
+Rosyn.Register("ShieldUI", {ShieldUI}, PlayerGui)
 
 return ShieldUI

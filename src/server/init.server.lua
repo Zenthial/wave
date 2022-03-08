@@ -66,10 +66,6 @@ local function Recurse(Root, Operator)
     end
 end
 
-if (not game:IsLoaded()) then
-    game.Loaded:Wait()
-end
-
 game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Workspace")
 
 Recurse(script:WaitForChild("Components"), LoadComponent)

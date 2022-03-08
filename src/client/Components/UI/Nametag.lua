@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Rosyn = require(Shared:WaitForChild("Rosyn"))
@@ -8,7 +9,8 @@ local ChatStats = require(Shared:WaitForChild("Configurations"):WaitForChild("Ch
 
 local NametagUI = Shared:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("NameTagGUI")
 
-local LocalPlayer = game.Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 --[=[
     Creates the nametag by cloning the template and parenting it to the player's head
@@ -177,6 +179,6 @@ function Nametag:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Nametag", {Nametag})
+Rosyn.Register("Nametag", {Nametag}, PlayerGui)
 
 return Nametag

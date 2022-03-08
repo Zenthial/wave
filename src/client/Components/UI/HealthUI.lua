@@ -6,6 +6,7 @@ local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Ros
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local HealthUI = {}
 HealthUI.__index = HealthUI
@@ -46,6 +47,6 @@ function HealthUI:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("HealthUI", {HealthUI})
+Rosyn.Register("HealthUI", {HealthUI}, PlayerGui)
 
 return HealthUI

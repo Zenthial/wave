@@ -6,8 +6,6 @@ type ComponentClass = {
     new: (Instance) -> ComponentInstance,
     Initial: () -> (),
     Destroy: () -> (),
-
-    __Tag: string
 }
 
 type InstanceToComponents = {[Instance]: {[ComponentClass]: ComponentInstance}}
@@ -26,7 +24,7 @@ local Cleaner = require(script.Parent.util:WaitForChild("Cleaner"))
 local Signal = require(script.Parent.util:WaitForChild("Signal"))
 
 local ERR_NO_INITIAL = "Component %s on %s does not contain an 'Initial' method"
-local ERR_INIT_FAILED = "Component %s of class %s Initial call failed on %s\n%s\n"
+local ERR_INIT_FAILED = "Component %s Initial call failed on %s\n%s\n"
 local ERR_WAIT_TIMEOUT = "Component %s on %s timed out"
 local ERR_NO_TAG_GIVEN = "No tag given!"
 local ERR_NO_OBJECT_GIVEN = "No object given!"
@@ -41,7 +39,7 @@ local ERR_COMPONENT_ALREADY_PRESENT = "Component %s already present on %s"
 local ERR_COMPONENT_DESTROY_YIELDED = "Component destructor %s yielded or threw an error on %s"
 local ERR_COMPONENT_CLASS_NOT_TABLE = "ComponentClass was not an table!"
 local ERR_TYPE_FIELD_INCORRECT_TYPE = "Type field in component should be a string"
-local WARN_COMPONENT_LIFECYCLE_ALREADY_ENDED = "Component %s lifecycle ended before Initial call completed - %s on %s"
+local WARN_COMPONENT_LIFECYCLE_ALREDY_ENDED = "Component lifecycle ended before Initial call completed - %s on %s"
 
 local WARN_MULTIPLE_REGISTER = "Register attempted to create duplicate component: %s\n\n%s"
 local WARN_NO_DESTROY_METHOD = "No Destroy method found on component %s - make sure Destroy cleans up any potential connections to events"
@@ -495,7 +493,7 @@ function Rosyn._AddComponent(Object: Instance, ComponentClass: ComponentClass)
         end)
 
         if (table.isfrozen(NewComponent)) then
-            warn(WARN_COMPONENT_LIFECYCLE_ALREADY_ENDED:format(ComponentClass.__Tag, ComponentName, Object:GetFullName()))
+            warn(WARN_COMPONENT_LIFECYCLE_ALREDY_ENDED:format(ComponentName, Object:GetFullName()))
             return
         end
 
@@ -504,7 +502,7 @@ function Rosyn._AddComponent(Object: Instance, ComponentClass: ComponentClass)
 
         if (not Success) then
             Rosyn.ComponentClassInitializationFailed:Fire(ComponentName, Object, Result)
-            TestService:Error(ERR_INIT_FAILED:format(ComponentName, ComponentClass.__Tag, Object:GetFullName(), Result))
+            TestService:Error(ERR_INIT_FAILED:format(ComponentName, Object:GetFullName(), Result))
         end
         -- TODO: maybe we pcall and timeout the Initial and ensure Destroy is always called after
         -- Otherwise we have to use the "retroactive" cleaner pattern

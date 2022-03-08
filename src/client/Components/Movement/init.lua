@@ -41,7 +41,7 @@ Movement.__Tag = "Movement"
 
 function Movement.new(root: any)
     return setmetatable({
-        Humanoid = root.Humanoid :: Humanoid,
+        Player = root;
         Cleaner = Trove.new() :: typeof(Trove),
         Keyboard = Input.Keyboard.new() :: typeof(Input.Keyboard),
 
@@ -58,6 +58,9 @@ function Movement.new(root: any)
 end
 
 function Movement:Initial()
+    local character = self.Player.Character or self.Player.CharacterAdded:Wait()
+    self.Humanoid = character.Humanoid :: Humanoid
+
     self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
             setSprint(self, true)
@@ -85,6 +88,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Character", {Movement})
+Rosyn.Register("Player", {Movement})
 
 return Movement

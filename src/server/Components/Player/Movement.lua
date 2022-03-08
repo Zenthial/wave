@@ -18,7 +18,7 @@ Movement.__index = Movement
 Movement.__Tag = "Movement"
 
 serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean) 
-    local MovementComp = player.Player and Rosyn.GetComponent(player.Player, Movement)
+    local MovementComp = player and Rosyn.GetComponent(player, Movement)
     if (MovementComp == nil) then return end
 
     if action then
@@ -29,7 +29,7 @@ serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, actio
 end)
 
 serverComm.GetComm():BindFunction("ToggleCrouch", function(player: Player, action: boolean) 
-    local MovementComp = player.Player and Rosyn.GetComponent(player.Player, Movement)
+    local MovementComp = player and Rosyn.GetComponent(player, Movement)
     if (MovementComp == nil) then return end
 
     if action then

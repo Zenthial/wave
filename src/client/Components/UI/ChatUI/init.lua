@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
@@ -19,6 +20,9 @@ local comm = ClientComm.GetClientComm()
 local sendChat = comm:GetFunction("AttemptChat")
 local sendChatSignal = comm:GetSignal("SendChat")
 local systemNotificationSignal = comm:GetSignal("SystemNotification")
+
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local DEFAULT_KEY = Enum.KeyCode.Slash
 
@@ -121,6 +125,6 @@ function ChatUI:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("ChatUI", {ChatUI})
+Rosyn.Register("ChatUI", {ChatUI}, PlayerGui)
 
 return ChatUI
