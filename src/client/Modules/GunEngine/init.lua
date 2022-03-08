@@ -41,7 +41,7 @@ function GunEngine:Start()
         if weaponStats then
             local mod = requiredBulletModules[weaponStats.BulletType]
             if mod then
-                mod.StaticDraw(startPosition, endPosition, weaponStats.BulletModel:Clone())
+                mod.StaticDraw(startPosition, endPosition, weaponStats.BulletCache:GetPart(), weaponStats.BulletCache)
             end
         else
             error("WeaponStats don't exist??")

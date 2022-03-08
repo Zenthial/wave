@@ -6,6 +6,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
+local PartCache = require(Shared:WaitForChild("util"):WaitForChild("PartCache"))
 
 local Mouse = require(script.Parent.Parent.Parent.Parent.Components.Player.Mouse)
 local ClientComm = require(script.Parent.Parent.Parent.ClientComm)
@@ -39,8 +40,8 @@ function Ray:Draw(target: Vector3): boolean
     if self.Model ~= nil then
         local gunModel = self.Model :: GunModel
         if gunModel.Barrel ~= nil then            
-            local bullet = self.WeaponStats.BulletModel:Clone() :: BasePart
-            Ray.StaticDraw(gunModel.Barrel.Position, target)
+            local bullet = self.WeaponStats.BulletCache:GetPart() :: BasePart
+            Ray.StaticDraw(gunModel.Barrel.Position, target, bullet, self.WeaponStats.BulletCache)
 
             return true
         end
@@ -49,7 +50,7 @@ function Ray:Draw(target: Vector3): boolean
     return false
 end
 
-function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bullet: BasePart)
+function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bullet: BasePart, bulletCache: PartCache.PartCache)
     CollectionService:AddTag(bullet, "Ignore")
     
     local iDist = (endPosition - startPosition).Magnitude
@@ -60,7 +61,7 @@ function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bullet: Ba
     local x = bullet.Mesh.Scale.X
     local y = bullet.Mesh.Scale.Y
     local z = bullet.Mesh.Scale.Z
-    local bullet2 = bullet:Clone()
+    local bullet2 = bulletCache:GetPart()
     local scale = z * .5
     local offset = -z * .25
     if z > 100 then
@@ -70,11 +71,13 @@ function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bullet: Ba
     bullet2.Mesh.Scale = Vector3.new(x, y, scale)
     bullet2.Mesh.Offset = Vector3.new(0, 0, offset)
     
-    Debris:AddItem(bullet, .05)
-    Debris:AddItem(bullet2, .10)
+    task.delay(.05, function()
+        bulletCache:ReturnPart(bullet)
+    end)
 
-    bullet.Parent = BulletFolder
-    bullet2.Parent = BulletFolder
+    task.delay(.1, function()
+        bulletCache:ReturnPart(bullet2)
+    end)
 end
 
 function Ray:Destroy()
