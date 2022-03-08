@@ -1,0 +1,3 @@
+local AdminService = {}
+
+return AdminService

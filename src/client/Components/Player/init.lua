@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
@@ -8,8 +7,6 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Mouse = require(script.Mouse)
-
-local createFrame = require(script.Parent.Parent.Helper.createFrame)
 
 local Player = {}
 Player.__index = Player
@@ -26,11 +23,11 @@ end
 
 function Player:Initial()
     -- titan animation trigger
-    self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-        if keyCode == Enum.KeyCode.E then
-            createFrame(self.Player.Character.HumanoidRootPart.CFrame)
-        end
-    end))
+    -- self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
+    --     if keyCode == Enum.KeyCode.E then
+    --         createFrame(self.Player.Character.HumanoidRootPart.CFrame)
+    --     end
+    -- end))
 
     local MouseComponent = Rosyn.AwaitComponentInit(self.Player, Mouse)
 

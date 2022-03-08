@@ -65,6 +65,6 @@ function ShieldModel:Destroy()
     self.Model:Destroy()
 end
 
-Rosyn.Register("ShieldModel", {ShieldModel}, workspace)
+Rosyn.Register("Character", {ShieldModel}, workspace)
 
 return ShieldModel

@@ -85,6 +85,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Movement", {Movement})
+Rosyn.Register("Character", {Movement})
 
 return Movement

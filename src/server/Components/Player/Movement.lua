@@ -18,7 +18,7 @@ Movement.__index = Movement
 Movement.__Tag = "Movement"
 
 serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean) 
-    local MovementComp = player.Character and Rosyn.GetComponent(player.Character, Movement)
+    local MovementComp = player.Player and Rosyn.GetComponent(player.Player, Movement)
     if (MovementComp == nil) then return end
 
     if action then
@@ -29,7 +29,7 @@ serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, actio
 end)
 
 serverComm.GetComm():BindFunction("ToggleCrouch", function(player: Player, action: boolean) 
-    local MovementComp = player.Character and Rosyn.GetComponent(player.Character, Movement)
+    local MovementComp = player.Player and Rosyn.GetComponent(player.Player, Movement)
     if (MovementComp == nil) then return end
 
     if action then
@@ -41,7 +41,7 @@ end)
 
 function Movement.new(root: Model)
     return setmetatable({
-        Character = root,
+        Player = root,
         Humanoid = root.Humanoid :: Humanoid,
         
         Cleaner = Trove.new() :: typeof(Trove),
@@ -49,53 +49,60 @@ function Movement.new(root: Model)
 end
 
 function Movement:Initial()
-    self.Player = Players:GetPlayerFromCharacter(self.Character)
-    self.Character:SetAttribute("Sprinting", false)
-    self.Character:SetAttribute("CanSprint", true)
+    self.Character = self.Player.Character or self.Player.CharacterAdded:Wait()
+    self.Humanoid = self.Character:WaitForChild("Humanoid")
 
-    self.Character:SetAttribute("Crouching", false)
-    self.Character:SetAttribute("CanCrouch", true)
+    self.Cleaner:Add(self.Player.CharacterAdded:Connect(function()
+        self.Character = self.Player.Character
+        self.Humanoid = self.Character:WaitForChild("Humanoid")
+    end))
+
+    self.Player:SetAttribute("Sprinting", false)
+    self.Player:SetAttribute("CanSprint", true)
+
+    self.Player:SetAttribute("Crouching", false)
+    self.Player:SetAttribute("CanCrouch", true)
 
     self:UpdateWalkspeed()
 end
 
 function Movement:EnableSprint()
-    if (self.Character:GetAttribute("CanSprint") == false) then return end
-    self.Character:SetAttribute("Sprinting", true)
+    if (self.Player:GetAttribute("CanSprint") == false) then return end
+    self.Player:SetAttribute("Sprinting", true)
     self:UpdateWalkspeed()
 end
 
 function Movement:DisableSprint()
-    self.Character:SetAttribute("Sprinting", false)
+    self.Player:SetAttribute("Sprinting", false)
     self:UpdateWalkspeed()
 end
 
 function Movement:EnableCrouch()
-    if (self.Character:GetAttribute("CanCrouch") == false) then return end
-    self.Character:SetAttribute("Crouching", true)
+    if (self.Player:GetAttribute("CanCrouch") == false) then return end
+    self.Player:SetAttribute("Crouching", true)
     self:UpdateWalkspeed()
 end
 
 function Movement:DisableCrouch()
-    self.Character:SetAttribute("Crouching", false)
+    self.Player:SetAttribute("Crouching", false)
     self:UpdateWalkspeed()
 end
 
 function Movement:UpdateWalkspeed()
-    -- if not self.Character:GetAttribute("CharacterAvailable") == true or self.Character:GetAttribute("PlacingDeployable") == true or self.Character:GetAttribute("Restrained") == true then
+    -- if not self.Player:GetAttribute("PlayerAvailable") == true or self.Player:GetAttribute("PlacingDeployable") == true or self.Player:GetAttribute("Restrained") == true then
 	-- 	self.Humanoid.WalkSpeed = 0
 	-- else
 		self.Humanoid.WalkSpeed = 16
 		
-		if self.Character:GetAttribute("Aiming") == true then
+		if self.Player:GetAttribute("Aiming") == true then
 			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 4
 		end
 		
-		if self.Character:GetAttribute("Crouching") == true then
+		if self.Player:GetAttribute("Crouching") == true then
 			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 8
 		end
 		
-		if self.Character:GetAttribute("Sprinting") == true then
+		if self.Player:GetAttribute("Sprinting") == true then
 			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed + 10
 		end
 		
@@ -113,6 +120,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Movement", {Movement}, workspace)
+Rosyn.Register("Player", {Movement}, workspace)
 
 return Movement;

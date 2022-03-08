@@ -9,6 +9,7 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 
 local SkillBar = {}
 SkillBar.__index = SkillBar
+SkillBar.__Tag = "SkillBar"
 
 function SkillBar.new(root: any)
     return setmetatable({
@@ -22,13 +23,13 @@ function SkillBar:Initial()
     local equippedSkillSignal = LocalPlayer:GetAttributeChangedSignal("EquippedSkill")
 
     self.Cleaner:Add(equippedSkillSignal:Connect(function()
-        local equippedSkill = LocalPlayer:GetAttribute("EquippedSkill") :: string
-        if equippedSkill == "" then
+        local equippedSkill = LocalPlayer:GetAttribute("EquippedSkill") or "--" :: string
+        if equippedSkill == "" or equippedSkill == "--" then
             self:SetCharge(0)
-            self.Root.Name.Text = "<i>--</i>"
+            self.Root.NameDisplay.Text = "<i>--</i>"
         else
             self:SetCharge(100)
-            self.Root.Name.Text = string.format("<i>%s</i>", equippedSkill)
+            self.Root.NameDisplay.Text = string.format("<i>%s</i>", equippedSkill)
         end
     end))
 end

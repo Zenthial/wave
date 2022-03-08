@@ -84,7 +84,7 @@ function Animation:Load(data: Types.AnimationData)
     local track = self.Animator:LoadAnimation(animation)
     self.AnimationTracks[data.Name] = track
 
-    print("Loaded ".. data.Name)
+    -- print("Loaded ".. data.Name)
 
     if (#data.MarkerSignals <= 0 ) then return self end
 
@@ -140,6 +140,6 @@ function Animation:DestroyTrack(animationName: string)
     end
 end
 
-Rosyn.Register("Animator", {Animation}, workspace)
+Rosyn.Register("Character", {Animation}, workspace)
 
 return Animation

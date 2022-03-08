@@ -6,7 +6,7 @@ local module = {
 	TextSize					= "Size18",                  -- Default text size
 	SpaceSize					= 2,                         -- size of one space; 2 = two spaces
 	TweenTime					= 0.5,                       -- Time to tween chat line
-	DefaultChatText				= [[PRESS %s TO CHAT]],      -- Text displayed when not focused on text box (fred you forgot add the regex)
+	DefaultChatText				= [[PRESS '%s' TO CHAT]],      -- Text displayed when not focused on text box (fred you forgot add the regex)
 	DefaultChatTextFadeInTime	= 0.01,                      -- Time it takes for default chat text to fade in
 	TeamChatSign				= "[TEAM]",                  -- String placed after name when a message is in teamchat
 	MinimumMessageSize			= 1,                         -- Minimum message size to send message; if message isn't long enough, unfocus text box
@@ -88,6 +88,7 @@ local module = {
 									["5430057"] = "SABLE",
 									["5429962"] = "CORUS",
 								},
+	DefaultGroupRankCheckId = 3747606,
 	RankTags					= {
 									["196"] = "OFC",
 									["199"] = "HICOM",

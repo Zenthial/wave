@@ -196,6 +196,6 @@ function AnimationTree:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("AnimationTree", {AnimationTree}, workspace)
+Rosyn.Register("Character", {AnimationTree}, workspace)
 
 return AnimationTree

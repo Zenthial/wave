@@ -60,6 +60,6 @@ function BodyGyro:Destroy()
     self.Gyro:Destroy()
 end
 
-Rosyn.Register("BodyGyro", {BodyGyro}, workspace)
+Rosyn.Register("Character", {BodyGyro}, workspace)
 
 return BodyGyro

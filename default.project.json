@@ -27,6 +27,13 @@
       "$properties": {
         "RespectFilteringEnabled": true
       }
+    },
+
+    "Chat": {
+      "$properties": {
+        "BubbleChatEnabled": false,
+        "LoadDefaultChat": false
+      }
     }
   }
 }

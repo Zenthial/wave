@@ -4,27 +4,19 @@
 --Shared
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
-
-local Components = script.Components
-local CharacterComponents = Components.Character:GetDescendants()
-
-local PLAYER_TAGS = {
-    "Player",
-    "Health",
-    "Nametag"
-}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 ------------------------------------------------------------------------
 --Setup
 
 local function playerAdded(player: Player)
-    for _, tag in pairs(PLAYER_TAGS) do
-        CollectionService:AddTag(player, tag)
+    if not CollectionService:HasTag(player, "Player") then
+        CollectionService:AddTag(player, "Player")
     end
 
     local function characterAdded(character) 
-        for _, component in pairs(CharacterComponents) do
-            CollectionService:AddTag(character, component.Name)
+        if not CollectionService:HasTag(character, "Character") then
+            CollectionService:AddTag(character, "Character")
         end
     end
 
@@ -41,20 +33,44 @@ end
 
 Players.PlayerAdded:Connect(playerAdded)
 
-local modules = {}
-
-for _, module in pairs(script:GetDescendants()) do
+for _, module in pairs(script.Modules:GetChildren()) do
     task.spawn(function()
         if module:IsA("ModuleScript") then
             local m = require(module)
-            modules[module.Name] = m
             if typeof(m) == "table" then
                 if m["Start"] ~= nil then
-                    task.spawn(function()
-                        m:Start()
-                    end)
+                    m:Start()
                 end
             end
         end
     end)
 end
+
+local function LoadComponent(Item)
+    if (not Item:IsA("ModuleScript")) then
+        return
+    end
+
+    if (Item.Name:sub(1, 1) == "_") then
+        -- Skip scripts prefixed with this
+        return
+    end
+
+    require(Item)
+end
+
+local function Recurse(Root, Operator)
+    for _, Item in pairs(Root:GetChildren()) do
+        Operator(Item)
+        Recurse(Item, Operator)
+    end
+end
+
+if (not game:IsLoaded()) then
+    game.Loaded:Wait()
+end
+
+game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Workspace")
+
+Recurse(script:WaitForChild("Components"), LoadComponent)
+Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)

@@ -1,31 +1,43 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local StarterGui = game:GetService("StarterGui")
 
 local Player = game.Players.LocalPlayer
 
-local CHARACTER_TAGS = {
-    "AnimationTree",
-    "Animator",
-    "BodyGyro"
-}
-
-local function characterAdded(character)
-    for _, tag in pairs(CHARACTER_TAGS) do
-        CollectionService:AddTag(character, tag)
-    end
-end
-
-if (Player.Character) then
-    characterAdded(Player.Character)
-end
-
-Player.CharacterAdded:Connect(characterAdded)
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
 local modules = {}
 
-for _, module in pairs(script:GetDescendants()) do
+local function LoadComponent(Item)
+    if (not Item:IsA("ModuleScript")) then
+        return
+    end
+
+    if (Item.Name:sub(1, 1) == "_") then
+        -- Skip scripts prefixed with this
+        return
+    end
+
+    require(Item)
+end
+
+local function Recurse(Root, Operator)
+    for _, Item in pairs(Root:GetChildren()) do
+        Operator(Item)
+        Recurse(Item, Operator)
+    end
+end
+
+if (not game:IsLoaded()) then
+    game.Loaded:Wait()
+end
+
+game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Workspace")
+
+Recurse(script:WaitForChild("Components"), LoadComponent)
+Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)
+
+for _, module in pairs(script.Modules:GetChildren()) do
     if module:IsA("ModuleScript") then
         local m = require(module)
         modules[module.Name] = m
@@ -41,9 +53,20 @@ end
 
 local comm = modules["ClientComm"]
 repeat
-    print(comm)
     comm = modules["ClientComm"]
 until comm ~= nil
 local ClientComm = comm.GetClientComm()
+
+local function characterAdded(character)
+    if not CollectionService:HasTag(character, "Character") then
+        CollectionService:AddTag(character, "Character")
+    end
+end
+
+if (Player.Character) then
+    characterAdded(Player.Character)
+end
+
+Player.CharacterAdded:Connect(characterAdded)
 
 ClientComm:GetSignal("PlayerLoaded"):Fire()
