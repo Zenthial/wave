@@ -2,6 +2,7 @@
     Written by tom and Preston
 ]=]
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = script.Parent.Parent:WaitForChild("Modules", 5)
@@ -17,10 +18,9 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
-local camera = workspace.CurrentCamera
-
 local function setSprint(self, action: boolean)
-    if (self.Humanoid:GetAttribute("CanSprint") == false) then return end
+    print(self.Player:GetAttribute("CanSprint"))
+    if (self.Player:GetAttribute("CanSprint") == false) then return end
 
     self.Events.SprintChanged:Fire(action)
     self.State.Sprinting = action
@@ -28,7 +28,8 @@ local function setSprint(self, action: boolean)
 end
 
 local function setCrouch(self, action: boolean)
-    if (self.Humanoid:GetAttribute("CanCrouch") == false) then return end
+    print(self.Player:GetAttribute("CanCrouch"))
+    if (self.Player:GetAttribute("CanCrouch") == false) then return end
 
     self.Events.CrouchChanged:Fire(action)
     self.State.Crouching = action
@@ -40,6 +41,7 @@ Movement.__index = Movement
 Movement.__Tag = "Movement"
 
 function Movement.new(root: any)
+    print(root)
     return setmetatable({
         Player = root;
         Cleaner = Trove.new() :: typeof(Trove),
@@ -88,6 +90,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Movement})
+Rosyn.Register("Player", {Movement}, Players)
 
 return Movement

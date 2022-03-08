@@ -104,7 +104,7 @@ function Animation:Play(animationName: string): AnimationTrack
     
     if (not self.AnimationTracks[animationName].IsPlaying == true) then
         self.AnimationTracks[animationName]:Play()
-        print(string.format("Playing %s", animationName))
+        -- print(string.format("Playing %s", animationName))
     end
 
     return self.AnimationTracks[animationName]
@@ -118,7 +118,7 @@ function Animation:Stop(animationName: string)
 
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
-        print(string.format("Stopping %s", animationName))
+        -- print(string.format("Stopping %s", animationName))
     end
 
     return self

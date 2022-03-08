@@ -93,7 +93,6 @@ function Toolbar:Add(item: any, slot: number?): boolean
         local freeSlot = -1
 
         for i, v in ipairs(self.Slots) do
-            print(i, v)
             if v == false then
                 tableFull = false
                 freeSlot = i

@@ -121,7 +121,6 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local animationComponent = Rosyn.AwaitComponentInit(character, Animator) :: typeof(Animator)
 
     for _, animationData in pairs(weaponStats.Animations) do
-        print("Loading " .. animationData.Name)
         animationComponent:Load(animationData)
     end
 

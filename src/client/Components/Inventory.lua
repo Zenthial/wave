@@ -44,8 +44,6 @@ function Inventory:Initial()
     local SetWeaponSignal = ClientComm:GetSignal("SetWeapon")
 
     self.Cleaner:Add(SetWeaponSignal:Connect(function(inventoryKey: string, weaponName: string, model: Model)
-        print(inventoryKey, weaponName, model)
-
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
         if model == nil then
             model = character:FindFirstChild(weaponName)
