@@ -26,7 +26,6 @@ function Player:Initial()
     self.Player:SetAttribute("Loaded", false)
 
     self.Cleaner:Add(playerLoadedSignal:Connect(function(player: Player)
-        print("yo")
         if self.Player == player then
             self.Player:SetAttribute("Loaded", true)
         end

@@ -12,7 +12,6 @@ local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local ClientComm = require(script.Parent.Parent.Parent.Modules.ClientComm)
 
 local createMessage = require(script.createMessage)
-local inputCapturer = require(script.inputCapturer)
 
 local KeyboardInput = Input.Keyboard.new()
 local comm = ClientComm.GetClientComm()
@@ -24,7 +23,8 @@ local systemNotificationSignal = comm:GetSignal("SystemNotification")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local DEFAULT_KEY = Enum.KeyCode.Slash
+local DEFAULT_CHAT_KEY = Enum.KeyCode.Slash
+local DEFAULT_TEAM_CHAT_KEY = Enum.KeyCode.LeftAlt
 
 local TWEEN_CONSTANTS = {
     HideBackgroundTransparency = 1,
@@ -62,7 +62,10 @@ function ChatUI.new(root: any)
 end
 
 function ChatUI:Initial()
-    self.Input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_KEY))
+    local input = self.Input :: TextBox
+    input.Text = ""
+    input.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
+    input.PlaceholderText = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_CHAT_KEY))
     
     for _, thing in pairs(self.Container:GetChildren()) do
         if thing:IsA("Frame") then
@@ -71,18 +74,9 @@ function ChatUI:Initial()
     end
 
     self.Cleaner:Add(KeyboardInput.KeyDown:Connect(function(keyCode)
-        if keyCode == DEFAULT_KEY then
-            local capturer = inputCapturer()
-            local internalCleaner = Trove.new()
-            internalCleaner:Add(capturer.Changed:Connect(function(text)
-                self:UpdateText(text)
-            end))
-
-            internalCleaner:Add(capturer.Finished:Connect(function(text)
-                self:UpdateText(text)
-                self:FocusLost(text)
-                internalCleaner:Clean()
-            end))
+        if keyCode == DEFAULT_CHAT_KEY then
+            task.wait()
+            input:CaptureFocus()
         end
     end))
 
@@ -90,6 +84,7 @@ function ChatUI:Initial()
     self.Cleaner:Add(sendChatSignal:Connect(function(username: string, username_color: Color3, tags: {[string]: Color3}, message: string)
         local messageUI = createMessage(username, username_color, tags, message)
         messageUI.Parent = self.Container
+        TweenService:Create(messageUI.textLabel, TweenInfo.new(ChatStats.DefaultChatTextFadeInTime), {TextTransparency = 0}):Play()
 
         Queue.push(messageQueue, messageUI)
         if messageQueue.size >= ChatStats.Lines then
@@ -97,28 +92,31 @@ function ChatUI:Initial()
             deleteMessage:Destroy()
         end
     end))
+
+    self.Cleaner:Add(input.FocusLost:Connect(function(enterPressed: boolean, _inputThatCausedFocusLoss: InputObject)
+        local contentText = input.ContentText
+        if enterPressed and string.len(contentText) > ChatStats.MinimumMessageSize and contentText ~= "" and contentText ~= string.format(ChatStats.DefaultChatFocusedText, DEFAULT_TEAM_CHAT_KEY.Name) then
+            input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_CHAT_KEY))
+            sendChat(contentText)
+        end
+    
+        TweenService:Create(self.Main, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.HideBackgroundTransparency}):Play()
+        TweenService:Create(self.InputBar, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.HideBackgroundTransparency}):Play()
+        TweenService:Create(self.Detail, TWEEN_CONSTANTS.ShowTweenInfo, {Size = TWEEN_CONSTANTS.HideDetailSize}):Play()
+    end))
+
+    self.Cleaner:Add(input.Focused:Connect(function()
+        input.PlaceholderText = string.format(ChatStats.DefaultChatFocusedText, DEFAULT_TEAM_CHAT_KEY.Name)
+        input.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
+        input.Text = ""
+        TweenService:Create(self.Main, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.ShowBackgroundTransparency}):Play()
+        TweenService:Create(self.InputBar, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.ShowBackgroundTransparency}):Play()
+        TweenService:Create(self.Detail, TWEEN_CONSTANTS.ShowTweenInfo, {Size = TWEEN_CONSTANTS.ShowDetailSize}):Play()
+    end))
 end
 
 function ChatUI:UpdateText(contentText)
     self.Input.Text = contentText
-end
-
-function ChatUI:FocusLost(contentText: string)
-    if string.len(contentText) > ChatStats.MinimumMessageSize and contentText ~= "" then
-        self.Input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_KEY))
-        sendChat(contentText)
-    end
-
-    TweenService:Create(self.Main, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.HideBackgroundTransparency}):Play()
-    TweenService:Create(self.InputBar, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.HideBackgroundTransparency}):Play()
-    TweenService:Create(self.Detail, TWEEN_CONSTANTS.ShowTweenInfo, {Size = TWEEN_CONSTANTS.HideDetailSize}):Play()
-end
-
-function ChatUI:Focused()
-    self.Input.Text = "PRESS LEFT ALT TO TOGGLE TEAMCHAT"
-    TweenService:Create(self.Main, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.ShowBackgroundTransparency}):Play()
-    TweenService:Create(self.InputBar, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.ShowBackgroundTransparency}):Play()
-    TweenService:Create(self.Detail, TWEEN_CONSTANTS.ShowTweenInfo, {Size = TWEEN_CONSTANTS.ShowDetailSize}):Play()
 end
 
 function ChatUI:Destroy()
