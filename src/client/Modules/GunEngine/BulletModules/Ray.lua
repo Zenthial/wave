@@ -26,7 +26,7 @@ Ray.__Tag = "Ray"
 
 function Ray.new(gunModel: GunModel, weaponStats)
     local self = setmetatable({
-        Model = gunModel,
+        GunModel = gunModel,
         WeaponStats = weaponStats,
 
         MouseComponent = Rosyn.GetComponent(Player, Mouse),
@@ -37,8 +37,8 @@ function Ray.new(gunModel: GunModel, weaponStats)
 end
 
 function Ray:Draw(target: Vector3): boolean
-    if self.Model ~= nil then
-        local gunModel = self.Model :: GunModel
+    if self.GunModel ~= nil then
+        local gunModel = self.GunModel :: GunModel
         if gunModel.Barrel ~= nil then            
             local bullet = self.WeaponStats.BulletCache:GetPart() :: BasePart
             Ray.StaticDraw(gunModel.Barrel.Position, target, bullet, self.WeaponStats.BulletCache)

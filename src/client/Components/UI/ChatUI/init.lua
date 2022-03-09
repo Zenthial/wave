@@ -117,10 +117,6 @@ function ChatUI:Initial()
     end))
 end
 
-function ChatUI:UpdateText(contentText)
-    self.Input.Text = contentText
-end
-
 function ChatUI:Destroy()
     self.Cleaner:Clean()
 end

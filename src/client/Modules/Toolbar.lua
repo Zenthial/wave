@@ -128,6 +128,7 @@ function Toolbar:FeedInput(keyCode: Enum.KeyCode)
 end
 
 function Toolbar:MouseDown()
+    print("here", self.EquippedTool)
     if self.EquippedTool ~= nil and self.EquippedTool["MouseDown"] then
         self.EquippedTool:MouseDown()
     end

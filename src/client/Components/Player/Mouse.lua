@@ -68,12 +68,11 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: 
     if aimBuff == nil then aimBuff = DEFAULT_AIMBUFF end
 
     local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread, weaponStats.MaxSpread, aiming, currentRecoil, aimBuff)
-
     local start = head.Position
-    local ignore = { CollectionService:GetTagged("Ignore") }
+    local ignore = CollectionService:GetTagged("Ignore")
     local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
     local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, ignore)
-    
+
     return hit, position
 end
 

@@ -20,16 +20,17 @@ local Auto = {}
 Auto.__index = Auto
 Auto.__Tag = "Auto"
 
-function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats)
+function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats, storedShots)
     local self = setmetatable({
         WeaponStats = stats,
         BulletModule = bulletModule,
         MutableStats = mutableStats,
+        StoredShots = storedShots,
 
         GunModel = gunModel,
 
         CanFire = true,
-        Shooting = true,
+        Shooting = false,
 
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
@@ -54,27 +55,32 @@ function Auto:Attack()
     local mouse = self.MouseComponent :: typeof(MouseComponentModule)
     local mouseInput = self.MouseInput :: typeof(Input.Mouse)
 
+    print(self.Shooting)
     if not self.Shooting then
         -- make it a do while because of weird edge cases in function calling
         repeat
             self.Shooting = true
     
             task.spawn(function()
-                local gunModel = self.Model :: GunModel
-                if gunModel.Barrel ~= nil then            
+                local gunModel = self.GunModel :: GunModel
+                if gunModel ~= nil and gunModel.Barrel ~= nil then         
                     local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
                     
                     if hit ~= nil then
                         self.Events.CheckHitPart:Fire(hit)
                     end
-    
+
+                    self.StoredShots.StartPosition = gunModel.Barrel.Position
+                    self.StoredShots.EndPosition = target
+                    self.StoredShots.Timestamp = tick()
                     self.BulletModule:Draw(target)
                 end
             end)
     
             self.Events.Attacked:Fire()
             task.wait(1/self.WeaponStats.FireRate)
-        until self.MutableStats == false or not self.CanFire
+        until self.MutableStats.MouseDown == false or not self.CanFire
+        self.Shooting = false
     end
 end
 

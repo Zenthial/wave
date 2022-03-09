@@ -58,17 +58,17 @@ loadModulesOfType(LoadedModules.Attack, AttackModules)
 loadModulesOfType(LoadedModules.Ammo, AmmoModules)
 loadModulesOfType(LoadedModules.Bullet, BulletModules)
 
-local function getAttackModule(stats: WeaponStats, bulletModule: table, gunModel, mutableStats): table
+local function getAttackModule(stats: WeaponStats, bulletModule: table, gunModel, mutableStats, storedShots: ShotsTable): table
     local mod = LoadedModules.Attack[stats.GunType]
     if mod then
-        return mod.new(stats, bulletModule, gunModel, mutableStats)
+        return mod.new(stats, bulletModule, gunModel, mutableStats, storedShots)
     end
 end
 
 local function getAmmoModule(stats: WeaponStats, shotsTable: ShotsTable): table
     local mod = LoadedModules.Ammo[stats.AmmoType]
     if mod then
-        return mod.new(stats.HeatRate, stats.CoolTime, stats.CoolWait, shotsTable)
+        return mod.new(stats.HeatRate, stats.CoolTime, stats.CoolWait, stats.BatteryDepletionMin, stats.BatteryDepletionMax, stats.ShotsDeplete, shotsTable)
     end
 end
 
@@ -98,7 +98,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         NumShots = 0,
         HitShots = 0,
         Headshots = 0,
-        LastShot = nil :: LastShotData
+        LastShot = {
+            StartPosition = nil,
+            EndPosition = nil,
+            Timestamp = tick()
+        } :: LastShotData
     }
 
     local mutableStats = {
@@ -112,7 +116,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     local bulletModule = getBulletModule(gunModel, weaponStats)
     local ammoModule = getAmmoModule(weaponStats, storedShots)
-    local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats)
+    local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats, storedShots)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
@@ -128,7 +132,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local cleaner = Trove.new();
 
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
-        attackModule:CanFire(bool)
+        attackModule:SetCanFire(bool)
 
         animationTreeComponent:SetReload(bool)
     end))
@@ -144,7 +148,6 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         end
     end))
 
-    
     return setmetatable({
         Model = gunModel,
 
