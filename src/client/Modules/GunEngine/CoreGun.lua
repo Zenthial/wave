@@ -107,6 +107,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
         Equipped = false,
         Aiming = false,
+        MouseDown = false,
     }
 
     local bulletModule = getBulletModule(gunModel, weaponStats)
@@ -179,6 +180,15 @@ function CoreGun:Unequip()
         error("Weld failed, does this weapon have stats?")
     end
     self.MutableStats.Equipped = false
+end
+
+function CoreGun:MouseDown()
+    self.MutableStats.MouseDown = true
+    self:Attack()
+end
+
+function CoreGun:MouseUp()
+    self.MutableStats.MouseDown = false
 end
 
 function CoreGun:Attack()

@@ -5,7 +5,7 @@ local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local Toolbar = require(script.Parent.Toolbar)
+local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
 
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
@@ -65,6 +65,19 @@ function Inventory:Initial()
             end
         end
     end))
+end
+
+function Inventory:FeedInput(KeyCode: Enum.KeyCode)
+    self.WeaponsToolbar:FeedInput(KeyCode)
+    self.SkillsToolbar:FeedInput(KeyCode)
+end
+
+function Inventory:MouseDown()
+    self.WeaponsToolbar:MouseDown()
+end
+
+function Inventory:MouseUp()
+    self.WeaponsToolbar:MouseUp()
 end
 
 function Inventory:Destroy()

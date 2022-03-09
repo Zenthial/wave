@@ -73,8 +73,9 @@ function ChatUI:Initial()
         end
     end
 
-    self.Cleaner:Add(KeyboardInput.KeyDown:Connect(function(keyCode)
-        if keyCode == DEFAULT_CHAT_KEY then
+    local chattingChangedSignal = LocalPlayer:GetAttributeChangedSignal("Chatting")
+    self.Cleaner:Add(chattingChangedSignal:Connect(function()
+        if LocalPlayer:GetAttribute("Chatting") == true then
             task.wait()
             input:CaptureFocus()
         end
@@ -94,6 +95,7 @@ function ChatUI:Initial()
     end))
 
     self.Cleaner:Add(input.FocusLost:Connect(function(enterPressed: boolean, _inputThatCausedFocusLoss: InputObject)
+        LocalPlayer:SetAttribute("Chatting", false)
         local contentText = input.ContentText
         if enterPressed and string.len(contentText) > ChatStats.MinimumMessageSize and contentText ~= "" and contentText ~= string.format(ChatStats.DefaultChatFocusedText, DEFAULT_TEAM_CHAT_KEY.Name) then
             input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_CHAT_KEY))

@@ -22,6 +22,7 @@ export type Gun = {
 
 local Cleaner = Trove.new()
 local KeyboardInput = Input.Keyboard.new()
+local MouseInput = Input.Mouse.new()
 
 local GunEngine = {}
 
@@ -46,6 +47,10 @@ function GunEngine:Start()
         else
             error("WeaponStats don't exist??")
         end
+    end))
+
+    Cleaner:Add(MouseInput.LeftDown:Connect(function()
+        
     end))
 end
 

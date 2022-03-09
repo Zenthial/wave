@@ -2,6 +2,7 @@ local WeaponStatsModule = require(game.ReplicatedStorage:WaitForChild("Shared"):
 local Rosyn = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
+local Input = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Mouse = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input")).Mouse
 
 local MouseComponentModule = require(script.Parent.Parent.Parent.Parent.Components.Player.Mouse)
@@ -34,6 +35,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
         Cleaner = Trove.new(),
 
         MouseComponent = Rosyn.GetComponent(Player, MouseComponentModule) :: typeof(MouseComponentModule),
+        MouseInput = Input.Mouse.new(),
 
         Events = {
             Attacked = Signal.new(),
@@ -50,25 +52,29 @@ end
 
 function Auto:Attack()
     local mouse = self.MouseComponent :: typeof(MouseComponentModule)
+    local mouseInput = self.MouseInput :: typeof(Input.Mouse)
 
-    while mouse:IsLeftDown() and self.CanFire and not self.Shooting do
-        self.Shooting = true
-
-        task.spawn(function()
-            local gunModel = self.Model :: GunModel
-            if gunModel.Barrel ~= nil then            
-                local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
-                
-                if hit ~= nil then
-                    self.Events.CheckHitPart:Fire(hit)
+    if not self.Shooting then
+        -- make it a do while because of weird edge cases in function calling
+        repeat
+            self.Shooting = true
+    
+            task.spawn(function()
+                local gunModel = self.Model :: GunModel
+                if gunModel.Barrel ~= nil then            
+                    local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
+                    
+                    if hit ~= nil then
+                        self.Events.CheckHitPart:Fire(hit)
+                    end
+    
+                    self.BulletModule:Draw(target)
                 end
-
-                self.BulletModule:Draw(target)
-            end
-        end)
-
-        self.Events.Attacked:Fire()
-        task.wait(1/self.WeaponStats.FireRate)
+            end)
+    
+            self.Events.Attacked:Fire()
+            task.wait(1/self.WeaponStats.FireRate)
+        until self.MutableStats == false or not self.CanFire
     end
 end
 

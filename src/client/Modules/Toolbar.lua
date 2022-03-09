@@ -2,10 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn"))
 local Signal = require(Shared:WaitForChild("util"):WaitForChild("Signal"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
-local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local function shiftTable(tble: table, startIndex: number)
     if startIndex ~= #tble then
@@ -38,40 +36,11 @@ function Toolbar.new(size: number)
         },
 
         Cleaner = Trove.new() :: typeof(Trove),
-        Input = Input.Keyboard.new() :: typeof(Input.Keyboard),
-
     }
 
     for i = 1, size do
         self.Slots[i] = false
     end
-
-    local cleaner = self.Cleaner :: typeof(Trove)
-    local input = self.Input :: typeof(Input.Keyboard)
-
-    cleaner:Add(input.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-        local index = table.find(self.ToolbarKeys, keyCode)
-
-
-        if index then
-            if self.EquippedTool ~= nil then
-                if self.EquippedTool.Unequip ~= nil then
-                    self.EquippedTool:Unequip()
-                end
-                self.EquippedTool = nil
-            end
-
-            if self.EquippedSlot ~= index and self.Slots[index] ~= false then
-                self.EquippedSlot = index
-                self.EquippedTool = self.Slots[index]
-                if self.EquippedTool.Equip ~= nil then
-                    self.EquippedTool:Equip()
-                end
-            else
-                self.EquippedSlot = nil
-            end
-        end
-    end))
 
     return setmetatable(self, Toolbar)
 end
@@ -133,6 +102,41 @@ end
 
 function Toolbar:SetToolbarKeys(keyDict: {[number]: Enum.KeyCode})
     self.ToolbarKeys = keyDict    
+end
+
+function Toolbar:FeedInput(keyCode: Enum.KeyCode)
+    local index = table.find(self.ToolbarKeys, keyCode)
+
+    if index then
+        if self.EquippedTool ~= nil then
+            if self.EquippedTool.Unequip ~= nil then
+                self.EquippedTool:Unequip()
+            end
+            self.EquippedTool = nil
+        end
+
+        if self.EquippedSlot ~= index and self.Slots[index] ~= false then
+            self.EquippedSlot = index
+            self.EquippedTool = self.Slots[index]
+            if self.EquippedTool.Equip ~= nil then
+                self.EquippedTool:Equip()
+            end
+        else
+            self.EquippedSlot = nil
+        end
+    end
+end
+
+function Toolbar:MouseDown()
+    if self.EquippedTool ~= nil and self.EquippedTool["MouseDown"] then
+        self.EquippedTool:MouseDown()
+    end
+end
+
+function Toolbar:MouseUp()
+    if self.EquippedTool ~= nil and self.EquippedTool["MouseUp"] then
+        self.EquippedTool:MouseUp()
+    end
 end
 
 function Toolbar:Destroy()

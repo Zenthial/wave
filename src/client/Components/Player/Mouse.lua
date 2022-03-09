@@ -1,11 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 
-local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
+local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
-local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
-local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
+local Rosyn = require(Shared:WaitForChild("Rosyn"))
+local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
+local Input = require(Shared:WaitForChild("util"):WaitForChild("Input"))
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 type WeaponStats = WeaponStatsModule.WeaponStats

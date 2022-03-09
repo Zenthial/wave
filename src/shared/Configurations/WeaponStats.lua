@@ -67,6 +67,7 @@ export type WeaponStats = {
     Animations: {AnimationData}
 }
 
+-- all of the below tables, except the caches, are just enums
 local GunTypes = {
     Auto = "Auto",
     Semi = "Semi",
