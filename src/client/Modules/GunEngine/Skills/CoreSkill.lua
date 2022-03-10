@@ -25,7 +25,7 @@ function CoreSkill.new(skillStats, model)
         Stats = skillStats;
         Model = model;
 
-        Movement = Rosyn.GetComponent(LocalPlayer.Character, Movement);
+        Movement = Rosyn.AwaitComponentInit(LocalPlayer, Movement);
     }, CoreSkill)
     return self
 end
@@ -35,8 +35,12 @@ function CoreSkill:Equip()
     print(Functions, self.Stats.name, func)
     if func == nil then error("No skill function for " .. self.Stats.name) end
     if LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil then
-        func(true, LocalPlayer.Character, self.Movement, self.Model)
+        func(self, true, LocalPlayer.Character, self.Movement, self.Model)
     end
+end
+
+function CoreSkill:DepleteEnergy(depletionAmount: number)
+    self.CurrentEnergy -= depletionAmount
 end
 
 function CoreSkill:Destroy()

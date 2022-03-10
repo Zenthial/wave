@@ -1,7 +1,8 @@
-return function(bool, character, movementComponent, skillModel)
-	local multiplier = 3250
+return function(self, bool, character, movementComponent, skillModel)
+	local multiplier = 50000
 	
 	if bool then
+		self:DepleteEnergy(100) -- replace this line with hardcoded d0dg-p energy depletion stats
 		movementComponent:SetSprint(false)
 		movementComponent:SetCrouch(false)
 		
@@ -16,15 +17,15 @@ return function(bool, character, movementComponent, skillModel)
 		linearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
 		linearVelocity.MaxForce = Vector3.new(character.Humanoid.MoveDirection.X * multiplier, 1000, character.Humanoid.MoveDirection.Z * multiplier)
 		linearVelocity.VectorVelocity = Vector3.new(character.Humanoid.MoveDirection.X * multiplier, 1000, character.Humanoid.MoveDirection.Z * multiplier)
-		linearVelocity.Parent = character.Torso or character.LowerTorso
-		
-		task.wait(0.8)
-		
-		skillModel.Propeller1.Flame.Enabled = false
-        skillModel.Propeller2.Flame.Enabled = false
-        skillModel.Propeller1.Material = Enum.Material.SmoothPlastic
-        skillModel.Propeller2.Material = Enum.Material.SmoothPlastic
+		linearVelocity.Parent = character.HumanoidRootPart
 
-		linearVelocity:Destroy()
+		task.delay(0.8, function()
+			skillModel.Propeller1.Flame.Enabled = false
+			skillModel.Propeller2.Flame.Enabled = false
+			skillModel.Propeller1.Material = Enum.Material.SmoothPlastic
+			skillModel.Propeller2.Material = Enum.Material.SmoothPlastic
+
+			linearVelocity:Destroy()
+		end)
 	end
 end
