@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
@@ -10,7 +11,10 @@ local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
 local comm = require(Modules.ClientComm)
+local MainHUDModule = require(StarterPlayerScripts.Client.Components.UI.MainHUD)
 
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local ClientComm = comm.GetClientComm()
 
 local DEFAULT_SKILL_KEYS = {
@@ -41,8 +45,33 @@ function Inventory:Initial()
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
 
-    local SetWeaponSignal = ClientComm:GetSignal("SetWeapon")
+    local MainHUD = PlayerGui:WaitForChild("MainHUD")
+    local MainHUDComponent = Rosyn.AwaitComponentInit(MainHUD, MainHUDModule) :: typeof(MainHUDModule)
 
+    local equippedWeaponCleaner = nil :: typeof(Trove)
+    self.Cleaner:Add(self.WeaponsToolbar.Events.ToolChanged:Connect(function(tool)
+        if equippedWeaponCleaner ~= nil then
+            equippedWeaponCleaner:Clean()
+        end
+        MainHUDComponent:UpdateEquippedWeapon(tool)
+
+        if tool ~= nil then
+            equippedWeaponCleaner = Trove.new()
+            equippedWeaponCleaner:Add(tool.Events.AmmoChanged:Connect(function(heat: number)
+                MainHUDComponent:UpdateHeat(heat)
+            end))
+
+            equippedWeaponCleaner:Add(tool.Events.Fired:Connect(function(trigDelay: number)
+                MainHUDComponent:UpdateTriggerBar(trigDelay)
+            end))
+        end
+    end))
+
+    self.Cleaner:Add(self.SkillsToolbar.Events.ToolChanged:Connect(function(tool)
+        -- maybe do something idk
+    end))
+
+    local SetWeaponSignal = ClientComm:GetSignal("SetWeapon")
     self.Cleaner:Add(SetWeaponSignal:Connect(function(inventoryKey: string, weaponName: string, model: Model)
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
         if model == nil then

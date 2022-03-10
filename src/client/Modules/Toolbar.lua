@@ -32,7 +32,8 @@ function Toolbar.new(size: number)
         EquippedSlot = nil,
 
         Events = {
-            GetUserToolbarKeys = Signal.new()
+            GetUserToolbarKeys = Signal.new(),
+            ToolChanged = Signal.new()
         },
 
         Cleaner = Trove.new() :: typeof(Trove),
@@ -113,22 +114,24 @@ function Toolbar:FeedInput(keyCode: Enum.KeyCode)
                 self.EquippedTool:Unequip()
             end
             self.EquippedTool = nil
+            self.Events.ToolChanged:Fire(nil)
         end
 
         if self.EquippedSlot ~= index and self.Slots[index] ~= false then
             self.EquippedSlot = index
             self.EquippedTool = self.Slots[index]
+            self.Events.ToolChanged:Fire(self.EquippedTool)
             if self.EquippedTool.Equip ~= nil then
                 self.EquippedTool:Equip()
             end
         else
             self.EquippedSlot = nil
+            self.Events.ToolChanged:Fire(nil)
         end
     end
 end
 
 function Toolbar:MouseDown()
-    print("here", self.EquippedTool)
     if self.EquippedTool ~= nil and self.EquippedTool["MouseDown"] then
         self.EquippedTool:MouseDown()
     end

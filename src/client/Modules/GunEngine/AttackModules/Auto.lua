@@ -55,7 +55,6 @@ function Auto:Attack()
     local mouse = self.MouseComponent :: typeof(MouseComponentModule)
     local mouseInput = self.MouseInput :: typeof(Input.Mouse)
 
-    print(self.Shooting)
     if not self.Shooting then
         -- make it a do while because of weird edge cases in function calling
         repeat
@@ -70,10 +69,10 @@ function Auto:Attack()
                         self.Events.CheckHitPart:Fire(hit)
                     end
 
-                    self.StoredShots.StartPosition = gunModel.Barrel.Position
-                    self.StoredShots.EndPosition = target
-                    self.StoredShots.Timestamp = tick()
-                    self.BulletModule:Draw(target)
+                    self.StoredShots.LastShot.StartPosition = gunModel.Barrel.Position
+                    self.StoredShots.LastShot.EndPosition = target
+                    self.StoredShots.LastShot.Timestamp = tick()
+                    local _ = self.BulletModule:Draw(target)
                 end
             end)
     

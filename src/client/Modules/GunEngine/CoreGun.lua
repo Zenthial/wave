@@ -8,7 +8,7 @@ local Rosyn = require(Shared:WaitForChild("Rosyn"))
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
-local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
+local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
 local AnimationTree = require(script.Parent.Parent.Parent.Components.AnimationTree)
 local Animator = require(script.Parent.Parent.Parent.Components.Animation)
@@ -129,15 +129,22 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         animationComponent:Load(animationData)
     end
 
-    local cleaner = Trove.new();
+    local ammoChanged = Signal.new()
+    local fired = Signal.new()
 
+    local cleaner = Trove.new();
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
         attackModule:SetCanFire(bool)
 
         animationTreeComponent:SetReload(bool)
     end))
 
+    cleaner:Add(ammoModule.Events.AmmoChanged:Connect(function(ammo): boolean
+        ammoChanged:Fire(ammo)
+    end))
+
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
+        fired:Fire(1/weaponStats.FireRate)
         ammoModule:Fire()
     end))
 
@@ -162,6 +169,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         WeldWeaponFunction = weldWeaponFunction,
 
         AnimationTree = animationTreeComponent,
+
+        Events = {
+            AmmoChanged = ammoChanged,
+            Fired = fired
+        },
 
         Cleaner = cleaner,
     }, CoreGun)

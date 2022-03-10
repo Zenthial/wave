@@ -63,9 +63,11 @@ function Battery:Fire()
 end
 
 function Battery:Heat()
-    if self.ShotsTable.NumShots % self.ShotsDeplete then
+    if self.ShotsTable.NumShots >= self.ShotsDeplete then
         self:DepleteBattery()
     end
+
+    local lastShotTimestamp = self.ShotsTable.LastShot.Timestamp
 
     local heatRate = self.HeatRate :: number
     local newHeatRate = (self.CurrentHeat + heatRate) :: number
@@ -85,19 +87,13 @@ function Battery:Heat()
         task.wait(self.CoolWait)
     end
 
-    local heatCleaner = Trove.new()
-
     local frameWait = 1/10
     local coolRate = 10 / self.CoolTime :: number
 
-    local lastShotTimestamp = self.ShotsTable.LastShot.Timestamp
-
     local loopActive = true
-
-    while loopActive do
-        if self.ShotsTable.LastShot.Timestamp ~= lastShotTimestamp then
-            break;
-        end
+    -- this while loop is only ever spawned in a signal connection, therefore we don't need to spawn a new coroutine
+    while loopActive and self.ShotsTable.LastShot.Timestamp == lastShotTimestamp do
+        task.wait(frameWait)
 
         local newHeat = self.CurrentHeat - coolRate
         if newHeat <= 0 then
