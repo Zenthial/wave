@@ -144,8 +144,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     end))
 
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
-        fired:Fire(1/weaponStats.FireRate)
         ammoModule:Fire()
+    end))
+
+    cleaner:Add(attackModule.Events.StoppedShooting:Connect(function()
+        fired:Fire(1/weaponStats.FireRate)
     end))
 
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)

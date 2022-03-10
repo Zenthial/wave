@@ -40,6 +40,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
 
         Events = {
             Attacked = Signal.new(),
+            StoppedShooting = Signal.new(),
             TriggerReload = Signal.new(),
             CheckHitPart = Signal.new()
         }
@@ -79,6 +80,7 @@ function Auto:Attack()
             self.Events.Attacked:Fire()
             task.wait(1/self.WeaponStats.FireRate)
         until self.MutableStats.MouseDown == false or not self.CanFire
+        self.Events.StoppedShooting:Fire()
         self.Shooting = false
     end
 end
