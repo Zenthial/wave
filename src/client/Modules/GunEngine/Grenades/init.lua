@@ -36,7 +36,7 @@ local function handleGrenadeStats(grenadeStats: GrenadeStats.GrenadeStats_T)
     CastBehavior.RaycastParams = CastParams
     CastBehavior.MaxDistance = grenadeStats.MaxDistance
     CastBehavior.CosmeticBulletProvider = grenadeStats.Cache
-    CastBehavior.CosmeticBulletContainer = workspace
+    CastBehavior.CosmeticBulletContainer = grenadeStats.CacheFolder
     CastBehavior.Acceleration = grenadeStats.Gravity
     CastBehavior.AutoIgnoreContainer = false -- We already do this! We don't need the default value of true (see the bottom of this script)
 end

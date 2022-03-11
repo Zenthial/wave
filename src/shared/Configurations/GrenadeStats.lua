@@ -1,6 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Grenades = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Grenades")
 local PartCache = require(ReplicatedStorage.Shared.util.PartCache)
+
+local cacheFolder = Instance.new("Folder")
+cacheFolder.Name = "GrenadeCacheFolder"
+cacheFolder.Parent = workspace
 
 export type GrenadeStats_T = {
     DEBUG: boolean,
@@ -23,6 +28,7 @@ export type GrenadeStats_T = {
     MaxSpreadAngle: number,
 
     Cache: typeof(PartCache),
+    CacheFolder: Folder
 }
 
 return {
@@ -45,5 +51,8 @@ return {
 
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
+
+        Cache = PartCache.new(Grenades.NDG.Projectile, 30, cacheFolder),
+        CacheFolder = cacheFolder,
     }
 }

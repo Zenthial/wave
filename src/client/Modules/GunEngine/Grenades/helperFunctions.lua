@@ -24,10 +24,9 @@ local function CanRayBounce(cast, rayResult, segmentVelocity)
 	else
 		-- If the hit data is registered, add 1.
 		cast.UserData.Hits += 1
-		
 	end
 	
-	-- And if the hit count is over 3, don't allow piercing and instead stop the ray.
+	-- And if the hit count is over grenadeStats.NumBounces, don't allow piercing and instead stop the ray.
 	if cast.UserData.Hits > grenadeStats.NumBounces then
 		return false
 	end
@@ -39,7 +38,7 @@ local function CanRayBounce(cast, rayResult, segmentVelocity)
 	if hitPart ~= nil and hitPart.Parent ~= nil then
 		local humanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
 		if humanoid then
-			-- possibly intergrate a csgo-like deal 1 damage here
+			-- possibly integrate a csgo-like deal 1 damage here
 		end
 	end
 	
@@ -47,11 +46,11 @@ local function CanRayBounce(cast, rayResult, segmentVelocity)
 	return true
 end
 
-local function Reflect(surfaceNormal, bulletNormal)
+local function reflect(surfaceNormal, bulletNormal)
 	return bulletNormal - (2 * bulletNormal:Dot(surfaceNormal) * surfaceNormal)
 end
 
-local function handleNade(part: Part, sourceTeam: BrickColor, sourcePlayer: Player, grenadeStats: GrenadeStats.GrenadeStats_T)
+local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourcePlayer: Player, grenadeStats: GrenadeStats.GrenadeStats_T)
 	local character = Player.Character
 	if character then
 		local distance = (character.HumanoidRootPart.Position - part.Position).Magnitude
@@ -102,9 +101,8 @@ local function OnRayBounced(cast, raycastResult, segmentVelocity, cosmeticBullet
 	local position = raycastResult.Position
 	local normal = raycastResult.Normal
 	
-	local newNormal = Reflect(normal, segmentVelocity.Unit)
+	local newNormal = reflect(normal, segmentVelocity.Unit)
 	cast:SetVelocity(newNormal * segmentVelocity.Magnitude / 2)
-	
 	-- It's super important that we set the cast's position to the ray hit position. Remember: When a BOUNCE is successful, it increments the ray forward by one increment.
 	-- If we don't do this, it'll actually start the bounce effect one segment *after* it continues through the object, which for thin walls, can cause the bullet to almost get stuck in the wall.
 	cast:SetPosition(position)
@@ -125,10 +123,9 @@ local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
     local grenadeStats = cast.UserData.GrenadeStats :: GrenadeStats.GrenadeStats_T
 	if cosmeticBullet ~= nil then
-		local position = cosmeticBullet.Position
-		cast:SetPosition(position)
+		cast:SetPosition(cosmeticBullet.Position)
 		task.wait(grenadeStats.PopTime)
-		handleNade(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer)
+		handleNadeTermination(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer)
 		task.wait(grenadeStats.DelayTime)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
@@ -136,7 +133,7 @@ end
 
 return {
     CanRayBounce = CanRayBounce,
-    Reflect = Reflect,
+    Reflect = reflect,
     OnRayHit = OnRayHit,
     OnRayBounced = OnRayBounced,
     OnRayUpdated = OnRayUpdated,
