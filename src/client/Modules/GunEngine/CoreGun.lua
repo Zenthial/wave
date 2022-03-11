@@ -22,7 +22,7 @@ local AttackModules = script.Parent.AttackModules
 local AmmoModules = script.Parent.AmmoModules
 local BulletModules = script.Parent.BulletModules
 
-type WeaponStats = WeaponStatsModule.WeaponStats
+type WeaponStats = WeaponStatsModule.WeaponStats_T
 type LastShotData = {
     StartPosition: Vector3,
     EndPosition: Vector3,
@@ -80,8 +80,9 @@ local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
 end
 
 local function recursivelyFindHealthComponent(part: BasePart)
-    if CollectionService:HasTag(part, "Health") then
-        return part
+    local player: Player | nil = Players:GetPlayerFromCharacter(part)
+    if player ~= nil then
+        return player
     elseif part.Parent ~= workspace then
         return recursivelyFindHealthComponent(part.Parent)
     else

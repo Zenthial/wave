@@ -57,7 +57,7 @@ function Inventory:LoadInventory(inv: InventoryType)
         if key == "Weapons" then
             for _, name in pairs(val) do
                 local stats = WeaponStats[name]
-                local model = WeaponModels[name]:Clone() :: Model
+                local model = WeaponModels[name].Model:Clone() :: Model
                 model.Parent = self.Character
     
                 assert(stats, "No Weapon Stats for " .. name)

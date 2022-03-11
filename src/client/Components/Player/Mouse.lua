@@ -8,7 +8,7 @@ local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local Input = require(Shared:WaitForChild("util"):WaitForChild("Input"))
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
-type WeaponStats = WeaponStatsModule.WeaponStats
+type WeaponStats = WeaponStatsModule.WeaponStats_T
 
 local RAYCAST_MAX_DISTANCE = 2000
 local DEFAULT_AIMBUFF = 3

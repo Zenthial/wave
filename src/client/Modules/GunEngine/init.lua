@@ -14,7 +14,7 @@ local BulletModules = script.BulletModules
 
 local ClientComm = require(script.Parent.ClientComm)
 
-type WeaponStats = WeaponStatsModule.WeaponStats
+type WeaponStats = WeaponStatsModule.WeaponStats_T
 
 export type Gun = {
     WeaponStats: WeaponStats

@@ -15,7 +15,7 @@ type HandleWeld = {
     C1: CFrame
 }
 
-export type WeaponStats = {
+export type WeaponStats_T = {
     Name: string,
     FullName: string,
     Category: string,

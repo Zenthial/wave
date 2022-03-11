@@ -43,6 +43,7 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
     return result
 end)
 
+-- healthComponentPart is technically a player now
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
     local healthComponent = Rosyn.GetComponent(healthComponentPart, Health) :: typeof(Health)
     local stats = WeaponStats[weaponName]
@@ -51,6 +52,10 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
     end
 end)
 
+comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
+    local healthComponent = Rosyn.AwaitComponentInit(player, Health) :: typeof(Health)
+    healthComponent:TakeDamage(damage)
+end)
 
 local GunEngine = {}
 

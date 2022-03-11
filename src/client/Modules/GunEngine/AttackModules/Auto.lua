@@ -9,7 +9,7 @@ local MouseComponentModule = require(script.Parent.Parent.Parent.Parent.Componen
 
 local Player = game.Players.LocalPlayer
 
-type WeaponStats = WeaponStatsModule.WeaponStats
+type WeaponStats = WeaponStatsModule.WeaponStats_T
 type GunModelAdditionalInfo = {
     Barrel: Part,
     Grip: Part
