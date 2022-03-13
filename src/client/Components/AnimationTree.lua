@@ -15,7 +15,7 @@ local Movement = require(script.Parent.Movement)
 
 local Player = game.Players.LocalPlayer
 
-type WeaponStats = WeaponStatsTable.WeaponStats
+type WeaponStats = WeaponStatsTable.WeaponStats_T
 
 type ActiveAnimationsStruct = {
     SprintAnimationName: string,
@@ -88,6 +88,9 @@ function AnimationTree:Initial()
         ReloadActive = false,
         ReloadPlaying = false,
 
+        GrenadeActive = false,
+        GrenadePlaying = false,
+
         WeaponEquipped = false,
         EquippedWeaponPointer = nil,
 
@@ -96,7 +99,8 @@ function AnimationTree:Initial()
             CrouchAnimationMiddleName = nil,
             CrouchAnimationBottomName = nil,
             RollAnimationName = nil,
-            ReloadAnimationName = nil
+            ReloadAnimationName = nil,
+            ThrowAnimationName = nil
         },
 
         Animator = Rosyn.AwaitComponentInit(Player.Character or Player.CharacterAdded:Wait(), Animation)
@@ -152,6 +156,10 @@ function AnimationTree:SetReload(bool: boolean)
     self.State.ReloadActive = bool
 
     self.Events.ReloadChanged:Fire(bool)
+end
+
+function AnimationTree:SetGrenade(bool: boolean)
+    self.State.GrenadeActive = bool
 end
 
 function AnimationTree:InitTree()

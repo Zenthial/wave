@@ -1,18 +1,27 @@
 -- tom
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
+local Rosyn = require(Shared:WaitForChild("Rosyn"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
+local GrenadeStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GrenadeStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
+local Movement = require(script.Parent.Parent.Components.Movement)
+local AnimationTree = require(script.Parent.Parent.Components.AnimationTree)
+
 local CoreGun = require(script.CoreGun)
 local CoreSkill = require(script.Skills.CoreSkill)
+local Grenades = require(script.Grenades)
 local BulletModules = script.BulletModules
 
 local ClientComm = require(script.Parent.ClientComm)
+
+local Player = Players.LocalPlayer
 
 type WeaponStats = WeaponStatsModule.WeaponStats_T
 
@@ -27,14 +36,24 @@ local MouseInput = Input.Mouse.new()
 local GunEngine = {}
 
 function GunEngine:Start()
+    if Player.Character ~= nil then
+        Player.CharacterAdded:Wait()
+    end
     local requiredBulletModules = {}
 
     for _, v in pairs(BulletModules:GetChildren()) do
         requiredBulletModules[v.Name] = require(v)    
     end
 
+    local movementComponent = Rosyn.AwaitComponentInit(Player, Movement)
+    self.MovementComponent = movementComponent
+
+    local animationTree = Rosyn.AwaitComponentInit(Player.Character, AnimationTree)
+    self.AnimationTreeComponent = animationTree
+
     local comm = ClientComm.GetClientComm()
     local raySignal = comm:GetSignal("DrawRay")
+    local nadeSignal = comm:GetSignal("RenderGrenade")
 
     Cleaner:Add(raySignal:Connect(function(startPosition: Vector3, endPosition: Vector3, weaponName: string)
         local weaponStats = WeaponStatsModule[weaponName]
@@ -52,6 +71,25 @@ function GunEngine:Start()
     Cleaner:Add(MouseInput.LeftDown:Connect(function()
         
     end))
+
+    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GrenadeStatsModule.GrenadeStats_T)
+        self:RenderGrenadeForOtherPlayer(player, position, direction, movementSpeed, stats)
+    end))
+end
+
+function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
+    local hrp = Player.Character.HumanoidRootPart
+    local humanoid = Player.Character.Humanoid
+    local grenadeStats = GrenadeStatsModule[grenadeName]
+    assert(grenadeStats, "No grenade stats for the grenade")
+    if Player.Character ~= nil and hrp ~= nil and humanoid ~= nil and self.MovementComponent.State.Sprinting == false then
+        self.AnimationTreeComponent:SetGrenade(true)
+        Grenades:RenderNade(Player, hrp.Position, humanoid.MoveDirection, humanoid.MoveDirection.Magnitude * humanoid.WalkSpeed, grenadeStats)
+    end
+end
+
+function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GrenadeStatsModule.GrenadeStats_T)
+    Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
 function GunEngine:CreateGun(weaponName: string, model): Gun

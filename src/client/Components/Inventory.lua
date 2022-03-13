@@ -44,6 +44,7 @@ function Inventory:Initial()
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
+    self.EquippedGrenade = nil
 
     local MainHUD = PlayerGui:WaitForChild("MainHUD")
     local MainHUDComponent = Rosyn.AwaitComponentInit(MainHUD, MainHUDModule) :: typeof(MainHUDModule)
@@ -92,6 +93,9 @@ function Inventory:Initial()
             if not success then
                 print("failed to add skill " .. weaponName)
             end
+        elseif inventoryKey == "Grenades" then
+            assert(model == nil, "Why does the grenade have a model?")
+            self.EquippedGrenade = weaponName
         end
     end))
 end
@@ -99,6 +103,10 @@ end
 function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
     self.SkillsToolbar:FeedInput(KeyCode)
+
+    if KeyCode == Enum.KeyCode.G and self.EquippedGrenade ~= nil then
+        GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGrenade)
+    end
 end
 
 function Inventory:MouseDown()
