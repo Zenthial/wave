@@ -1,17 +1,11 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer")
-local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
 local FastCast = require(ReplicatedStorage.Shared.Modules.FastCastRedux)
 local GadgetStats = require(ReplicatedStorage.Shared.Configurations.GadgetStats)
-local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
+
 
 local CastBehavior = FastCast.newBehavior()
-local Comm = ClientComm.GetClientComm()
-local Player = Players.LocalPlayer
 
-local dealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
 local function CanRayBounce(cast, rayResult, segmentVelocity)
     local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
@@ -48,36 +42,6 @@ end
 
 local function reflect(surfaceNormal, bulletNormal)
 	return bulletNormal - (2 * bulletNormal:Dot(surfaceNormal) * surfaceNormal)
-end
-
-local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourcePlayer: Player, gadgetStats: GadgetStats.GadgetStats_T)
-	local character = Player.Character
-	if character then
-		local distance = (character.HumanoidRootPart.Position - part.Position).Magnitude
-		local explosion = Instance.new("Explosion")
-        explosion.Position = part.Position
-        explosion.BlastRadius = gadgetStats.NadeRadius
-        explosion.BlastPressure = 0
-        explosion.DestroyJointRadiusPercent = 0
-        explosion.Parent = workspace
-
-        task.delay(1, function()
-            explosion:Destroy()
-        end)
-
-        local function Damage()
-            local distanceDamageFactor = 1-(distance/gadgetStats.NadeRadius)
-            dealSelfDamage(math.abs(gadgetStats.MaxDamage*distanceDamageFactor))
-        end
-
-        if distance <= gadgetStats.NadeRadius then
-            if Player.TeamColor ~= sourceTeam then
-                Damage()
-            -- elseif Player == sourcePlayer then
-            --     Damage()
-            end
-        end
-	end
 end
 
 -- Event Handlers
@@ -124,12 +88,7 @@ local function OnRayTerminated(cast)
     local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
-		cosmeticBullet.Anchored = false
-		cosmeticBullet.CanCollide = true
-		cosmeticBullet.CanTouch = true
-		task.wait(gadgetStats.PopTime)
-		handleNadeTermination(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
-		task.wait(gadgetStats.DelayTime)
+		gadgetStats.TerminationBehavior(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end

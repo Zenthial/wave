@@ -15,7 +15,6 @@ local OnRayHit, OnRayBounced, OnRayUpdated, OnRayTerminated, CanRayBounce, CastB
 NadeCaster.RayHit:Connect(OnRayHit)
 NadeCaster.RayPierced:Connect(OnRayBounced)
 NadeCaster.LengthChanged:Connect(OnRayUpdated)
-NadeCaster.CastTerminating:Connect(OnRayTerminated)
 
 local Grenades = {}
 
@@ -24,6 +23,7 @@ local CastParams = RaycastParams.new()
 local function handleGadgetStats(player: Player, gadgetStats: GadgetStats.GadgetStats_T)
     FastCast.DebugLogging = gadgetStats.DEBUG
     FastCast.VisualizeCasts = gadgetStats.DEBUG
+    NadeCaster.CastTerminating:Connect(OnRayTerminated)
 
     CastParams.IgnoreWater = true
     CastParams.FilterType = Enum.RaycastFilterType.Blacklist
@@ -58,7 +58,6 @@ function Grenades:RenderNade(player: Player, position: Vector3, direction: Vecto
 	direction = (directionalCF * CFrame.fromOrientation(0, 0, RNG:NextNumber(0, TAU)) * CFrame.fromOrientation(math.rad(RNG:NextNumber(gadgetStats.MinSpreadAngle, gadgetStats.MaxSpreadAngle)), 0, 0)).LookVector
     -- local modifiedBulletSpeed = (direction * gadgetStats.ProjectileSpeed) + movementSpeed	-- We multiply our direction unit by the bullet speed. This creates a Vector3 version of the bullet's velocity at the given speed. We then add MyMovementSpeed to add our body's motion to the velocity.
 
-    print("caster fire")
     local activeCast = NadeCaster:Fire(position, direction, gadgetStats.ProjectileSpeed, CastBehavior)
 	activeCast.UserData.SourceTeam = player.TeamColor
 	activeCast.UserData.SourcePlayer = player

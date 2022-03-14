@@ -11,7 +11,7 @@ local DEFAULT_LOADOUT = {
     },
 
     Gadgets = {
-        "NDG"
+        "C0S"
     },
 
     Skills = {
