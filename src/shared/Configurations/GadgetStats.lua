@@ -89,7 +89,8 @@ return {
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
             grenade.Anchored = false
             grenade.CanCollide = true
-            grenade.CanTouch = true
+            grenade.CanTouch = false
+            grenade.CanQuery = false
             task.wait(stats.PopTime)
             local character = sourcePlayer.Character
             if character then
@@ -152,6 +153,10 @@ return {
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            grenade.Anchored = false
+            grenade.CanCollide = false
+            grenade.CanTouch = false
+            grenade.CanQuery = false
             local function calcC0SDamage(damage, distance)
                 return math.clamp(damage + (20 * (1 / distance)), 1, 15)
             end
