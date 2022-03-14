@@ -37,8 +37,8 @@ export type GadgetStats_T = {
     TerminationBehavior: (BasePart, BrickColor, Player, GadgetStats_T) -> (), -- Should yield if pop-time is needed
 }
 
-local dealSelfDamage = nil
-local cacheFolder = nil
+local DealSelfDamage = nil
+local CacheFolder = nil
 local Caches = {
     NDG = nil,
     C0S = nil,
@@ -49,14 +49,14 @@ if RunService:IsClient() then
     local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
     local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
     local Comm = ClientComm.GetClientComm()
-    dealSelfDamage = Comm:GetFunction("DealSelfDamage")
+    DealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
-    cacheFolder = Instance.new("Folder")
-    cacheFolder.Name = "GrenadeCacheFolder"
-    cacheFolder.Parent = workspace
+    CacheFolder = Instance.new("Folder")
+    CacheFolder.Name = "GrenadeCacheFolder"
+    CacheFolder.Parent = workspace
 
-    Caches.NDG = PartCache.new(Grenades.NDG.Projectile, 30, cacheFolder)
-    Caches.C0S = PartCache.new(Grenades.C0S.Projectile, 30, cacheFolder)
+    Caches.NDG = PartCache.new(Grenades.NDG.Projectile, 30, CacheFolder)
+    Caches.C0S = PartCache.new(Grenades.C0S.Projectile, 30, CacheFolder)
 end
 
 return {
@@ -83,7 +83,7 @@ return {
         MaxSpreadAngle = 0,
 
         Cache = Caches.NDG,
-        CacheFolder = cacheFolder,
+        CacheFolder = CacheFolder,
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
@@ -108,7 +108,7 @@ return {
 
                 local function Damage()
                     local distanceDamageFactor = 1-(distance/stats.NadeRadius)
-                    dealSelfDamage(math.abs(stats.MaxDamage*distanceDamageFactor))
+                    DealSelfDamage(math.abs(stats.MaxDamage*distanceDamageFactor))
                 end
 
                 if distance <= stats.NadeRadius then
@@ -149,7 +149,7 @@ return {
         MaxSpreadAngle = 0,
 
         Cache = Caches.C0S,
-        CacheFolder = cacheFolder,
+        CacheFolder = CacheFolder,
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
@@ -181,7 +181,7 @@ return {
                     if chr ~= nil and chr.HumanoidRootPart ~= nil --[[ and sourcePlayer.TeamColor ~= sourceTeam]] then
                         local dist = (chr.HumanoidRootPart.Position - startCFrame.Position).Magnitude
                         if dist <= radius then
-                            dealSelfDamage(calcC0SDamage(stats.MaxDamage, dist))
+                            DealSelfDamage(calcC0SDamage(stats.MaxDamage, dist))
                         end
                     end
                     task.wait(0.05)
