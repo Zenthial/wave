@@ -6,19 +6,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Grenades = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Grenades")
 local PartCache = require(ReplicatedStorage.Shared.util.PartCache)
 
-local dealSelfDamage = nil
-if RunService:IsClient() then
-    local StarterPlayer = game:GetService("StarterPlayer")
-    local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
-    local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
-    local Comm = ClientComm.GetClientComm()
-    dealSelfDamage = Comm:GetFunction("DealSelfDamage")
-end
-
-local cacheFolder = Instance.new("Folder")
-cacheFolder.Name = "GrenadeCacheFolder"
-cacheFolder.Parent = workspace
-
 export type GadgetStats_T = {
     Name: string,
     
@@ -50,6 +37,28 @@ export type GadgetStats_T = {
     TerminationBehavior: (BasePart, BrickColor, Player, GadgetStats_T) -> (), -- Should yield if pop-time is needed
 }
 
+local dealSelfDamage = nil
+local cacheFolder = nil
+local Caches = {
+    NDG = nil,
+    C0S = nil,
+}
+
+if RunService:IsClient() then
+    local StarterPlayer = game:GetService("StarterPlayer")
+    local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
+    local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
+    local Comm = ClientComm.GetClientComm()
+    dealSelfDamage = Comm:GetFunction("DealSelfDamage")
+
+    cacheFolder = Instance.new("Folder")
+    cacheFolder.Name = "GrenadeCacheFolder"
+    cacheFolder.Parent = workspace
+
+    Caches.NDG = PartCache.new(Grenades.NDG.Projectile, 30, cacheFolder)
+    Caches.C0S = PartCache.new(Grenades.C0S.Projectile, 30, cacheFolder)
+end
+
 return {
     ["NDG"] = {
         Name = "NDG",
@@ -73,7 +82,7 @@ return {
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
 
-        Cache = PartCache.new(Grenades.NDG.Projectile, 30, cacheFolder),
+        Cache = Caches.NDG,
         CacheFolder = cacheFolder,
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
@@ -138,7 +147,7 @@ return {
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
 
-        Cache = PartCache.new(Grenades.C0S.Projectile, 30, cacheFolder),
+        Cache = Caches.C0S,
         CacheFolder = cacheFolder,
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
