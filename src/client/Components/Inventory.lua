@@ -44,7 +44,7 @@ function Inventory:Initial()
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
-    self.EquippedGrenade = nil
+    self.EquippedGadget = nil
 
     local MainHUD = PlayerGui:WaitForChild("MainHUD")
     local MainHUDComponent = Rosyn.AwaitComponentInit(MainHUD, MainHUDModule) :: typeof(MainHUDModule)
@@ -74,6 +74,7 @@ function Inventory:Initial()
 
     local SetWeaponSignal = ClientComm:GetSignal("SetWeapon")
     self.Cleaner:Add(SetWeaponSignal:Connect(function(inventoryKey: string, weaponName: string, model: Model)
+        print(inventoryKey, weaponName)
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
         if model == nil then
             model = character:FindFirstChild(weaponName)
@@ -93,9 +94,9 @@ function Inventory:Initial()
             if not success then
                 print("failed to add skill " .. weaponName)
             end
-        elseif inventoryKey == "Grenades" then
+        elseif inventoryKey == "Gadgets" then
             assert(model == nil, "Why does the grenade have a model?")
-            self.EquippedGrenade = weaponName
+            self.EquippedGadget = weaponName
         end
     end))
 end
@@ -104,8 +105,10 @@ function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
     self.SkillsToolbar:FeedInput(KeyCode)
 
-    if KeyCode == Enum.KeyCode.G and self.EquippedGrenade ~= nil then
-        GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGrenade)
+    print(KeyCode, self.EquippedGadget)
+    if KeyCode == Enum.KeyCode.G and self.EquippedGadget ~= nil then
+        print("throwing")
+        GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
     end
 end
 

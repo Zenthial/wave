@@ -7,7 +7,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Rosyn = require(Shared:WaitForChild("Rosyn"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
-local GrenadeStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GrenadeStats"))
+local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
@@ -72,7 +72,7 @@ function GunEngine:Start()
         
     end))
 
-    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GrenadeStatsModule.GrenadeStats_T)
+    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GadgetStatsModule.GadgetStats_T)
         self:RenderGrenadeForOtherPlayer(player, position, direction, movementSpeed, stats)
     end))
 end
@@ -80,15 +80,15 @@ end
 function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local hrp = Player.Character.HumanoidRootPart
     local humanoid = Player.Character.Humanoid
-    local grenadeStats = GrenadeStatsModule[grenadeName]
-    assert(grenadeStats, "No grenade stats for the grenade")
+    local GadgetStats = GadgetStatsModule[grenadeName]
+    assert(GadgetStats, "No grenade stats for the grenade")
     if Player.Character ~= nil and hrp ~= nil and humanoid ~= nil and self.MovementComponent.State.Sprinting == false then
         self.AnimationTreeComponent:SetGrenade(true)
-        Grenades:RenderNade(Player, hrp.Position, humanoid.MoveDirection, humanoid.MoveDirection.Magnitude * humanoid.WalkSpeed, grenadeStats)
+        Grenades:RenderNade(Player, hrp.Position, humanoid.MoveDirection, humanoid.MoveDirection.Magnitude * humanoid.WalkSpeed, GadgetStats)
     end
 end
 
-function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GrenadeStatsModule.GrenadeStats_T)
+function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GadgetStatsModule.GadgetStats_T)
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 

@@ -4,7 +4,7 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
 local FastCast = require(ReplicatedStorage.Shared.Modules.FastCastRedux)
-local GrenadeStats = require(ReplicatedStorage.Shared.Configurations.GrenadeStats)
+local GadgetStats = require(ReplicatedStorage.Shared.Configurations.GadgetStats)
 local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
 
 local CastBehavior = FastCast.newBehavior()
@@ -14,7 +14,7 @@ local Player = Players.LocalPlayer
 local dealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
 local function CanRayBounce(cast, rayResult, segmentVelocity)
-    local grenadeStats = cast.UserData.GrenadeStats :: GrenadeStats.GrenadeStats_T
+    local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
 	
 	-- Let's keep track of how many times we've hit something.
 	local hits = cast.UserData.Hits
@@ -26,8 +26,8 @@ local function CanRayBounce(cast, rayResult, segmentVelocity)
 		cast.UserData.Hits += 1
 	end
 	
-	-- And if the hit count is over grenadeStats.NumBounces, don't allow piercing and instead stop the ray.
-	if cast.UserData.Hits > grenadeStats.NumBounces then
+	-- And if the hit count is over GadgetStats.NumBounces, don't allow piercing and instead stop the ray.
+	if cast.UserData.Hits > gadgetStats.NumBounces then
 		return false
 	end
 	
@@ -50,13 +50,13 @@ local function reflect(surfaceNormal, bulletNormal)
 	return bulletNormal - (2 * bulletNormal:Dot(surfaceNormal) * surfaceNormal)
 end
 
-local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourcePlayer: Player, grenadeStats: GrenadeStats.GrenadeStats_T)
+local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourcePlayer: Player, gadgetStats: GadgetStats.GadgetStats_T)
 	local character = Player.Character
 	if character then
 		local distance = (character.HumanoidRootPart.Position - part.Position).Magnitude
 		local explosion = Instance.new("Explosion")
         explosion.Position = part.Position
-        explosion.BlastRadius = grenadeStats.NadeRadius
+        explosion.BlastRadius = GadgetStats.NadeRadius
         explosion.BlastPressure = 0
         explosion.DestroyJointRadiusPercent = 0
         explosion.Parent = workspace
@@ -66,11 +66,11 @@ local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourceP
         end)
 
         local function Damage()
-            local distanceDamageFactor = 1-(distance/grenadeStats.NadeRadius)
-            dealSelfDamage(math.abs(grenadeStats.MaxDamage*distanceDamageFactor))
+            local distanceDamageFactor = 1-(distance/GadgetStats.NadeRadius)
+            dealSelfDamage(math.abs(GadgetStats.MaxDamage*distanceDamageFactor))
         end
 
-        if distance <= grenadeStats.NadeRadius then
+        if distance <= GadgetStats.NadeRadius then
             if Player.TeamColor ~= sourceTeam then
                 Damage()
             -- elseif Player == sourcePlayer then
@@ -121,12 +121,12 @@ end
 
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
-    local grenadeStats = cast.UserData.GrenadeStats :: GrenadeStats.GrenadeStats_T
+    local GadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
-		task.wait(grenadeStats.PopTime)
+		task.wait(GadgetStats.PopTime)
 		handleNadeTermination(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer)
-		task.wait(grenadeStats.DelayTime)
+		task.wait(GadgetStats.DelayTime)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end

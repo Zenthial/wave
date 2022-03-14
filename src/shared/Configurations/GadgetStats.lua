@@ -7,7 +7,9 @@ local cacheFolder = Instance.new("Folder")
 cacheFolder.Name = "GrenadeCacheFolder"
 cacheFolder.Parent = workspace
 
-export type GrenadeStats_T = {
+export type GadgetStats_T = {
+    Name: string,
+    
     DEBUG: boolean,
 
     ProjectileSpeed: number,
@@ -33,6 +35,8 @@ export type GrenadeStats_T = {
 
 return {
     ["NDG"] = {
+        Name = "NDG",
+
         DEBUG = false,
 
         ProjectileSpeed = 110,

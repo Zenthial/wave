@@ -9,7 +9,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChild("InventoryStats"))
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local SkillStats = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
-local GrenadeStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GrenadeStats"))
+local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local comm = require(Modules.ServerComm)
 
 local WeaponModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
@@ -90,9 +90,9 @@ function Inventory:LoadInventory(inv: InventoryType)
                 self.Root:SetAttribute("EquippedSkill", name)
                 SetWeaponSignal:Fire(self.Root, key, name, model)
             end
-        elseif key == "Grenades" then
+        elseif key == "Gadgets" then
             for _, name in pairs(val) do
-                local stats = GrenadeStats[name]
+                local stats = GadgetStats[name]
 
                 assert(stats, "No Grenade Stats for " .. name)
                 self.Root:SetAttribute("EquippedGrenade", name)
