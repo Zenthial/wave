@@ -42,7 +42,7 @@ for _, module in pairs(script.Modules:GetChildren()) do
         local m = require(module)
         modules[module.Name] = m
         if typeof(m) == "table" then
-            if m["Start"] ~= nil then
+            if m["Start"] ~= nil and typeof(m["Start"]) == "function" then
                 task.spawn(function()
                     m:Start()
                 end)
@@ -54,6 +54,7 @@ end
 local comm = modules["ClientComm"]
 repeat
     comm = modules["ClientComm"]
+    task.wait()
 until comm ~= nil
 local ClientComm = comm.GetClientComm()
 
@@ -67,6 +68,7 @@ if (Player.Character) then
     characterAdded(Player.Character)
 end
 
+CollectionService:AddTag(Player, "Inventory")
 Player.CharacterAdded:Connect(characterAdded)
 
 ClientComm:GetSignal("PlayerLoaded"):Fire()

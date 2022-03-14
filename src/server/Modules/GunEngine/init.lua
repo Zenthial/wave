@@ -1,11 +1,11 @@
 local Players = game:GetService("Players")
-local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
 
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 
 local Health = require(game.ServerScriptService.Server.Components.Player.Health)
@@ -30,6 +30,7 @@ local function setupPlayer(player: Player)
 end
 
 local drawRaySignal = comm:CreateSignal("DrawRay")
+local renderGrenade = comm:CreateSignal("RenderGrenade")
 
 comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: boolean)
     -- could be abused somehow?
@@ -75,6 +76,10 @@ function GunEngine:Start()
         -- could be spammed fired to cause people to lag, check some kind of script invocation timer thingy, could make sure that the time between shots isn't shorter than the fire rate
         -- something like LastShot = tick(), if currentShot - LastShot < fireRate then kick, though probably would just want to watch them
         drawRaySignal:FireExcept(player, startPosition, endPosition, weaponName)
+    end)
+
+    renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, stats: GadgetStats.GadgetStats_T)
+        renderGrenade:FireExcept(player, player, position, direction, movementSpeed, stats)
     end)
 end
 

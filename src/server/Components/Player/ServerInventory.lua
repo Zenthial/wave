@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
@@ -15,28 +16,28 @@ local comm = require(Modules.ServerComm)
 local WeaponModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local SkillModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Skills")
 
-type InventoryType = InventoryStats.Inventory
+type ServerInventoryType = InventoryStats.Inventory
 
 local ServerComm = comm.GetComm()
 local SetWeaponSignal = ServerComm:CreateSignal("SetWeapon")
 
-local Inventory = {}
-Inventory.__index = Inventory
-Inventory.__Tag = "Inventory"
+local ServerInventory = {}
+ServerInventory.__index = ServerInventory
+ServerInventory.__Tag = "ServerInventory"
 
-function Inventory.new(root: any)
+function ServerInventory.new(root: any)
     return setmetatable({
         Root = root,
 
-        ActiveInventory = {
+        ActiveServerInventory = {
             Weapons = {},
             Gadgets = {},
             Skills = {}
-        } :: InventoryType
-    }, Inventory)
+        } :: ServerInventoryType
+    }, ServerInventory)
 end
 
-function Inventory:Initial()
+function ServerInventory:Initial()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
@@ -48,12 +49,12 @@ function Inventory:Initial()
     self.Root:SetAttribute("EquippedWeapon", "") -- on the toolbars, have an event that fires when equipped and unequipped to increment the thing
     self.Root:SetAttribute("EquippedSkill", "") -- on the toolbars, have an event that fires when equipped and unequipped to increment the thing
 
-    self:LoadInventory(InventoryStats)
+    self:LoadServerInventory(InventoryStats)
 end
 
-function Inventory:LoadInventory(inv: InventoryType)
+function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
     for key, val in pairs(inv) do
-        self.ActiveInventory[key] = val
+        self.ActiveServerInventory[key] = val
 
         if key == "Weapons" then
             for _, name in pairs(val) do
@@ -102,10 +103,10 @@ function Inventory:LoadInventory(inv: InventoryType)
     end
 end
 
-function Inventory:Destroy()
+function ServerInventory:Destroy()
 
 end
 
-Rosyn.Register("Player", {Inventory})
+Rosyn.Register("Player", {ServerInventory}, Players)
 
-return Inventory
+return ServerInventory

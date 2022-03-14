@@ -56,7 +56,7 @@ local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourceP
 		local distance = (character.HumanoidRootPart.Position - part.Position).Magnitude
 		local explosion = Instance.new("Explosion")
         explosion.Position = part.Position
-        explosion.BlastRadius = GadgetStats.NadeRadius
+        explosion.BlastRadius = gadgetStats.NadeRadius
         explosion.BlastPressure = 0
         explosion.DestroyJointRadiusPercent = 0
         explosion.Parent = workspace
@@ -66,11 +66,11 @@ local function handleNadeTermination(part: Part, sourceTeam: BrickColor, sourceP
         end)
 
         local function Damage()
-            local distanceDamageFactor = 1-(distance/GadgetStats.NadeRadius)
-            dealSelfDamage(math.abs(GadgetStats.MaxDamage*distanceDamageFactor))
+            local distanceDamageFactor = 1-(distance/gadgetStats.NadeRadius)
+            dealSelfDamage(math.abs(gadgetStats.MaxDamage*distanceDamageFactor))
         end
 
-        if distance <= GadgetStats.NadeRadius then
+        if distance <= gadgetStats.NadeRadius then
             if Player.TeamColor ~= sourceTeam then
                 Damage()
             -- elseif Player == sourcePlayer then
@@ -121,12 +121,15 @@ end
 
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
-    local GadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
+    local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
-		task.wait(GadgetStats.PopTime)
-		handleNadeTermination(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer)
-		task.wait(GadgetStats.DelayTime)
+		cosmeticBullet.Anchored = false
+		cosmeticBullet.CanCollide = true
+		cosmeticBullet.CanTouch = true
+		task.wait(gadgetStats.PopTime)
+		handleNadeTermination(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
+		task.wait(gadgetStats.DelayTime)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end

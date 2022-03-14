@@ -105,9 +105,7 @@ function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
     self.SkillsToolbar:FeedInput(KeyCode)
 
-    print(KeyCode, self.EquippedGadget)
     if KeyCode == Enum.KeyCode.G and self.EquippedGadget ~= nil then
-        print("throwing")
         GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
     end
 end
@@ -124,6 +122,6 @@ function Inventory:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Inventory})
+Rosyn.Register("Inventory", {Inventory}, Players)
 
 return Inventory

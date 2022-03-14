@@ -5,7 +5,7 @@ local Option = require(script.Parent.Parent.Option)
 local Util = {}
 
 Util.IsServer = RunService:IsServer()
-Util.WaitForChildTimeout = 60
+Util.WaitForChildTimeout = 10
 Util.DefaultCommFolderName = "__comm__"
 Util.None = newproxy()
 

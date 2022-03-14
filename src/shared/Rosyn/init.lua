@@ -47,7 +47,7 @@ local WARN_TAG_DESTROY_CREATE = "CollectionService reported a destroyed tag befo
 local WARN_COMPONENT_NOT_FOUND = "Component not found: %s"
 local WARN_COMPONENT_INFINITE_WAIT = "Potential infinite wait on (\n\tObject = '%s';\n\tComponent = '%s';\n)\n%s"
 
-local DEFAULT_TIMEOUT = 60
+local DEFAULT_TIMEOUT = 10
 local FORCE_RELEASE_REFS = true
 local TIMEOUT_WARN_MULTIPLIER = 1/6
 local WRAP_FUNCTIONS_WITH_MEMORY_TAGS = "Initial"

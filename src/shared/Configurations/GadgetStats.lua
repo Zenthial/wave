@@ -46,7 +46,7 @@ return {
         MaxDamage = 50,
 
         Bounce = true,
-        NumBounces = 2,
+        NumBounces = 0,
 
         PopTime = 0.6,
         DelayTime = 0.1,

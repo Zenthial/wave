@@ -22,6 +22,7 @@ local BulletModules = script.BulletModules
 local ClientComm = require(script.Parent.ClientComm)
 
 local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 
 type WeaponStats = WeaponStatsModule.WeaponStats_T
 
@@ -36,7 +37,7 @@ local MouseInput = Input.Mouse.new()
 local GunEngine = {}
 
 function GunEngine:Start()
-    if Player.Character ~= nil then
+    if Player.Character == nil then
         Player.CharacterAdded:Wait()
     end
     local requiredBulletModules = {}
@@ -44,12 +45,6 @@ function GunEngine:Start()
     for _, v in pairs(BulletModules:GetChildren()) do
         requiredBulletModules[v.Name] = require(v)    
     end
-
-    local movementComponent = Rosyn.AwaitComponentInit(Player, Movement)
-    self.MovementComponent = movementComponent
-
-    local animationTree = Rosyn.AwaitComponentInit(Player.Character, AnimationTree)
-    self.AnimationTreeComponent = animationTree
 
     local comm = ClientComm.GetClientComm()
     local raySignal = comm:GetSignal("DrawRay")
@@ -79,16 +74,21 @@ end
 
 function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local hrp = Player.Character.HumanoidRootPart
-    local humanoid = Player.Character.Humanoid
+    local leftArm = Player.Character["Left Arm"] :: Part
+
     local GadgetStats = GadgetStatsModule[grenadeName]
     assert(GadgetStats, "No grenade stats for the grenade")
-    if Player.Character ~= nil and hrp ~= nil and humanoid ~= nil and self.MovementComponent.State.Sprinting == false then
-        self.AnimationTreeComponent:SetGrenade(true)
-        Grenades:RenderNade(Player, hrp.Position, humanoid.MoveDirection, humanoid.MoveDirection.Magnitude * humanoid.WalkSpeed, GadgetStats)
+    
+    local movementComponent = Rosyn.AwaitComponentInit(Player, Movement)
+    local animationTree = Rosyn.AwaitComponentInit(Player.Character, AnimationTree)
+
+    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and movementComponent ~= nil and movementComponent.State.Sprinting == false then
+        animationTree:SetGrenade(true)
+        Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
     end
 end
 
-function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GadgetStatsModule.GadgetStats_T)
+function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, stats: GadgetStatsModule.GadgetStats_T)
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
