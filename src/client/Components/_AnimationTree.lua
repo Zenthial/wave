@@ -10,7 +10,7 @@ local TreeCreator = require(BehaviorTrees.BehaviorTreeCreator)
 
 local WeaponStatsTable = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 
-local Animation = require(script.Parent.Animation)
+local Animation = require(script.Parent.Animation.AnimationHandler)
 local Movement = require(script.Parent.Movement)
 
 local Player = game.Players.LocalPlayer
@@ -183,6 +183,7 @@ function AnimationTree:InitTree()
 
         cleaner:Add(RunService.Stepped:Connect(update))
         cleaner:Add(function()
+            print("aborting")
             animationTree:Abort()
         end)
     end)

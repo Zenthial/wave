@@ -48,12 +48,6 @@ function Movement.new(root: Model)
 end
 
 function Movement:Initial()
-    self.Player:SetAttribute("Sprinting", false)
-    self.Player:SetAttribute("CanSprint", true)
-
-    self.Player:SetAttribute("Crouching", false)
-    self.Player:SetAttribute("CanCrouch", true)
-
     self.Character = self.Player.Character or self.Player.CharacterAdded:Wait()
     self.Humanoid = self.Character:WaitForChild("Humanoid")
 

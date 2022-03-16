@@ -21,7 +21,7 @@ local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 local function setSprint(self, action: boolean)
     if (self.Player:GetAttribute("CanSprint") == false) then return end
 
-    self.Events.SprintChanged:Fire(action)
+    self.Player:SetAttribute("LocalSprinting", action)
     self.State.Sprinting = action
     toggleSprint(action)
 end
@@ -29,7 +29,7 @@ end
 local function setCrouch(self, action: boolean)
     if (self.Player:GetAttribute("CanCrouch") == false) then return end
 
-    self.Events.CrouchChanged:Fire(action)
+    self.Player:SetAttribute("LocalCrouching", action)
     self.State.Crouching = action
     toggleCrouch(action)
 end
@@ -48,11 +48,6 @@ function Movement.new(root: any)
             Crouching = false,
             Sprinting = false,
         },
-
-        Events = {
-            SprintChanged = Signal.new(),
-            CrouchChanged = Signal.new(),
-        }
     }, Movement)
 end
 

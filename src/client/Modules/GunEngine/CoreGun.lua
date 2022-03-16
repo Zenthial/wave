@@ -10,7 +10,6 @@ local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
-local AnimationTree = require(script.Parent.Parent.Parent.Components.AnimationTree)
 local Animator = require(script.Parent.Parent.Parent.Components.Animation)
 
 local ClientComm = require(script.Parent.Parent.ClientComm)
@@ -123,7 +122,6 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
     local character = Player.Character or Player.CharacterAdded:Wait()
-    local animationTreeComponent = Rosyn.AwaitComponentInit(character, AnimationTree) :: typeof(AnimationTree)
     local animationComponent = Rosyn.AwaitComponentInit(character, Animator) :: typeof(Animator)
 
     for _, animationData in pairs(weaponStats.Animations) do
@@ -137,7 +135,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
         attackModule:SetCanFire(bool)
 
-        animationTreeComponent:SetReload(bool)
+        Player:SetAttribute("Reloading", bool)
     end))
 
     cleaner:Add(ammoModule.Events.AmmoChanged:Connect(function(ammo): boolean
@@ -172,8 +170,6 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
         WeldWeaponFunction = weldWeaponFunction,
 
-        AnimationTree = animationTreeComponent,
-
         Events = {
             AmmoChanged = ammoChanged,
             Fired = fired
@@ -184,7 +180,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 end
 
 function CoreGun:Equip()
-    self.AnimationTree:EquipWeapon(self)
+    Player:SetAttribute("EquippedWeapon", self.WeaponStats.Name)
     local result = self.WeldWeaponFunction(self.Model, false) :: boolean
     if result == false then
         error("Weld failed, does this weapon have stats?")
@@ -193,7 +189,7 @@ function CoreGun:Equip()
 end
 
 function CoreGun:Unequip()
-    self.AnimationTree:UnequipWeapon()
+    Player:SetAttribute("EquippedWeapon", "")
     local result = self.WeldWeaponFunction(self.Model, true) :: boolean
     if result == false then
         error("Weld failed, does this weapon have stats?")

@@ -15,9 +15,9 @@ local Types = require(Shared:WaitForChild("Types"))
 
 local DefaultAnimations = require(Configurations.DefaultAnimations) :: {[string]: Types.AnimationData}
 
-local Animation = {}
-Animation.__index = Animation
-Animation.__Tag = "Animation"
+local AnimationHandler = {}
+AnimationHandler.__index = AnimationHandler
+AnimationHandler.__Tag = "AnimationHandler"
 
 ------------------------------------------------------------------------
 
@@ -47,17 +47,17 @@ end
 
 -------------------------------------------------------------------------
 
-function Animation.new(root: Model)
+function AnimationHandler.new(root: Model)
     return setmetatable({
         Root = root :: Model,
         Animator = nil :: Animator,
         AnimationTracks = {},
         AnimationFolder = createFolder(root),
         MarkerSignals = {},
-    }, Animation)
+    }, AnimationHandler)
 end
 
-function Animation:Initial()
+function AnimationHandler:Initial()
     self.Animator = findAnimator(self.Root)
     if self.Animator == nil then
         local humanoid = self.Root:WaitForChild("Humanoid", 30)
@@ -69,14 +69,14 @@ function Animation:Initial()
     end
 end
 
-function Animation:Destroy()
+function AnimationHandler:Destroy()
     for _, cleaner in pairs(self.MarkerSignals) do
         cleaner:Destroy()
     end
     self.AnimationFolder:Destroy()
 end
 
-function Animation:Load(data: Types.AnimationData)
+function AnimationHandler:Load(data: Types.AnimationData)
     local animation = createAnimation(data.TrackId)
     animation.Name = data.Name
     animation.Parent = self.AnimationFolder
@@ -96,7 +96,7 @@ function Animation:Load(data: Types.AnimationData)
     return self
 end
 
-function Animation:Play(animationName: string): AnimationTrack
+function AnimationHandler:Play(animationName: string): AnimationTrack
     if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
         return 
@@ -104,13 +104,13 @@ function Animation:Play(animationName: string): AnimationTrack
     
     if (not self.AnimationTracks[animationName].IsPlaying == true) then
         self.AnimationTracks[animationName]:Play()
-        -- print(string.format("Playing %s", animationName))
+        print(string.format("Playing %s", animationName))
     end
 
     return self.AnimationTracks[animationName]
 end
 
-function Animation:Stop(animationName: string)
+function AnimationHandler:Stop(animationName: string)
     if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to stop animation: "..animationName.. " does not exist in this Animation Component!")
         return 
@@ -118,15 +118,15 @@ function Animation:Stop(animationName: string)
 
     if (self.AnimationTracks[animationName].IsPlaying) then
         self.AnimationTracks[animationName]:Stop()
-        -- print(string.format("Stopping %s", animationName))
+        print(string.format("Stopping %s", animationName))
     end
 
     return self
 end
 
-function Animation:DestroyTrack(animationName: string)
+function AnimationHandler:DestroyTrack(animationName: string)
     if (self.AnimationTracks[animationName] == nil) then 
-        warn("Animation: ".. animationName .." has already been removed or never existed!")
+        warn("AnimationHandler: ".. animationName .." has already been removed or never existed!")
         return 
     end
 
@@ -140,6 +140,6 @@ function Animation:DestroyTrack(animationName: string)
     end
 end
 
-Rosyn.Register("Character", {Animation}, workspace)
+Rosyn.Register("Character", {AnimationHandler}, workspace)
 
-return Animation
+return AnimationHandler

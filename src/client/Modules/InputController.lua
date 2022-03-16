@@ -18,8 +18,6 @@ function InputController:Start()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
 
-    LocalPlayer:SetAttribute("Chatting", false)
-
     local InventoryComponent = Rosyn.AwaitComponentInit(LocalPlayer, Inventory) :: typeof(Inventory)
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()

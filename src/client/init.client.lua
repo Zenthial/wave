@@ -71,4 +71,8 @@ end
 CollectionService:AddTag(Player, "Inventory")
 Player.CharacterAdded:Connect(characterAdded)
 
+for attribute, value in pairs(modules["DefaultLocalPlayerAttributes"]) do
+    Player:SetAttribute(attribute, value)
+end
+
 ClientComm:GetSignal("PlayerLoaded"):Fire()

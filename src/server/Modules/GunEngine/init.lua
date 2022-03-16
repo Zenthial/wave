@@ -15,16 +15,10 @@ local comm = ServerComm.GetServerComm()
 
 local Welder = require(script.Welder)
 
-local GUN_ENGINE_ATTRIBUTES = {
-    NumWeaponsEquipped = 0,
-    HasPrimaryWeapon = false,
-    Spotted = false,
-    Restrained = false,
-    PlacingDeployable = false,
-}
+local DefaultServerPlayerAttributes = require(script.Parent.DefaultServerPlayerAttributes)
 
 local function setupPlayer(player: Player)
-    for attributeName, value in pairs(GUN_ENGINE_ATTRIBUTES) do
+    for attributeName, value in pairs(DefaultServerPlayerAttributes) do
         player:SetAttribute(attributeName, value)
     end
 end
