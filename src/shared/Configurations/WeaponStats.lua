@@ -37,6 +37,9 @@ export type WeaponStats_T = {
     BulletType: string, -- for things like the msi, pbw, anything else
     BulletModel: Model | BasePart,
     BulletCache: PartCache.PartCache,
+
+    CanSprint: boolean,
+    CanCrouch: boolean,
     
     NumBarrels: number,
     NumHandles: number,
@@ -139,6 +142,9 @@ return {
         BulletType = BulletType.Ray, -- for things like the msi, pbw, anything else
         BulletModel = Bullets.Default,
         BulletCache = Caches.DefaultCache,
+
+        CanSprint = true,
+        CanCrouch = true,
         
         NumBarrels = 1,
         NumHandles = 1,

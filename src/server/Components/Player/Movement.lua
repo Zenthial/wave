@@ -62,6 +62,7 @@ end
 function Movement:EnableSprint()
     if (self.Player:GetAttribute("CanSprint") == false) then return end
     self.Player:SetAttribute("Sprinting", true)
+    self.Player:SetAttribute("Crouching", false)
     self:UpdateWalkspeed()
 end
 
@@ -72,7 +73,13 @@ end
 
 function Movement:EnableCrouch()
     if (self.Player:GetAttribute("CanCrouch") == false) then return end
-    self.Player:SetAttribute("Crouching", true)
+    if self.Player:GetAttribute("Sprinting") == true and self.Player:GetAttribute("CanRoll") == true then
+        self.Player:SetAttribute("Rolling", true)
+        self.Player:SetAttribute("Sprinting", false)
+        self.Player:SetAttribute("Crouching", false)
+    else
+        self.Player:SetAttribute("Crouching", true)
+    end
     self:UpdateWalkspeed()
 end
 
@@ -95,7 +102,7 @@ function Movement:UpdateWalkspeed()
 			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 8
 		end
 		
-		if self.Player:GetAttribute("Sprinting") == true then
+		if self.Player:GetAttribute("Sprinting") == true or self.Player:GetAttribute("Rolling") == true then
 			self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed + 10
 		end
 		

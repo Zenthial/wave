@@ -22,16 +22,26 @@ local function setSprint(self, action: boolean)
     if (self.Player:GetAttribute("CanSprint") == false) then return end
 
     self.Player:SetAttribute("LocalSprinting", action)
+    if self.Player:GetAttribute("LocalCrouching") == true then
+        self.Player:SetAttribute("LocalCrouching", false)
+    end
     self.State.Sprinting = action
     toggleSprint(action)
 end
 
 local function setCrouch(self, action: boolean)
     if (self.Player:GetAttribute("CanCrouch") == false) then return end
+    if (self.Player:GetAttribute("LocalRolling") == true) then return end
 
-    self.Player:SetAttribute("LocalCrouching", action)
-    self.State.Crouching = action
-    toggleCrouch(action)
+    if action and self.Player:GetAttribute("LocalSprinting") == true and self.Player:GetAttribute("CanRoll") == true then
+        self.Player:SetAttribute("LocalRolling")
+        self.State.Rolling = action
+        toggleCrouch(action)
+    else
+        self.Player:SetAttribute("LocalCrouching", action)
+        self.State.Crouching = action
+        toggleCrouch(action)
+    end
 end
 
 local Movement = {}
@@ -47,6 +57,7 @@ function Movement.new(root: any)
         State = {
             Crouching = false,
             Sprinting = false,
+            Rolling = false,
         },
     }, Movement)
 end
@@ -67,6 +78,38 @@ function Movement:Initial()
         if (keyCode == Enum.KeyCode.LeftShift) then
             setSprint(self, false)
         end
+    end))
+
+    local LocalSprintingChangedSignal = self.Player:GetAttributeChangedSignal("LocalSprinting")
+    local LocalCrouchingChangedSignal = self.Player:GetAttributeChangedSignal("LocalCrouching")
+    local LocalRollingingChangedSignal = self.Player:GetAttributeChangedSignal("LocalRollinging")
+
+    local SprintChangedSignal = self.Player:GetAttributeChangedSignal("Sprint")
+    local CrouchChangedSignal = self.Player:GetAttributeChangedSignal("Crouch")
+    local RollingChangedSignal = self.Player:GetAttributeChangedSignal("Rolling")
+
+    self.Cleaner:Add(LocalSprintingChangedSignal:Connect(function()
+        self:SetSprint(self.Player:GetAttribute("LocalSprinting"))
+    end))
+
+    self.Cleaner:Add(LocalCrouchingChangedSignal:Connect(function()
+        self:SetCrouch(self.Player:GetAttribute("LocalCrouching"))
+    end))
+
+    self.Cleaner:Add(LocalRollingingChangedSignal:Connect(function()
+        self:SetRolling(self.Player:GetAttribute("LocalRollinging"))
+    end))
+
+    self.Cleaner:Add(SprintChangedSignal:Connect(function()
+        self.Player:SetAttribute("LocalSprinting", self.Player:GetAttribute("Sprinting"))
+    end))
+
+    self.Cleaner:Add(CrouchChangedSignal:Connect(function()
+        self.Player:SetAttribute("LocalCrouching", self.Player:GetAttribute("Crouching"))
+    end))
+
+    self.Cleaner:Add(RollingChangedSignal:Connect(function()
+        self.Player:SetAttribute("LocalRollinging", self.Player:GetAttribute("Rolling"))
     end))
 end
 

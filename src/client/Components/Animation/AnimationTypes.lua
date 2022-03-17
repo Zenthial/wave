@@ -13,7 +13,7 @@ export type AnimationTreeStruct = {
     ReloadPlaying: boolean,
 
     WeaponEquipped: boolean,
-    EquippedWeaponPointer: any, -- CoreGun but cannot define it without recursively requiring
+    WeaponName: boolean
 }
 
 return {}

@@ -4,7 +4,9 @@ local Players = game:GetService("Players")
 local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
+local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 
+local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
 local AnimationHandler = require(script.Parent.AnimationHandler)
 local AnimationTypes = require(script.Parent.AnimationTypes)
 
@@ -25,14 +27,7 @@ function AnimationState.new(root: any)
 end
 
 function AnimationState:Initial()
-    local events = {
-        SprintChanged = Signal.new(),
-        CrouchChanged = Signal.new(),
-        ReloadChanged = Signal.new(),
-        RollingChanged = Signal.new(),
-        EquipChanged = Signal.new(),
-        UnequipChanged = Signal.new(),
-    }
+    local cleaner = self.Cleaner :: typeof(Trove)
 
     local state: State_T = {
         Equipping = 0,
@@ -52,51 +47,82 @@ function AnimationState:Initial()
         GrenadePlaying = false,
 
         WeaponEquipped = false,
-        EquippedWeaponPointer = nil,
+        WeaponName = "",
+
+        PlayingAnimations = {}
     }
 
     self.State = state
-    self.Events = events
+
+    self.AnimationHandler = Rosyn.AwaitComponentInit(self.Root, AnimationHandler)
+
+    local SprintChangedSignal = Player:GetAttributeChangedSignal("LocalSprinting")
+    local CrouchChangedSignal = Player:GetAttributeChangedSignal("LocalCrouching")
+    local RollingChangedSignal = Player:GetAttributeChangedSignal("LocalRolling")
+    local EquippedWeaponChangedSignal = Player:GetAttributeChangedSignal("EquippedWeapon") -- string
+    local ReloadingChangedSignal = Player:GetAttributeChangedSignal("Reloading")
+    local ThrowingChangedSignal = Player:GetAttributeChangedSignal("Throwing")
+    local PlacingChangedSignal = Player:GetAttributeChangedSignal("Placing")
+
+    cleaner:Add(SprintChangedSignal:Connect(function()
+        state.SprintActive = Player:GetAttribute("LocalSprinting")
+        
+        self:HandleSprintChange()
+    end))
+
+    cleaner:Add(CrouchChangedSignal:Connect(function()
+        state.CrouchActive = Player:GetAttribute("LocalCrouching")
+        
+        self:HandleCrouchChange()
+    end))
+
+    cleaner:Add(RollingChangedSignal:Connect(function()
+        state.Rolling = Player:GetAttribute("LocalRolling")
+        
+        self:HandleRollingChange()
+    end))
 end
 
-function AnimationState:EquipWeapon(weapon)
-    self.State.Equipping = 1
-
-    self.State.WeaponEquipped = true
-    self.State.EquippedWeaponPointer = weapon
-
-    self.Events.EquipChanged:Fire(true)
+function AnimationState:HandleCrouchChange()
+    local state = self.State :: State_T
+    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
 end
 
-function AnimationState:UnequipWeapon()
-    self.State.Equipping = -1
+function AnimationState:HandleSprintChange()
+    local state = self.State :: State_T
+    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
 
-    self.State.WeaponEquipped = false
-    -- self.State.EquippedWeaponPointer = nil
+    if state.SprintActive and not state.SprintPlaying then
+        if state.CrouchActive then
+            Player:SetAttribute("LocalCrouching", false)
+        end
 
-    self.Events.UnequipChanged:Fire(false)
+        if state.WeaponEquipped and state.WeaponName ~= "" and not state.Rolling then
+            animationHandler:Play(state.WeaponName .. "Sprint")
+            table.insert(self.PlayingAnimations, state.WeaponName .. "Sprint")
+            state.SprintPlaying = true
+        end
+
+    elseif not state.SprintActive and state.SprintPlaying then
+        for _, animationName in pairs(self.PlayingAnimations) do
+            if string.find(animationName:lower(), "sprint") then -- could optimize by storing every sprint animation playing
+                animationHandler:Stop(animationName)
+            end
+        end
+
+        state.SprintPlaying = false
+    end
 end
 
-function AnimationState:SetSprint(bool: boolean)
-    self.State.SprintActive = bool
+function AnimationState:HandleRollingChange()
+    local state = self.State :: State_T
+    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+    state.SprintActive = false
+    self:HandleSprintChange()
 
-    self.Events.SprintChanged:Fire(bool)
-end
-
-function AnimationState:SetCrouch(bool: boolean)
-    self.State.CrouchActive = bool
-
-    self.Events.CrouchChanged:Fire(bool)
-end
-
-function AnimationState:SetReload(bool: boolean)
-    self.State.ReloadActive = bool
-
-    self.Events.ReloadChanged:Fire(bool)
-end
-
-function AnimationState:SetGrenade(bool: boolean)
-    self.State.GrenadeActive = bool
+    
+    Player:SetAttribute("LocalSprinting", false)
+    Player:SetAttribute("LocalCrouching", false)
 end
 
 function AnimationState:Destroy()
