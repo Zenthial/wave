@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
@@ -33,6 +34,8 @@ function Mouse:Initial()
     self.Cleaner:Add(mouseObject.Move:Connect(function()
         -- mouse move
     end))
+
+    print("mouse initialized")
 end
 
 function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming: boolean, currentRecoil: number?, aimBuff: number?): Vector3
@@ -85,6 +88,6 @@ function Mouse:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Mouse})
+Rosyn.Register("Player", {Mouse}, Players)
 
 return Mouse

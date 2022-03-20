@@ -2,8 +2,9 @@
 -- 1/11/2022
 ------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent:WaitForChild("Modules")
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules")
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -47,17 +48,19 @@ end
 
 -------------------------------------------------------------------------
 
-function AnimationHandler.new(root: Model)
+function AnimationHandler.new(player: Player)
     return setmetatable({
-        Root = root :: Model,
+        Player = player,
         Animator = nil :: Animator,
         AnimationTracks = {},
-        AnimationFolder = createFolder(root),
         MarkerSignals = {},
     }, AnimationHandler)
 end
 
 function AnimationHandler:Initial()
+    local root = self.Player.Character or self.Player.CharacterAdded:Wait()
+    self.Root = root;
+    self.AnimationFolder = createFolder(root)
     self.Animator = findAnimator(self.Root)
     if self.Animator == nil then
         local humanoid = self.Root:WaitForChild("Humanoid", 30)
@@ -67,6 +70,8 @@ function AnimationHandler:Initial()
     for _, animationData in pairs(DefaultAnimations) do
         self:Load(animationData)
     end
+
+    print("animationhandler initialized")
 end
 
 function AnimationHandler:Destroy()
@@ -140,6 +145,6 @@ function AnimationHandler:DestroyTrack(animationName: string)
     end
 end
 
-Rosyn.Register("Character", {AnimationHandler}, workspace)
+Rosyn.Register("AnimationHandler", {AnimationHandler}, workspace)
 
 return AnimationHandler

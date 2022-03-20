@@ -16,7 +16,7 @@ local Player = Players.LocalPlayer
 
 local AnimationState = {}
 AnimationState.__index = AnimationState
-AnimationState.Tag = "AnimationState"
+AnimationState.__Tag = "AnimationState"
 
 function AnimationState.new(root: any)
     return setmetatable({
@@ -81,11 +81,34 @@ function AnimationState:Initial()
         
         self:HandleRollingChange()
     end))
+
+    cleaner:Add(ThrowingChangedSignal:Connect(function()
+        state.GrenadeActive = true
+
+        self:HandleThrowingChange()
+    end))
 end
 
 function AnimationState:HandleCrouchChange()
+    print(self)
     local state = self.State :: State_T
     local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+
+    if state.CrouchActive and not state.CrouchPlaying then
+        for _, animationName in pairs(DefaultAnimations.Crouch) do
+            animationHandler:Play(animationName)
+        end
+
+        state.CrouchPlaying = true
+    elseif not state.CrouchActive and state.CrouchPlaying then
+        for _, animationName in pairs(self.PlayingAnimations) do
+            if string.find(animationName:lower(), "crouch") then -- could optimize by storing every sprint animation playing
+                animationHandler:Stop(animationName)
+            end
+        end
+
+        state.CrouchPlaying = false
+    end
 end
 
 function AnimationState:HandleSprintChange()
@@ -120,9 +143,27 @@ function AnimationState:HandleRollingChange()
     state.SprintActive = false
     self:HandleSprintChange()
 
+
+    local rollAnimation = animationHandler:Play(DefaultAnimations.Rolling)
+    rollAnimation.Stopped:Wait()
     
     Player:SetAttribute("LocalSprinting", false)
     Player:SetAttribute("LocalCrouching", false)
+end
+
+function AnimationState:HandleThrowingChange()
+    local state = self.State :: State_T
+    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+
+    if state.GrenadeActive == true and not state.GrenadePlaying then
+        local animation = animationHandler:Play(DefaultAnimations.Throw)
+        state.GrenadePlaying = true
+        animation.Stopped:Wait()
+        Player:SetAttribute("Throwing", false)
+        state.GrenadeActive = false
+        state.GrenadePlaying = false
+    end
+    
 end
 
 function AnimationState:Destroy()

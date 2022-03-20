@@ -6,9 +6,7 @@ return {
 
     Rolling = "globalrollMiddle",
 
-    Throw = {
-        "globalthrowArms"
-    },
+    Throw = "globalthrowArms",
 
     Deployable = {
         "globaldeployableBottom",

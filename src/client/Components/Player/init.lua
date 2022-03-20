@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
@@ -34,6 +35,8 @@ function Player:Initial()
     local player = self.Player :: Player
     player.CameraMaxZoomDistance = 25
     player.CameraMinZoomDistance = 5
+    CollectionService:AddTag(self.Player, "Movement")
+    CollectionService:AddTag(self.Player, "AnimationHandler")
 end
 
 function Player:Destroy()

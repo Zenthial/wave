@@ -16,7 +16,7 @@ local TWEEN_CONSTANTS = {
 
 local HeatUI = {}
 HeatUI.__index = HeatUI
-HeatUI.Tag = "HeatUI"
+HeatUI.__Tag = "HeatUI"
 
 --[[
     UI Structure

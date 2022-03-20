@@ -18,32 +18,6 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
-local function setSprint(self, action: boolean)
-    if (self.Player:GetAttribute("CanSprint") == false) then return end
-
-    self.Player:SetAttribute("LocalSprinting", action)
-    if self.Player:GetAttribute("LocalCrouching") == true then
-        self.Player:SetAttribute("LocalCrouching", false)
-    end
-    self.State.Sprinting = action
-    toggleSprint(action)
-end
-
-local function setCrouch(self, action: boolean)
-    if (self.Player:GetAttribute("CanCrouch") == false) then return end
-    if (self.Player:GetAttribute("LocalRolling") == true) then return end
-
-    if action and self.Player:GetAttribute("LocalSprinting") == true and self.Player:GetAttribute("CanRoll") == true then
-        self.Player:SetAttribute("LocalRolling")
-        self.State.Rolling = action
-        toggleCrouch(action)
-    else
-        self.Player:SetAttribute("LocalCrouching", action)
-        self.State.Crouching = action
-        toggleCrouch(action)
-    end
-end
-
 local Movement = {}
 Movement.__index = Movement
 Movement.__Tag = "Movement"
@@ -68,21 +42,21 @@ function Movement:Initial()
 
     self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
-            setSprint(self, true)
+            self:SetSprint(true)
         elseif (keyCode == Enum.KeyCode.C) then
-            setCrouch(self, not self.State.Crouching)
+            self:SetCrouch(not self.State.Crouching)
         end
     end))
 
     self.Cleaner:Add(self.Keyboard.KeyUp:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
-            setSprint(self, false)
+            self:SetSprint(false)
         end
     end))
 
     local LocalSprintingChangedSignal = self.Player:GetAttributeChangedSignal("LocalSprinting")
     local LocalCrouchingChangedSignal = self.Player:GetAttributeChangedSignal("LocalCrouching")
-    local LocalRollingingChangedSignal = self.Player:GetAttributeChangedSignal("LocalRollinging")
+    local LocalRollingChangedSignal = self.Player:GetAttributeChangedSignal("LocalRolling")
 
     local SprintChangedSignal = self.Player:GetAttributeChangedSignal("Sprint")
     local CrouchChangedSignal = self.Player:GetAttributeChangedSignal("Crouch")
@@ -96,9 +70,9 @@ function Movement:Initial()
         self:SetCrouch(self.Player:GetAttribute("LocalCrouching"))
     end))
 
-    self.Cleaner:Add(LocalRollingingChangedSignal:Connect(function()
-        self:SetRolling(self.Player:GetAttribute("LocalRollinging"))
-    end))
+    -- self.Cleaner:Add(LocalRollingChangedSignal:Connect(function()
+    --     self:SetRolling(self.Player:GetAttribute("LocalRolling"))
+    -- end))
 
     self.Cleaner:Add(SprintChangedSignal:Connect(function()
         self.Player:SetAttribute("LocalSprinting", self.Player:GetAttribute("Sprinting"))
@@ -109,16 +83,34 @@ function Movement:Initial()
     end))
 
     self.Cleaner:Add(RollingChangedSignal:Connect(function()
-        self.Player:SetAttribute("LocalRollinging", self.Player:GetAttribute("Rolling"))
+        self.Player:SetAttribute("LocalRolling", self.Player:GetAttribute("Rolling"))
     end))
 end
 
-function Movement:SetSprint(sprint: boolean)
-    setSprint(self, sprint)
+function Movement:SetSprint(action: boolean)
+    if (self.Player:GetAttribute("CanSprint") == false) then return end
+
+    self.Player:SetAttribute("LocalSprinting", action)
+    if self.Player:GetAttribute("LocalCrouching") == true then
+        self.Player:SetAttribute("LocalCrouching", false)
+    end
+    self.State.Sprinting = action
+    toggleSprint(action)
 end
 
-function Movement:SetCrouch(crouch: boolean)
-    setCrouch(self, crouch)
+function Movement:SetCrouch(action: boolean)
+    if (self.Player:GetAttribute("CanCrouch") == false) then return end
+    if (self.Player:GetAttribute("LocalRolling") == true) then return end
+
+    if action and self.Player:GetAttribute("LocalSprinting") == true and self.Player:GetAttribute("CanRoll") == true then
+        self.Player:SetAttribute("LocalRolling")
+        self.State.Rolling = action
+        toggleCrouch(action)
+    else
+        self.Player:SetAttribute("LocalCrouching", action)
+        self.State.Crouching = action
+        toggleCrouch(action)
+    end
 end
 
 function Movement:Destroy()

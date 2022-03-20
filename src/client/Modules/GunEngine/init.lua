@@ -12,7 +12,6 @@ local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Movement = require(script.Parent.Parent.Components.Movement)
-local AnimationTree = require(script.Parent.Parent.Components.AnimationTree)
 
 local CoreGun = require(script.CoreGun)
 local CoreSkill = require(script.Skills.CoreSkill)
@@ -80,10 +79,9 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     assert(GadgetStats, "No grenade stats for the grenade")
     
     local movementComponent = Rosyn.AwaitComponentInit(Player, Movement)
-    local animationTree = Rosyn.AwaitComponentInit(Player.Character, AnimationTree)
 
     if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and movementComponent ~= nil and movementComponent.State.Sprinting == false then
-        animationTree:SetGrenade(true)
+        Player:SetAttribute("Throwing", true)
         Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
     end
 end

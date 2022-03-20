@@ -10,7 +10,7 @@ local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
-local Animator = require(script.Parent.Parent.Parent.Components.Animation)
+local Animator = require(script.Parent.Parent.Parent.Components.Animation.AnimationHandler)
 
 local ClientComm = require(script.Parent.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()

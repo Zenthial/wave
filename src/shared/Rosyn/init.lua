@@ -1,7 +1,7 @@
 --!nonstrict
 type ComponentInstance = any
 type ComponentClass = {
-    Type: string?,
+    __Tag: string?,
 
     new: (Instance) -> ComponentInstance,
     Initial: () -> (),
@@ -25,7 +25,7 @@ local Signal = require(script.Parent.util:WaitForChild("Signal"))
 
 local ERR_NO_INITIAL = "Component %s on %s does not contain an 'Initial' method"
 local ERR_INIT_FAILED = "Component %s Initial call failed on %s\n%s\n"
-local ERR_WAIT_TIMEOUT = "Component %s on %s timed out"
+local ERR_WAIT_TIMEOUT = "Component %s on %s with tag %s timed out"
 local ERR_NO_TAG_GIVEN = "No tag given!"
 local ERR_NO_OBJECT_GIVEN = "No object given!"
 local ERR_NO_COMPONENT_LIST = "No component class list given!"
@@ -114,6 +114,8 @@ function Rosyn.GetComponentName(Component: ComponentInstance | ComponentClass): 
     return Component.Type or tostring(Component)
 end
 
+
+local GlobalRegisteredTable = {}
 --[[--
     Registers component(s) to be automatically associated with instances with a certain tag.
     @param Tag The string of the CollectionService tag
@@ -168,6 +170,10 @@ function Rosyn.Register(Tag: string, Components: {ComponentClass}, AncestorTarge
         if (not Component._DO_NOT_WRAP and not Cleaner.IsWrapped(Component)) then
             Cleaner.Wrap(Component)
         end
+
+        if (GlobalRegisteredTable[Component.__Tag] == nil) then
+            GlobalRegisteredTable[Component.__Tag] = {}
+        end
     end
 
     local Registered = {}
@@ -179,17 +185,24 @@ function Rosyn.Register(Tag: string, Components: {ComponentClass}, AncestorTarge
             -- Thanks Roblox
             return
         end
-
+        
         assert(Item.Parent ~= nil, ERR_ITEM_ALREADY_DESTROYED)
-
+        
         if (not AncestorTarget:IsAncestorOf(Item)) then
             return
         end
-
+        
         Registered[Item] = true
-
+        
         for Index = 1, #Components do
             local ComponentClass = Components[Index]
+            print(GlobalRegisteredTable)
+            if table.find(GlobalRegisteredTable[ComponentClass.__Tag], Item) then
+                continue
+            else
+                print(string.format("Binding %s to %s with parent %s", Components[1].__Tag, Item.Name, Item.Parent.Name))
+                table.insert(GlobalRegisteredTable[ComponentClass.__Tag], Item)
+            end
 
             if (Rosyn.GetComponent(Item, ComponentClass)) then
                 warn(WARN_MULTIPLE_REGISTER:format(Rosyn.GetComponentName(ComponentClass), Trace))
@@ -303,7 +316,7 @@ function Rosyn.AwaitComponent(Object: Instance, ComponentClass: ComponentClass, 
     AddedConnection:Disconnect()
 
     assert(Result == 1,
-            Result == 2 and ERR_WAIT_TIMEOUT:format(ComponentName, Object:GetFullName()))
+            Result == 2 and ERR_WAIT_TIMEOUT:format(ComponentName, Object:GetFullName(), ComponentClass.__Tag))
 
     return Rosyn.GetComponent(Object, ComponentClass)
 end
@@ -360,7 +373,7 @@ function Rosyn.AwaitComponentInit(Object: Instance, ComponentClass: ComponentCla
     InitializedConnection:Disconnect()
 
     assert(Result == 1,
-            Result == 2 and ERR_WAIT_TIMEOUT:format(ComponentName, Object:GetFullName()))
+            Result == 2 and ERR_WAIT_TIMEOUT:format(ComponentName, Object:GetFullName(), ComponentClass.__Tag))
 
     return Rosyn.GetComponent(Object, ComponentClass)
 end

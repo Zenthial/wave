@@ -120,6 +120,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Movement}, Players)
+Rosyn.Register("Movement", {Movement}, Players)
 
 return Movement;
