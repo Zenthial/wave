@@ -1,3 +1,5 @@
+--!strict
+
 local CollectionService = game:GetService("CollectionService")
 
 local Signal = require(script.Signal)
@@ -13,43 +15,74 @@ type ComponentClass = Types.ComponentClass
 local instances_on_components: {[Instance]: {[ComponentClass]: ComponentInstance}} = {}
 local component_names_on_components: {[string]: ComponentClass}
 
-local function _get_instance_components(instance: Instance, component: ComponentClass)
-    return instances_on_components[instance] and instances_on_components[instance][component] or nil
+local function _get_instance_component(instance: Instance, component: ComponentClass)
+    return (instances_on_components[instance] ~= nil and instances_on_components[instance][component]) or nil
 end
 
 local function get_component(instance: Instance, component_name: string): ComponentInstance
     local component_class = component_names_on_components[component_name]
-    for _, component_instance in ipairs(_get_instance_components(instance, component_class)) do
-        if component_instance.Name == component_class.Name then
-            if component_instance.__Initialized == true then
-                return component_instance
-            else
-                local proxy = Signal.new()
-                local initialized = false
-                local initialized_connection = component_instance.__InitializedSignal:Connect(function()
-                    initialized = true
-                    proxy:Fire(0)
-                end)
 
-                task.delay(COMPONENT_START_TIMEOUT, function()
-                    if initialized == false then
-                        proxy:Fire(1)
-                    end
-                end)
+    local component_instance = _get_instance_component(instance, component_class)
+    if component_instance ~= nil then
+        if component_instance.__Initialized then
+            return component_instance
+        else
+            local proxy = Signal.new()
+            local initialized = false
+            local initialized_connection = component_instance.__InitializedSignal:Connect(function()
+                initialized = true
+                proxy:Fire(0)
+            end)
 
-                local result = proxy:Wait()
-                initialized_connection:Destroy()
-
-                if result == 0 then
-                    return component_instance
-                elseif result == 1 then
-                    error("Initialization failed on " .. component_instance.Name)
+            task.delay(COMPONENT_START_TIMEOUT, function()
+                if initialized == false then
+                    proxy:Fire(1)
                 end
+            end)
+
+            local result = proxy:Wait()
+            initialized_connection:Destroy()
+
+            if result == 0 then
+                return component_instance
+            elseif result == 1 then
+                error("Initialization failed on " .. component_instance.Name)
             end
         end
     end
 
     return nil
+    -- for _, component_instance in ipairs(_get_instance_components(instance, component_class)) do
+    --     if component_instance.Name == component_class.Name then
+    --         if component_instance.__Initialized == true then
+    --             return component_instance
+    --         else
+    --             local proxy = Signal.new()
+    --             local initialized = false
+    --             local initialized_connection = component_instance.__InitializedSignal:Connect(function()
+    --                 initialized = true
+    --                 proxy:Fire(0)
+    --             end)
+
+    --             task.delay(COMPONENT_START_TIMEOUT, function()
+    --                 if initialized == false then
+    --                     proxy:Fire(1)
+    --                 end
+    --             end)
+
+    --             local result = proxy:Wait()
+    --             initialized_connection:Destroy()
+
+    --             if result == 0 then
+    --                 return component_instance
+    --             elseif result == 1 then
+    --                 error("Initialization failed on " .. component_instance.Name)
+    --             end
+    --         end
+    --     end
+    -- end
+
+    -- return nil
 end
 
 local function _create(instance: Instance, component: ComponentClass)
@@ -62,7 +95,7 @@ local function _create(instance: Instance, component: ComponentClass)
     end
 
     local component_instance = component.new(instance) :: ComponentInstance -- .new is ran syncronously
-    table.insert(instances_on_components[instance][component], component_instance)
+    instances_on_components[instance][component] = component_instance
 
     task.spawn(function() -- spawn a new thread to handle 
         component_instance.__Initialized = false
@@ -117,10 +150,9 @@ local function create_component(component: ComponentClass)
     end)
 
     CollectionService:GetInstanceRemovedSignal(component.Tag):Connect(function(instance)
-        for _, component_instance in ipairs(_get_instance_components(instance, component)) do
-            if component_instance.Name == component.Name then
-                _destroy(component_instance)
-            end
+        local component_instance = _get_instance_component(instance, component)
+        if component_instance ~= nil then
+            _destroy(component_instance)
         end
     end)
 end
