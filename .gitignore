@@ -4,3 +4,6 @@
 # Roblox Studio lock files
 /*.rbxlx.lock
 /*.rbxl.lock
+
+.DS_Store
+./**.DS_Store
