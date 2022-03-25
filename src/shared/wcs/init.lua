@@ -3,37 +3,15 @@ local CollectionService = game:GetService("CollectionService")
 local Signal = require(script.Signal)
 local Trove = require(script.Trove)
 
+local Types = require(script.Types)
+
 local COMPONENT_START_TIMEOUT = 5
 
-type ComponentInstance = {
-    __Initialized: boolean,
-    __InitializedSignal: typeof(Signal),
-
-    Name: string,
-    Tag: string,
-
-    CreateDependencies: () -> {[string]: Instance},
-    Start: () -> (),
-    Destroy: () -> (),
-}
-
-type ComponentClass = {
-    Name: string,
-    Tag: string,
-    Needs: {string},
-    
-    new: (Instance) -> ComponentInstance,
-    CreateDependencies: () -> {[string]: Instance},
-    Start: () -> (),
-    Destroy: () -> (),
-}
+type ComponentInstance = Types.ComponentInstance
+type ComponentClass = Types.ComponentClass
 
 local instances_on_components: {[Instance]: {[ComponentClass]: ComponentInstance}} = {}
 local component_names_on_components: {[string]: ComponentClass}
-
-local function _create_signal()
-    return Instance.new("BindableEvent")
-end
 
 local function _get_instance_components(instance: Instance, component: ComponentClass)
     return instances_on_components[instance] and instances_on_components[instance][component] or nil
@@ -83,42 +61,44 @@ local function _create(instance: Instance, component: ComponentClass)
         instances_on_components[instance][component] = {}
     end
 
-    local component_instance = component.new(instance) :: ComponentClass
-    local initialized_signal = _create_signal()
+    local component_instance = component.new(instance) :: ComponentInstance -- .new is ran syncronously
     table.insert(instances_on_components[instance][component], component_instance)
-    task.spawn(function()
+
+    task.spawn(function() -- spawn a new thread to handle 
         component_instance.__Initialized = false
+        local initialized_signal = Signal.new()
         component_instance.__InitializedSignal = initialized_signal
 
-        for componentName, componentRoot in pairs(component_instance:CreateDependencies()) do
-            component_instance[componentName] = get_component(componentRoot, componentName)
+        for componentName, componentRoot in pairs(component_instance:CreateDependencies()) do -- loop through the dependencies table
+            component_instance[componentName] = get_component(componentRoot, componentName) -- add each dependency into the component_instance
         end
 
-        for _, need in pairs(component_instance.Needs) do
+        for _, need in pairs(component_instance.Needs) do -- loop through the needs
             if need == "Cleaner" then
-                component_instance.Cleaner = Trove.new()
+                component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
             end
         end
 
-        component_instance:Start()
-        component_instance.__Initialized = true
+        component_instance:Start() -- start the component sync'd in the thread
+        component_instance.__Initialized = true -- set the initialized variable to true and fire the event
         initialized_signal:Fire()
     end)
 
     return component_instance
 end
 
-local function _destroy(component: ComponentInstance)
+local function _destroy(component: ComponentInstance) -- destruction method wrapper
     component:Destroy()
 end
 
-local function create_component(component: ComponentClass, ancestor: Instance?)
+local function create_component(component: ComponentClass)
     assert(component.Tag ~= nil, "Missing Tag property on " .. component)
     assert(component.Name ~= nil, "Missing Name property on " .. component .. " with tag " .. component.Tag)
     assert(component.new ~= nil, "Missing constructor on " .. component.Name)
     assert(component.Initial ~= nil, "Missing initial function on " .. component.Name)
     assert(component.Destroy ~= nil, "Missing destructor function on " .. component.Name)
 
+    local ancestor = component.Ancestor
     if ancestor == nil then
         ancestor = game
     end
@@ -129,6 +109,7 @@ local function create_component(component: ComponentClass, ancestor: Instance?)
         _create(thing, component)
     end
 
+    -- wait a frame to avoid double firing
     task.wait()
 
     CollectionService:GetInstanceAddedSignal(component.Tag):Connect(function(instance)
