@@ -23,11 +23,11 @@ local function _get_instance_component(instance: Instance, component: ComponentC
 end
 
 local function get_component(instance: Instance, component_name: string): ComponentInstance | nil
-    assert(instance, "No instance provided")
-    assert(component_name, "No component name provided")
-    assert(typeof(instance) == "Instance", "Instance provided is not an instance")
-    assert(typeof(component_name) == "string", "Component name provided is not a string")
-    
+	assert(instance, "No instance provided")
+	assert(component_name, "No component name provided")
+	assert(typeof(instance) == "Instance", "Instance provided is not an instance")
+	assert(typeof(component_name) == "string", "Component name provided is not a string")
+
 	local component_class = component_names_on_components[component_name]
 
 	local component_instance = _get_instance_component(instance, component_class)
@@ -49,9 +49,9 @@ local function get_component(instance: Instance, component_name: string): Compon
 			end)
 
 			local result = proxy:Wait()
-			initialized_connection:Destroy()
+			initialized_connection:Disconnect()
 
-			if result == 0 then
+			if result == 0 or component_instance.__Initialized == true then
 				return component_instance
 			elseif result == 1 then
 				error("Initialization failed on " .. component_instance.Name)
@@ -69,25 +69,29 @@ local function _create(instance: Instance, component: ComponentClass)
 
 	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran syncronously
 	instances_on_components[instance][component] = component_instance
+    component_instance.__Initialized = false
+    local initialized_signal = Signal.new()
+    component_instance.__InitializedSignal = initialized_signal
 
-	task.spawn(function() -- spawn a new thread to handle 
-		component_instance.__Initialized = false
-		local initialized_signal = Signal.new()
-		component_instance.__InitializedSignal = initialized_signal
-
-		for componentName, componentRoot in pairs(component_instance:CreateDependencies()) do -- loop through the dependencies table
-			component_instance[componentName] = get_component(componentRoot, componentName) -- add each dependency into the component_instance
-		end
-
-		for _, need in pairs(component_instance.Needs) do -- loop through the needs
-			if need == "Cleaner" then
-				component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
+	task.delay(.1, function() -- spawn a new thread to handle 
+		if component_instance.CreateDependencies then
+			for componentName, componentRoot in pairs(component_instance:CreateDependencies()) do -- loop through the dependencies table
+				local inst = get_component(componentRoot, componentName) -- add each dependency into the component_instance
+				component_instance[componentName] = inst
 			end
 		end
 
-		component_instance:Start() -- start the component sync'd in the thread
-		component_instance.__Initialized = true -- set the initialized variable to true and fire the event
+		if component_instance.Needs then
+			for _, need in pairs(component_instance.Needs) do -- loop through the needs
+				if need == "Cleaner" then
+					component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
+				end
+			end
+		end
+
+		component_instance.__Initialized =  true -- set the initialized variable to true and fire the event
 		initialized_signal:Fire()
+		component_instance:Start() -- start the component sync'd in the thread
 	end)
 
 	return component_instance
@@ -102,8 +106,10 @@ local function create_component(component: ComponentClass)
 	assert(component.Name ~= nil, "Missing Name property on component with tag " .. component.Tag)
 	assert(component.new ~= nil, "Missing constructor on " .. component.Name)
 	assert(component.Start ~= nil, "Missing initial function on " .. component.Name)
-	assert(component.Destroy ~= nil, "Missing destructor function on " .. component.Name)
-
+    assert(component.Destroy ~= nil, "Missing destructor function on " .. component.Name)
+    
+    debug.setmemorycategory("create_component")
+            
 	local ancestor = component.Ancestor
 	if ancestor == nil then
 		ancestor = game
@@ -128,9 +134,11 @@ local function create_component(component: ComponentClass)
 			_destroy(component_instance)
 		end
 	end)
+
+    debug.resetmemorycategory()
 end
 
 return {
-	create_component,
-	get_component
+	create_component = create_component,
+	get_component = get_component,
 }
