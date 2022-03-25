@@ -52,37 +52,6 @@ local function get_component(instance: Instance, component_name: string): Compon
     end
 
     return nil
-    -- for _, component_instance in ipairs(_get_instance_components(instance, component_class)) do
-    --     if component_instance.Name == component_class.Name then
-    --         if component_instance.__Initialized == true then
-    --             return component_instance
-    --         else
-    --             local proxy = Signal.new()
-    --             local initialized = false
-    --             local initialized_connection = component_instance.__InitializedSignal:Connect(function()
-    --                 initialized = true
-    --                 proxy:Fire(0)
-    --             end)
-
-    --             task.delay(COMPONENT_START_TIMEOUT, function()
-    --                 if initialized == false then
-    --                     proxy:Fire(1)
-    --                 end
-    --             end)
-
-    --             local result = proxy:Wait()
-    --             initialized_connection:Destroy()
-
-    --             if result == 0 then
-    --                 return component_instance
-    --             elseif result == 1 then
-    --                 error("Initialization failed on " .. component_instance.Name)
-    --             end
-    --         end
-    --     end
-    -- end
-
-    -- return nil
 end
 
 local function _create(instance: Instance, component: ComponentClass)
