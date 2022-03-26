@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local wcs = require(Shared:WaitForChild("wcs"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))

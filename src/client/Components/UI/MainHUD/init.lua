@@ -32,7 +32,7 @@ function MainHUD:Start()
 end
 
 function MainHUD:UpdateEquippedWeapon(weapon)
-    local HeatUIComponent = self.HeatUIComponent
+    local HeatUIComponent = self.HeatUI
     if weapon == nil then
         HeatUIComponent:SetName(nil)
         HeatUIComponent:SetHeat(0)
@@ -46,12 +46,12 @@ function MainHUD:UpdateEquippedWeapon(weapon)
 end
 
 function MainHUD:UpdateHeat(heat: number)
-    local HeatUIComponent = self.HeatUIComponent
+    local HeatUIComponent = self.HeatUI
     HeatUIComponent:SetHeat(heat)
 end
 
 function MainHUD:UpdateTriggerBar(trigDelay: number)
-    local HeatUIComponent = self.HeatUIComponent
+    local HeatUIComponent = self.HeatUI
     HeatUIComponent:TriggerBar(trigDelay)
 end
 

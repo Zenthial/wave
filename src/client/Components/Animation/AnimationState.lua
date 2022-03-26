@@ -13,7 +13,7 @@ local Player = Players.LocalPlayer
 local AnimationState = {}
 AnimationState.__index = AnimationState
 AnimationState.Name = "AnimationState"
-AnimationState.Tag = "Character"
+AnimationState.Tag = "Player"
 AnimationState.Ancestor = workspace
 AnimationState.Needs = {"Cleaner"}
 
