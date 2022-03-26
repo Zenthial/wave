@@ -1,11 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
-
-local ShieldModel = require(script.Parent.Parent.Character.ShieldModel)
 
 local DEFAULT_HEALTH_STATS = {
     MAX_HEALTH = 75,
@@ -16,13 +12,13 @@ local DEFAULT_HEALTH_STATS = {
 
 local Health = {}
 Health.__index = Health
-Health.__Tag = "Health"
+Health.Name = "Health"
+Health.Tag = "Health"
+Health.Needs = {"Cleaner"}
 
 function Health.new(root: any)
     return setmetatable({
         Root = root,
-
-        Cleaner = Trove.new(),
 
         Events = {
             HealthChanged = Signal.new(),
@@ -32,7 +28,7 @@ function Health.new(root: any)
     }, Health)
 end
 
-function Health:Initial()
+function Health:Start()
     self.MaxHealth = DEFAULT_HEALTH_STATS.MAX_HEALTH
     self.Root:SetAttribute("MaxHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH)
     self.MaxShields = DEFAULT_HEALTH_STATS.MAX_SHIELD
@@ -54,12 +50,12 @@ function Health:Initial()
 
     if self.Root.Character ~= nil then
         self.Character = self.Root.Character
-        self.ShieldModelComponent = Rosyn.AwaitComponentInit(self.Character, ShieldModel)
+        self.ShieldModelComponent = wcs.get_component(self.Character, "ShieldModel")
     end
 
     self.Cleaner:Add(self.Root.CharacterAdded:Connect(function(char)
         self.Character = char
-        self.ShieldModelComponent = Rosyn.AwaitComponentInit(self.Character, ShieldModel)
+        self.ShieldModelComponent = wcs.get_component(self.Character, "ShieldModel")
     end))
 
     -- lots of legacy wace trash here
@@ -194,6 +190,6 @@ function Health:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Health", {Health})
+wcs.create_component(Health)
 
 return Health

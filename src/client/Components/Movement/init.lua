@@ -13,19 +13,19 @@ local toggleCrouch = clientComm.GetComm():GetFunction("ToggleCrouch")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
-local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
+local wcs = require(Shared.wcs)
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
-local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
 local Movement = {}
 Movement.__index = Movement
-Movement.__Tag = "Movement"
+Movement.Name = "Movement"
+Movement.Tag = "Player"
+Movement.Ancestor = Players
+Movement.Needs = {"Cleaner"}
 
 function Movement.new(root: any)
     return setmetatable({
         Player = root;
-        Cleaner = Trove.new() :: typeof(Trove),
         Keyboard = Input.Keyboard.new() :: typeof(Input.Keyboard),
 
         State = {
@@ -36,9 +36,9 @@ function Movement.new(root: any)
     }, Movement)
 end
 
-function Movement:Initial()
+function Movement:Start()
     local character = self.Player.Character or self.Player.CharacterAdded:Wait()
-    self.Humanoid = character.Humanoid :: Humanoid
+    self.Humanoid = character:WaitForChild("Humanoid") :: Humanoid
 
     self.Cleaner:Add(self.Keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if (keyCode == Enum.KeyCode.LeftShift) then
@@ -117,6 +117,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Movement}, Players)
+wcs.create_component(Movement)
 
 return Movement

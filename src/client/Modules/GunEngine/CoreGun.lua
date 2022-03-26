@@ -1,16 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn"))
+local wcs = require(Shared:WaitForChild("wcs"))
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
-
-local Animator = require(script.Parent.Parent.Parent.Components.Animation.AnimationHandler)
 
 local ClientComm = require(script.Parent.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()
@@ -121,8 +118,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
-    local character = Player.Character or Player.CharacterAdded:Wait()
-    local animationComponent = Rosyn.AwaitComponentInit(character, Animator) :: typeof(Animator)
+    local animationComponent = wcs.get_component(Player, "AnimationHandler")
 
     for _, animationData in pairs(weaponStats.Animations) do
         animationComponent:Load(animationData)

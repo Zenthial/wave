@@ -1,13 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
-local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
-local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
-local AnimationHandler = require(script.Parent.AnimationHandler)
 local AnimationTypes = require(script.Parent.AnimationTypes)
 
 type State_T = AnimationTypes.AnimationTreeStruct
@@ -16,18 +12,25 @@ local Player = Players.LocalPlayer
 
 local AnimationState = {}
 AnimationState.__index = AnimationState
-AnimationState.__Tag = "AnimationState"
+AnimationState.Name = "AnimationState"
+AnimationState.Tag = "Character"
+AnimationState.Ancestor = workspace
+AnimationState.Needs = {"Cleaner"}
 
 function AnimationState.new(root: any)
     return setmetatable({
         Root = root,
-
-        Cleaner = Trove.new()
     }, AnimationState)
 end
 
-function AnimationState:Initial()
-    local cleaner = self.Cleaner :: typeof(Trove)
+function AnimationState:CreateDependencies()
+    return {
+        ["AnimationHandler"] = self.Root
+    }
+end
+
+function AnimationState:Start()
+    local cleaner = self.Cleaner
 
     local state: State_T = {
         Equipping = 0,
@@ -53,8 +56,6 @@ function AnimationState:Initial()
     }
 
     self.State = state
-
-    self.AnimationHandler = Rosyn.AwaitComponentInit(self.Root, AnimationHandler)
 
     local SprintChangedSignal = Player:GetAttributeChangedSignal("LocalSprinting")
     local CrouchChangedSignal = Player:GetAttributeChangedSignal("LocalCrouching")
@@ -90,9 +91,8 @@ function AnimationState:Initial()
 end
 
 function AnimationState:HandleCrouchChange()
-    print(self)
     local state = self.State :: State_T
-    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+    local animationHandler = self.AnimationHandler
 
     if state.CrouchActive and not state.CrouchPlaying then
         for _, animationName in pairs(DefaultAnimations.Crouch) do
@@ -113,7 +113,7 @@ end
 
 function AnimationState:HandleSprintChange()
     local state = self.State :: State_T
-    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+    local animationHandler = self.AnimationHandler
 
     if state.SprintActive and not state.SprintPlaying then
         if state.CrouchActive then
@@ -139,7 +139,7 @@ end
 
 function AnimationState:HandleRollingChange()
     local state = self.State :: State_T
-    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+    local animationHandler = self.AnimationHandler
     state.SprintActive = false
     self:HandleSprintChange()
 
@@ -153,7 +153,7 @@ end
 
 function AnimationState:HandleThrowingChange()
     local state = self.State :: State_T
-    local animationHandler = self.AnimationHandler :: typeof(AnimationHandler)
+    local animationHandler = self.AnimationHandler
 
     if state.GrenadeActive == true and not state.GrenadePlaying then
         local animation = animationHandler:Play(DefaultAnimations.Throw)
@@ -170,6 +170,6 @@ function AnimationState:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("Character", {AnimationState}, workspace)
+wcs.create_component(AnimationState)
 
 return AnimationState

@@ -2,15 +2,17 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local HealthUI = {}
 HealthUI.__index = HealthUI
-HealthUI.__Tag = "HealthUI"
+HealthUI.Name = "HealthUI"
+HealthUI.Tag = "HealthUI"
+HealthUI.Needs = {"Cleaner"}
+HealthUI.Ancestor = PlayerGui
 
 --[[
     Health UI structure
@@ -23,12 +25,10 @@ HealthUI.__Tag = "HealthUI"
 function HealthUI.new(root: any)
     return setmetatable({
         Root = root,
-
-        Cleaner = Trove.new()
     }, HealthUI)
 end
 
-function HealthUI:Initial()
+function HealthUI:Start()
     local maxShields = Player:GetAttribute("MaxHealth")
 
     self.Root.Health.Fill.UIGradient.Offset = Vector2.new(-0.5, 0)
@@ -47,6 +47,6 @@ function HealthUI:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("HealthUI", {HealthUI}, PlayerGui)
+wcs.create_component(HealthUI)
 
 return HealthUI

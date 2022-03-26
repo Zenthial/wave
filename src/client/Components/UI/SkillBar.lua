@@ -5,22 +5,23 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local SkillBar = {}
 SkillBar.__index = SkillBar
-SkillBar.__Tag = "SkillBar"
+SkillBar.Name = "SkillBar"
+SkillBar.Tag = "SkillBar"
+SkillBar.Needs = {"Cleaner"}
+SkillBar.Ancestor = PlayerGui
 
 function SkillBar.new(root: any)
     return setmetatable({
         Root = root,
 
-        Cleaner = Trove.new(),
     }, SkillBar)
 end
 
-function SkillBar:Initial()
+function SkillBar:Start()
     local equippedSkillSignal = LocalPlayer:GetAttributeChangedSignal("EquippedSkill")
 
     self.Cleaner:Add(equippedSkillSignal:Connect(function()
@@ -44,6 +45,6 @@ function SkillBar:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("SkillBar", {SkillBar}, PlayerGui)
+wcs.create_component(SkillBar)
 
 return SkillBar

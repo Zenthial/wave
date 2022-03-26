@@ -168,7 +168,6 @@ return {
             tween.Completed:Wait()
 
             grenade.CFrame = startCFrame
-            grenade.Buzzing:Play()
             grenade.Transparency = 0.5
 
             -- this should be moved somewhere
@@ -193,13 +192,10 @@ return {
                 local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
                 sizeDecrease:Play()
                 sizeDecrease.Completed:Wait()
-                grenade.Buzzing:Stop()
             else
                 task.wait(stats.DelayTime - .1)
                 local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
                 sizeDecrease:Play()
-                sizeDecrease.Completed:Wait()
-                grenade.Buzzing:Stop()
             end
 
             active = false

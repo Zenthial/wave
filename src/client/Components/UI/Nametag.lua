@@ -2,8 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Rosyn = require(Shared:WaitForChild("Rosyn"))
-local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
+local wcs = require(Shared.wcs)
 
 local ChatStats = require(Shared:WaitForChild("Configurations"):WaitForChild("ChatStats"))
 
@@ -71,18 +70,19 @@ end
 ]=]
 local Nametag = {}
 Nametag.__index = Nametag
-Nametag.__Tag = "Nametag"
+Nametag.Name = "Nametag"
+Nametag.Tag = "Nametag"
+Nametag.Ancestor = PlayerGui
+Nametag.Needs = {"Cleaner"}
 
 function Nametag.new(player: any)
     print(player)
     return setmetatable({
         Player = player,
-
-        Cleaner = Trove.new()
     }, Nametag)
 end
 
-function Nametag:Initial()
+function Nametag:Start()
     local player = self.Player :: Player
     if player == LocalPlayer then
         return
@@ -179,6 +179,6 @@ function Nametag:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Nametag", {Nametag}, PlayerGui)
+wcs.create_component(Nametag)
 
 return Nametag

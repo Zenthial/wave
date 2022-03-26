@@ -1,18 +1,18 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-
-local KeyboardInputPrompt = require(script.Parent.KeyboardInputPrompt)
-local HeatUI = require(script.Parent.HeatUI)
 
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local KeyboardInputPromptObject = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("MainHUD"):WaitForChild("KeyboardInputPrompt")
 
 local MainHUD = {}
 MainHUD.__index = MainHUD
-MainHUD.__Tag = "MainHUD"
+MainHUD.Name = "MainHUD"
+MainHUD.Tag = "MainHUD"
+MainHUD.Ancestor = PlayerGui
 
 function MainHUD.new(root: any)
     return setmetatable({
@@ -21,12 +21,18 @@ function MainHUD.new(root: any)
     }, MainHUD)
 end
 
-function MainHUD:Initial()
-    self.HeatUIComponent = Rosyn.AwaitComponentInit(self.Bottom:WaitForChild("HeatContainer"), HeatUI)
+function MainHUD:CreateDependencies()
+    return {
+        ["HeatUI"] = self.Bottom:WaitForChild("HeatContainer")
+    }
+end
+
+function MainHUD:Start()
+
 end
 
 function MainHUD:UpdateEquippedWeapon(weapon)
-    local HeatUIComponent = self.HeatUIComponent :: typeof(HeatUI)
+    local HeatUIComponent = self.HeatUIComponent
     if weapon == nil then
         HeatUIComponent:SetName(nil)
         HeatUIComponent:SetHeat(0)
@@ -40,20 +46,19 @@ function MainHUD:UpdateEquippedWeapon(weapon)
 end
 
 function MainHUD:UpdateHeat(heat: number)
-    local HeatUIComponent = self.HeatUIComponent :: typeof(HeatUI)
+    local HeatUIComponent = self.HeatUIComponent
     HeatUIComponent:SetHeat(heat)
 end
 
 function MainHUD:UpdateTriggerBar(trigDelay: number)
-    local HeatUIComponent = self.HeatUIComponent :: typeof(HeatUI)
+    local HeatUIComponent = self.HeatUIComponent
     HeatUIComponent:TriggerBar(trigDelay)
 end
 
 function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
     local prevInput = self.Bottom:FindFirstChild("KeyboardInputPrompt")
     if prevInput then
-        local prevInputComponent = Rosyn.GetComponent(prevInput, KeyboardInputPrompt) :: typeof(KeyboardInputPrompt)
-        prevInputComponent:Destroy()
+        CollectionService:RemoveTag(prevInput, "KeyboardInputPrompt")
     end
     local input = KeyboardInputPromptObject:Clone()
     input.PromptText.Text = inputText
@@ -61,7 +66,7 @@ function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
         input.PromptKey.Text = inputKey:upper()
     end
     input.Parent = self.Bottom
-    local inputComponent = Rosyn.AwaitComponent(input, KeyboardInputPrompt)
+    local inputComponent = wcs.get_component(input, "KeyboardInputPrompt")
     return inputComponent
 end
 
@@ -69,6 +74,6 @@ function MainHUD:Destroy()
 
 end
 
-Rosyn.Register("MainHUD", {MainHUD}, PlayerGui)
+wcs.create_component(MainHUD)
 
 return MainHUD

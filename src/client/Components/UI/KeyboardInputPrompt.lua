@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -12,7 +12,9 @@ local TWEEN_TIME = 0.25
 
 local KeyboardInputPrompt = {}
 KeyboardInputPrompt.__index = KeyboardInputPrompt
-KeyboardInputPrompt.__Tag = "KeyboardInputPrompt"
+KeyboardInputPrompt.Name = "KeyboardInputPrompt"
+KeyboardInputPrompt.Tag = "KeyboardInputPrompt"
+KeyboardInputPrompt.Ancestor = PlayerGui
 
 function KeyboardInputPrompt.new(root: any)
     return setmetatable({
@@ -20,7 +22,7 @@ function KeyboardInputPrompt.new(root: any)
     }, KeyboardInputPrompt)
 end
 
-function KeyboardInputPrompt:Initial()
+function KeyboardInputPrompt:Start()
     self.Root.PromptText.TextTransparency = 1
     self.Root.PromptKey.TextTransparency = 1
     self.Root.Divider.Size = DIV_START
@@ -39,6 +41,6 @@ function KeyboardInputPrompt:Destroy()
     self.Root:Destroy()
 end
 
-Rosyn.Register("KeyboardInputPrompt", {KeyboardInputPrompt}, PlayerGui)
+wcs.create_component(KeyboardInputPrompt)
 
 return KeyboardInputPrompt

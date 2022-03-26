@@ -1,11 +1,9 @@
 local WeaponStatsModule = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
-local Rosyn = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Trove = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Input = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Mouse = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input")).Mouse
-
-local MouseComponentModule = require(script.Parent.Parent.Parent.Parent.Components.Player.Mouse)
 
 local Player = game.Players.LocalPlayer
 
@@ -35,7 +33,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
 
-        MouseComponent = Rosyn.GetComponent(Player, MouseComponentModule) :: typeof(MouseComponentModule),
+        MouseComponent = wcs.get_component(Player, "Mouse"),
         MouseInput = Input.Mouse.new(),
 
         Events = {
@@ -53,7 +51,7 @@ function Auto:SetCanFire(bool: boolean)
 end
 
 function Auto:Attack()
-    local mouse = self.MouseComponent :: typeof(MouseComponentModule)
+    local mouse = self.MouseComponent
     local mouseInput = self.MouseInput :: typeof(Input.Mouse)
 
     if not self.Shooting then

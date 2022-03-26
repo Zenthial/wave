@@ -1,14 +1,12 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local wcs = require(Shared:WaitForChild("wcs"))
 
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
-
-local Health = require(game.ServerScriptService.Server.Components.Player.Health)
 
 local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
@@ -40,7 +38,7 @@ end)
 
 -- healthComponentPart is technically a player now
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
-    local healthComponent = Rosyn.GetComponent(healthComponentPart, Health) :: typeof(Health)
+    local healthComponent = wcs.get_component(healthComponentPart, "Health")
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
         healthComponent:TakeDamage(stats.Damage)
@@ -48,7 +46,7 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
 end)
 
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
-    local healthComponent = Rosyn.AwaitComponentInit(player, Health) :: typeof(Health)
+    local healthComponent = wcs.get_component(player, "Health")
     healthComponent:TakeDamage(damage)
 end)
 

@@ -1,13 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
-local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
-
-local Inventory = require(StarterPlayerScripts.Client.Components.Inventory)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -18,7 +15,7 @@ function InputController:Start()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
 
-    local InventoryComponent = Rosyn.AwaitComponentInit(LocalPlayer, Inventory) :: typeof(Inventory)
+    local InventoryComponent = wcs.get_component(LocalPlayer, "Inventory")
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()

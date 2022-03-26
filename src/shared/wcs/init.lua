@@ -7,7 +7,7 @@ local Trove = require(script.Trove)
 
 local Types = require(script.Types)
 
-local COMPONENT_START_TIMEOUT = 5
+local COMPONENT_START_TIMEOUT = 10
 
 type ComponentInstance = Types.ComponentInstance
 type ComponentClass = Types.ComponentClass
@@ -22,15 +22,7 @@ local function _get_instance_component(instance: Instance, component: ComponentC
 	return nil
 end
 
-local function get_component(instance: Instance, component_name: string): ComponentInstance | nil
-	assert(instance, "No instance provided")
-	assert(component_name, "No component name provided")
-	assert(typeof(instance) == "Instance", "Instance provided is not an instance")
-	assert(typeof(component_name) == "string", "Component name provided is not a string")
-
-	local component_class = component_names_on_components[component_name]
-	assert(component_class, "Component " .. component_name .. " is not registered")
-
+local function get_component_with_class(instance: Instance, component_class: ComponentClass): CommandInstance | nil
 	local component_instance = _get_instance_component(instance, component_class)
 	if component_instance ~= nil then
 		if component_instance.__Initialized == true then
@@ -65,9 +57,26 @@ local function get_component(instance: Instance, component_name: string): Compon
 	return nil
 end
 
+local function get_component(instance: Instance, component_name: string): ComponentInstance | nil
+	assert(instance, "No instance provided")
+	assert(component_name, "No component name provided")
+	assert(typeof(instance) == "Instance", "Instance provided is not an instance")
+	assert(typeof(component_name) == "string", "Component name provided is not a string")
+
+	local component_class = component_names_on_components[component_name:lower()]
+	assert(component_class, "Component " .. component_name .. " is not registered")
+
+	return get_component_with_class(instance, component_class)
+end
+
 local function _create(instance: Instance, component: ComponentClass)
 	if instances_on_components[instance] == nil then
 		instances_on_components[instance] = {}
+	end
+
+	-- print(instances_on_components[instance])
+	if instances_on_components[instance][component] ~= nil then
+		return
 	end
 
 	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran syncronously
@@ -76,7 +85,8 @@ local function _create(instance: Instance, component: ComponentClass)
     local initialized_signal = Signal.new()
     component_instance.__InitializedSignal = initialized_signal
 
-	task.delay(.1, function() -- spawn a new thread to handle 
+	task.wait()
+	task.spawn(function() -- spawn a new thread to handle 
 		if component_instance.CreateDependencies then
 			for componentName, componentRoot in pairs(component_instance:CreateDependencies()) do -- loop through the dependencies table
 				local inst = get_component(componentRoot, componentName) -- add each dependency into the component_instance
@@ -119,17 +129,23 @@ local function create_component(component: ComponentClass)
 		ancestor = game
 	end
 
-	component_names_on_components[component.Name] = component
+	component_names_on_components[component.Name:lower()] = component
 
-	for _, thing in ipairs(CollectionService:GetTagged(component.Tag)) do
-		_create(thing, component)
+	for i, thing in ipairs(CollectionService:GetTagged(component.Tag)) do
+		print("Existing", component.Name, component.Tag, thing, i)
+		if ancestor:IsAncestorOf(thing) then
+			_create(thing, component)	
+		end
 	end
 
 	-- wait a frame to avoid double firing
-	task.wait()
+	task.wait(.1)
 
 	CollectionService:GetInstanceAddedSignal(component.Tag):Connect(function(instance)
-		_create(instance, component)
+		print("Instance added", component.Name, component.Tag, instance)
+		if ancestor:IsAncestorOf(instance) then
+			_create(instance, component)
+		end
 	end)
 
 	CollectionService:GetInstanceRemovedSignal(component.Tag):Connect(function(instance)

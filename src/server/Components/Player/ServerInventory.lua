@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local Modules = game.ServerScriptService.Server.Modules
 local GunEngine = require(Modules.GunEngine)
@@ -23,7 +23,9 @@ local SetWeaponSignal = ServerComm:CreateSignal("SetWeapon")
 
 local ServerInventory = {}
 ServerInventory.__index = ServerInventory
-ServerInventory.__Tag = "ServerInventory"
+ServerInventory.Name = "ServerInventory"
+ServerInventory.Tag = "Player"
+ServerInventory.Ancestor = Players
 
 function ServerInventory.new(root: any)
     return setmetatable({
@@ -37,7 +39,7 @@ function ServerInventory.new(root: any)
     }, ServerInventory)
 end
 
-function ServerInventory:Initial()
+function ServerInventory:Start()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
@@ -104,6 +106,6 @@ function ServerInventory:Destroy()
 
 end
 
-Rosyn.Register("Player", {ServerInventory}, Players)
+wcs.create_component(ServerInventory)
 
 return ServerInventory

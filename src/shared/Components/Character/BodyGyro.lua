@@ -2,11 +2,13 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local BodyGyro = {}
 BodyGyro.__index = BodyGyro
-BodyGyro.__Tag = "BodyGyro"
+BodyGyro.Name = "BodyGyro"
+BodyGyro.Tag = "Character"
+BodyGyro.Ancestor = workspace
 
 function BodyGyro.new(root: any)
     local hrp = root:FindFirstChild("HumanoidRootPart")
@@ -26,7 +28,7 @@ function BodyGyro.new(root: any)
     }, BodyGyro)
 end
 
-function BodyGyro:Initial()
+function BodyGyro:Start()
     self:SetGyro(false)
 end
 
@@ -60,6 +62,6 @@ function BodyGyro:Destroy()
     self.Gyro:Destroy()
 end
 
-Rosyn.Register("Character", {BodyGyro}, workspace)
+wcs.create_component(BodyGyro)
 
 return BodyGyro

@@ -1,8 +1,11 @@
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local MAX_HEAT = 100
 
@@ -16,7 +19,10 @@ local TWEEN_CONSTANTS = {
 
 local HeatUI = {}
 HeatUI.__index = HeatUI
-HeatUI.__Tag = "HeatUI"
+HeatUI.Name = "HeatUI"
+HeatUI.Tag = "HeatUI"
+HeatUI.Needs = {"Cleaner"}
+HeatUI.Ancestor = PlayerGui
 
 --[[
     UI Structure
@@ -38,12 +44,10 @@ function HeatUI.new(root: any)
         HeatOutline = root.HeatOutline,
         Keybind = root.Keybind,
         NameDisplay = root.NameDisplay,
-
-        Cleaner = Trove.new()
     }, HeatUI)
 end
 
-function HeatUI:Initial()
+function HeatUI:Start()
     self.HeatOutline.Heat.Fill.UIGradient.Offset = Vector2.new(0.5, 0)
     self.ChargeDelay.Fill.UIGradient.Offset = Vector2.new(0.5, 0)
     self.NameDisplay.Text = "<i>--</i>"
@@ -78,6 +82,6 @@ function HeatUI:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("HeatUI", {HeatUI})
+wcs.create_component(HeatUI)
 
 return HeatUI

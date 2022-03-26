@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = Players.LocalPlayer
@@ -10,7 +10,10 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local ShieldUI = {}
 ShieldUI.__index = ShieldUI
-ShieldUI.__Tag = "ShieldUI"
+ShieldUI.Name = "ShieldUI"
+ShieldUI.Tag = "ShieldUI"
+ShieldUI.Ancestor = PlayerGui
+ShieldUI.Needs = {"Cleaner"}
 
 --[[
     Shield UI structure
@@ -28,7 +31,7 @@ function ShieldUI.new(root: any)
     }, ShieldUI)
 end
 
-function ShieldUI:Initial()
+function ShieldUI:Start()
     local maxShields = Player:GetAttribute("MaxShields")
 
     self.Root.Shield.Fill.UIGradient.Offset = Vector2.new(-0.5, 0)
@@ -47,6 +50,6 @@ function ShieldUI:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("ShieldUI", {ShieldUI}, PlayerGui)
+wcs.create_component(ShieldUI)
 
 return ShieldUI

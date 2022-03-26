@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
@@ -11,7 +11,6 @@ local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
 local comm = require(Modules.ClientComm)
-local MainHUDModule = require(StarterPlayerScripts.Client.Components.UI.MainHUD)
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -24,7 +23,10 @@ local DEFAULT_SKILL_KEYS = {
 
 local Inventory = {}
 Inventory.__index = Inventory
-Inventory.__Tag = "Inventory"
+Inventory.Name = "Inventory"
+Inventory.Tag = "Inventory"
+Inventory.Needs = {"Cleaner"}
+Inventory.Ancestor = Players
 
 function Inventory.new(root: any)
     return setmetatable({
@@ -36,18 +38,22 @@ function Inventory.new(root: any)
             Skills = {}
         },
 
-        Cleaner = Trove.new()
     }, Inventory)
 end
 
-function Inventory:Initial()
+function Inventory:CreateDependencies()
+    return {
+        ["MainHUD"] = PlayerGui:WaitForChild("MainHUD")
+    }
+end
+
+function Inventory:Start()
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
     self.EquippedGadget = nil
 
-    local MainHUD = PlayerGui:WaitForChild("MainHUD")
-    local MainHUDComponent = Rosyn.AwaitComponentInit(MainHUD, MainHUDModule) :: typeof(MainHUDModule)
+    local MainHUDComponent = self.MainHUD
 
     local equippedWeaponCleaner = nil :: typeof(Trove)
     self.Cleaner:Add(self.WeaponsToolbar.Events.ToolChanged:Connect(function(tool)
@@ -122,6 +128,7 @@ function Inventory:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Inventory", {Inventory}, Players)
+wcs.create_component(Inventory)
+print("creating inventory")
 
 return Inventory

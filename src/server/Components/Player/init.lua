@@ -1,9 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
+local wcs = require(Shared:WaitForChild("wcs", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 
 local comm = require(script.Parent.Parent.Modules.ServerComm)
@@ -13,16 +14,18 @@ local playerLoadedSignal = ServerComm:CreateSignal("PlayerLoaded")
 
 local Player = {}
 Player.__index = Player
-Player.__Tag = "ServerPlayer"
+Player.Name = "ServerPlayer"
+Player.Tag = "Player"
+-- Player.Ancestor = Players
+Player.Needs = {"Cleaner"}
 
 function Player.new(player: Player)
     return setmetatable({
             Player = player,
-            Cleaner = Trove.new() :: typeof(Trove),
     }, Player)
 end
 
-function Player:Initial()
+function Player:Start()
     self.Player:SetAttribute("Loaded", false)
 
     self.Cleaner:Add(playerLoadedSignal:Connect(function(player: Player)
@@ -36,6 +39,6 @@ function Player:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Player})
+wcs.create_component(Player)
 
 return Player

@@ -1,9 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
-
-local Movement = require(script.Parent.Parent.Parent.Parent.Components.Movement)
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -25,7 +23,7 @@ function CoreSkill.new(skillStats, model)
         Stats = skillStats;
         Model = model;
 
-        Movement = Rosyn.AwaitComponentInit(LocalPlayer, Movement);
+        Movement = wcs.get_component(LocalPlayer, "Movement");
     }, CoreSkill)
     return self
 end

@@ -3,7 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
@@ -17,7 +17,10 @@ type ClosestPlayerArray = {
 
 local BaseEnemy = {}
 BaseEnemy.__index = BaseEnemy
-BaseEnemy.__Tag = "BaseEnemy"
+BaseEnemy.Name = "BaseEnemy"
+BaseEnemy.Tag = "BaseEnemy"
+BaseEnemy.Ancestor = workspace
+BaseEnemy.Needs = {"Cleaner"}
 
 function BaseEnemy.new(root: Model)
     return setmetatable({
@@ -34,15 +37,13 @@ function BaseEnemy.new(root: Model)
         CurrentTarget = nil,
         DistanceFromTarget = math.huge,
 
-        Cleaner = Trove.new(),
-
         Signals = {
             DistanceFromTarget = Signal.new() -- fires each time the target distance updates
         }
     }, BaseEnemy)
 end
 
-function BaseEnemy:Initial()
+function BaseEnemy:Start()
     task.spawn(self.TargetLoop, self)
     task.spawn(self.MovementLoop, self)
 end
@@ -156,6 +157,6 @@ function BaseEnemy:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("BaseEnemy", {BaseEnemy}, workspace)
+wcs.create_component(BaseEnemy)
 
 return BaseEnemy

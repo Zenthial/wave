@@ -3,10 +3,7 @@ local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-
-local Rosyn = require(Shared:WaitForChild("Rosyn"))
-local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
-local Input = require(Shared:WaitForChild("util"):WaitForChild("Input"))
+local wcs = require(Shared.wcs)
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 type WeaponStats = WeaponStatsModule.WeaponStats_T
@@ -17,19 +14,20 @@ local DEFAULT_RECOIL = 0
 
 local Mouse = {}
 Mouse.__index = Mouse
-Mouse.__Tag = "Mouse"
+Mouse.Name = "Mouse"
+Mouse.Tag = "Player"
+Mouse.Needs = {"Cleaner"}
+Mouse.Ancestor = Players
 
 function Mouse.new(Player: Player)
     return setmetatable({
         Player = Player,
 
         MouseObject = Player:GetMouse(),
-
-        Cleaner = Trove.new()
     }, Mouse)
 end
 
-function Mouse:Initial()
+function Mouse:Start()
     local mouseObject = self.MouseObject :: Mouse
     self.Cleaner:Add(mouseObject.Move:Connect(function()
         -- mouse move
@@ -88,6 +86,6 @@ function Mouse:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Player", {Mouse}, Players)
+wcs.create_component(Mouse)
 
 return Mouse

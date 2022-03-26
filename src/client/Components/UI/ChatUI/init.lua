@@ -3,10 +3,9 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage.Shared.wcs)
 
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
-local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Queue = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Queue"))
 local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
 local ClientComm = require(script.Parent.Parent.Parent.Modules.ClientComm)
@@ -46,7 +45,10 @@ local TWEEN_CONSTANTS = {
 ]]
 local ChatUI = {}
 ChatUI.__index = ChatUI
-ChatUI.__Tag = "ChatUI"
+ChatUI.Name = "ChatUI"
+ChatUI.Tag = "ChatUI"
+ChatUI.Ancestor = PlayerGui
+ChatUI.Needs = {"Cleaner"}
 
 function ChatUI.new(root: any)
     return setmetatable({
@@ -56,12 +58,10 @@ function ChatUI.new(root: any)
         InputBar = root.InputBar,
         Input = root.InputBar.Input,
         Detail = root.Detail,
-
-        Cleaner = Trove.new()
     }, ChatUI)
 end
 
-function ChatUI:Initial()
+function ChatUI:Start()
     local input = self.Input :: TextBox
     input.Text = ""
     input.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
@@ -121,6 +121,6 @@ function ChatUI:Destroy()
     self.Cleaner:Clean()
 end
 
-Rosyn.Register("ChatUI", {ChatUI}, PlayerGui)
+wcs.create_component(ChatUI)
 
 return ChatUI

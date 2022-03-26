@@ -2,15 +2,13 @@
 -- 1/11/2022
 ------------------------------------------------------------------------
 
-local Modules = script.Parent.Parent.Parent:WaitForChild("Modules")
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local Configurations = Shared:WaitForChild("Configurations")
 
-local Rosyn = require(Shared:WaitForChild("Rosyn"))
+local wcs = require(Shared:WaitForChild("wcs"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local Types = require(Shared:WaitForChild("Types"))
 
@@ -18,7 +16,9 @@ local DefaultAnimations = require(Configurations.DefaultAnimations) :: {[string]
 
 local AnimationHandler = {}
 AnimationHandler.__index = AnimationHandler
-AnimationHandler.__Tag = "AnimationHandler"
+AnimationHandler.Name = "AnimationHandler"
+AnimationHandler.Tag = "AnimationHandler"
+AnimationHandler.Ancestor = Players
 
 ------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ function AnimationHandler.new(player: Player)
     }, AnimationHandler)
 end
 
-function AnimationHandler:Initial()
+function AnimationHandler:Start()
     local root = self.Player.Character or self.Player.CharacterAdded:Wait()
     self.Root = root;
     self.AnimationFolder = createFolder(root)
@@ -71,7 +71,7 @@ function AnimationHandler:Initial()
         self:Load(animationData)
     end
 
-    print("animationhandler initialized")
+    print("animation handler initialized")
 end
 
 function AnimationHandler:Destroy()
@@ -145,6 +145,6 @@ function AnimationHandler:DestroyTrack(animationName: string)
     end
 end
 
-Rosyn.Register("AnimationHandler", {AnimationHandler}, workspace)
+wcs.create_component(AnimationHandler)
 
 return AnimationHandler

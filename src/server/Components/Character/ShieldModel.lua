@@ -1,13 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local Rosyn = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Rosyn"))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local makeShieldModel = require(ServerScriptService.Server.Helper.makeShieldModel)
 
 local ShieldModel = {}
 ShieldModel.__index = ShieldModel
-ShieldModel.__Tag = "ShieldModel"
+ShieldModel.Name = "ShieldModel"
+ShieldModel.Tag = "Character"
+ShieldModel.Ancestor = workspace
 
 function ShieldModel.new(root: any)
     return setmetatable({
@@ -15,7 +17,7 @@ function ShieldModel.new(root: any)
     }, ShieldModel)
 end
 
-function ShieldModel:Initial()
+function ShieldModel:Start()
     self.Model = makeShieldModel(self.Root)
 
     self.__call = function()
@@ -65,6 +67,6 @@ function ShieldModel:Destroy()
     self.Model:Destroy()
 end
 
-Rosyn.Register("Character", {ShieldModel}, workspace)
+wcs.create_component(ShieldModel)
 
 return ShieldModel

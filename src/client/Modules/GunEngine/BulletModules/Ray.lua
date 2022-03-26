@@ -1,14 +1,12 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Debris = game:GetService("Debris")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
+local wcs = require(Shared:WaitForChild("wcs", 5))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local PartCache = require(Shared:WaitForChild("util"):WaitForChild("PartCache"))
 
-local Mouse = require(script.Parent.Parent.Parent.Parent.Components.Player.Mouse)
 local ClientComm = require(script.Parent.Parent.Parent.ClientComm)
 
 local Player = game.Players.LocalPlayer
@@ -29,7 +27,7 @@ function Ray.new(gunModel: GunModel, weaponStats)
         GunModel = gunModel,
         WeaponStats = weaponStats,
 
-        MouseComponent = Rosyn.GetComponent(Player, Mouse),
+        MouseComponent = wcs.get_component(Player, "Mouse"),
 
         Cleaner = Trove.new()
     }, Ray)

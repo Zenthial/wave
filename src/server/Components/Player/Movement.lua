@@ -2,58 +2,57 @@
     By tom and preston
 ]=]
 local Players = game:GetService("Players")
-local Modules = script.Parent.Parent.Parent:WaitForChild("Modules", 5)
+local Modules = script.Parent.Parent.Parent:WaitForChild("Modules")
 local serverComm = require(Modules.ServerComm)
 
 --Shared
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
-local Util = Shared:WaitForChild("Util", 5)
-
-local Rosyn = require(Shared:WaitForChild("Rosyn", 5))
-local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
+local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
 
 local Movement = {}
 Movement.__index = Movement
-Movement.__Tag = "Movement"
+Movement.Name = "Movement"
+Movement.Tag = "Movement"
+Movement.Ancestor = Players
+Movement.Needs = {"Cleaner"}
 
 serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean) 
-    local MovementComp = player and Rosyn.GetComponent(player, Movement)
-    if (MovementComp == nil) then return end
-
-    if action then
-        MovementComp:EnableSprint()
-    else
-        MovementComp:DisableSprint()
-    end
+    player:SetAttribute("Sprinting", action)
 end)
 
 serverComm.GetComm():BindFunction("ToggleCrouch", function(player: Player, action: boolean) 
-    local MovementComp = player and Rosyn.GetComponent(player, Movement)
-    if (MovementComp == nil) then return end
-
-    if action then
-        MovementComp:EnableCrouch()
-    else
-        MovementComp:DisableCrouch()
-    end
+    player:SetAttribute("Crouching", action)
 end)
 
 function Movement.new(root: Model)
     return setmetatable({
         Player = root,
-        
-        Cleaner = Trove.new() :: typeof(Trove),
     }, Movement)
 end
 
-function Movement:Initial()
+function Movement:Start()
     self.Character = self.Player.Character or self.Player.CharacterAdded:Wait()
     self.Humanoid = self.Character:WaitForChild("Humanoid")
 
     self.Cleaner:Add(self.Player.CharacterAdded:Connect(function()
         self.Character = self.Player.Character
         self.Humanoid = self.Character:WaitForChild("Humanoid")
+    end))
+
+    self.Cleaner:Add(self.Player:GetAttributeChangedSignal("Sprinting"):Connect(function()
+        if self.Player:GetAttribute("Sprinting") then
+            self:EnableSprint()
+        else
+            self:DisableSprint()
+        end
+    end))
+
+    self.Cleaner:Add(self.Player:GetAttributeChangedSignal("Crouching"):Connect(function()
+        if self.Player:GetAttribute("Crouching") then
+            self:EnableCrouch()
+        else
+            self:DisableCrouch()
+        end
     end))
 
     self:UpdateWalkspeed()
@@ -120,6 +119,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-Rosyn.Register("Movement", {Movement}, Players)
+wcs.create_component(Movement)
 
 return Movement;
