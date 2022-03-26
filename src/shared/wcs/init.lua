@@ -29,6 +29,7 @@ local function get_component(instance: Instance, component_name: string): Compon
 	assert(typeof(component_name) == "string", "Component name provided is not a string")
 
 	local component_class = component_names_on_components[component_name]
+	assert(component_class, "Component " .. component_name .. " is not registered")
 
 	local component_instance = _get_instance_component(instance, component_class)
 	if component_instance ~= nil then
@@ -57,6 +58,8 @@ local function get_component(instance: Instance, component_name: string): Compon
 				error("Initialization failed on " .. component_instance.Name)
 			end
 		end
+	else
+		error("Component " .. component_class.Name .. " does not exist on ".. instance.Name)
 	end
 
 	return nil
@@ -97,8 +100,9 @@ local function _create(instance: Instance, component: ComponentClass)
 	return component_instance
 end
 
-local function _destroy(component: ComponentInstance) -- destruction method wrapper
-	component:Destroy()
+local function _destroy(instance: Instance, component: ComponentClass, component_instance: ComponentInstance) -- destruction method wrapper
+	instances_on_components[instance][component] = nil
+	component_instance:Destroy()
 end
 
 local function create_component(component: ComponentClass)
@@ -131,7 +135,7 @@ local function create_component(component: ComponentClass)
 	CollectionService:GetInstanceRemovedSignal(component.Tag):Connect(function(instance)
 		local component_instance = _get_instance_component(instance, component)
 		if component_instance ~= nil then
-			_destroy(component_instance)
+			_destroy(instance, component, component_instance)
 		end
 	end)
 
