@@ -1,0 +1,51 @@
+{
+    "name": "game",
+    "tree": {
+      "$className": "DataModel",
+  
+      "ReplicatedStorage": {
+        "Shared": {
+          "$path": "core/shared"
+        },
+
+        "HEXShared": {
+            "$path": "places/hex/shared"
+        }
+      },
+  
+      "ServerScriptService": {
+        "Server": {
+          "$path": "core/server"
+        },
+
+        "HEXServer": {
+            "$path": "places/hex/server"
+        }
+      },
+  
+      "StarterPlayer": {
+        "StarterPlayerScripts": {
+          "Client": {
+            "$path": "core/client"
+          },
+
+          "HEXClient": {
+            "$path": "places/hex/client"
+            }
+        }
+      },
+  
+      "SoundService": {
+        "$properties": {
+          "RespectFilteringEnabled": true
+        }
+      },
+  
+      "Chat": {
+        "$properties": {
+          "BubbleChatEnabled": false,
+          "LoadDefaultChat": false
+        }
+      }
+    }
+  }
