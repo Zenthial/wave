@@ -69,6 +69,9 @@ if (Player.Character) then
 end
 
 CollectionService:AddTag(Player, "Inventory")
+CollectionService:AddTag(Player, "Movement")
+CollectionService:AddTag(Player, "AnimationHandler")
+CollectionService:AddTag(Player, "AnimationState")
 Player.CharacterAdded:Connect(characterAdded)
 
 for attribute, value in pairs(modules["DefaultLocalPlayerAttributes"]) do

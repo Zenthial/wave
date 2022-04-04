@@ -13,7 +13,7 @@ export type AnimationTreeStruct = {
     ReloadPlaying: boolean,
 
     WeaponEquipped: boolean,
-    WeaponName: boolean
+    WeaponName: string
 }
 
 return {}

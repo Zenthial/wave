@@ -21,10 +21,12 @@ local function _get_instance_component(instance: Instance, component: ComponentC
 		if instances_on_components[instance][component] ~= nil then
 			return instances_on_components[instance][component]
 		else
+			print(string.format("here looking for %s", component.Name))
 			local start = tick()
 			
 			while tick() - start < COMPONENT_START_TIMEOUT do
 				if instances_on_components[instance][component] ~= nil then
+					print("found ".. instances_on_components[instance][component].Name)
 					return instances_on_components[instance][component]
 				end
 				task.wait(.1)
@@ -46,7 +48,7 @@ end
 
 local function get_component_with_class(instance: Instance, component_class: ComponentClass): CommandInstance | nil
 	local component_instance = _get_instance_component(instance, component_class)
-	print(instance, component_class, component_class.Name, instances_on_components[instance])
+	-- print(instance, component_class, component_class.Name, instances_on_components[instance])
 	if component_instance ~= nil then
 		if component_instance.__Initialized == true then
 			return component_instance
@@ -117,7 +119,7 @@ local function _create(instance: Instance, component: ComponentClass)
 		return
 	end
 
-	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran syncronously
+	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran synchronously
 	instances_on_components[instance][component] = component_instance
     component_instance.__Initialized = false
     local initialized_signal = Signal.new()
@@ -158,40 +160,41 @@ local function create_component(component: ComponentClass)
 	assert(component.new ~= nil, "Missing constructor on " .. component.Name)
 	assert(component.Start ~= nil, "Missing initial function on " .. component.Name)
     assert(component.Destroy ~= nil, "Missing destructor function on " .. component.Name)
-    
-    debug.setmemorycategory("create_component")
-            
+		
+	debug.setmemorycategory("create_component")
+	
 	local ancestor = component.Ancestor
 	if ancestor == nil then
 		ancestor = game
 	end
-
+		
 	component_names_on_components[component.Name:lower()] = component
-
+	
 	for i, thing in ipairs(CollectionService:GetTagged(component.Tag)) do
 		-- print("Existing", component.Name, component.Tag, thing, i)
 		if ancestor:IsAncestorOf(thing) then
 			_create(thing, component)	
 		end
 	end
-
+	
 	-- wait a frame to avoid double firing
-	task.wait(.1)
-
+	task.wait()
+	
 	CollectionService:GetInstanceAddedSignal(component.Tag):Connect(function(instance)
-		-- print("Instance added", component.Name, component.Tag, instance)
 		if ancestor:IsAncestorOf(instance) then
 			_create(instance, component)
+		else
+			warn(string.format("Instance %s is not under the passed ancestor %s by component %s", instance.Name, component.Ancestor.Name, component.Name))
 		end
 	end)
-
+	
 	CollectionService:GetInstanceRemovedSignal(component.Tag):Connect(function(instance)
 		local component_instance = _get_instance_component(instance, component)
 		if component_instance ~= nil then
 			_destroy(instance, component, component_instance)
 		end
 	end)
-
+	
     debug.resetmemorycategory()
 end
 

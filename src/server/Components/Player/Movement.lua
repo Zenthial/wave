@@ -16,7 +16,8 @@ Movement.Tag = "Movement"
 Movement.Ancestor = Players
 Movement.Needs = {"Cleaner"}
 
-serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean) 
+serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean)
+    print("here")
     player:SetAttribute("Sprinting", action)
 end)
 

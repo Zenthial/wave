@@ -54,6 +54,7 @@ function AnimationHandler.new(player: Player)
         Animator = nil :: Animator,
         AnimationTracks = {},
         MarkerSignals = {},
+        Loaded = false,
     }, AnimationHandler)
 end
 
@@ -70,8 +71,8 @@ function AnimationHandler:Start()
     for _, animationData in pairs(DefaultAnimations) do
         self:Load(animationData)
     end
-
-    print("animation handler initialized")
+    
+    self.Loaded = true
 end
 
 function AnimationHandler:Destroy()
@@ -145,6 +146,7 @@ function AnimationHandler:DestroyTrack(animationName: string)
     end
 end
 
+print("creating animation handler")
 wcs.create_component(AnimationHandler)
 
 return AnimationHandler

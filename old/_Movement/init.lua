@@ -63,11 +63,17 @@ function Movement:Start()
     local RollingChangedSignal = self.Player:GetAttributeChangedSignal("Rolling")
 
     self.Cleaner:Add(LocalSprintingChangedSignal:Connect(function()
-        self:SetSprint(self.Player:GetAttribute("LocalSprinting"))
+        local attributeSprinting = self.Player:GetAttribute("LocalSprinting")
+        if attributeSprinting ~= self.State.Sprinting then
+            self:SetSprint(attributeSprinting)
+        end
     end))
 
     self.Cleaner:Add(LocalCrouchingChangedSignal:Connect(function()
-        self:SetCrouch(self.Player:GetAttribute("LocalCrouching"))
+        local attributeCrouching = self.Player:GetAttribute("LocalCrouching")
+        if attributeCrouching ~= self.State.Crouching then
+            self:SetCrouch(attributeCrouching)
+        end
     end))
 
     -- self.Cleaner:Add(LocalRollingChangedSignal:Connect(function()
@@ -88,6 +94,7 @@ function Movement:Start()
 end
 
 function Movement:SetSprint(action: boolean)
+    print(self.Player:GetAttribute("CanSprint"))
     if (self.Player:GetAttribute("CanSprint") == false) then return end
 
     self.Player:SetAttribute("LocalSprinting", action)
@@ -117,6 +124,7 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
+print("creating movement")
 wcs.create_component(Movement)
 
 return Movement

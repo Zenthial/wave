@@ -184,5 +184,5 @@ return {
             AnimationData.new("W17Sprint", 8681795992),
             AnimationData.new("W17Melee", 1427432032),
         }
-    }
-}
+    } :: WeaponStats_T
+} :: {[string]: WeaponStats_T}

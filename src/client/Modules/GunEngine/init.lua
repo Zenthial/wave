@@ -11,8 +11,6 @@ local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
-local Movement = require(script.Parent.Parent.Components.Movement)
-
 local CoreGun = require(script.CoreGun)
 local CoreSkill = require(script.Skills.CoreSkill)
 local Grenades = require(script.Grenades)

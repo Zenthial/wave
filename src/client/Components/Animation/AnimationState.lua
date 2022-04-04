@@ -10,11 +10,31 @@ type State_T = AnimationTypes.AnimationTreeStruct
 
 local Player = Players.LocalPlayer
 
-local AnimationState = {}
+type Cleaner_T = {
+    Add: (Cleaner_T, any) -> (),
+    Clean: (Cleaner_T) -> ()
+}
+
+type AnimationHandler_T = {
+    Play: (AnimationHandler_T, string) -> AnimationTrack,
+    Stop: (AnimationHandler_T, string) -> (),
+}
+
+type AnimationState_T = {
+    __index: AnimationState_T,
+    Name: string,
+    Tag: string,
+
+    State: State_T,
+    Cleaner: Cleaner_T,
+    AnimationHandler: AnimationHandler_T,    
+}
+
+local AnimationState: AnimationState_T = {}
 AnimationState.__index = AnimationState
 AnimationState.Name = "AnimationState"
-AnimationState.Tag = "Player"
-AnimationState.Ancestor = workspace
+AnimationState.Tag = "AnimationState"
+AnimationState.Ancestor = Players
 AnimationState.Needs = {"Cleaner"}
 
 function AnimationState.new(root: any)
@@ -88,20 +108,25 @@ function AnimationState:Start()
 
         self:HandleThrowingChange()
     end))
+
+    cleaner:Add(EquippedWeaponChangedSignal:Connect(function()
+        self:HandleWeaponChange()
+    end))
 end
 
 function AnimationState:HandleCrouchChange()
-    local state = self.State :: State_T
+    local state = self.State
     local animationHandler = self.AnimationHandler
 
     if state.CrouchActive and not state.CrouchPlaying then
         for _, animationName in pairs(DefaultAnimations.Crouch) do
             animationHandler:Play(animationName)
+            table.insert(self.State.PlayingAnimations, animationName)
         end
 
         state.CrouchPlaying = true
     elseif not state.CrouchActive and state.CrouchPlaying then
-        for _, animationName in pairs(self.PlayingAnimations) do
+        for _, animationName in pairs(self.State.PlayingAnimations) do
             if string.find(animationName:lower(), "crouch") then -- could optimize by storing every sprint animation playing
                 animationHandler:Stop(animationName)
             end
@@ -112,7 +137,7 @@ function AnimationState:HandleCrouchChange()
 end
 
 function AnimationState:HandleSprintChange()
-    local state = self.State :: State_T
+    local state = self.State
     local animationHandler = self.AnimationHandler
 
     if state.SprintActive and not state.SprintPlaying then
@@ -122,12 +147,12 @@ function AnimationState:HandleSprintChange()
 
         if state.WeaponEquipped and state.WeaponName ~= "" and not state.Rolling then
             animationHandler:Play(state.WeaponName .. "Sprint")
-            table.insert(self.PlayingAnimations, state.WeaponName .. "Sprint")
+            table.insert(self.State.PlayingAnimations, state.WeaponName .. "Sprint")
             state.SprintPlaying = true
         end
 
     elseif not state.SprintActive and state.SprintPlaying then
-        for _, animationName in pairs(self.PlayingAnimations) do
+        for _, animationName in pairs(self.State.PlayingAnimations) do
             if string.find(animationName:lower(), "sprint") then -- could optimize by storing every sprint animation playing
                 animationHandler:Stop(animationName)
             end
@@ -138,7 +163,7 @@ function AnimationState:HandleSprintChange()
 end
 
 function AnimationState:HandleRollingChange()
-    local state = self.State :: State_T
+    local state = self.State
     local animationHandler = self.AnimationHandler
     state.SprintActive = false
     self:HandleSprintChange()
@@ -152,7 +177,7 @@ function AnimationState:HandleRollingChange()
 end
 
 function AnimationState:HandleThrowingChange()
-    local state = self.State :: State_T
+    local state = self.State
     local animationHandler = self.AnimationHandler
 
     if state.GrenadeActive == true and not state.GrenadePlaying then
@@ -164,6 +189,33 @@ function AnimationState:HandleThrowingChange()
         state.GrenadePlaying = false
     end
     
+end
+
+function AnimationState:HandleWeaponChange()
+    local newWeaponName = Player:GetAttribute("EquippedWeapon")
+    local oldWeaponName = self.State.WeaponName
+
+    if newWeaponName == self.State.WeaponName then return end
+    
+    if newWeaponName ~= self.State.WeaponName then
+        if newWeaponName == "" then
+            self.State.WeaponEquipped = false
+        else
+            self.State.WeaponEquipped = true
+        end
+
+        self.State.WeaponName = newWeaponName
+    end
+
+    if self.State.WeaponEquipped then
+        local animationTrack = self.AnimationHandler:Play(newWeaponName.."Equip")
+        animationTrack.Stopped:Wait()
+        self.AnimationHandler:Play(newWeaponName.."Hold")
+    else
+        self.AnimationHandler:Stop(oldWeaponName.."Hold")
+        local animationTrack = self.AnimationHandler:Play(oldWeaponName.."Equip")
+        animationTrack.Stopped:Wait()
+    end   
 end
 
 function AnimationState:Destroy()
