@@ -1,0 +1,99 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+
+local Player = Players.LocalPlayer
+
+local SELECTED_COLOR = Color3.fromRGB(98, 200, 255)
+local UNSELECTED_COLOR = Color3.fromRGB(255, 255, 255)
+
+type Cleaner_T = {
+    Add: (Cleaner_T, any) -> (),
+    Clean: (Cleaner_T) -> ()
+}
+
+type MainMenu_T = {
+    __index: MainMenu_T,
+    Name: string,
+    Tag: string,
+    CurrentPanel: string,
+
+    Root: {
+        SwitcherButtons: {
+            Keys: TextButton,
+            Stats: TextButton,
+            Options: TextButton,
+            GetChildren: () -> {TextButton},
+            GetDescendants: () -> {any},
+        },
+
+        Options: {
+            Container: ScrollingFrame,
+            Visible: boolean,
+        }
+    },
+
+    Cleaner: Cleaner_T
+}
+
+local MainMenu: MainMenu_T = {}
+MainMenu.__index = MainMenu
+MainMenu.Name = "MainMenu"
+MainMenu.Tag = "MainMenu"
+MainMenu.Ancestor = game
+MainMenu.Needs = {"Cleaner"}
+
+function MainMenu.new(root: any)
+    return setmetatable({
+        Root = root,
+    }, MainMenu)
+end
+
+function MainMenu:CreateDependencies()
+    return {}
+end
+
+function MainMenu:Start()
+    self.CurrentPanel = "Options"
+
+    for _, thing in pairs(self.Root.SwitcherButtons:GetChildren()) do
+        self.Cleaner:Add(thing.Activated:Connect(function()
+            self:OpenPanel(thing.Name)
+        end))
+    end
+
+    for _, boolOption in pairs(self.Root.Options:GetChildren()) do
+        local boolOptionComponent = bluejay.get_component(boolOption, "BoolOption")
+        if boolOptionComponent ~= nil then
+            self.Cleaner:Add(boolOptionComponent.Events.Changed:Connect(function(newStateType)
+                Player:SetAttribute(boolOption.Name.."Option", newStateType)
+            end))
+        end
+    end
+end
+
+function MainMenu:OpenPanel(panel: string)
+    self.Root[panel].Visible = true
+    self.Root[self.CurrentPanel].Visible = false
+    self.SwitcherButtons[panel].OptionText.TextColor = SELECTED_COLOR
+    self.SwitcherButtons[self.CurrentPanel].OptionText.TextColor = UNSELECTED_COLOR
+    self.CurrentPanel = panel
+end
+
+-- can worry about making a fancy tween transition later
+function MainMenu:Open()
+    self.Root.Visible = true
+end
+
+function MainMenu:Close()
+    self.Root.Visible = false
+end
+
+function MainMenu:Destroy()
+    self.Cleaner:Clean()
+end
+
+bluejay.create_component(MainMenu)
+
+return MainMenu
