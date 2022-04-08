@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local wcs = require(ReplicatedStorage.Shared.wcs)
+local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
@@ -118,7 +118,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
-    local animationComponent = wcs.get_component(Player, "AnimationHandler")
+    local animationComponent = bluejay.get_component(Player, "AnimationHandler")
 
     for _, animationData in pairs(weaponStats.Animations) do
         animationComponent:Load(animationData)

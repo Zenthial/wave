@@ -4,7 +4,7 @@ local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local wcs = require(Shared:WaitForChild("wcs", 5))
+local bluejay = require(Shared:WaitForChild("bluejay", 5))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 
 local comm = require(script.Parent.Parent.Modules.ServerComm)
@@ -39,6 +39,6 @@ function Player:Destroy()
     self.Cleaner:Destroy()
 end
 
-wcs.create_component(Player)
+bluejay.create_component(Player)
 
 return Player

@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
-local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
+local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
@@ -128,7 +128,7 @@ function Inventory:Destroy()
     self.Cleaner:Destroy()
 end
 
-wcs.create_component(Inventory)
+bluejay.create_component(Inventory)
 print("creating inventory")
 
 return Inventory

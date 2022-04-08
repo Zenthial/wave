@@ -3,7 +3,7 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
-local wcs = require(ReplicatedStorage.Shared.wcs)
+local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Queue = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Queue"))
@@ -121,6 +121,6 @@ function ChatUI:Destroy()
     self.Cleaner:Clean()
 end
 
-wcs.create_component(ChatUI)
+bluejay.create_component(ChatUI)
 
 return ChatUI

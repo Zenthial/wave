@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local wcs = require(Shared:WaitForChild("wcs"))
+local bluejay = require(Shared:WaitForChild("bluejay"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
@@ -76,7 +76,7 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local GadgetStats = GadgetStatsModule[grenadeName]
     assert(GadgetStats, "No grenade stats for the grenade")
     
-    local movementComponent = wcs.get_component(Player, "Movement")
+    local movementComponent = bluejay.get_component(Player, "Movement")
 
     if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and movementComponent ~= nil and movementComponent.State.Sprinting == false then
         Player:SetAttribute("Throwing", true)

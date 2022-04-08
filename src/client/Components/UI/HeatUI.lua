@@ -2,7 +2,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local wcs = require(ReplicatedStorage.Shared.wcs)
+local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -82,6 +82,6 @@ function HeatUI:Destroy()
     self.Cleaner:Clean()
 end
 
-wcs.create_component(HeatUI)
+bluejay.create_component(HeatUI)
 
 return HeatUI

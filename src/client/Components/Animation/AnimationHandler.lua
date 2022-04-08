@@ -8,7 +8,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local Configurations = Shared:WaitForChild("Configurations")
 
-local wcs = require(Shared:WaitForChild("wcs"))
+local bluejay = require(Shared:WaitForChild("bluejay"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local Types = require(Shared:WaitForChild("Types"))
 
@@ -147,6 +147,6 @@ function AnimationHandler:DestroyTrack(animationName: string)
 end
 
 print("creating animation handler")
-wcs.create_component(AnimationHandler)
+bluejay.create_component(AnimationHandler)
 
 return AnimationHandler

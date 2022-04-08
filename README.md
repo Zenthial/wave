@@ -11,7 +11,7 @@ Component Generation VSC Snippet
 		"body": [
 			"local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
 			"",
-			"local wcs = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"wcs\"))",
+			"local bluejay = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"bluejay\"))",
 			"",
 			"type Cleaner_T = {",
 			"\tAdd: (Cleaner_T, any) -> (),",
@@ -51,7 +51,7 @@ Component Generation VSC Snippet
 			"\tself.Cleaner:Clean()",
 			"end",
 			"",
-			"wcs.create_component(${0:$TM_FILENAME_BASE})",
+			"bluejay.create_component(${0:$TM_FILENAME_BASE})",
 			"",
 			"return ${0:$TM_FILENAME_BASE}"
 		]

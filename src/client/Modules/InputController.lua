@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 
-local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
+local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
@@ -15,7 +15,7 @@ function InputController:Start()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
 
-    local InventoryComponent = wcs.get_component(LocalPlayer, "Inventory")
+    local InventoryComponent = bluejay.get_component(LocalPlayer, "Inventory")
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()

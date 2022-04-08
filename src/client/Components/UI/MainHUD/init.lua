@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
-local wcs = require(ReplicatedStorage.Shared.wcs)
+local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local KeyboardInputPromptObject = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("MainHUD"):WaitForChild("KeyboardInputPrompt")
 
@@ -66,7 +66,7 @@ function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
         input.PromptKey.Text = inputKey:upper()
     end
     input.Parent = self.Bottom
-    local inputComponent = wcs.get_component(input, "KeyboardInputPrompt")
+    local inputComponent = bluejay.get_component(input, "KeyboardInputPrompt")
     return inputComponent
 end
 
@@ -74,6 +74,6 @@ function MainHUD:Destroy()
 
 end
 
-wcs.create_component(MainHUD)
+bluejay.create_component(MainHUD)
 
 return MainHUD

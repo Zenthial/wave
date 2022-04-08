@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local wcs = require(Shared.wcs)
+local bluejay = require(Shared.bluejay)
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 type WeaponStats = WeaponStatsModule.WeaponStats_T
@@ -86,6 +86,6 @@ function Mouse:Destroy()
     self.Cleaner:Destroy()
 end
 
-wcs.create_component(Mouse)
+bluejay.create_component(Mouse)
 
 return Mouse

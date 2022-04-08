@@ -1,5 +1,5 @@
 local WeaponStatsModule = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats"))
-local wcs = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
+local bluejay = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
 local Trove = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Input = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
@@ -33,7 +33,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
 
-        MouseComponent = wcs.get_component(Player, "Mouse"),
+        MouseComponent = bluejay.get_component(Player, "Mouse"),
         MouseInput = Input.Mouse.new(),
 
         Events = {

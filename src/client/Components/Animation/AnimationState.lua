@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local wcs = require(ReplicatedStorage.Shared.wcs)
+local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
 local AnimationTypes = require(script.Parent.AnimationTypes)
@@ -222,6 +222,6 @@ function AnimationState:Destroy()
     self.Cleaner:Clean()
 end
 
-wcs.create_component(AnimationState)
+bluejay.create_component(AnimationState)
 
 return AnimationState

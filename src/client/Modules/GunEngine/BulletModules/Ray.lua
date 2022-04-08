@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local wcs = require(Shared:WaitForChild("wcs", 5))
+local bluejay = require(Shared:WaitForChild("bluejay", 5))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local PartCache = require(Shared:WaitForChild("util"):WaitForChild("PartCache"))
 
@@ -27,7 +27,7 @@ function Ray.new(gunModel: GunModel, weaponStats)
         GunModel = gunModel,
         WeaponStats = weaponStats,
 
-        MouseComponent = wcs.get_component(Player, "Mouse"),
+        MouseComponent = bluejay.get_component(Player, "Mouse"),
 
         Cleaner = Trove.new()
     }, Ray)

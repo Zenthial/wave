@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local wcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("wcs"))
+local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
 
 local SkillBar = {}
 SkillBar.__index = SkillBar
@@ -45,6 +45,6 @@ function SkillBar:Destroy()
     self.Cleaner:Clean()
 end
 
-wcs.create_component(SkillBar)
+bluejay.create_component(SkillBar)
 
 return SkillBar
