@@ -9,6 +9,8 @@ local TRUE_TRANSPARENCY = 0.25
 local FALSE_COLOR = Color3.fromRGB(65, 88, 111)
 local FALSE_TRANSPARENCY = 0.5
 
+local TWEEN_TIME = 0.2
+
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
@@ -61,11 +63,16 @@ function BoolOption:Start()
     end))
 end
 
+function BoolOption:SetState(state: boolean)
+    self.CurrentState = state
+    self:Update()
+end
+
 function BoolOption:Update()
     if self.CurrentState then
-        TweenService:Create(self.Root.Button, TweenInfo.new(0.25), {BackgroundColor3 = TRUE_COLOR, BackgroundTransparency = TRUE_TRANSPARENCY}):Play()
+        TweenService:Create(self.Root.Button, TweenInfo.new(TWEEN_TIME), {BackgroundColor3 = TRUE_COLOR, BackgroundTransparency = TRUE_TRANSPARENCY}):Play()
     else
-        TweenService:Create(self.Root.Button, TweenInfo.new(0.25), {BackgroundColor3 = FALSE_COLOR, BackgroundTransparency = FALSE_TRANSPARENCY}):Play()
+        TweenService:Create(self.Root.Button, TweenInfo.new(TWEEN_TIME), {BackgroundColor3 = FALSE_COLOR, BackgroundTransparency = FALSE_TRANSPARENCY}):Play()
     end
 end
 

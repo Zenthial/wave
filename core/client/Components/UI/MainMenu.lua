@@ -18,6 +18,7 @@ type MainMenu_T = {
     Name: string,
     Tag: string,
     CurrentPanel: string,
+    Open: boolean,
 
     Root: {
         SwitcherButtons: {
@@ -56,19 +57,28 @@ end
 
 function MainMenu:Start()
     self.CurrentPanel = "Options"
+    self.Open = false
+    self:CloseMenu()
 
     for _, thing in pairs(self.Root.SwitcherButtons:GetChildren()) do
+        if thing:IsA("UIListLayout") then continue end
         self.Cleaner:Add(thing.Activated:Connect(function()
             self:OpenPanel(thing.Name)
         end))
     end
 
-    for _, boolOption in pairs(self.Root.Options:GetChildren()) do
+    for _, boolOption in pairs(self.Root.Options.Container:GetChildren()) do
+        if not boolOption:IsA("Frame") then continue end
         local boolOptionComponent = bluejay.get_component(boolOption, "BoolOption")
         if boolOptionComponent ~= nil then
             self.Cleaner:Add(boolOptionComponent.Events.Changed:Connect(function(newStateType)
                 Player:SetAttribute(boolOption.Name.."Option", newStateType)
             end))
+
+            local state = Player:GetAttribute(boolOption.Name.."Option")
+
+            assert(typeof(state) == "boolean", "Attribute "..boolOption.Name.."Option does not exist on local player")
+            boolOptionComponent:SetState(state)
         end
     end
 end
@@ -82,11 +92,13 @@ function MainMenu:OpenPanel(panel: string)
 end
 
 -- can worry about making a fancy tween transition later
-function MainMenu:Open()
+function MainMenu:OpenMenu()
+    self.Open = true
     self.Root.Visible = true
 end
 
-function MainMenu:Close()
+function MainMenu:CloseMenu()
+    self.Open = false
     self.Root.Visible = false
 end
 

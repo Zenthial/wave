@@ -4,15 +4,24 @@ local Players = game:GetService("Players")
 local ProfileService = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ProfileService"))
 local PlayerProfileTemplate = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("PlayerProfile"))
 
+local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+
 local PlayerDataStore = ProfileService.GetProfileStore("PlayerData", PlayerProfileTemplate)
 local PlayerProfiles = {}
+local PlayerCleaners = {}
 
 local function HandlePlayerData(player: Player, profile)
+    local playerCleaner = Trove.new()
+
     local optionsFolder = Instance.new("Folder")
     optionsFolder.Name = "OptionsFolder"
     optionsFolder.Parent = player
     for optionName, optionValue in pairs(profile.Data.Options) do
         player:SetAttribute(optionName.."Option", optionValue)
+        playerCleaner:Add(player:GetAttributeChangedSignal(optionName.."Option"):Connect(function()
+            local newOption = player:GetAttribute(optionName.."Option")
+            profile.Data.Options[optionName] = newOption
+        end))
 
         local option = Instance.new("NumberValue")
         option.Name = optionName
@@ -25,15 +34,21 @@ local function HandlePlayerData(player: Player, profile)
     statsFolder.Parent = player
     for statName, statValue in pairs(profile.Data.Stats) do
         player:SetAttribute(statName.."Stat", statValue)
+        playerCleaner:Add(player:GetAttributeChangedSignal(statName.."Stat"):Connect(function()
+            local newStat = player:GetAttribute(statName.."Stat")
+            profile.Data.Stats[statName] = newStat
+        end))
 
         local stat = Instance.new("NumberValue")
         stat.Name = statName
         stat.Value = statValue
         stat.Parent = statsFolder
     end
+
+    PlayerCleaners[player] = playerCleaner
 end
 
-function PlayerAdded(player)
+local function PlayerAdded(player)
     local profile = PlayerDataStore:LoadProfileAsync("Player_" .. player.UserId)
     if profile ~= nil then
         profile:AddUserId(player.UserId) -- GDPR compliance
@@ -59,9 +74,22 @@ function PlayerAdded(player)
     end
 end
 
+local function OptionSync(player: Player, optionName: string, optionValue: boolean)
+    assert(player:GetAttribute(optionName) ~= "", "Option does not exist on player "..player.Name)
+
+    if optionValue ~= player:GetAttribute(optionName) then
+        player:SetAttribute(optionName, optionValue)
+    end
+end
+
 local DataLoader = {}
 
 function DataLoader:Start()
+    local OptionSyncRemote = Instance.new("RemoteEvent")
+    OptionSyncRemote.Name = "OptionSyncRemote"
+    OptionSyncRemote.OnServerEvent:Connect(OptionSync)
+    OptionSyncRemote.Parent = ReplicatedStorage.Shared
+
     for _, player in ipairs(Players:GetPlayers()) do
         task.spawn(PlayerAdded, player)
     end
@@ -72,6 +100,15 @@ function DataLoader:Start()
         local profile = PlayerProfiles[player]
         if profile ~= nil then
             profile:Release()
+            -- make sure everything is gc'd
+            PlayerProfiles[player] = nil
+        end
+
+        local cleaner = PlayerCleaners[player]
+        if cleaner ~= nil then
+            cleaner:Clean()
+            -- make sure everything is gc'd
+            PlayerCleaners[player] = nil
         end
     end)
 end
