@@ -18,8 +18,9 @@ local SkillModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Skill
 
 type ServerInventoryType = InventoryStats.Inventory
 
-local ServerComm = comm.GetComm()
-local SetWeaponSignal = ServerComm:CreateSignal("SetWeapon")
+local SetWeaponSignal = Instance.new("RemoteEvent")
+SetWeaponSignal.Name = "SetWeapon"
+SetWeaponSignal.Parent = ReplicatedStorage.Shared
 
 local ServerInventory = {}
 ServerInventory.__index = ServerInventory
@@ -47,6 +48,8 @@ function ServerInventory:Start()
             task.wait()
         until self.Root:GetAttribute("Loaded") == true and self.Character ~= nil
     end
+
+    print("Inventory loaded")
     
     self:LoadServerInventory(InventoryStats)
 end
@@ -70,7 +73,8 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
                     error("failed to weld")
                 end
 
-                SetWeaponSignal:Fire(self.Root, key, name, model)
+                print("Setting weapon " .. name)
+                SetWeaponSignal:FireClient(self.Root, key, name, model)
             end
         elseif key == "Skills" then
             for _, name in pairs(val) do
@@ -88,7 +92,7 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
                 end
 
                 self.Root:SetAttribute("EquippedSkill", name)
-                SetWeaponSignal:Fire(self.Root, key, name, model)
+                SetWeaponSignal:FireClient(self.Root, key, name, model)
             end
         elseif key == "Gadgets" then
             for _, name in pairs(val) do
@@ -96,7 +100,7 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
 
                 assert(stats, "No Grenade Stats for " .. name)
                 self.Root:SetAttribute("EquippedGrenade", name)
-                SetWeaponSignal:Fire(self.Root, key, name)
+                SetWeaponSignal:FireClient(self.Root, key, name)
             end
         end
     end

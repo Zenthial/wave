@@ -1,16 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
 local bluejay = require(Shared:WaitForChild("bluejay", 5))
-local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 
-local comm = require(script.Parent.Parent.Modules.ServerComm)
-local ServerComm = comm.GetServerComm()
-
-local playerLoadedSignal = ServerComm:CreateSignal("PlayerLoaded")
+local playerLoadedSignal = Instance.new("RemoteEvent")
+playerLoadedSignal.Name = "PlayerLoaded"
+playerLoadedSignal.Parent = ReplicatedStorage.Shared
 
 local Player = {}
 Player.__index = Player
@@ -26,11 +22,14 @@ function Player.new(player: Player)
 end
 
 function Player:Start()
+    print("player component")
     self.Player:SetAttribute("Loaded", false)
 
-    self.Cleaner:Add(playerLoadedSignal:Connect(function(player: Player)
+    self.Cleaner:Add(playerLoadedSignal.OnServerEvent:Connect(function(player: Player)
+        print("here")
         if self.Player == player then
             self.Player:SetAttribute("Loaded", true)
+            print("player loaded")
         end
     end))
 end

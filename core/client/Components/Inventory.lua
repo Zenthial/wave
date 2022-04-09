@@ -10,11 +10,11 @@ local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
 
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
-local comm = require(Modules.ClientComm)
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local ClientComm = comm.GetClientComm()
+
+local SetWeaponSignal = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("SetWeapon")
 
 local DEFAULT_SKILL_KEYS = {
     Enum.KeyCode.F,
@@ -55,31 +55,8 @@ function Inventory:Start()
 
     local MainHUDComponent = self.MainHUD
 
-    local equippedWeaponCleaner = nil :: typeof(Trove)
-    self.Cleaner:Add(self.WeaponsToolbar.Events.ToolChanged:Connect(function(tool)
-        if equippedWeaponCleaner ~= nil then
-            equippedWeaponCleaner:Clean()
-        end
-        MainHUDComponent:UpdateEquippedWeapon(tool)
-
-        if tool ~= nil then
-            equippedWeaponCleaner = Trove.new()
-            equippedWeaponCleaner:Add(tool.Events.AmmoChanged:Connect(function(heat: number)
-                MainHUDComponent:UpdateHeat(heat)
-            end))
-
-            equippedWeaponCleaner:Add(tool.Events.Fired:Connect(function(trigDelay: number)
-                MainHUDComponent:UpdateTriggerBar(trigDelay)
-            end))
-        end
-    end))
-
-    self.Cleaner:Add(self.SkillsToolbar.Events.ToolChanged:Connect(function(tool)
-        -- maybe do something idk
-    end))
-
-    local SetWeaponSignal = ClientComm:GetSignal("SetWeapon")
-    self.Cleaner:Add(SetWeaponSignal:Connect(function(inventoryKey: string, weaponName: string, model: Model)
+    print("Created weapon signal")
+    self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
         print(inventoryKey, weaponName)
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
         if model == nil then
@@ -104,6 +81,29 @@ function Inventory:Start()
             assert(model == nil, "Why does the grenade have a model?")
             self.EquippedGadget = weaponName
         end
+    end))
+
+    local equippedWeaponCleaner = nil :: typeof(Trove)
+    self.Cleaner:Add(self.WeaponsToolbar.Events.ToolChanged:Connect(function(tool)
+        if equippedWeaponCleaner ~= nil then
+            equippedWeaponCleaner:Clean()
+        end
+        MainHUDComponent:UpdateEquippedWeapon(tool)
+
+        if tool ~= nil then
+            equippedWeaponCleaner = Trove.new()
+            equippedWeaponCleaner:Add(tool.Events.AmmoChanged:Connect(function(heat: number)
+                MainHUDComponent:UpdateHeat(heat)
+            end))
+
+            equippedWeaponCleaner:Add(tool.Events.Fired:Connect(function(trigDelay: number)
+                MainHUDComponent:UpdateTriggerBar(trigDelay)
+            end))
+        end
+    end))
+
+    self.Cleaner:Add(self.SkillsToolbar.Events.ToolChanged:Connect(function(tool)
+        -- maybe do something idk
     end))
 end
 

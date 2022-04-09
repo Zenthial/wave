@@ -51,13 +51,6 @@ for _, module in pairs(script.Modules:GetChildren()) do
     end
 end
 
-local comm = modules["ClientComm"]
-repeat
-    comm = modules["ClientComm"]
-    task.wait()
-until comm ~= nil
-local ClientComm = comm.GetClientComm()
-
 local function characterAdded(character)
     if not CollectionService:HasTag(character, "Character") then
         CollectionService:AddTag(character, "Character")
@@ -78,4 +71,8 @@ for attribute, value in pairs(modules["DefaultLocalPlayerAttributes"]) do
     Player:SetAttribute(attribute, value)
 end
 
-ClientComm:GetSignal("PlayerLoaded"):Fire()
+print("here")
+local PlayerLoaded = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PlayerLoaded") :: RemoteEvent
+print("here 2")
+PlayerLoaded:FireServer()
+print("here 3")

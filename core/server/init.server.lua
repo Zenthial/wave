@@ -9,30 +9,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 ------------------------------------------------------------------------
 --Setup
 
-local function playerAdded(player: Player)
-    if not CollectionService:HasTag(player, "Player") then
-        CollectionService:AddTag(player, "Player")
-    end
-
-    local function characterAdded(character) 
-        if not CollectionService:HasTag(character, "Character") then
-            CollectionService:AddTag(character, "Character")
-        end
-    end
-
-    if (player.Character) then
-        characterAdded(player.Character)
-    end
-    
-    player.CharacterAdded:Connect(characterAdded)
-end
-
-for _,player in pairs(game.Players:GetPlayers()) do
-    playerAdded(player)
-end
-
-Players.PlayerAdded:Connect(playerAdded)
-
 for _, module in pairs(script.Modules:GetChildren()) do
     task.spawn(function()
         if module:IsA("ModuleScript") then
@@ -70,3 +46,23 @@ game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Works
 
 Recurse(script:WaitForChild("Components"), LoadComponent)
 Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)
+
+local function playerAdded(player: Player)
+    CollectionService:AddTag(player, "Player")
+
+    local function characterAdded(character) 
+        CollectionService:AddTag(character, "Character")
+    end
+
+    if (player.Character) then
+        characterAdded(player.Character)
+    end
+    
+    player.CharacterAdded:Connect(characterAdded)
+end
+
+for _,player in pairs(game.Players:GetPlayers()) do
+    playerAdded(player)
+end
+
+Players.PlayerAdded:Connect(playerAdded)
