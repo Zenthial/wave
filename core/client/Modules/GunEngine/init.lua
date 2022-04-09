@@ -17,6 +17,7 @@ local Grenades = require(script.Grenades)
 local BulletModules = script.BulletModules
 
 local ClientComm = require(script.Parent.ClientComm)
+local comm = ClientComm.GetClientComm()
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -43,7 +44,6 @@ function GunEngine:Start()
         requiredBulletModules[v.Name] = require(v)    
     end
 
-    local comm = ClientComm.GetClientComm()
     local raySignal = comm:GetSignal("DrawRay")
     local nadeSignal = comm:GetSignal("RenderGrenade")
 
@@ -64,8 +64,8 @@ function GunEngine:Start()
         
     end))
 
-    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, stats: GadgetStatsModule.GadgetStats_T)
-        self:RenderGrenadeForOtherPlayer(player, position, direction, movementSpeed, stats)
+    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, grenade: string)
+        self:RenderGrenadeForOtherPlayer(player, position, direction, movementSpeed, grenade)
     end))
 end
 
@@ -76,15 +76,18 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local GadgetStats = GadgetStatsModule[grenadeName]
     assert(GadgetStats, "No grenade stats for the grenade")
     
-    local movementComponent = bluejay.get_component(Player, "Movement")
-
-    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and movementComponent ~= nil and movementComponent.State.Sprinting == false then
+    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false then
         Player:SetAttribute("Throwing", true)
+        
+        local nadeSignal = comm:GetSignal("RenderGrenade")
+        nadeSignal:Fire(leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
         Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
     end
 end
 
-function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, stats: GadgetStatsModule.GadgetStats_T)
+function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, grenade: string)
+    local stats = GadgetStatsModule[grenade]
+    assert(stats ~= nil, "No gadget stats for "..grenade)
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 

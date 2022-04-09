@@ -29,17 +29,25 @@ function HealthUI.new(root: any)
 end
 
 function HealthUI:Start()
-    local maxShields = Player:GetAttribute("MaxHealth")
+    local maxHealth = Player:GetAttribute("MaxHealth")
 
     self.Root.Health.Fill.UIGradient.Offset = Vector2.new(-0.5, 0)
     self.Root.Health.Fill2.UIGradient.Offset = Vector2.new(0.5, 0)
 
-    local shieldsChangedSignal = Player:GetAttributeChangedSignal("Health")
-    self.Cleaner:Add(shieldsChangedSignal:Connect(function()
-        local currentShieldsValue = Player:GetAttribute("Health")
-        local tweenValue = (currentShieldsValue/maxShields) - 0.5 -- subtract 0.5 cause the gradient goes from -0.5 to 0.5 rather than 0 to 1
+    local heathChangedSignal = Player:GetAttributeChangedSignal("Health")
+    self.Cleaner:Add(heathChangedSignal:Connect(function()
+        local currentHealth = Player:GetAttribute("Health")
+        local tweenValue = (currentHealth/maxHealth) - 0.5 -- subtract 0.5 cause the gradient goes from -0.5 to 0.5 rather than 0 to 1
         TweenService:Create(self.Root.Health.Fill.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Offset = Vector2.new(-tweenValue, 0)}):Play()
         TweenService:Create(self.Root.Health.Fill2.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Offset = Vector2.new(tweenValue, 0)}):Play()
+
+        if currentHealth < maxHealth * .30 then
+            self.Root.Health.Fill.UIGradient.Color = ColorSequence.new(Color3.fromRGB(255, 78, 96))
+            self.Root.Health.Fill2.UIGradient.Color = ColorSequence.new(Color3.fromRGB(255, 78, 96))
+        else
+            self.Root.Health.Fill.UIGradient.Color = ColorSequence.new(Color3.fromRGB(85, 255, 127))
+            self.Root.Health.Fill2.UIGradient.Color = ColorSequence.new(Color3.fromRGB(85, 255, 127))
+        end
     end))
 end
 

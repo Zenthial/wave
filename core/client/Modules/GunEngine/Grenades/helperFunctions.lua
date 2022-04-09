@@ -86,6 +86,7 @@ end
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
     local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
+	print(cosmeticBullet)
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 		gadgetStats.TerminationBehavior(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)

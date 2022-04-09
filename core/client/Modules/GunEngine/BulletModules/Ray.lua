@@ -3,14 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local bluejay = require(Shared:WaitForChild("bluejay", 5))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local PartCache = require(Shared:WaitForChild("util"):WaitForChild("PartCache"))
-
-local ClientComm = require(script.Parent.Parent.Parent.ClientComm)
-
-local Player = game.Players.LocalPlayer
-local BulletFolder = workspace:WaitForChild("Bullets") :: Folder
 
 type GunModelAdditionalInfo = {
     Barrel: Part,
@@ -26,8 +20,6 @@ function Ray.new(gunModel: GunModel, weaponStats)
     local self = setmetatable({
         GunModel = gunModel,
         WeaponStats = weaponStats,
-
-        MouseComponent = bluejay.get_component(Player, "Mouse"),
 
         Cleaner = Trove.new()
     }, Ray)

@@ -70,8 +70,8 @@ function GunEngine:Start()
         drawRaySignal:FireExcept(player, startPosition, endPosition, weaponName)
     end)
 
-    renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, stats: GadgetStats.GadgetStats_T)
-        renderGrenade:FireExcept(player, player, position, direction, movementSpeed, stats)
+    renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
+        renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
     end)
 end
 

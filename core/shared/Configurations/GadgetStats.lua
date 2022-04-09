@@ -126,7 +126,7 @@ return {
     ["C0S"] = {
         Name = "C0S",
 
-        DEBUG = false,
+        DEBUG = true,
 
         ProjectileSpeed = 150,
         MaxDistance = 1000,
@@ -153,10 +153,11 @@ return {
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = false
+            grenade.Anchored = true
             grenade.CanCollide = false
             grenade.CanTouch = false
             grenade.CanQuery = false
+            
             local function calcC0SDamage(damage, distance)
                 return math.clamp(damage + (20 * (1 / distance)), 1, 15)
             end
