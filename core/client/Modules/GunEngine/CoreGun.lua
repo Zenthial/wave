@@ -129,7 +129,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     local cleaner = Trove.new();
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
-        attackModule:SetCanFire(bool)
+        attackModule:SetCanFire(not bool)
 
         Player:SetAttribute("Reloading", bool)
     end))
@@ -139,10 +139,12 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     end))
 
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
+        Player:SetAttribute("Firing", true)
         ammoModule:Fire()
     end))
 
     cleaner:Add(attackModule.Events.StoppedShooting:Connect(function()
+        Player:SetAttribute("Firing", false)
         fired:Fire(1/weaponStats.FireRate)
     end))
 
@@ -204,6 +206,7 @@ end
 
 function CoreGun:Attack()
     if self.AmmoModule:CanFire() then
+        Player:SetAttribute("LocalSprinting", false)
         self.AttackModule:Attack()
     end
 end

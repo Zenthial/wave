@@ -107,6 +107,8 @@ function Battery:Heat()
         self.CurrentHeat = newHeat
         self.Events.AmmoChanged:Fire(self.CurrentHeat)
     end
+
+    -- print(self.CurrentHeat)
 end
 
 return Battery

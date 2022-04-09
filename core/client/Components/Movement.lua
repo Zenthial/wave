@@ -34,20 +34,21 @@ function Movement:Start()
 
 	self.Cleaner:Add(keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
 		if keyCode == Enum.KeyCode.LeftShift then
+			if self.Root:GetAttribute("Firing") == true then return end
 			self.Root:SetAttribute("LocalSprinting", true)
-			self:UpdateWalkspeed()
 		elseif keyCode == Enum.KeyCode.C then
 			self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
-			self:UpdateWalkspeed()
 		end
 	end))
 
 	self.Cleaner:Add(keyboard.KeyUp:Connect(function(keyCode: Enum.KeyCode)
 		if keyCode == Enum.KeyCode.LeftShift then
 			self.Root:SetAttribute("LocalSprinting", false)
-			self:UpdateWalkspeed()	
 		end
 	end))
+
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalSprinting"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCrouching"):Connect(function() self:UpdateWalkspeed() end))
 end
 
 function Movement:UpdateWalkspeed()

@@ -38,8 +38,7 @@ function Ray:Draw(target: Vector3): boolean
     if self.GunModel ~= nil then
         local gunModel = self.GunModel :: GunModel
         if gunModel.Barrel ~= nil then            
-            local bullet = self.WeaponStats.BulletCache:GetPart() :: BasePart
-            Ray.StaticDraw(gunModel.Barrel.Position, target, bullet, self.WeaponStats.BulletCache)
+            Ray.StaticDraw(gunModel.Barrel.Position, target, self.WeaponStats.BulletCache)
 
             return true
         end
@@ -48,7 +47,8 @@ function Ray:Draw(target: Vector3): boolean
     return false
 end
 
-function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bullet: BasePart, bulletCache: PartCache.PartCache)
+function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bulletCache: PartCache.PartCache)
+    local bullet = bulletCache:GetPart() :: BasePart
     CollectionService:AddTag(bullet, "Ignore")
     
     local iDist = (endPosition - startPosition).Magnitude

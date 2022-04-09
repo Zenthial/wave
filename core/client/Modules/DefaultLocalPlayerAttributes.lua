@@ -4,6 +4,8 @@ return {
     LocalCrouching = false,
     
     Chatting = false,
+
+    Firing = false,
     
     EquippedWeapon = "",
     Reloading = false,

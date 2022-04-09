@@ -103,7 +103,9 @@ function Health:Start()
                 if self.ShieldModelComponent ~= nil then
                     self.ShieldModelComponent:UpdateShieldTransparency(newShield/self.MaxShields)
                     task.delay(0.2, function()
-                        self.ShieldModelComponent:UpdateShieldTransparency(1)
+                        if not self.Charging then
+                            self.ShieldModelComponent:UpdateShieldTransparency(1)
+                        end
                     end)
                 end
             end
@@ -173,7 +175,7 @@ function Health:RegenShield(lastDamageTime: number)
                 while self.Shields < self.MaxShields and lastDamageTime >= self.DamageTime do
                     self:SetTotalHealth(self.TotalHealth + 1)
                     lastShield = self.Shields
-                    task.wait(0.15)
+                    task.wait(0.08)
                 end
                 self.Charging = false
                 self:RegenShield(tick())

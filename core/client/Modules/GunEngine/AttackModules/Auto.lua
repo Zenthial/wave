@@ -78,6 +78,7 @@ function Auto:Attack()
             self.Events.Attacked:Fire()
             task.wait(1/self.WeaponStats.FireRate)
         until self.MutableStats.MouseDown == false or not self.CanFire
+        -- print(self.MutableStats.MouseDown == false, not self.CanFire)
         self.Events.StoppedShooting:Fire()
         self.Shooting = false
     end

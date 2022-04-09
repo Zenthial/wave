@@ -49,6 +49,7 @@ Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), Loa
 
 local function playerAdded(player: Player)
     CollectionService:AddTag(player, "Player")
+    CollectionService:AddTag(player, "Health")
 
     local function characterAdded(character) 
         CollectionService:AddTag(character, "Character")
