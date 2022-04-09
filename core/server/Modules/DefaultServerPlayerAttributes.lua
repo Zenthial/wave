@@ -12,4 +12,6 @@ return {
     CanCrouch = true,
     Rolling = false,
     CanRoll = true,
+
+    Dead = false,
 }

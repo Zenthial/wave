@@ -19,6 +19,7 @@ Health.Needs = {"Cleaner"}
 function Health.new(root: any)
     return setmetatable({
         Root = root,
+        Dead = false,
 
         Events = {
             HealthChanged = Signal.new(),
@@ -66,9 +67,6 @@ function Health:Start()
 
         local damage = previousTotalHealth - currentTotalHealth
         local availableDamage = damage -- overwritten down the line
-    
-        local lastHealth = math.clamp(currentTotalHealth, 0, self.MaxTotalHealth) - self.Shields :: number
-        local lastShield = math.clamp(previousTotalHealth, 0, self.MaxTotalHealth) - self.Health :: number
 
         local newShield = self.Shields
         local newHealth = self.Health
@@ -135,7 +133,8 @@ function Health:Start()
 
         self:RegenShield(self.DamageTime)
 
-        if currentTotalHealth == 0 then
+        if currentTotalHealth <= 0 then
+            self.Dead = true
             self.Events.Died:Fire()
         end
     end))
@@ -162,19 +161,22 @@ function Health:SetTotalHealth(trueHealth: number)
     self.TotalHealth = trueHealth
     
     local player = self.Root :: Player
+    if self.TotalHealth <= 0 then
+        self.Dead = true
+    else
+        self.Dead = false
+    end
     player:SetAttribute("TotalHealth", trueHealth)
 end
 
 function Health:RegenShield(lastDamageTime: number)
     task.spawn(function()
-        local lastShield = self.Shields
-        if not self.Charging and self.Shields < self.MaxShields then
+        if not self.Charging and self.Shields < self.MaxShields and not self.Dead then
             task.wait(self.RechargeTime)
             if lastDamageTime >= self.DamageTime then
                 self.Charging = true
                 while self.Shields < self.MaxShields and lastDamageTime >= self.DamageTime do
                     self:SetTotalHealth(self.TotalHealth + 1)
-                    lastShield = self.Shields
                     task.wait(0.08)
                 end
                 self.Charging = false

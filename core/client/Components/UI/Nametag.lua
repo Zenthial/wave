@@ -71,8 +71,8 @@ end
 local Nametag = {}
 Nametag.__index = Nametag
 Nametag.Name = "Nametag"
-Nametag.Tag = "Nametag"
-Nametag.Ancestor = PlayerGui
+Nametag.Tag = "Player"
+-- Nametag.Ancestor = PlayerGui
 Nametag.Needs = {"Cleaner"}
 
 function Nametag.new(player: any)
