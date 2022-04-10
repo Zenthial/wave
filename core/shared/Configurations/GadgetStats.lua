@@ -1,10 +1,11 @@
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local HapticService = game:GetService("HapticService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Grenades = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Grenades")
 local PartCache = require(ReplicatedStorage.Shared.util.PartCache)
+
+local radiusDamage = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
 
 export type GadgetStats_T = {
     Name: string,
@@ -31,13 +32,14 @@ export type GadgetStats_T = {
     MinSpreadAngle: number,
     MaxSpreadAngle: number,
 
+    CalculateDamage: (number, number) -> number,
+
     Cache: typeof(PartCache),
     CacheFolder: Folder,
 
     TerminationBehavior: (BasePart, BrickColor, Player, GadgetStats_T) -> (), -- Should yield if pop-time is needed
 }
 
-local DealSelfDamage = nil
 local CacheFolder = nil
 local Caches = {
     NDG = nil,
@@ -45,12 +47,6 @@ local Caches = {
 }
 
 if RunService:IsClient() then
-    local StarterPlayer = game:GetService("StarterPlayer")
-    local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
-    local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
-    local Comm = ClientComm.GetClientComm()
-    DealSelfDamage = Comm:GetFunction("DealSelfDamage")
-
     CacheFolder = Instance.new("Folder")
     CacheFolder.Name = "GrenadeCacheFolder"
     CacheFolder.Parent = workspace
@@ -85,6 +81,11 @@ return {
         Cache = Caches.NDG,
         CacheFolder = CacheFolder,
 
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/20)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
             grenade.Anchored = false
@@ -106,18 +107,7 @@ return {
                     explosion:Destroy()
                 end)
 
-                local function Damage()
-                    local distanceDamageFactor = 1-(distance/stats.NadeRadius)
-                    DealSelfDamage(math.abs(stats.MaxDamage*distanceDamageFactor))
-                end
-
-                if distance <= stats.NadeRadius then
-                    if sourcePlayer.TeamColor ~= sourceTeam then
-                        Damage()
-                    -- elseif Player == sourcePlayer then
-                    --     Damage()
-                    end
-                end
+                radiusDamage(stats, grenade, nil, false)
             end
             task.wait(stats.DelayTime)
         end
@@ -151,16 +141,16 @@ return {
         Cache = Caches.C0S,
         CacheFolder = CacheFolder,
 
+        CalculateDamage = function(damage, distance)
+            return math.clamp(damage + (20 * (1 / distance)), 1, 15)
+        end,
+
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
             grenade.Anchored = true
             grenade.CanCollide = false
             grenade.CanTouch = false
             grenade.CanQuery = false
-            
-            local function calcC0SDamage(damage, distance)
-                return math.clamp(damage + (20 * (1 / distance)), 1, 15)
-            end
 
             grenade.BrickColor = sourceTeam
             local startCFrame = grenade.CFrame
@@ -176,14 +166,7 @@ return {
             local active = true
             task.spawn(function()
                 while active do
-                    local radius = grenade.Size.Magnitude / 2
-                    local chr = sourcePlayer.Character
-                    if chr ~= nil and chr.HumanoidRootPart ~= nil --[[ and sourcePlayer.TeamColor ~= sourceTeam]] then
-                        local dist = (chr.HumanoidRootPart.Position - startCFrame.Position).Magnitude
-                        if dist <= radius then
-                            DealSelfDamage(calcC0SDamage(stats.MaxDamage, dist))
-                        end
-                    end
+                    radiusDamage(stats, grenade, nil, false)
                     task.wait(0.05)
                 end
             end)
