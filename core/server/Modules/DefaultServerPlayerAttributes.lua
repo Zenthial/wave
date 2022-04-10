@@ -14,4 +14,7 @@ return {
     CanRoll = true,
 
     Dead = false,
+
+    LastKiller = "",
+    LastKilledWeapon = ""
 }

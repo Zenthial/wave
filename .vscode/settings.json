@@ -1,5 +1,8 @@
 {
     "robloxLsp.diagnostics.disable": [
         "trailing-space"
+    ],
+    "cSpell.words": [
+        "RESPAWNING"
     ]
 }

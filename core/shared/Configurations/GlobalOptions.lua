@@ -1,0 +1,3 @@
+return {
+    RespawnTime = 5,
+}

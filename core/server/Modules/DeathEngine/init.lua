@@ -54,6 +54,7 @@ local function playerAdded(player: Player)
 
                 health_component:SetTotalHealth(100) -- probably bad to hardcode this value
                 player:SetAttribute("Dead", false)
+                player:SetAttribute("LastKiller", "")
             end)
         end))
 
