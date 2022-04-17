@@ -4,9 +4,24 @@ local Players = game:GetService("Players")
 local bluejay = require(ReplicatedStorage.Shared.bluejay)
 
 local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
-local AnimationTypes = require(script.Parent.AnimationTypes)
 
-type State_T = AnimationTypes.AnimationTreeStruct
+export type State_T = {
+    Equipping: number, -- 0 = not equipping, 1 = equipping, -1 = unequipping
+    
+    SprintActive: boolean,
+    SprintPlaying: boolean,
+
+    Rolling: boolean,
+
+    CrouchActive: boolean,
+    CrouchPlaying: boolean,
+
+    ReloadActive: boolean,
+    ReloadPlaying: boolean,
+
+    WeaponEquipped: boolean,
+    WeaponName: string
+}
 
 local Player = Players.LocalPlayer
 

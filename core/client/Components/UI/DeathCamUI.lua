@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
@@ -18,6 +19,7 @@ type DeathCamUI_T = {
     CountDown1: Sound,
     CountDown2: Sound,
     CurrentDeathTween: Tween | nil,
+    Blur: BlurEffect | nil,
 
     Cleaner: Cleaner_T
 }
@@ -63,6 +65,17 @@ function DeathCamUI:Start()
 end
 
 function DeathCamUI:ToggleDeathCam()
+    if self.Blur then
+        self.Blur:Destroy()
+        self.Blur = nil
+    end
+
+    local blur = Instance.new("BlurEffect")
+    blur.Size = 0
+    blur.Parent = Lighting
+    TweenService:Create(blur, Instance.new(0.15), {Size = 20}):Play()
+
+
     local killer = Players.LocalPlayer:GetAttribute("LastKiller")
     local weapon = Players.LocalPlayer:GetAttribute("LastKilledWeapon")
 
@@ -116,6 +129,18 @@ function DeathCamUI:RemoveOverlay()
         self.CurrentDeathTween = nil
     end
     
+    if self.Blur then
+        local tween = TweenService:Create(self.Blur, TweenInfo.new(.15), {Size = 0})
+        tween:Play()
+        
+        local con
+        con = tween.Completed:Connect(function()
+            self.Blur:Destroy()
+            self.Blur = nil
+            con:Disconnect()
+        end)
+    end
+
     self.CurrentDeathTween = TweenService:Create(self.Root.Parent.Overlay, TweenInfo.new(.1), {BackgroundTransparency = 1})
     self.CurrentDeathTween:Play()
     self.CurrentDeathTween.Completed:Wait()
