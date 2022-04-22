@@ -34,12 +34,12 @@ function Movement:Start()
 
 	self.Cleaner:Add(keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
 		if keyCode == Enum.KeyCode.LeftShift then
-			if self.Root:GetAttribute("LocalCanSprint") == true then return end
+			if self.Root:GetAttribute("LocalCanSprint") == false then return end
 			if self.Root:GetAttribute("Firing") == true then return end
 
 			self.Root:SetAttribute("LocalSprinting", true)
 		elseif keyCode == Enum.KeyCode.C then
-			if self.Root:GetAttribute("LocalCanCrouch") == true then return end
+			if self.Root:GetAttribute("LocalCanCrouch") == false then return end
 
 			self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
 		end
@@ -53,16 +53,18 @@ function Movement:Start()
 
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalSprinting"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCrouching"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanMove"):Connect(function() self:UpdateWalkspeed() end))
 	
 	-- this is a fucking mess, but i think its a smart mess
+	-- i may not need any of this since I'm also using LocalCanMove
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanSprint"):Connect(function()
-		if self.Root:GetAttribute("LocalCanSprint") == true then
+		if self.Root:GetAttribute("LocalCanSprint") == false then
 			self.Root:SetAttribute("LocalSprinting", false)
 		end
 	end))
 
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanCrouch"):Connect(function()
-		if self.Root:GetAttribute("LocalCanCrouch") == true then
+		if self.Root:GetAttribute("LocalCanCrouch") == false then
 			self.Root:SetAttribute("LocalCrouching", false)
 		end
 	end))
@@ -70,6 +72,12 @@ end
 
 function Movement:UpdateWalkspeed()
 	self.Humanoid.WalkSpeed = 16
+
+	if self.Root:GetAttribute("LocalCanMove") == false then
+		self.Humanoid.WalkSpeed = 0
+
+		return
+	end
 		
 	if self.Root:GetAttribute("Aiming") == true then
 		self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 4

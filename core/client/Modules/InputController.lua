@@ -31,10 +31,10 @@ function InputController:Start()
     end))
 
     cleaner:Add(keyboardInput.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-        print(keyCode)
         if keyCode == Enum.KeyCode.Slash then
             LocalPlayer:SetAttribute("Chatting", true)
         elseif keyCode == Enum.KeyCode.M then
+            -- redo this, as inventory component shouldn't be accessing state variables of MainMenuComponent
             if MainMenuComponent.Open then
                 MainMenuComponent:CloseMenu()
             else

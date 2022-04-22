@@ -5,6 +5,7 @@ return {
 
     LocalCanSprint = true,
     LocalCanCrouch = true,
+    LocalCanMove = true,
     
     Chatting = false,
 
