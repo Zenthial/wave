@@ -19,6 +19,7 @@ function InputController:Start()
     local mouseInput = Input.Mouse.new()
 
     local InventoryComponent = bluejay.get_component(LocalPlayer, "Inventory")
+    local MenuStateComponent = bluejay.get_component(LocalPlayer, "MenuState")
     local MainMenuComponent = bluejay.get_component(MainMenu, "MainMenu")
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()
@@ -30,6 +31,7 @@ function InputController:Start()
     end))
 
     cleaner:Add(keyboardInput.KeyDown:Connect(function(keyCode: Enum.KeyCode)
+        print(keyCode)
         if keyCode == Enum.KeyCode.Slash then
             LocalPlayer:SetAttribute("Chatting", true)
         elseif keyCode == Enum.KeyCode.M then
@@ -38,6 +40,8 @@ function InputController:Start()
             else
                 MainMenuComponent:OpenMenu()
             end
+        elseif keyCode == Enum.KeyCode.B then
+            MenuStateComponent:FeedInput()
         else
             InventoryComponent:FeedInput(keyCode)
         end
