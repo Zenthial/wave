@@ -4,7 +4,11 @@ return {
     Spotted = false,
     Restrained = false,
     PlacingDeployable = false,
+    
+    EquippedPrimary = "",
+    EquippedSecondary = "",
     EquippedSkill = "",
+    EquippedGadget = "",
 
     Sprinting = false,
     CanSprint = true,

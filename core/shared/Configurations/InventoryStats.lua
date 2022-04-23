@@ -6,17 +6,13 @@ export type Inventory = {
 
 
 local DEFAULT_LOADOUT = {
-    Weapons = {
-        "W17",
-    },
+    Primary = "W17",
 
-    Gadgets = {
-        "C0S"
-    },
+    Secondary = "Y14",
 
-    Skills = {
-        "D0DG-P"
-    }
+    Gadget = "C0S",
+
+    Skill = "D0DG-P",
 }
 
 return DEFAULT_LOADOUT

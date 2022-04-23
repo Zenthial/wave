@@ -24,6 +24,7 @@ export type WeaponStats_T = {
     
     WeaponCost: number, -- backwards armory compatibility?    
     
+    Primary: boolean,
     GunType: string,
     
     DamageCalculationFunction: (number, number) -> number | nil, -- damage, distance, alteredDamage
@@ -135,6 +136,7 @@ return {
         
         WeaponCost = 0, -- backwards armory compatibility?    
         
+        Primary = true,
         GunType = GunTypes.Auto,
         
         DamageCalculationFunction = function(damage, _)
@@ -203,6 +205,7 @@ return {
 
         WeaponCost = 2000, -- backwards armory compatibility?    
         
+        Primary = true,
         GunType = GunTypes.Auto,
 
         DamageCalculationFunction = function(damage, _)
@@ -260,5 +263,68 @@ return {
             AnimationData.new("W17Sprint", 8681795992),
             AnimationData.new("W17Melee", 1427432032),
         }
+    } :: WeaponStats_T,
+
+    ["Y14"] = {
+        Name = "Y14",
+        FullName = "YOLTOR no. 14 Phaser Pistol",
+        Category = "Handgun",
+        Description = "The YOLTOR no. 14 phaser pistol is the standard-issue sidearm issued to all WIJ forces with a history dating back to the conception of the alliance. With a highly efficient energy converter and easy handling, the Y14 serves well in any combat situation. The Y14 is widely considered the best sidearm on the market today.",
+
+        WeaponCost = 0,
+
+        Primary = false,
+        GunType = GunTypes.Semi,
+
+        DamageCalculationFunction = function(damage, _)
+            return damage
+        end, -- damage, distance, alteredDamage
+        Damage = 8,
+        HeadshotMultiplier = 1.6,
+        VehicleMultiplier = 1,
+
+        ChargeWait = 0,
+
+        FireMode = FireMode.Single,
+        BulletType = BulletType.Ray, -- for things like the msi, pbw, anything else
+        BulletModel = Bullets.Default,
+        BulletCache = Caches.DefaultCache,
+
+        CanSprint = true,
+        CanCrouch = true,
+
+        NumBarrels = 1,
+        NumHandles = 1,
+        Holster = Holsters.Hip,
+        HandleWelds = {
+            {	limb = "Right Arm",
+				C0 = CFrame.new(0, -.5, -.25) * CFrame.Angles(math.rad(-90), 0, 0),
+				C1 = CFrame.new()
+			}
+        },
+
+        EquipTime = 0.1,
+
+        FireRate = 15,
+        MaxSpread = 2.5,
+        MinSpread = 0.5,
+
+        AmmoType = AmmoType.Battery,
+
+        BatteryDepletionMin = 2,
+        BatteryDepletionMax = 3,
+        ShotsDeplete = 10,
+
+        HeatRate = 5,
+        CoolTime = 1.5,
+        CoolWait = 1,
+
+        Animations = {
+            AnimationData.new("Y14Equip", 1426996139),
+            AnimationData.new("Y14Hold", 1426980822),
+            AnimationData.new("Y14Sprint", 8681795992),
+            AnimationData.new("Y14Melee", 1427432032),
+        }
+
     } :: WeaponStats_T,
 } :: {[string]: WeaponStats_T}

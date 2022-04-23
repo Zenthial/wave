@@ -1,1 +1,0 @@
-rojo upload --asset_id TEST_PLACE_ID --cookie "COOKIE"

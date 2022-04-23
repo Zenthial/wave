@@ -33,9 +33,10 @@ function ServerInventory.new(root: any)
         Root = root,
 
         ActiveServerInventory = {
-            Weapons = {},
-            Gadgets = {},
-            Skills = {}
+            Primary = "",
+            Secondary = "",
+            Gadgets = "",
+            Skills = ""
         } :: ServerInventoryType
     }, ServerInventory)
 end
@@ -55,53 +56,47 @@ function ServerInventory:Start()
 end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
-    for key, val in pairs(inv) do
-        self.ActiveServerInventory[key] = val
+    for key, name in pairs(inv) do
+        self.ActiveServerInventory[key] = name
 
-        if key == "Weapons" then
-            for _, name in pairs(val) do
-                local stats = WeaponStats[name]
-                local model = WeaponModels[name].Model:Clone() :: Model
-                model.Name = name
-                model.Parent = self.Character
-    
-                assert(stats, "No Weapon Stats for " .. name)
-                assert(model, "No model for " .. name)
-    
-                local success = GunEngine:WeldWeapon(self.Character, model, true)
-                if not success then
-                    error("failed to weld")
-                end
+        if key == "Primary" or key == "Secondary" then
+            local stats = WeaponStats[name]
+            local model = WeaponModels[name].Model:Clone() :: Model
+            model.Name = name
+            model.Parent = self.Character
 
-                print("Setting weapon " .. name)
-                SetWeaponSignal:FireClient(self.Root, key, name, model)
+            assert(stats, "No Weapon Stats for " .. name)
+            assert(model, "No model for " .. name)
+
+            local success = GunEngine:WeldWeapon(self.Character, model, true)
+            if not success then
+                error("failed to weld")
             end
-        elseif key == "Skills" then
-            for _, name in pairs(val) do
-                local stats = SkillStats[name]
-                local model = SkillModels[name]:Clone() :: Model
-                model.Name = name
-                model.Parent = self.Character
 
-                assert(stats, "No Skill Stats for " .. name)
-                assert(model, "No model for " .. name)
+            self.Root:SetAttribute("Equipped"..key, name)
+            SetWeaponSignal:FireClient(self.Root, key, name, model)
+        elseif key == "Skill" then
+            local stats = SkillStats[name]
+            local model = SkillModels[name]:Clone() :: Model
+            model.Name = name
+            model.Parent = self.Character
 
-                local success = GunEngine:WeldWeapon(self.Character, model, true)
-                if not success then
-                    error("failed to weld")
-                end
+            assert(stats, "No Skill Stats for " .. name)
+            assert(model, "No model for " .. name)
 
-                self.Root:SetAttribute("EquippedSkill", name)
-                SetWeaponSignal:FireClient(self.Root, key, name, model)
+            local success = GunEngine:WeldWeapon(self.Character, model, true)
+            if not success then
+                error("failed to weld")
             end
-        elseif key == "Gadgets" then
-            for _, name in pairs(val) do
-                local stats = GadgetStats[name]
 
-                assert(stats, "No Grenade Stats for " .. name)
-                self.Root:SetAttribute("EquippedGrenade", name)
-                SetWeaponSignal:FireClient(self.Root, key, name)
-            end
+            self.Root:SetAttribute("EquippedSkill", name)
+            SetWeaponSignal:FireClient(self.Root, key, name, model)
+        elseif key == "Gadget" then
+            local stats = GadgetStats[name]
+
+            assert(stats, "No Grenade Stats for " .. name)
+            self.Root:SetAttribute("EquippedGadget", name)
+            SetWeaponSignal:FireClient(self.Root, key, name)
         end
     end
 end

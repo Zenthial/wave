@@ -2,7 +2,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Grenades = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Grenades")
+local Gadgets = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Gadgets")
 local PartCache = require(ReplicatedStorage.Shared.util.PartCache)
 
 local radiusDamage = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
@@ -51,8 +51,8 @@ if RunService:IsClient() then
     CacheFolder.Name = "GrenadeCacheFolder"
     CacheFolder.Parent = workspace
 
-    Caches.NDG = PartCache.new(Grenades.NDG.Projectile, 30, CacheFolder)
-    Caches.C0S = PartCache.new(Grenades.C0S.Projectile, 30, CacheFolder)
+    Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
+    Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
 end
 
 return {

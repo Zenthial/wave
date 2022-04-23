@@ -1,8 +1,0 @@
-name: "Main Place Publisher"
-description: "Automatically publish the game"
-outputs:
-  return_code:
-    description: "The error status of the publish"
-runs:
-  using: "Docker"
-  image: Dockerfile
