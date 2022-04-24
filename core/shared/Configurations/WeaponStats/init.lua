@@ -286,7 +286,7 @@ return {
         ChargeWait = 0,
 
         FireMode = FireMode.Single,
-        BulletType = BulletType.Ray, -- for things like the msi, pbw, anything else
+        BulletType = BulletType.a, -- for things like the msi, pbw, anything else
         BulletModel = Bullets.Default,
         BulletCache = Caches.DefaultCache,
 
