@@ -163,16 +163,25 @@ function AnimationState:HandleSprintChange()
         end
 
         if state.WeaponEquipped and state.WeaponName ~= "" and not state.Rolling then
-            animationHandler:Play(state.WeaponName .. "Sprint")
-            table.insert(self.State.PlayingAnimations, state.WeaponName .. "Sprint")
+            animationHandler:Play(state.WeaponName .. "sprintingMiddle")
+            animationHandler:Play(state.WeaponName .. "sprintingTop")
+            self.AnimationHandler:Stop(state.WeaponName.."equipMiddle")
+            self.AnimationHandler:Stop(state.WeaponName.."equipTop")
+            table.insert(self.State.PlayingAnimations, state.WeaponName .. "sprintingMiddle")
+            table.insert(self.State.PlayingAnimations, state.WeaponName .. "sprintingTop")
             state.SprintPlaying = true
         end
 
     elseif not state.SprintActive and state.SprintPlaying then
         for _, animationName in pairs(self.State.PlayingAnimations) do
-            if string.find(animationName:lower(), "sprint") then -- could optimize by storing every sprint animation playing
+            if string.find(animationName:lower(), "sprinting") then -- could optimize by storing every sprint animation playing
                 animationHandler:Stop(animationName)
             end
+        end
+
+        if state.WeaponEquipped and state.WeaponName ~= "" and not state.Rolling then
+            self.AnimationHandler:Play(state.WeaponName.."equipMiddle")
+            self.AnimationHandler:Play(state.WeaponName.."equipTop")
         end
 
         state.SprintPlaying = false
@@ -234,15 +243,15 @@ function AnimationState:HandleWeaponChange()
 
         self.AnimationHandler:Play(newWeaponName.."equipMiddle")
         self.AnimationHandler:Play(newWeaponName.."equipTop")
-
-        print(self.AnimationHandler.Animator:GetPlayingAnimationTracks())
     else
         self.AnimationHandler:Stop(oldWeaponName.."equipMiddle")
         self.AnimationHandler:Stop(oldWeaponName.."equipTop")
 
-        self.AnimationHandler:Play(oldWeaponName.."equippingArm")
-        task.wait(oldWeaponStats.EquipTime)
-        self.AnimationHandler:Stop(oldWeaponName.."equippingArm")
+        if oldWeaponStats.Slot == 1 then
+            self.AnimationHandler:Play(oldWeaponName.."equippingArm")
+            task.wait(oldWeaponStats.EquipTime)
+            self.AnimationHandler:Stop(oldWeaponName.."equippingArm")
+        end
     end
 end
 

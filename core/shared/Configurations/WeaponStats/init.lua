@@ -3,11 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local BulletAssets = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Bullets")
 
-local Types = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Types"))
 local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("PartCache"))
-local AnimationData = require(script.Parent.Parent.Modules.AnimationData)
-
-type AnimationData = Types.AnimationData
 
 type HandleWeld = {
     Limb: string,
@@ -67,8 +63,6 @@ export type WeaponStats_T = {
     HeatRate: number,
     CoolTime: number,
     CoolWait: number,
-
-    Animations: {AnimationData}
 }
 
 -- all of the below tables, except the caches, are just enums
@@ -117,14 +111,6 @@ local Holsters = {
     LeftArmModule = "LeftArmModule",
     Melee = "Melee"
 }
-
-local returnTable: {[string]: WeaponStats_T} = {}
-for _, file in pairs(script:GetChildren()) do
-    local func = require(file)
-    local weaponStats = func(FireMode, BulletType, Bullets, Caches, AmmoType, Holsters, GunTypes, AnimationData)
-
-    returnTable[file.Name] = weaponStats
-end
 
 return {
     ["W17"] = {
@@ -187,13 +173,6 @@ return {
         HeatRate = 2,
         CoolTime = 3,
         CoolWait = 0.3,
-
-        Animations = {
-            AnimationData.new("W17Equip", 1429821058),
-            AnimationData.new("W17Hold", 1429816077),
-            AnimationData.new("W17Sprint", 8681795992),
-            AnimationData.new("W17Melee", 1427432032),
-        }
     } :: WeaponStats_T,
 
     ["W18"] = {
@@ -256,13 +235,6 @@ return {
         HeatRate = 2,
         CoolTime = 3,
         CoolWait = 0.3,
-
-        Animations = {
-            AnimationData.new("W17Equip", 1429821058),
-            AnimationData.new("W17Hold", 1429816077),
-            AnimationData.new("W17Sprint", 8681795992),
-            AnimationData.new("W17Melee", 1427432032),
-        }
     } :: WeaponStats_T,
 
     ["Y14"] = {
@@ -318,13 +290,5 @@ return {
         HeatRate = 5,
         CoolTime = 1.5,
         CoolWait = 1,
-
-        Animations = {
-            AnimationData.new("Y14Equip", 0),
-            AnimationData.new("Y14Hold", 1426996139),
-            AnimationData.new("Y14Sprint", 8681795992),
-            AnimationData.new("Y14Melee", 1427432032),
-        }
-
     } :: WeaponStats_T,
 } :: {[string]: WeaponStats_T}

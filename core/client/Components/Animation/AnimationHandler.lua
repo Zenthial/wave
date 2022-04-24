@@ -9,10 +9,8 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Configurations = Shared:WaitForChild("Configurations")
 
 local bluejay = require(Shared:WaitForChild("bluejay"))
-local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
-local Types = require(Shared:WaitForChild("Types"))
 
-local DefaultAnimations = require(Configurations.DefaultAnimations) :: {[string]: Types.AnimationData}
+local DefaultAnimations = require(Configurations.DefaultAnimations) :: {[string]: Animation}
 
 local AnimationHandler = {}
 AnimationHandler.__index = AnimationHandler
@@ -62,8 +60,8 @@ function AnimationHandler:Start()
         self.Animator = humanoid:WaitForChild("Animator", 30)
     end
 
-    for _, animationData in pairs(DefaultAnimations) do
-        self:Load(animationData)
+    for _, animation in pairs(DefaultAnimations) do
+        self:Load(animation)
     end
     
     self.Loaded = true
