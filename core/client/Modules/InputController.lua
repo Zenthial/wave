@@ -31,16 +31,16 @@ function InputController:Start()
     end))
 
     cleaner:Add(keyboardInput.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-        if keyCode == Enum.KeyCode.Slash then
+        if keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("ChatKeybind")] then
             LocalPlayer:SetAttribute("Chatting", true)
-        elseif keyCode == Enum.KeyCode.M then
+        elseif keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("MenuKeybind")] then
             -- redo this, as inventory component shouldn't be accessing state variables of MainMenuComponent
             if MainMenuComponent.Open then
                 MainMenuComponent:CloseMenu()
             else
                 MainMenuComponent:OpenMenu()
             end
-        elseif keyCode == Enum.KeyCode.B then
+        elseif keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("InventoryKeybind")] then
             MenuStateComponent:FeedInput()
         else
             InventoryComponent:FeedInput(keyCode)

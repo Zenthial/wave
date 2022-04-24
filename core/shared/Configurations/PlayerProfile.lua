@@ -7,6 +7,21 @@ export type PlayerProfile_T = {
         Particles: boolean,
         BulletHoles: boolean,
     },
+
+    Keybinds: {
+        Menu: Enum.KeyCode,
+        Interact: Enum.KeyCode,
+        Spot: Enum.KeyCode,
+        Aim: Enum.KeyCode,
+        Melee: Enum.KeyCode,
+        Sprint: Enum.KeyCode,
+        Crouch: Enum.KeyCode,
+        Gadget: Enum.KeyCode,
+        Skill: Enum.KeyCode,
+        Chat: Enum.KeyCode,
+        Leaderboard: Enum.KeyCode,
+        ToggleDisplay: Enum.KeyCode,
+    },
 }
 
 local PlayerProfile = {
@@ -17,6 +32,22 @@ local PlayerProfile = {
         Shadows = true,
         Particles = true,
         BulletHoles = true,
+    },
+
+    Keybinds = {
+        Menu = Enum.KeyCode.M,
+        Interact = Enum.KeyCode.E,
+        Spot = Enum.KeyCode.V,
+        Aim = Enum.KeyCode.Q,
+        Melee = Enum.KeyCode.R,
+        Sprint = Enum.KeyCode.LeftShift,
+        Crouch = Enum.KeyCode.C,
+        Gadget = Enum.KeyCode.G,
+        Skill = Enum.KeyCode.F,
+        Chat = Enum.KeyCode.Slash,
+        Inventory = Enum.KeyCode.B,
+        Leaderboard = Enum.KeyCode.Tab,
+        ToggleDisplay = Enum.KeyCode.LeftControl,
     },
 
     Stats = {

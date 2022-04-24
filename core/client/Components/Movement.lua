@@ -1,8 +1,11 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Keyboard = Input.Keyboard
+
+local LocalPlayer = Players.LocalPlayer
 
 local Movement = {}
 Movement.__index = Movement
@@ -33,12 +36,12 @@ function Movement:Start()
 	self.Humanoid = hum
 
 	self.Cleaner:Add(keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-		if keyCode == Enum.KeyCode.LeftShift then
+		if keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("SprintKeybind")] then
 			if self.Root:GetAttribute("LocalCanSprint") == false then return end
 			if self.Root:GetAttribute("Firing") == true then return end
 
 			self.Root:SetAttribute("LocalSprinting", true)
-		elseif keyCode == Enum.KeyCode.C then
+		elseif keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("CrouchKeybind")] then
 			if self.Root:GetAttribute("LocalCanCrouch") == false then return end
 
 			self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
@@ -46,7 +49,7 @@ function Movement:Start()
 	end))
 
 	self.Cleaner:Add(keyboard.KeyUp:Connect(function(keyCode: Enum.KeyCode)
-		if keyCode == Enum.KeyCode.LeftShift then
+		if keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("SprintKeybind")] then
 			self.Root:SetAttribute("LocalSprinting", false)
 		end
 	end))

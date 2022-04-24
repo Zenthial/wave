@@ -29,6 +29,10 @@ local function HandlePlayerData(player: Player, profile)
         option.Parent = optionsFolder
     end
 
+    for keybindName, keybindValue: Enum.KeyCode in pairs(profile.Data.Keybinds) do
+        player:SetAttribute(keybindName.."Keybind", keybindValue.Name)
+    end
+
     local statsFolder = Instance.new("Folder")
     statsFolder.Name = "StatsFolder"
     statsFolder.Parent = player
@@ -48,10 +52,31 @@ local function HandlePlayerData(player: Player, profile)
     PlayerCleaners[player] = playerCleaner
 end
 
+local function DecodeKeycodeEnums(enumTable: {[string]: string})
+    local newTable = {}
+    for key, enumName in pairs(enumTable) do
+        newTable[key] = Enum.KeyCode[enumName]
+    end
+
+    return newTable
+end
+
+local function EncodeKeycodeEnums(enumTable: {[string]: Enum.KeyCode})
+    local newTable = {}
+    for key, enum in pairs(enumTable) do
+        newTable[key] = enum.Name
+    end
+
+    return newTable
+end
+
 local function PlayerAdded(player)
     local profile = PlayerDataStore:LoadProfileAsync("Player_" .. player.UserId)
     if profile ~= nil then
         profile:AddUserId(player.UserId) -- GDPR compliance
+        if profile.Data.Keybinds then
+            profile.Data.Keybinds = DecodeKeycodeEnums(profile.Data.Keybinds)
+        end
         profile:Reconcile() -- Fill in missing variables from ProfileTemplate (optional)
         profile:ListenToRelease(function()
             PlayerProfiles[player] = nil
@@ -99,6 +124,7 @@ function DataLoader:Start()
     Players.PlayerRemoving:Connect(function(player)
         local profile = PlayerProfiles[player]
         if profile ~= nil then
+            profile.Data.Keybinds = EncodeKeycodeEnums(profile.Data.Keybinds)
             profile:Release()
             -- make sure everything is gc'd
             PlayerProfiles[player] = nil

@@ -22,7 +22,6 @@ local systemNotificationSignal = comm:GetSignal("SystemNotification")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local DEFAULT_CHAT_KEY = Enum.KeyCode.Slash
 local DEFAULT_TEAM_CHAT_KEY = Enum.KeyCode.LeftAlt
 
 local TWEEN_CONSTANTS = {
@@ -65,7 +64,7 @@ function ChatUI:Start()
     local input = self.Input :: TextBox
     input.Text = ""
     input.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-    input.PlaceholderText = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(DEFAULT_CHAT_KEY))
+    input.PlaceholderText = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer:GetAttribute("ChatKeybind")]))
     
     for _, thing in pairs(self.Container:GetChildren()) do
         if thing:IsA("Frame") then

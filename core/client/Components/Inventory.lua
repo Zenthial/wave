@@ -55,7 +55,6 @@ function Inventory:Start()
 
     local MainHUDComponent = self.MainHUD
 
-    print("Created weapon signal")
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
         print(inventoryKey, weaponName)
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
@@ -70,14 +69,14 @@ function Inventory:Start()
             if not success then
                 print("failed to add weapon " .. weaponName)
             end
-        elseif inventoryKey == "Skills" then
+        elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = GunEngine:CreateSkill(weaponName, model)
             local success = self.SkillsToolbar:Add(skill)
             if not success then
                 print("failed to add skill " .. weaponName)
             end
-        elseif inventoryKey == "Gadgets" then
+        elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
             self.EquippedGadget = weaponName
         end
@@ -111,7 +110,8 @@ function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
     self.SkillsToolbar:FeedInput(KeyCode)
 
-    if KeyCode == Enum.KeyCode.G and self.EquippedGadget ~= nil then
+    print(KeyCode == Enum.KeyCode[LocalPlayer:GetAttribute("GadgetKeybind")], self.EquippedGadget ~= nil)
+    if KeyCode == Enum.KeyCode[LocalPlayer:GetAttribute("GadgetKeybind")] and self.EquippedGadget ~= nil then
         GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
     end
 end
