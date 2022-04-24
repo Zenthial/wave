@@ -9,6 +9,8 @@ local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
 
+local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
+
 local ClientComm = require(script.Parent.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()
 
@@ -55,7 +57,8 @@ loadModulesOfType(LoadedModules.Ammo, AmmoModules)
 loadModulesOfType(LoadedModules.Bullet, BulletModules)
 
 local function getAttackModule(stats: WeaponStats, bulletModule: table, gunModel, mutableStats, storedShots: ShotsTable): table
-    local mod = LoadedModules.Attack[stats.GunType]
+    local mod = LoadedModules.Attack[stats.Trigger]
+    assert(mod, "Attack module does not exist for "..tostring(stats.Trigger).." on "..stats.Name)
     if mod then
         return mod.new(stats, bulletModule, gunModel, mutableStats, storedShots)
     end
@@ -70,6 +73,7 @@ end
 
 local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
     local mod = LoadedModules.Bullet[stats.BulletType]
+    assert(mod, "Bullet module does not exist for "..tostring(stats.BulletType).." on "..stats.Name)
     if mod then
         return mod.new(gunModel, stats)
     end
@@ -120,8 +124,13 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     local animationComponent = bluejay.get_component(Player, "AnimationHandler")
 
-    for _, animationData in pairs(weaponStats.Animations) do
-        animationComponent:Load(animationData)
+    local weaponsFolder = Weapons[weaponStats.Name] :: Folder
+    assert(weaponsFolder:FindFirstChild("Anims"), "Anims folder does not exist for "..weaponStats.Name)
+
+    for _, animation: Animation in pairs(weaponsFolder.Anims:GetChildren()) do
+        local ani = animation:Clone()
+        ani.Name = weaponStats.Name..""..ani.Name
+        animationComponent:Load(ani)
     end
 
     local ammoChanged = Signal.new()

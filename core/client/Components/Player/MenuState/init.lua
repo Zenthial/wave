@@ -65,7 +65,8 @@ type MenuState_T = {
 
     State: {
         InArmory: boolean,
-        Open: boolean
+        Open: boolean,
+        Animating: boolean,
     },
 
     Cleaner: Cleaner_T,
@@ -88,6 +89,7 @@ function MenuState.new(root: any)
         State = {
             InArmory = false,
             Open = false,
+            Animating = false,
         }
     }, MenuState)
 end
@@ -109,6 +111,7 @@ function MenuState:Start()
 end
 
 function MenuState:FeedInput()
+    if self.State.Animating == true then return end
     if self.State.InArmory and not self.State.Open then
         self:Open()
     elseif self.State.Open then
@@ -118,6 +121,7 @@ end
 
 function MenuState:Open()
     self.State.Open = true
+    self.State.Animating = true
     self.SavedCFrame = Camera.CFrame
     Camera.CameraType = Enum.CameraType.Scriptable
     self.OpenCleaner = Trove.new()
@@ -166,10 +170,12 @@ function MenuState:Open()
     Player:SetAttribute("LocalCanMove", false)
     Player:SetAttribute("LocalCanCrouch", false)
     Player:SetAttribute("LocalCanSprint", false)
+    self.State.Animating = false
 end
 
 function MenuState:Close()
     self.State.Open = false
+    self.State.Animating = true
     
     local tween = TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = self.SavedCFrame})
     tween:Play()
@@ -186,6 +192,7 @@ function MenuState:Close()
     Player:SetAttribute("LocalCanSprint", true)
 
     self.OpenCleaner:Clean()
+    self.State.Animating = false
 end
 
 function MenuState:Destroy()

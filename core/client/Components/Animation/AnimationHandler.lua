@@ -32,12 +32,6 @@ local function findAnimator(root: Model): Animator?
     return nil;
 end
 
-local function createAnimation(id): Animation
-    local animation = Instance.new("Animation")
-    animation.AnimationId = "rbxassetid://"..tostring(id)  
-    return animation
-end
-
 local function createFolder(parent): Folder
     local folder = Instance.new("Folder")
     folder.Name = "AnimationFolder"
@@ -82,22 +76,18 @@ function AnimationHandler:Destroy()
     self.AnimationFolder:Destroy()
 end
 
-function AnimationHandler:Load(data: Types.AnimationData)
-    local animation = createAnimation(data.TrackId)
-    animation.Name = data.Name
+function AnimationHandler:Load(animation: Animation)
     animation.Parent = self.AnimationFolder
 
-    local track = self.Animator:LoadAnimation(animation)
-    self.AnimationTracks[data.Name] = track
-
-    -- print("Loaded ".. data.Name)
-
-    if (#data.MarkerSignals <= 0 ) then return self end
-
-    self.MarkerSignals[data.Name.."Signals"] = Trove.new()
-    for str, func in pairs(data.MarkerSignals) do
-        self.MarkerSignals[data.Name.."Signals"]:Add(track:GetMarkerReachedSignal(str):Connect(func))
+    if self.Animator == nil then
+        repeat
+            task.wait()
+        until self.Animator ~= nil
     end
+    local track = self.Animator:LoadAnimation(animation)
+    self.AnimationTracks[animation.Name] = track
+
+    print("Loaded ".. animation.Name)
 
     return self
 end

@@ -320,8 +320,8 @@ return {
         CoolWait = 1,
 
         Animations = {
-            AnimationData.new("Y14Equip", 1426996139),
-            AnimationData.new("Y14Hold", 1426980822),
+            AnimationData.new("Y14Equip", 0),
+            AnimationData.new("Y14Hold", 1426996139),
             AnimationData.new("Y14Sprint", 8681795992),
             AnimationData.new("Y14Melee", 1427432032),
         }

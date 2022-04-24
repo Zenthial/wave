@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local bluejay = require(Shared:WaitForChild("bluejay"))
-local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
@@ -22,7 +22,7 @@ local comm = ClientComm.GetClientComm()
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
-type WeaponStats = WeaponStatsModule.WeaponStats_T
+type WeaponStats = {}
 
 export type Gun = {
     WeaponStats: WeaponStats

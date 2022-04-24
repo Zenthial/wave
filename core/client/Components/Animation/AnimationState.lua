@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
 local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
 
@@ -119,7 +120,7 @@ function AnimationState:Start()
     end))
 
     cleaner:Add(ThrowingChangedSignal:Connect(function()
-        state.GrenadeActive = true
+        state.GrenadeActive = Player:GetAttribute("Throwing")
 
         self:HandleThrowingChange()
     end))
@@ -211,6 +212,9 @@ function AnimationState:HandleWeaponChange()
     local newWeaponName = Player:GetAttribute("EquippedWeapon")
     local oldWeaponName = self.State.WeaponName
 
+    local newWeaponStats = WeaponStats[newWeaponName]
+    local oldWeaponStats = WeaponStats[oldWeaponName]
+
     if newWeaponName == self.State.WeaponName then return end
     
     if newWeaponName ~= self.State.WeaponName then
@@ -224,14 +228,22 @@ function AnimationState:HandleWeaponChange()
     end
 
     if self.State.WeaponEquipped then
-        local animationTrack = self.AnimationHandler:Play(newWeaponName.."Equip")
-        animationTrack.Stopped:Wait()
-        self.AnimationHandler:Play(newWeaponName.."Hold")
+        self.AnimationHandler:Play(newWeaponName.."equippingArm")
+        task.wait(newWeaponStats.EquipTime)
+        self.AnimationHandler:Stop(newWeaponName.."equippingArm")
+
+        self.AnimationHandler:Play(newWeaponName.."equipMiddle")
+        self.AnimationHandler:Play(newWeaponName.."equipTop")
+
+        print(self.AnimationHandler.Animator:GetPlayingAnimationTracks())
     else
-        self.AnimationHandler:Stop(oldWeaponName.."Hold")
-        local animationTrack = self.AnimationHandler:Play(oldWeaponName.."Equip")
-        animationTrack.Stopped:Wait()
-    end   
+        self.AnimationHandler:Stop(oldWeaponName.."equipMiddle")
+        self.AnimationHandler:Stop(oldWeaponName.."equipTop")
+
+        self.AnimationHandler:Play(oldWeaponName.."equippingArm")
+        task.wait(oldWeaponStats.EquipTime)
+        self.AnimationHandler:Stop(oldWeaponName.."equippingArm")
+    end
 end
 
 function AnimationState:Destroy()

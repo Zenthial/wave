@@ -31,12 +31,12 @@ end
 local Welder = {}
 
 function Welder:WeldWeapon(character: Model, weapon: Model, toBack: boolean)
-    print(character, weapon)
+    -- print(character, weapon)
     if not character then return false end
 
     local weaponStats = WeaponStatsModule[weapon.Name] :: WeaponStatsModule.WeaponStats_T
     if weaponStats == nil then weaponStats = SkillStatsModule[weapon.Name] end
-    print(weaponStats)
+    -- print(weaponStats)
     if weaponStats then
         local holsters = toBack and HolsterStatsModule[weaponStats.Holster] or weaponStats.HandleWelds
 
