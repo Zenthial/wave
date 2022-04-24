@@ -17,6 +17,9 @@ local TWEEN_CONSTANTS = {
     HeatTweenInfo = TweenInfo.new(.1, Enum.EasingStyle.Linear)
 }
 
+local NOT_OVERHEATED = Color3.fromRGB(8, 169, 255)
+local OVERHEATED = Color3.fromRGB(211, 39, 39)
+
 local HeatUI = {}
 HeatUI.__index = HeatUI
 HeatUI.Name = "HeatUI"
@@ -51,6 +54,14 @@ function HeatUI:Start()
     self.HeatOutline.Heat.Fill.UIGradient.Offset = Vector2.new(0.5, 0)
     self.ChargeDelay.Fill.UIGradient.Offset = Vector2.new(0.5, 0)
     self.NameDisplay.Text = "<i>--</i>"
+end
+
+function HeatUI:SetOverheated(bool: boolean)
+    if bool then
+        self.HeatOutline.Heat.Fill.UIGradient.Color = ColorSequence.new(OVERHEATED)
+    else
+        self.HeatOutline.Heat.Fill.UIGradient.Color = ColorSequence.new(NOT_OVERHEATED)
+    end
 end
 
 function HeatUI:SetHeat(heat: number)

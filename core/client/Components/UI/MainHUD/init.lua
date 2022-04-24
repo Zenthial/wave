@@ -13,6 +13,7 @@ MainHUD.__index = MainHUD
 MainHUD.Name = "MainHUD"
 MainHUD.Tag = "MainHUD"
 MainHUD.Ancestor = PlayerGui
+MainHUD.Needs = {"Cleaner"}
 
 function MainHUD.new(root: any)
     return setmetatable({
@@ -28,7 +29,11 @@ function MainHUD:CreateDependencies()
 end
 
 function MainHUD:Start()
+    local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
+    self.Cleaner:Add(ReloadingSignal:Connect(function()
+        self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
+    end))
 end
 
 function MainHUD:UpdateEquippedWeapon(weapon)
