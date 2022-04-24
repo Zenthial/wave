@@ -74,11 +74,14 @@ local function PlayerAdded(player)
     local profile = PlayerDataStore:LoadProfileAsync("Player_" .. player.UserId)
     if profile ~= nil then
         profile:AddUserId(player.UserId) -- GDPR compliance
+        
         if profile.Data.Keybinds then
             profile.Data.Keybinds = DecodeKeycodeEnums(profile.Data.Keybinds)
         end
+
         profile:Reconcile() -- Fill in missing variables from ProfileTemplate (optional)
         profile:ListenToRelease(function()
+            profile.Data.Keybinds = EncodeKeycodeEnums(profile.Data.Keybinds)
             PlayerProfiles[player] = nil
             -- The profile could've been loaded on another Roblox server:
             player:Kick()
@@ -90,6 +93,7 @@ local function PlayerAdded(player)
             HandlePlayerData(player, profile)
         else
             -- Player left before the profile loaded:
+            profile.Data.Keybinds = EncodeKeycodeEnums(profile.Data.Keybinds)
             profile:Release()
         end
     else

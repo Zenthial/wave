@@ -71,8 +71,5 @@ for attribute, value in pairs(modules["DefaultLocalPlayerAttributes"]) do
     Player:SetAttribute(attribute, value)
 end
 
-print("here")
 local PlayerLoaded = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PlayerLoaded") :: RemoteEvent
-print("here 2")
 PlayerLoaded:FireServer()
-print("here 3")

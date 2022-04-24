@@ -25,6 +25,7 @@ local function _get_instance_component(instance: Instance, component: ComponentC
 			local start = tick()
 			
 			while tick() - start < COMPONENT_START_TIMEOUT do
+				print(instance, instances_on_components[instance], instances_on_components[instance][component])
 				if instances_on_components[instance][component] ~= nil then
 					print("found ".. instances_on_components[instance][component].Name)
 					return instances_on_components[instance][component]
@@ -120,6 +121,7 @@ local function _create(instance: Instance, component: ComponentClass)
 	end
 
 	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran synchronously
+	component_instance.__Debug = component.Name
 	instances_on_components[instance][component] = component_instance
     component_instance.__Initialized = false
     local initialized_signal = Signal.new()
