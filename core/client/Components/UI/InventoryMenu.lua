@@ -135,6 +135,12 @@ function InventoryMenu:InitializeWeapons()
     local primaryFrame = self.Root.Inventory.Weapons.Primary
     local secondaryFrame = self.Root.Inventory.Weapons.Secondary
 
+    local primaryStats = WeaponStats_V2[primary]
+    local secondaryStats = WeaponStats_V2[secondary]
+
+    primaryFrame.Title.Text = primaryStats.Name
+    secondaryFrame.Title.Text = secondaryStats.Name
+
     primaryFrame.ViewportFrame:ClearAllChildren()
     secondaryFrame.ViewportFrame:ClearAllChildren()
 
@@ -151,6 +157,12 @@ function InventoryMenu:InitializeUtilities()
 
     local skillFrame = self.Root.Inventory.Utility.Skill
     local gadgetFrame = self.Root.Inventory.Utility.Gadget
+
+    local skillStats = WeaponStats_V2[skill]
+    local gadgetStats = WeaponStats_V2[gadget]
+
+    skillFrame.Title.Text = skillStats.Name
+    gadgetFrame.Title.Text = gadgetStats.Name
 
     skillFrame.ViewportFrame:ClearAllChildren()
     gadgetFrame.ViewportFrame:ClearAllChildren()
@@ -203,6 +215,7 @@ function InventoryMenu:DisplayShop(slot: number)
         itemFrame.GunName.Text = itemStats.Name
         itemFrame.CostNum.Text = itemStats.WeaponCost
         itemFrame.Detail.BackgroundColor3 = getDetailColor(itemStats.WeaponCost)
+        itemFrame.Overlay.Purchase.Text = string.format("BUY: %d", itemStats.WeaponCost)
 
         local model
         if slot == 1 or slot == 2 then
