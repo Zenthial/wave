@@ -53,8 +53,6 @@ local function wait_for_class(component_name: string)
 	return class
 end
 
-
-
 local function get_component(instance: Instance, component_name: string)
     local class = component_name_to_class_module[component_name:lower()]
 	if class == nil then
@@ -87,6 +85,22 @@ local function await_component(instance: Instance, component_name: string)
 		else
 			resolve(component_instance)
 		end	
+	end)
+end
+
+local function await_init(component_instance: ComponentInstance)
+	return Promise.new(function(resolve, reject)
+		if component_instance.__Initialized == true then resolve(component_instance) end
+
+		local start = tick()
+		while component_instance.__Initialized ~= true do
+			if tick() - start % TIMEOUT == 0 then
+				if DEBUG_WARN then warn("POTENTIAL INFINITE WAIT IN COMPONENT "..component_instance.Name.." START METHOD") end
+			end
+			task.wait()
+		end
+
+		resolve(component_instance)
 	end)
 end
 
@@ -166,5 +180,6 @@ end
 return {
     create_component = create_component,
 	get_component = await_component,
-	debug = set_debug
+	debug = set_debug,
+	await_init = await_init
 }
