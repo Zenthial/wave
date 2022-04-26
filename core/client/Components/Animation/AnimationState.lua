@@ -59,14 +59,10 @@ function AnimationState.new(root: any)
     }, AnimationState)
 end
 
-function AnimationState:CreateDependencies()
-    return {
-        ["AnimationHandler"] = self.Root
-    }
-end
-
 function AnimationState:Start()
     local cleaner = self.Cleaner
+
+    bluejay.get_component(self.Root, "AnimationHandler")
 
     local state: State_T = {
         Equipping = 0,

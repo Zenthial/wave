@@ -47,10 +47,6 @@ function BoolOption.new(root: any)
     }, BoolOption)
 end
 
-function BoolOption:CreateDependencies()
-    return {}
-end
-
 function BoolOption:Start()
     local activeAttribute = self.Root:GetAttribute("Active") :: boolean
     self.CurrentState = activeAttribute

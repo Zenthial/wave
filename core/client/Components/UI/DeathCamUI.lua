@@ -37,10 +37,6 @@ function DeathCamUI.new(root: any)
     }, DeathCamUI)
 end
 
-function DeathCamUI:CreateDependencies()
-    return {}
-end
-
 function DeathCamUI:Start()
     local countDown = Instance.new("Sound")
     countDown.SoundId = "rbxassetid://166400843"

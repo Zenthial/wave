@@ -20,10 +20,6 @@ function Movement.new(root: any)
     }, Movement)
 end
 
-function Movement:CreateDependencies()
-    return {}
-end
-
 function Movement:Start()
 	local keyboard = Keyboard.new()
 	local char = self.Root.Character or self.Root.CharacterAdded:Wait()

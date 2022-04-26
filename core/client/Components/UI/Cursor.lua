@@ -40,10 +40,6 @@ function Cursor.new(root: any)
     }, Cursor)
 end
 
-function Cursor:CreateDependencies()
-    return {}
-end
-
 function Cursor:Start()
     self.Root.Visible = true
     self:WordForNotExpand()

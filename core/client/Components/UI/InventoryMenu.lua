@@ -117,10 +117,6 @@ function InventoryMenu.new(root: any)
     }, InventoryMenu)
 end
 
-function InventoryMenu:CreateDependencies()
-    return {}
-end
-
 function InventoryMenu:Start()
     self.ShopCleaner = Trove.new()
 

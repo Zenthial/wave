@@ -41,13 +41,8 @@ function Inventory.new(root: any)
     }, Inventory)
 end
 
-function Inventory:CreateDependencies()
-    return {
-        ["MainHUD"] = PlayerGui:WaitForChild("MainHUD")
-    }
-end
-
 function Inventory:Start()
+    self.MainHUD = bluejay.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)

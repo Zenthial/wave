@@ -33,10 +33,6 @@ function Armory.new(root: any)
     }, Armory)
 end
 
-function Armory:CreateDependencies()
-    return {}
-end
-
 function Armory:Start()
     local character = Player.Character or Player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")

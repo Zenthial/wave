@@ -51,10 +51,6 @@ function MainMenu.new(root: any)
     }, MainMenu)
 end
 
-function MainMenu:CreateDependencies()
-    return {}
-end
-
 function MainMenu:Start()
     self.CurrentPanel = "Options"
     self.Open = false

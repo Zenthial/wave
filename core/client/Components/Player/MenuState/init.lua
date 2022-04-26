@@ -94,10 +94,6 @@ function MenuState.new(root: any)
     }, MenuState)
 end
 
-function MenuState:CreateDependencies()
-    return {}
-end
-
 function MenuState:Start()
     self.Character = Player.Character or Player.CharacterAdded:Wait()
     self.HumanoidRootPart = self.Character:WaitForChild("HumanoidRootPart")

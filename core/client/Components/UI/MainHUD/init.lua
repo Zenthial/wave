@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local TextService = game:GetService("TextService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = game.Players.LocalPlayer
@@ -22,14 +23,10 @@ function MainHUD.new(root: any)
     }, MainHUD)
 end
 
-function MainHUD:CreateDependencies()
-    return {
-        ["HeatUI"] = self.Bottom:WaitForChild("HeatContainer")
-    }
-end
-
 function MainHUD:Start()
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
+
+    bluejay.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI")
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
