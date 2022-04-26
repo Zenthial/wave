@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local tcs = require(ReplicatedStorage.Shared.tcs)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -55,6 +55,6 @@ function HealthUI:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(HealthUI)
+tcs.create_component(HealthUI)
 
 return HealthUI

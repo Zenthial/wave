@@ -13,7 +13,7 @@ local toggleCrouch = clientComm.GetComm():GetFunction("ToggleCrouch")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local bluejay = require(Shared.bluejay)
+local tcs = require(Shared.tcs)
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Movement = {}
@@ -125,6 +125,6 @@ function Movement:Destroy()
 end
 
 print("creating movement")
-bluejay.create_component(Movement)
+tcs.create_component(Movement)
 
 return Movement

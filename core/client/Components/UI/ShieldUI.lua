@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = Players.LocalPlayer
@@ -50,6 +50,6 @@ function ShieldUI:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(ShieldUI)
+tcs.create_component(ShieldUI)
 
 return ShieldUI

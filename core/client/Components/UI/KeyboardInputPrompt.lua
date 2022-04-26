@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local tcs = require(ReplicatedStorage.Shared.tcs)
 
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -41,6 +41,6 @@ function KeyboardInputPrompt:Destroy()
     self.Root:Destroy()
 end
 
-bluejay.create_component(KeyboardInputPrompt)
+tcs.create_component(KeyboardInputPrompt)
 
 return KeyboardInputPrompt

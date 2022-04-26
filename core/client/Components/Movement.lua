@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Keyboard = Input.Keyboard
 
@@ -108,6 +108,6 @@ function Movement:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(Movement)
+tcs.create_component(Movement)
 
 return Movement

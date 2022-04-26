@@ -5,7 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
-local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local tcs = require(ReplicatedStorage.Shared.tcs)
 
 local KeyboardInputPromptObject = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("MainHUD"):WaitForChild("KeyboardInputPrompt")
 
@@ -26,7 +26,7 @@ end
 function MainHUD:Start()
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
-    bluejay.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI")
+    self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI"):await()
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
@@ -68,7 +68,7 @@ function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
         input.PromptKey.Text = inputKey:upper()
     end
     input.Parent = self.Bottom
-    local inputComponent = bluejay.get_component(input, "KeyboardInputPrompt")
+    local inputComponent = tcs.get_component(input, "KeyboardInputPrompt")
     return inputComponent
 end
 
@@ -76,6 +76,6 @@ function MainHUD:Destroy()
 
 end
 
-bluejay.create_component(MainHUD)
+tcs.create_component(MainHUD)
 
 return MainHUD

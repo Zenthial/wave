@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local tcs = require(ReplicatedStorage.Shared.tcs)
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
 local DefaultAnimations = require(script.Parent.DefaultAnimationNames)
@@ -62,7 +62,7 @@ end
 function AnimationState:Start()
     local cleaner = self.Cleaner
 
-    bluejay.get_component(self.Root, "AnimationHandler")
+    self.AnimationHandler = tcs.get_component(self.Root, "AnimationHandler"):await()
 
     local state: State_T = {
         Equipping = 0,
@@ -255,6 +255,6 @@ function AnimationState:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(AnimationState)
+tcs.create_component(AnimationState)
 
 return AnimationState

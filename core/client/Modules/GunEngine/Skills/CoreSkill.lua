@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -23,7 +23,7 @@ function CoreSkill.new(skillStats, model)
         Stats = skillStats;
         Model = model;
 
-        Movement = bluejay.get_component(LocalPlayer, "Movement");
+        Movement = tcs.get_component(LocalPlayer, "Movement"):await();
     }, CoreSkill)
     return self
 end

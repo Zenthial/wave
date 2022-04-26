@@ -6,21 +6,10 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+
 ------------------------------------------------------------------------
 --Setup
-
-for _, module in pairs(script.Modules:GetChildren()) do
-    task.spawn(function()
-        if module:IsA("ModuleScript") then
-            local m = require(module)
-            if typeof(m) == "table" then
-                if m["Start"] ~= nil then
-                    m:Start()
-                end
-            end
-        end
-    end)
-end
 
 local function LoadComponent(Item)
     if (not Item:IsA("ModuleScript")) then
@@ -46,6 +35,21 @@ game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Works
 
 Recurse(script:WaitForChild("Components"), LoadComponent)
 Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)
+
+-- tcs.start().sync()
+
+for _, module in pairs(script.Modules:GetChildren()) do
+    task.spawn(function()
+        if module:IsA("ModuleScript") then
+            local m = require(module)
+            if typeof(m) == "table" then
+                if m["Start"] ~= nil then
+                    m:Start()
+                end
+            end
+        end
+    end)
+end
 
 local function playerAdded(player: Player)
     CollectionService:AddTag(player, "Player")

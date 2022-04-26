@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local makeShieldModel = require(ServerScriptService.Server.Helper.makeShieldModel)
 
@@ -67,6 +67,6 @@ function ShieldModel:Destroy()
     self.Model:Destroy()
 end
 
-bluejay.create_component(ShieldModel)
+tcs.create_component(ShieldModel)
 
 return ShieldModel

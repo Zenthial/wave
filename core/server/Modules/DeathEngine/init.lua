@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local createDeathBox = require(script.createDeathBox)
@@ -34,7 +34,7 @@ end
 local PlayerCleaners: {[Player]: typeof(Trove)} = {}
 
 local function playerAdded(player: Player)
-    local health_component = bluejay.get_component(player, "Health") :: HealthComponent_T
+    local health_component = tcs.get_component(player, "Health"):await() :: HealthComponent_T
     if health_component ~= nil then
         local cleaner = Trove.new()
         cleaner:Add(health_component.Events.Died:Connect(function()

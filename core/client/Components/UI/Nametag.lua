@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local bluejay = require(Shared.bluejay)
+local tcs = require(Shared.tcs)
 
 local ChatStats = require(Shared:WaitForChild("Configurations"):WaitForChild("ChatStats"))
 
@@ -179,6 +179,6 @@ function Nametag:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Nametag)
+tcs.create_component(Nametag)
 
 return Nametag

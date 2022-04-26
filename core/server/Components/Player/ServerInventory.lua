@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Modules = game.ServerScriptService.Server.Modules
 local GunEngine = require(Modules.GunEngine)
@@ -105,6 +105,6 @@ function ServerInventory:Destroy()
 
 end
 
-bluejay.create_component(ServerInventory)
+tcs.create_component(ServerInventory)
 
 return ServerInventory

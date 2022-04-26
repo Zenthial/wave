@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
@@ -42,7 +42,7 @@ function Inventory.new(root: any)
 end
 
 function Inventory:Start()
-    self.MainHUD = bluejay.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
+    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD"):await()
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
@@ -122,7 +122,7 @@ function Inventory:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Inventory)
+tcs.create_component(Inventory)
 print("creating inventory")
 
 return Inventory

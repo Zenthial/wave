@@ -3,7 +3,7 @@ local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 
@@ -147,6 +147,6 @@ function DeathCamUI:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(DeathCamUI)
+tcs.create_component(DeathCamUI)
 
 return DeathCamUI

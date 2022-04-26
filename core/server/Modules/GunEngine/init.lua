@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local bluejay = require(Shared:WaitForChild("bluejay"))
+local tcs = require(Shared:WaitForChild("tcs"))
 
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
@@ -38,7 +38,7 @@ end)
 
 -- healthComponentPart is technically a player now
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
-    local healthComponent = bluejay.get_component(healthComponentPart, "Health")
+    local healthComponent = tcs.get_component(healthComponentPart, "Health"):await()
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
         healthComponent:TakeDamage(stats.Damage)
@@ -46,7 +46,7 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
 end)
 
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
-    local healthComponent = bluejay.get_component(player, "Health")
+    local healthComponent = tcs.get_component(player, "Health"):await()
     healthComponent:TakeDamage(damage)
 end)
 

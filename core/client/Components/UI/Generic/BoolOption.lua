@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 local TRUE_COLOR = Color3.fromRGB(0, 255, 191)
@@ -76,6 +76,6 @@ function BoolOption:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(BoolOption)
+tcs.create_component(BoolOption)
 
 return BoolOption

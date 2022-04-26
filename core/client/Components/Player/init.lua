@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local bluejay = require(Shared.bluejay)
+local tcs = require(Shared.tcs)
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Player = {}
@@ -39,6 +39,6 @@ function Player:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Player)
+tcs.create_component(Player)
 
 return Player

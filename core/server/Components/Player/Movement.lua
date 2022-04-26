@@ -7,7 +7,7 @@ local serverComm = require(Modules.ServerComm)
 
 --Shared
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Movement = {}
 Movement.__index = Movement
@@ -120,6 +120,6 @@ function Movement:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Movement)
+tcs.create_component(Movement)
 
 return Movement;

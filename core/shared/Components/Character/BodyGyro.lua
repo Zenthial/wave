@@ -2,7 +2,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local BodyGyro = {}
 BodyGyro.__index = BodyGyro
@@ -62,6 +62,6 @@ function BodyGyro:Destroy()
     self.Gyro:Destroy()
 end
 
-bluejay.create_component(BodyGyro)
+tcs.create_component(BodyGyro)
 
 return BodyGyro

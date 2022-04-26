@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 local DEFAULT_HEALTH_STATS = {
@@ -51,12 +51,12 @@ function Health:Start()
 
     if self.Root.Character ~= nil then
         self.Character = self.Root.Character
-        self.ShieldModelComponent = bluejay.get_component(self.Character, "ShieldModel")
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel"):await()
     end
 
     self.Cleaner:Add(self.Root.CharacterAdded:Connect(function(char)
         self.Character = char
-        self.ShieldModelComponent = bluejay.get_component(self.Character, "ShieldModel")
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel"):await()
     end))
 
     -- lots of legacy wace trash here
@@ -194,6 +194,6 @@ function Health:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Health)
+tcs.create_component(Health)
 
 return Health

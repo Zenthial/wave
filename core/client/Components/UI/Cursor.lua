@@ -4,7 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Player = Players.LocalPlayer
 
@@ -73,6 +73,6 @@ function Cursor:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(Cursor)
+tcs.create_component(Cursor)
 
 return Cursor

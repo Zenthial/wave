@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Player = Players.LocalPlayer
 
@@ -65,7 +65,8 @@ function MainMenu:Start()
 
     for _, boolOption in pairs(self.Root.Options.Container:GetChildren()) do
         if not boolOption:IsA("Frame") then continue end
-        local boolOptionComponent = bluejay.get_component(boolOption, "BoolOption")
+        local boolOptionComponent = tcs.get_component(boolOption, "BoolOption"):await()
+        print(boolOptionComponent)
         if boolOptionComponent ~= nil then
             self.Cleaner:Add(boolOptionComponent.Events.Changed:Connect(function(newStateType)
                 Player:SetAttribute(boolOption.Name.."Option", newStateType)
@@ -102,6 +103,6 @@ function MainMenu:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(MainMenu)
+tcs.create_component(MainMenu)
 
 return MainMenu

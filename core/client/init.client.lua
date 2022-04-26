@@ -2,6 +2,8 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+
 local Player = game.Players.LocalPlayer
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
@@ -36,6 +38,8 @@ game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Works
 
 Recurse(script:WaitForChild("Components"), LoadComponent)
 Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)
+
+-- tcs.start().sync()
 
 for _, module in pairs(script.Modules:GetChildren()) do
     if module:IsA("ModuleScript") then

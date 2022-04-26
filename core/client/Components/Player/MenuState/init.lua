@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local initializeInspectUi = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("initializeInspectUi"))
 
@@ -130,7 +130,7 @@ function MenuState:Open()
     ui.Adornee = menuPart
     ui.Parent = PlayerGui
 
-    local uiComponent = bluejay.get_component(ui, "InventoryMenu")
+    local uiComponent = tcs.get_component(ui, "InventoryMenu"):await()
     self.OpenCleaner:Add(uiComponent.Events.Inspect:Connect(function(itemName: string, slot: number)
         local inspectPart = createInspectPart(self.HumanoidRootPart.CFrame:ToWorldSpace(INSPECT_PART_RELATIVE_CFRAME))
 
@@ -195,7 +195,6 @@ function MenuState:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(MenuState)
-print("created menu state")
+tcs.create_component(MenuState)
 
 return MenuState

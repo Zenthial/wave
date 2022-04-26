@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Player = Players.LocalPlayer
 
@@ -71,6 +71,6 @@ function Armory:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(Armory)
+tcs.create_component(Armory)
 
 return Armory

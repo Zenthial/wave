@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
-local bluejay = require(ReplicatedStorage.Shared.bluejay)
+local tcs = require(ReplicatedStorage.Shared.tcs)
 
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
@@ -122,7 +122,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
-    local animationComponent = bluejay.get_component(Player, "AnimationHandler")
+    local animationComponent = tcs.get_component(Player, "AnimationHandler"):await()
 
     local weaponsFolder = Weapons[weaponStats.Name] :: Folder
     assert(weaponsFolder:FindFirstChild("Anims"), "Anims folder does not exist for "..weaponStats.Name)

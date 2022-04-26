@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
-local bluejay = require(Shared:WaitForChild("bluejay", 5))
+local tcs = require(Shared:WaitForChild("tcs", 5))
 
 local playerLoadedSignal = Instance.new("RemoteEvent")
 playerLoadedSignal.Name = "PlayerLoaded"
@@ -38,6 +38,6 @@ function Player:Destroy()
     self.Cleaner:Destroy()
 end
 
-bluejay.create_component(Player)
+tcs.create_component(Player)
 
 return Player
