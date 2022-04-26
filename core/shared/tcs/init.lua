@@ -88,7 +88,7 @@ local function await_component(instance: Instance, component_name: string)
 	end)
 end
 
-local function await_init(component_instance: ComponentInstance)
+local function await_start(component_instance: ComponentInstance)
 	return Promise.new(function(resolve, reject)
 		if component_instance.__Initialized == true then resolve(component_instance) end
 
@@ -181,5 +181,5 @@ return {
     create_component = create_component,
 	get_component = await_component,
 	debug = set_debug,
-	await_init = await_init
+	await_start = await_start
 }
