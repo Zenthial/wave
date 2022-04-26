@@ -1,5 +1,4 @@
 local CollectionService = game:GetService("CollectionService")
-local RunService = game:GetService("RunService")
 
 local Trove = require(script.Trove)
 local Promise = require(script.Promise)
