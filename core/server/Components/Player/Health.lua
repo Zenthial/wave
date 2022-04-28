@@ -51,12 +51,12 @@ function Health:Start()
 
     if self.Root.Character ~= nil then
         self.Character = self.Root.Character
-        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel"):await()
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel") --[[:await()]]
     end
 
     self.Cleaner:Add(self.Root.CharacterAdded:Connect(function(char)
         self.Character = char
-        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel"):await()
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel") --[[:await()]]
     end))
 
     -- lots of legacy wace trash here

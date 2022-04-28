@@ -155,7 +155,7 @@ end
 	end)
 
 	-- Same as above, but yields thread:
-	local success, info = mapInfo:OnReady():await()
+	local success, info = mapInfo:OnReady() --[[:await()]]
 	```
 ]=]
 function ClientComm:GetProperty(name: string, inboundMiddleware: Types.ClientMiddleware?, outboundMiddleware: Types.ClientMiddleware?)

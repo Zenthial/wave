@@ -130,7 +130,7 @@ function MenuState:Open()
     ui.Adornee = menuPart
     ui.Parent = PlayerGui
 
-    local uiComponent = tcs.get_component(ui, "InventoryMenu"):await()
+    local uiComponent = tcs.get_component(ui, "InventoryMenu") --[[:await()]]
     self.OpenCleaner:Add(uiComponent.Events.Inspect:Connect(function(itemName: string, slot: number)
         local inspectPart = createInspectPart(self.HumanoidRootPart.CFrame:ToWorldSpace(INSPECT_PART_RELATIVE_CFRAME))
 

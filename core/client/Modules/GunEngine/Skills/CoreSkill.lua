@@ -23,7 +23,7 @@ function CoreSkill.new(skillStats, model)
         Stats = skillStats;
         Model = model;
 
-        Movement = tcs.get_component(LocalPlayer, "Movement"):await();
+        Movement = tcs.get_component(LocalPlayer, "Movement") --[[:await()]];
     }, CoreSkill)
     return self
 end

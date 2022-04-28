@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = game.Players.LocalPlayer
 
@@ -35,6 +36,12 @@ if (not game:IsLoaded()) then
 end
 
 game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Workspace")
+
+local function inject(component_instance)
+	component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
+end
+
+tcs.set_inject_function(inject)
 
 Recurse(script:WaitForChild("Components"), LoadComponent)
 Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)

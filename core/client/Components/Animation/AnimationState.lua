@@ -62,7 +62,7 @@ end
 function AnimationState:Start()
     local cleaner = self.Cleaner
 
-    self.AnimationHandler = tcs.get_component(self.Root, "AnimationHandler"):await()
+    self.AnimationHandler = tcs.get_component(self.Root, "AnimationHandler") --[[:await()]]
 
     local state: State_T = {
         Equipping = 0,

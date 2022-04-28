@@ -18,9 +18,9 @@ function InputController:Start()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
 
-    local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory"):await()
-    local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState"):await()
-    local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu"):await()
+    local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory") --[[:await()]]
+    local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState") --[[:await()]]
+    local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu") --[[:await()]]
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()

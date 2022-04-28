@@ -33,7 +33,7 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
         Mouse = Mouse.new(),
         Cleaner = Trove.new(),
 
-        MouseComponent = tcs.get_component(Player, "Mouse"):await(),
+        MouseComponent = tcs.get_component(Player, "Mouse") --[[:await()]],
         MouseInput = Input.Mouse.new(),
 
         Events = {

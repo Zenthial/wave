@@ -75,7 +75,7 @@ end
 	end)
 
 	-- Use await:
-	local success, initialValue = clientRemoteProperty:OnReady():await()
+	local success, initialValue = clientRemoteProperty:OnReady() --[[:await()]]
 	if success then
 		print(initialValue)
 	end

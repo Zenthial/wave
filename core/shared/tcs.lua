@@ -1,11 +1,10 @@
 local CollectionService = game:GetService("CollectionService")
 
-local Trove = require(script.Trove)
-
 -- fake constants
 local TIMEOUT = 5
 local DEBUG_PRINT = false
 local DEBUG_WARN = true
+local INJECT_FUNCTION = function(component_instance) end
 
 -- local STATIC_has_started = false -- static in the c sense
 
@@ -15,7 +14,6 @@ export type ComponentInstance = {
 	Name: string,
 	Tag: string,
 	Needs: {string}?, -- The required needs of the component
-	Cleaner: typeof(Trove)?,
 
 	CreateDependencies: () -> {[string]: Instance}?,
 	Start: () -> (),
@@ -109,7 +107,7 @@ local function create(instance: Instance, component: ComponentClass)
 
     component.__Instances[instance] = component_instance
 
-	component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
+	INJECT_FUNCTION(component_instance)
 
 	if DEBUG_PRINT then print("starting "..component_instance.Name.." on "..instance.Name) end
 	task.spawn(function()
@@ -176,10 +174,15 @@ local function set_timeout(timeout: number)
 	TIMEOUT = timeout
 end
 
+local function set_inject_function(inject_function: (ComponentInstance) -> ())
+	INJECT_FUNCTION = inject_function
+end
+
 return {
     create_component = create_component,
 	get_component = await_component,
 	debug = set_debug,
 	await_start = await_start,
-	set_timeout = set_timeout
+	set_timeout = set_timeout,
+	set_inject_function = set_inject_function
 }

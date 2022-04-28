@@ -122,7 +122,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
 
-    local animationComponent = tcs.get_component(Player, "AnimationHandler"):await()
+    local animationComponent = tcs.get_component(Player, "AnimationHandler") --[[:await()]]
 
     local weaponsFolder = Weapons[weaponStats.Name] :: Folder
     assert(weaponsFolder:FindFirstChild("Anims"), "Anims folder does not exist for "..weaponStats.Name)

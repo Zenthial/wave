@@ -42,7 +42,7 @@ function Inventory.new(root: any)
 end
 
 function Inventory:Start()
-    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD"):await()
+    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD") --[[:await()]]
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
     self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
     self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)

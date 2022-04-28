@@ -26,7 +26,7 @@ end
 function MainHUD:Start()
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
-    self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI"):await()
+    self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI") --[[:await()]]
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))

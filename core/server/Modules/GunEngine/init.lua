@@ -38,7 +38,7 @@ end)
 
 -- healthComponentPart is technically a player now
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
-    local healthComponent = tcs.get_component(healthComponentPart, "Health"):await()
+    local healthComponent = tcs.get_component(healthComponentPart, "Health") --[[:await()]]
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
         healthComponent:TakeDamage(stats.Damage)
@@ -46,7 +46,7 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
 end)
 
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
-    local healthComponent = tcs.get_component(player, "Health"):await()
+    local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
     healthComponent:TakeDamage(damage)
 end)
 
