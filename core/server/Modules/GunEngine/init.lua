@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local tcs = require(Shared:WaitForChild("tcs"))
 
-local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 
@@ -37,11 +37,18 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
 end)
 
 -- healthComponentPart is technically a player now
-comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string)
+comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
     local healthComponent = tcs.get_component(healthComponentPart, "Health") --[[:await()]]
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
-        healthComponent:TakeDamage(stats.Damage)
+        local damage = stats.Damage
+
+        if hitPartName == "Head" then
+            damage *= stats.HeadshotMultiplier
+        end
+        
+        print(damage)
+        healthComponent:TakeDamage(damage)
     end
 end)
 

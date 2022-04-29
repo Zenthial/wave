@@ -64,6 +64,13 @@ local function playerAdded(player: Player)
 
     local function characterAdded(character) 
         CollectionService:AddTag(character, "Character")
+
+        player.CharacterAppearanceLoaded:Wait()
+        for _, thing in pairs(character:GetDescendants()) do
+            if thing.Name == "Handle" and thing.Parent:IsA("Accessory") then
+                CollectionService:AddTag(thing, "Ignore")
+            end
+        end
     end
 
     if (player.Character) then

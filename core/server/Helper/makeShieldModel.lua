@@ -1,4 +1,9 @@
+local CollectionService = game:GetService("CollectionService")
 local Shields = game.ReplicatedStorage.Shared.Assets.Shields
+
+for _, thing in pairs(Shields:GetChildren()) do
+	CollectionService:AddTag(thing, "Ignore")
+end
 
 local weld = require(script.Parent.weld)
 

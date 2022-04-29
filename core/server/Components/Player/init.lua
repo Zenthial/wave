@@ -22,14 +22,11 @@ function Player.new(player: Player)
 end
 
 function Player:Start()
-    print("player component")
     self.Player:SetAttribute("Loaded", false)
 
     self.Cleaner:Add(playerLoadedSignal.OnServerEvent:Connect(function(player: Player)
-        print("here")
         if self.Player == player then
             self.Player:SetAttribute("Loaded", true)
-            print("player loaded")
         end
     end))
 end

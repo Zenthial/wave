@@ -190,7 +190,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
         local healthComponentPart = recursivelyFindHealthComponent(hitPart)
         if healthComponentPart ~= nil then
-            attemptDealDamageFunction(healthComponentPart, weaponStats.Name)
+            attemptDealDamageFunction(healthComponentPart, weaponStats.Name, hitPart.Name)
         end
     end))
 

@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -62,6 +63,11 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
         if key == "Primary" or key == "Secondary" then
             local stats = WeaponStats[name]
             local model = WeaponModels[name].Model:Clone() :: Model
+
+            for _, thing in pairs(model:GetChildren()) do
+                CollectionService:AddTag(thing, "Ignore")
+            end
+            
             model.Name = name
             model.Parent = self.Character
 
