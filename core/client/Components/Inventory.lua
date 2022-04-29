@@ -105,7 +105,7 @@ function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
     self.SkillsToolbar:FeedInput(KeyCode)
 
-    if KeyCode == Enum.KeyCode[LocalPlayer:GetAttribute("GadgetKeybind")] and self.EquippedGadget ~= nil then
+    if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil then
         GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
     end
 end

@@ -15,6 +15,8 @@ return {
     Reloading = false,
     Throwing = false,
     Placing = false,
+    Charging = false,
+    ChargeWait = 0,
 
     InArmory = false,
 }

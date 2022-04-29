@@ -52,11 +52,20 @@ function Cursor:Start()
     end))
 
     local EquippedWeaponChangedSignal = Player:GetAttributeChangedSignal("EquippedWeapon")
+    local ChargingChangedSignal = Player:GetAttributeChangedSignal("Charging")
     self.Cleaner:Add(EquippedWeaponChangedSignal:Connect(function()
         if Player:GetAttribute("EquippedWeapon") == "" then
             self:WordForNotExpand()
         else
             self:Expand()
+        end
+    end))
+
+    self.Cleaner:Add(ChargingChangedSignal:Connect(function()
+        local charging = Player:GetAttribute("Charging")
+
+        if typeof(charging) == "boolean" then
+            self:ShotBar(charging, Player:GetAttribute("ChargeWait"))
         end
     end))
 end
@@ -67,6 +76,17 @@ end
 
 function Cursor:WordForNotExpand()
     TweenService:Create(self.Root.Icon, TweenInfo.new(ICON_TWEEN), {Size = ICON_CLOSED_SIZE}):Play()
+end
+
+function Cursor:ShotBar(bool, waitTime: number)
+	local barFill = self.Root.ShotBar.Bar
+    barFill.Visible = bool
+
+	if bool then
+		barFill.Size = UDim2.new(1,0,1,0)
+		barFill.Position = UDim2.new(0,0,0,0)
+		barFill:TweenSizeAndPosition(UDim2.new(0, 0, 1, 0), UDim2.new(.5, 0, 0, 0), "Out", "Linear", waitTime, true)
+	end
 end
 
 function Cursor:Destroy()

@@ -64,7 +64,7 @@ function ChatUI:Start()
     local input = self.Input :: TextBox
     input.Text = ""
     input.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-    input.PlaceholderText = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer:GetAttribute("ChatKeybind")]))
+    input.PlaceholderText = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Chat")]))
     
     for _, thing in pairs(self.Container:GetChildren()) do
         if thing:IsA("Frame") then
@@ -97,7 +97,7 @@ function ChatUI:Start()
         LocalPlayer:SetAttribute("Chatting", false)
         local contentText = input.ContentText
         if enterPressed and string.len(contentText) > ChatStats.MinimumMessageSize and contentText ~= "" and contentText ~= string.format(ChatStats.DefaultChatFocusedText, DEFAULT_TEAM_CHAT_KEY.Name) then
-            input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer:GetAttribute("ChatKeybind")]))
+            input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Chat")]))
             sendChat(contentText)
         end
     

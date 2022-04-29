@@ -8,6 +8,7 @@ local tcs = require(ReplicatedStorage.Shared.tcs)
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Signal = require(Shared:WaitForChild("util", 5):WaitForChild("Signal", 5))
+local Mouse = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5)).Mouse.new()
 
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 
@@ -87,6 +88,26 @@ local function recursivelyFindHealthComponent(part: BasePart)
         return recursivelyFindHealthComponent(part.Parent)
     else
         return nil
+    end
+end
+
+local function chargeWait(waitTime: number): boolean
+    local retVal = true
+    task.spawn(function()
+        local con
+
+        con = Mouse.LeftUp:Connect(function()
+            retVal = false
+            Player:SetAttribute("Charging", false)
+            con:Disconnect()
+        end)
+    end)
+    task.wait(waitTime)
+
+    if retVal == false then
+        return false
+    else
+        return Mouse:IsLeftDown()
     end
 end
 
@@ -231,7 +252,17 @@ end
 function CoreGun:Attack()
     if self.AmmoModule:CanFire() then
         Player:SetAttribute("LocalSprinting", false)
-        self.AttackModule:Attack()
+        print(self.WeaponStats.ChargeWait)
+        if self.WeaponStats.ChargeWait > 0 then
+            Player:SetAttribute("ChargeWait", self.WeaponStats.ChargeWait)
+            Player:SetAttribute("Charging", true)
+            if chargeWait(self.WeaponStats.ChargeWait) then
+                self.AttackModule:Attack()
+            end
+            Player:SetAttribute("Charging", false)
+        else
+            self.AttackModule:Attack()
+        end
     else
         if self.Model.Barrel:FindFirstChild("Unavailable") then
             self.Model.Barrel.Unavailable:Play()

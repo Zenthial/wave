@@ -68,12 +68,12 @@ function MainMenu:Start()
         local boolOptionComponent = tcs.get_component(boolOption, "BoolOption") --[[:await()]]
         if boolOptionComponent ~= nil then
             self.Cleaner:Add(boolOptionComponent.Events.Changed:Connect(function(newStateType)
-                Player:SetAttribute(boolOption.Name.."Option", newStateType)
+                Player.Options:SetAttribute(boolOption.Name, newStateType)
             end))
 
-            local state = Player:GetAttribute(boolOption.Name.."Option")
+            local state = Player.Options:GetAttribute(boolOption.Name)
 
-            assert(typeof(state) == "boolean", "Attribute "..boolOption.Name.."Option does not exist on local player")
+            assert(typeof(state) == "boolean", "Attribute "..boolOption.Name.." option does not exist on local player")
             boolOptionComponent:SetState(state)
         end
     end

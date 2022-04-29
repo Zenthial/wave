@@ -192,6 +192,12 @@ function AnimationState:HandleRollingChange()
 
     local rollAnimation = animationHandler:Play(DefaultAnimations.Rolling)
     rollAnimation.Stopped:Wait()
+    state.Rolling = false
+
+    if state.WeaponEquipped and state.WeaponName ~= "" and not state.Rolling then
+        self.AnimationHandler:Play(state.WeaponName.."equipMiddle")
+        self.AnimationHandler:Play(state.WeaponName.."equipTop")
+    end
 end
 
 function AnimationState:HandleThrowingChange()

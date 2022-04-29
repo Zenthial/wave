@@ -32,12 +32,12 @@ function Movement:Start()
 	self.Humanoid = hum
 
 	self.Cleaner:Add(keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-		if keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("SprintKeybind")] then
+		if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Sprint")] then
 			if self.Root:GetAttribute("LocalCanSprint") == false then return end
 			if self.Root:GetAttribute("Firing") == true then return end
 
 			self.Root:SetAttribute("LocalSprinting", true)
-		elseif keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("CrouchKeybind")] then
+		elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Crouch")] then
 			if self.Root:GetAttribute("LocalCanCrouch") == false then return end
 
 			if not self.Root:GetAttribute("LocalRolling") then
@@ -55,7 +55,7 @@ function Movement:Start()
 	end))
 
 	self.Cleaner:Add(keyboard.KeyUp:Connect(function(keyCode: Enum.KeyCode)
-		if keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("SprintKeybind")] then
+		if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Sprint")] then
 			self.Root:SetAttribute("LocalSprinting", false)
 		end
 	end))

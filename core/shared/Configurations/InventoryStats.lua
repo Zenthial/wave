@@ -6,7 +6,7 @@ export type Inventory = {
 
 
 local DEFAULT_LOADOUT = {
-    Primary = "E31",
+    Primary = "MSI",
 
     Secondary = "Y14",
 
