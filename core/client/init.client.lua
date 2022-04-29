@@ -43,6 +43,10 @@ end
 
 tcs.set_inject_function(inject)
 
+repeat
+    task.wait()
+until Player:GetAttribute("DataLoaded") == true
+
 Recurse(script:WaitForChild("Components"), LoadComponent)
 Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), LoadComponent)
 

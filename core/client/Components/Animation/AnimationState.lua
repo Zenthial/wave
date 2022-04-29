@@ -152,7 +152,6 @@ function AnimationState:HandleSprintChange()
     local state = self.State
     local animationHandler = self.AnimationHandler
 
-    print(state)
     if state.SprintActive and not state.SprintPlaying then
         if state.CrouchActive then
             Player:SetAttribute("LocalCrouching", false)
@@ -193,9 +192,6 @@ function AnimationState:HandleRollingChange()
 
     local rollAnimation = animationHandler:Play(DefaultAnimations.Rolling)
     rollAnimation.Stopped:Wait()
-    
-    Player:SetAttribute("LocalSprinting", false)
-    Player:SetAttribute("LocalCrouching", false)
 end
 
 function AnimationState:HandleThrowingChange()

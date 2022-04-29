@@ -50,6 +50,8 @@ local function HandlePlayerData(player: Player, profile)
     end
 
     PlayerCleaners[player] = playerCleaner
+
+    player:SetAttribute("DataLoaded", true)
 end
 
 local function DecodeKeycodeEnums(enumTable: {[string]: string})
@@ -71,6 +73,7 @@ local function EncodeKeycodeEnums(enumTable: {[string]: Enum.KeyCode})
 end
 
 local function PlayerAdded(player)
+    player:SetAttribute("DataLoaded", false)
     local profile = PlayerDataStore:LoadProfileAsync("Player_" .. player.UserId)
     if profile ~= nil then
         profile:AddUserId(player.UserId) -- GDPR compliance

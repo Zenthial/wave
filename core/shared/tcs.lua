@@ -119,7 +119,9 @@ end
 
 local function destroy(instance: Instance, component: ComponentClass) -- destruction method wrapper
     local component_instance = get_component(instance, component.Name)
-	component.__Instances[component_instance] = nil
+	if component_instance then
+		component.__Instances[component_instance] = nil
+	end
 	component_instance:Destroy()
 end
 

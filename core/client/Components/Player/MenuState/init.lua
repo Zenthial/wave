@@ -163,6 +163,12 @@ function MenuState:Open()
     self.MenuPart = menuPart
     self.MenuUI = ui
 
+    local dof = Instance.new("DepthOfFieldEffect")
+    dof.FocusDistance = 0
+    dof.Parent = Camera
+
+    self.OpenCleaner:Add(dof)
+
     Player:SetAttribute("LocalCanMove", false)
     Player:SetAttribute("LocalCanCrouch", false)
     Player:SetAttribute("LocalCanSprint", false)

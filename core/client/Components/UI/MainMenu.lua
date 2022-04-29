@@ -66,7 +66,6 @@ function MainMenu:Start()
     for _, boolOption in pairs(self.Root.Options.Container:GetChildren()) do
         if not boolOption:IsA("Frame") then continue end
         local boolOptionComponent = tcs.get_component(boolOption, "BoolOption") --[[:await()]]
-        print(boolOptionComponent)
         if boolOptionComponent ~= nil then
             self.Cleaner:Add(boolOptionComponent.Events.Changed:Connect(function(newStateType)
                 Player:SetAttribute(boolOption.Name.."Option", newStateType)

@@ -40,7 +40,17 @@ function Movement:Start()
 		elseif keyCode == Enum.KeyCode[LocalPlayer:GetAttribute("CrouchKeybind")] then
 			if self.Root:GetAttribute("LocalCanCrouch") == false then return end
 
-			self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
+			if not self.Root:GetAttribute("LocalRolling") then
+				if self.Root:GetAttribute("LocalSprinting") then
+					self.Root:SetAttribute("LocalRolling", true)
+					task.wait(0.55) -- from wace dont ask me
+					self.Root:SetAttribute("LocalRolling", false)
+					self.Root:SetAttribute("LocalCrouching", true)
+					self.Root:SetAttribute("LocalSprinting", false)
+				else
+					self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
+				end
+			end
 		end
 	end))
 
