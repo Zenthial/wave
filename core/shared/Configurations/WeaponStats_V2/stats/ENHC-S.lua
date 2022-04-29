@@ -19,7 +19,7 @@ local FireMode = {
 
 local BulletType = {
     Ray = "Ray",
-    Lighting = "Lighting",
+    Streak = "Streak",
     Projectile = "Projectile",
 }
 

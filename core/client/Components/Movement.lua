@@ -43,7 +43,7 @@ function Movement:Start()
 			if not self.Root:GetAttribute("LocalRolling") then
 				if self.Root:GetAttribute("LocalSprinting") then
 					self.Root:SetAttribute("LocalRolling", true)
-					task.wait(0.55) -- from wace dont ask me
+					task.wait(0.55) -- from wace don't ask me
 					self.Root:SetAttribute("LocalRolling", false)
 					self.Root:SetAttribute("LocalCrouching", true)
 					self.Root:SetAttribute("LocalSprinting", false)

@@ -8,7 +8,7 @@ local GunEngine = require(Modules.GunEngine)
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChild("InventoryStats"))
-local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats"))
+local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStats = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local comm = require(Modules.ServerComm)

@@ -34,7 +34,7 @@ type ShotsTable = {
 }
 type GunModelAdditionalInfo = {
     Barrel: Part,
-    Grip: Part
+    Handle: Part
 }
 type GunModel = Model & GunModelAdditionalInfo
 
@@ -139,6 +139,12 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local cleaner = Trove.new();
     cleaner:Add(ammoModule.Events.Reloading:Connect(function(bool: boolean)
         attackModule:SetCanFire(not bool)
+        
+        if bool == true then
+            if gunModel.Barrel:FindFirstChild("Overheat") then
+                gunModel.Barrel.Overheat:Play()
+            end
+        end
 
         Player:SetAttribute("Reloading", bool)
     end))
@@ -149,6 +155,9 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     cleaner:Add(attackModule.Events.Attacked:Connect(function()
         Player:SetAttribute("Firing", true)
+        if gunModel.Barrel:FindFirstChild("Fire") then
+            gunModel.Barrel.Fire:Play()
+        end
         ammoModule:Fire()
     end))
 
@@ -193,6 +202,9 @@ function CoreGun:Equip()
         error("Weld failed, does this weapon have stats?")
     end
     self.MutableStats.Equipped = true
+    if self.Model.Handle:FindFirstChild("Equip") then
+        self.Model.Handle.Equip:Play()
+    end
 end
 
 function CoreGun:Unequip()
@@ -202,6 +214,9 @@ function CoreGun:Unequip()
         error("Weld failed, does this weapon have stats?")
     end
     self.MutableStats.Equipped = false
+    if self.Model.Handle:FindFirstChild("Unequip") then
+        self.Model.Handle.Unequip:Play()
+    end
 end
 
 function CoreGun:MouseDown()
@@ -217,6 +232,10 @@ function CoreGun:Attack()
     if self.AmmoModule:CanFire() then
         Player:SetAttribute("LocalSprinting", false)
         self.AttackModule:Attack()
+    else
+        if self.Model.Barrel:FindFirstChild("Unavailable") then
+            self.Model.Barrel.Unavailable:Play()
+        end
     end
 end
 
