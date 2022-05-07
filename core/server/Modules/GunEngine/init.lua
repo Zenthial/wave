@@ -53,6 +53,7 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
 end)
 
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
+    damage = math.clamp(damage, 0, 100)
     local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
     healthComponent:TakeDamage(damage)
 end)
@@ -78,7 +79,11 @@ function GunEngine:Start()
     end)
 
     renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
-        renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
+        local quantity = player:GetAttribute("GadgetQuantity")
+        if quantity > 0 then
+            player:SetAttribute("GadgetQuantity", quantity - 1)
+            renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
+        end
     end)
 end
 

@@ -35,8 +35,11 @@ function Inventory.new(root: any)
         Items = {
             Weapons = {},
             Gadgets = {},
-            Skills = {}
+            Skill = nil
         },
+
+        EquippedGadget = nil,
+        EquippedSkill = nil, 
 
     }, Inventory)
 end
@@ -44,11 +47,11 @@ end
 function Inventory:Start()
     self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD") --[[:await()]]
     self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
-    self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
-    self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
-    self.EquippedGadget = nil
+    -- self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
+    -- self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
 
     local MainHUDComponent = self.MainHUD
+    local skillCleaner = nil :: typeof(Trove)
 
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
         print(inventoryKey, weaponName)
@@ -67,10 +70,20 @@ function Inventory:Start()
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = GunEngine:CreateSkill(weaponName, model)
-            local success = self.SkillsToolbar:Add(skill)
-            if not success then
-                print("failed to add skill " .. weaponName)
+            self.EquippedSkill = skill
+            
+            if skillCleaner ~= nil then
+                skillCleaner:Clean()
+                skillCleaner = Trove.new()
             end
+            
+            skillCleaner:Add(skill.Events.EnergyChanged:Connect(function(currentEnergy: number)
+                MainHUDComponent:SkillEnergyChanged(currentEnergy)
+            end))
+
+            skillCleaner:Add(skill.Events.FunctionStarted:Connect(function()
+                MainHUDComponent:SetSkillActive()
+            end))
         elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
             self.EquippedGadget = weaponName
@@ -95,18 +108,15 @@ function Inventory:Start()
             end))
         end
     end))
-
-    self.Cleaner:Add(self.SkillsToolbar.Events.ToolChanged:Connect(function(tool)
-        -- maybe do something idk
-    end))
 end
 
 function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
-    self.SkillsToolbar:FeedInput(KeyCode)
 
-    if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil then
+    if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil and LocalPlayer:GetAttribute("GadgetQuantity") > 0 then
         GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
+    elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
+        self.EquippedSkill:Equip()
     end
 end
 

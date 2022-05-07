@@ -27,6 +27,7 @@ function MainHUD:Start()
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
     self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI") --[[:await()]]
+    self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
@@ -55,6 +56,10 @@ end
 function MainHUD:UpdateTriggerBar(trigDelay: number)
     local HeatUIComponent = self.HeatUI
     HeatUIComponent:TriggerBar(trigDelay)
+end
+
+function MainHUD:SkillEnergyChanged(energy: number)
+    self.InventoryUI:SetSkillCharge(energy)
 end
 
 function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)

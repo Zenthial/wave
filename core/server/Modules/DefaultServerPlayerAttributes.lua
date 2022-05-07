@@ -9,6 +9,8 @@ return {
     EquippedSecondary = "",
     EquippedSkill = "",
     EquippedGadget = "",
+    GadgetQuantity = 3,
+    MaxGadgetQuantity = 3,
 
     Sprinting = false,
     CanSprint = true,

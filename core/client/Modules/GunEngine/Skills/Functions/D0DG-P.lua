@@ -27,5 +27,7 @@ return function(self, bool, character, movementComponent, skillModel)
 
 			linearVelocity:Destroy()
 		end)
+
+		self:RegenEnergy()
 	end
 end

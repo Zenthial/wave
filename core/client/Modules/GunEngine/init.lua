@@ -70,7 +70,6 @@ function GunEngine:Start()
 end
 
 function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
-    print("Here")
     local hrp = Player.Character.HumanoidRootPart
     local leftArm = Player.Character["Left Arm"] :: Part
 
