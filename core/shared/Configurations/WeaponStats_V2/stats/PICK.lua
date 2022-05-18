@@ -59,6 +59,7 @@ return {
 	AmmoType = AmmoType.Battery,
 	Slot = 2,
 	Holster = Holsters.Hip,
+	Action = "Mining",
 	NumHandles = 1,
 	CanSprint = false,
 	CanCrouch = true,

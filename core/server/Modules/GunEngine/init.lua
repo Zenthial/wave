@@ -72,7 +72,7 @@ comm:BindFunction("AoERadius", function(player: Player, part: BasePart, weaponNa
     end
 
     assert(stats ~= nil, "No stats exist for "..weaponName)
-    local playersToDamage = radiusDamage(stats, part, player.TeamColor, false)
+    local playersToDamage = radiusDamage(stats, part, player, false)
     for _player: Player, damage: number in pairs(playersToDamage) do
         attemptDealDamage(_player, damage)
     end

@@ -30,7 +30,7 @@ if RunService:IsClient() then
         end
     end
 elseif RunService:IsServer() then
-    return function(stats, part: Part, sourceTeam: BrickColor, canTK: boolean)
+    return function(stats, part: Part, sourcePlayer: Player, canTK: boolean)
         local origin = part.Position
         local radius
 
@@ -53,11 +53,19 @@ elseif RunService:IsServer() then
                 
             local NewRay = Ray.new(origin + Vector3.new(0, 3, 0), (hrp.CFrame.Position - (origin + Vector3.new(0, 3, 0))).Unit * radius)
             local hit, position = workspace:FindPartOnRayWithIgnoreList(NewRay, ignore)
+
             if hit and hit:IsDescendantOf(character) then
-                if not canTK then
-                    if player.TeamColor == sourceTeam then continue end
+                if stats.Action == "Heal" then
+                    if player.TeamColor == sourcePlayer.TeamColor and player ~= sourcePlayer then
+                        print(player)
+                        playersNear[player] = stats.CalculateDamage(maxDamage, dist)
+                    end
+                else
+                    if not canTK then
+                        if player.TeamColor == sourcePlayer.TeamColor then continue end
+                    end
+                    playersNear[player] = stats.CalculateDamage(maxDamage, dist)
                 end
-                playersNear[player] = stats.CalculateDamage(maxDamage, dist)
             end
         end
 

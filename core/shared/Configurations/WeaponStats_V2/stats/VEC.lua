@@ -87,6 +87,7 @@ return {
 	BulletCache = Caches.DefaultCache,
 
 	FireMode = FireMode.Misc,
+	Action = "Repair",
 	HandleWelds = {
 		{	limb = "Right Arm",
 			C0 = CFrame.new(-0.1, -.75, -0.45) * CFrame.Angles(math.rad(90),0,math.rad(180)),

@@ -18,7 +18,7 @@ return function(self, bool, character, skillModel)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
 
         EffectEnableRemote:FireServer(skillModel.Reactor.FieldExplosion, true)
-        attemptAoE(skillModel.Reactor, "FIEL-X")
+        attemptAoE(skillModel.Reactor, "HEAL-X")
         skillModel.Reactor.FieldExplosionSound:Play()
 
         LocalPlayer:SetAttribute("FielxActive", true)

@@ -57,6 +57,7 @@ return {
 	Description = "The Heal Generator X is a special harness mounted to one of the arms, or other relevant appendages, of a trooper. Upon activation, the device effectively amplifies the wearer?s arm strength by a large factor by generating a phased energy field around it that heals his teammates.",
 	WeaponCost = 1000,
 	Slot = 4,
+	Action = "Heal",
 	CanTeamKill = true,
 	Locked = false,
 	Holster = Holsters.RightArmModule,

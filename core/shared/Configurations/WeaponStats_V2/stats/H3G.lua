@@ -58,6 +58,7 @@ return {
 	WeaponCost = 1500,
 	Slot = 3,
 	Type = "Projectile",
+	Action = "Heal",
 	CanTeamKill = true,
 	Locked = false,
 	Damage = -50,

@@ -88,6 +88,7 @@ return {
 	BulletType = BulletType.Constant,
 	BulletCache = Caches.DefaultCache,
 
+	Action = "Heal",
 	HandleWelds = {
 		{	limb = "Right Arm",
 			C0 = CFrame.new(-0.1, -1, -0.25) * CFrame.Angles(math.rad(90),0,math.rad(180)),

@@ -12,7 +12,7 @@ return function(chr: Model)
 	if not chr or chr:FindFirstChild("shieldModel") then return end
 	
     local shieldModel = Instance.new("Model")
-	shieldModel.Name = "shieldModel"
+	shieldModel.Name = "ShieldModel"
 	shieldModel.Parent = chr
 	
 	local realHead = chr["Head"]
