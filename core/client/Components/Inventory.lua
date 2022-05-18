@@ -51,7 +51,7 @@ function Inventory:Start()
     -- self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
 
     local MainHUDComponent = self.MainHUD
-    local skillCleaner = nil :: typeof(Trove)
+    local skillCleaner = Trove.new() :: typeof(Trove)
 
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
         print(inventoryKey, weaponName)

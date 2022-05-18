@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
-local bluejay = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("bluejay"))
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
@@ -39,6 +39,14 @@ local function make(name: string, weaponStats)
     frame.Fill.Size = UDim2.new(1, 0, 0, 0)
 
     return frame
+end
+
+local function clearInventoryToolbar(bar)
+    for _, thing in pairs(bar:GetChildren()) do
+        if thing:IsA("Frame") then
+            thing:Destroy()
+        end
+    end
 end
 
 type Cleaner_T = {
@@ -79,6 +87,7 @@ function InventoryUI:Start()
     local equippedSkillSignal = Player:GetAttributeChangedSignal("EquippedSkill")
     local equippedGadgetSignal = Player:GetAttributeChangedSignal("EquippedGadget")
     local gadgetQuantitySignal = Player:GetAttributeChangedSignal("GadgetQuantity")
+    clearInventoryToolbar(self.Root)
 
     self.Cleaner:Add(equippedSkillSignal:Connect(function()
         local equippedSkill = Player:GetAttribute("EquippedSkill") or "--" :: string
@@ -86,6 +95,7 @@ function InventoryUI:Start()
             self.SkillUI:Destroy()
         else
             self.SkillUI = make(equippedSkill, WeaponStats[equippedSkill])
+            self.SkillUI.Parent = self.Root
         end
     end))
 
@@ -95,6 +105,7 @@ function InventoryUI:Start()
             self.GadgetUI:Destroy()
         else
             self.GadgetUI = make(equippedGadget, WeaponStats[equippedGadget])
+            self.GadgetUI.Parent = self.Root
         end
     end))
 
@@ -117,6 +128,8 @@ function InventoryUI:Start()
             self.GadgetUI.GadgetAmount.TextLabel.Text = quantity
         end
     end))
+
+    print("inventory UI started")
 end
 
 function InventoryUI:SetSkillCharge(charge: number)
@@ -145,6 +158,6 @@ function InventoryUI:Destroy()
     self.Cleaner:Clean()
 end
 
-bluejay.create_component(InventoryUI)
+tcs.create_component(InventoryUI)
 
 return InventoryUI

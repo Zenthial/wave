@@ -40,18 +40,17 @@ function CoreSkill.new(skillStats, model)
 end
 
 function CoreSkill:Equip()
-    local func = Functions[self.Stats.name]
-    print(Functions, self.Stats.name, func)
-    if func == nil then error("No skill function for " .. self.Stats.name) end
-    if LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil then
+    local func = Functions[self.Stats.Name]
+    if func == nil then error("No skill function for " .. self.Stats.Name) end
+    if LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil and self.CurrentEnergy >= self.Stats.EnergyMin then
         self.Events.FunctionStarted:Fire()
-        func(self, true, LocalPlayer.Character, self.Movement, self.Model)
+        func(self, true, LocalPlayer.Character, self.Model)
         -- self.Events.FunctionEnded:Fire()
     end
 end
 
 function CoreSkill:DepleteEnergy(depletionAmount: number)
-    self.CurrentEnergy = math.clamp(self.MinEnergy, self.CurrentEnergy - depletionAmount, self.MaxEnergy)
+    self.CurrentEnergy = math.clamp(self.CurrentEnergy - depletionAmount, self.MinEnergy, self.MaxEnergy)
     self.Events.EnergyChanged:Fire(self.CurrentEnergy)
 end
 

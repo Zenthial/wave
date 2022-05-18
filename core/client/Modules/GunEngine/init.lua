@@ -6,7 +6,6 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local tcs = require(Shared:WaitForChild("tcs"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
-local SkillStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
@@ -76,12 +75,15 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local GadgetStats = GadgetStatsModule[grenadeName]
     assert(GadgetStats, "No grenade stats for the grenade")
     
-    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false then
+    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false and Player:GetAttribute("TotalHealth") > 0 then
         Player:SetAttribute("Throwing", true)
         
         local nadeSignal = comm:GetSignal("RenderGrenade")
-        nadeSignal:Fire(leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
-        Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
+        task.wait(.5) -- animation wait
+        if Player:GetAttribute("TotalHealth") > 0 then
+            nadeSignal:Fire(leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
+            Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
+        end
     end
 end
 
@@ -98,7 +100,7 @@ function GunEngine:CreateGun(weaponName: string, model): Gun
 end
 
 function GunEngine:CreateSkill(skillName: string, model)
-    local stats = SkillStatsModule[skillName]
+    local stats = WeaponStatsModule[skillName]
     assert(stats, "No skill stats for ".. skillName)
     return CoreSkill.new(stats, model)
 end
