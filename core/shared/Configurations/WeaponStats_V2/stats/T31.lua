@@ -50,49 +50,54 @@ local Holsters = {
 }
 
 return {
-	Name = "F99",
-	FullName = "Plasma Thrower",
-	Category = "Melee",
-	Description = "The F99 flamethrower is a very bulky and unwieldy weapon, but one which carries great destructive power. Capable of firing forth a stream of critical temperature plasma at close range, any targets which are caught in the fire will find themselves quickly and assuredly roasted, completely vaporizing the target at worst.",
-	QuickDescription = "Close quarters, constant area damage",
-	WeaponCost = 1750,
+	Name = "T31",
+	FullName = "Shotgun",
+	Category = "Shotgun",
+	Description = "The T31 Tactical Shotgun is a close-in weapon used in breach and clear engagements. The electromagnetic disruption provided by one shot of the T31 equates that of an entire squad firepower and can potentially vaporize a soldier in one shot. However the heavy EM flux used to generate this powerful disruption blast degrades very fast over distance.",
+	QuickDescription = "Semi Automatic, 5 Pellet Shots",
+	WeaponCost = 500,
 	AmmoType = AmmoType.Battery,
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
-	NumBarrels = 3,
-	CanSprint = false,
-	CanCrouch = false,
+	NumBarrels = 1,
+	CanSprint = true,
+	CanCrouch = true,
+	HeadshotMultiplier = 2,
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.5,
-	BatteryDepletionMin = 4,
-	BatteryDepletionMax = 5,
-	ShotsDeplete = 4,
-	MaxSpread = 1,
-	MinSpread = 0.5,
-	HeatRate = 2,
-	CoolTime = 6,
-	CoolWait = 1,
+	EquipTime = 0.3,
+	BatteryDepletionMin = 2,
+	BatteryDepletionMax = 3,
+	ShotsDeplete = 10,
+	MaxSpread = 6,
+	MinSpread = 4,
+	HeatRate = 4,
+	CoolTime = 2,
+	CoolWait = 1.2,
 	Damage = 15,
 	CalculateDamage = function(damage, distance)
-		damage = damage --+ (10 * (1/(distance*2)))
-		return math.clamp(damage, 7, 50)
+		if distance >= 2 then
+			damage = 25
+			if distance <= 50 then
+				damage = 80 + (0.035 * ((distance-25)^2)) - (1.5375 * distance)
+			end
+		end
+		return damage / 5
 	end,
-	VehicleMultiplier = 4,
-	BlastRadius = 7,
-	FireRate = 10,
+	VehicleMultiplier = 1,
+	FireRate = 4,
 	ChargeWait = 0,
-	Trigger = "Auto",
-	FireMode = FireMode.Flame,
-	BulletType = BulletType.Flame,
+	Trigger = "Semi",
+	FireMode = FireMode.Shotgun,
+	BulletType = BulletType.Streak,
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(.25, -2, -1.25) * CFrame.Angles(math.rad(-135),math.rad(180),0),
+			C0 = CFrame.new(0, -0.5, -0.25) * CFrame.Angles(math.rad(-90),math.rad(180),0),
 			C1 = CFrame.new()
-		},
+		}
 	},
 }

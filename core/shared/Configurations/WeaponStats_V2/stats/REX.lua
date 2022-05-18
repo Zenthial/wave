@@ -93,4 +93,5 @@ return {
 			C1 = CFrame.new()
 		},
 	},
+	BlastRadius = 10,
 }

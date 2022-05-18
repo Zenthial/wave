@@ -80,8 +80,9 @@ return {
 		return damage + (50 * (1/distance))
 	end,
 	VehicleMultiplier = 30,
+	BlastRadius = 30,
 	FireRate = 3,
-	ChargeWait = 4,
+	ChargeWait = 2,
 	Trigger = "Semi",
 	FireMode = FireMode.SingleExplosive,
 	BulletType = BulletType.Ray,

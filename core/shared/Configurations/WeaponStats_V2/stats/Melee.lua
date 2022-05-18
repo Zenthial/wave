@@ -1,15 +1,10 @@
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local BulletAssets = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Bullets")
 
 local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("PartCache"))
-
+local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
-local GunTypes = {
-    Auto = "Auto",
-    Semi = "Semi",
-}
 
 local FireMode = {
     Single = "Single",
@@ -19,17 +14,13 @@ local FireMode = {
 
 local BulletType = {
     Ray = "Ray",
-    Lighting = "Lighting",
+    Streak = "Streak",
     Projectile = "Projectile",
 }
 
 local AmmoType = {
     Battery = "Battery",
     Ammo = "Ammo"
-}
-
-local Bullets = {
-    Default = BulletAssets:WaitForChild("Default")
 }
 
 local Caches = {
@@ -39,8 +30,14 @@ local Caches = {
 -- don't create extra parts that are just never used on the server
 -- WeaponStats.Cache should never be touched on the server anyway
 if RunService:IsClient() then
-    CollectionService:AddTag(Bullets.Default, "Ignore")
-    Caches.DefaultCache = PartCache.new(Bullets.Default, 200)
+    local weapon = Weapons:FindFirstChild(script.Name)
+    if weapon then
+        local bullet = weapon:FindFirstChild("Bullet") or weapon:FindFirstChild("Projectile")
+        if bullet then
+            CollectionService:AddTag(bullet, "Ignore")
+            Caches.DefaultCache = PartCache.new(bullet, 50)
+        end
+    end
 end
 
 local Holsters = {
@@ -54,6 +51,8 @@ local Holsters = {
 
 return {
 	Name = "Melee",
+	WeaponCost = 0,
+	Damage = 35,
 	CanTeamKill = false,
 	CalculateDamage = function(damage, distance)
 		return damage

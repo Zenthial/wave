@@ -79,6 +79,7 @@ return {
 		return damage + (50 * (1/distance))
 	end,
 	VehicleMultiplier = 300,
+	BlastRadius = 30,
 	FireRate = 3,
 	ChargeWait = 4,
 	Trigger = "Semi",

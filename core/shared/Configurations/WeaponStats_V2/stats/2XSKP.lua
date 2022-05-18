@@ -76,7 +76,7 @@ return {
 	HeatRate = 1.5,
 	CoolTime = 5,
 	CoolWait = 0.5,
-	Damage = 4,
+	Damage = 7,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,

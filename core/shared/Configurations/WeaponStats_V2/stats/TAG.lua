@@ -69,6 +69,7 @@ return {
 	MinSpread = 0,
 	MaxSpread = 0,
 	HeatRate = 0,
+	VehicleMultiplier = 1,
 	Damage = 0,
 	CalculateDamage = function(damage, distance)
 		return damage
@@ -77,7 +78,7 @@ return {
 	Trigger = "Blade",
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(0, -.75, -.5) * CFrame.Angles(math.rad(-30), math.rad(-20), math.rad(180)),
+			C0 = CFrame.new(0, -0.75, -0.5) * CFrame.Angles(math.rad(-30), math.rad(-20), math.rad(180)),
 			C1 = CFrame.new(),
 		}
 	},

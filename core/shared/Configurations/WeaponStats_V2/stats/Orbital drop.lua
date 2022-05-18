@@ -52,9 +52,11 @@ local Holsters = {
 return {
 	Name = "Orbital drop",
 	CanTeamKill = false,
+	WeaponCost = 0,
 	Damage = 50,
 	CalculateDamage = function(damage, distance)
 		return damage + (200 * (1/distance))
 	end,
 	VehicleMultiplier = 10,
+	BlastRadius = 15,
 }

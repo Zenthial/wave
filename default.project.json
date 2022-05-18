@@ -1,20 +1,20 @@
 {
   "name": "game",
+  "servePlaceIds": [
+    9452951872
+  ],
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
       "Shared": {
         "$path": "core/shared"
       }
     },
-
     "ServerScriptService": {
       "Server": {
         "$path": "core/server"
       }
     },
-
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "Client": {
@@ -22,13 +22,11 @@
         }
       }
     },
-
     "SoundService": {
       "$properties": {
         "RespectFilteringEnabled": true
       }
     },
-
     "Chat": {
       "$properties": {
         "BubbleChatEnabled": false,

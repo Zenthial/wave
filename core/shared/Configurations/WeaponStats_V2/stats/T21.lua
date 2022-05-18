@@ -71,15 +71,15 @@ return {
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
-	MaxSpread = 25,
+	MaxSpread = 10,
 	MinSpread = 4,
 	HeatRate = 3.5,
 	CoolTime = 2.5,
 	CoolWait = 0.5,
-	Damage = 10,
+	Damage = 20,
 	CalculateDamage = function(damage, distance)
 		if distance <= 50 then
-			damage = 10 + (0.015 * ((distance - 50)^2)) - (0.18 * distance)
+			damage = 20 + (0.015 * ((distance - 50)^2)) - (0.18 * distance)
 		end
 		return damage / 3
 	end,

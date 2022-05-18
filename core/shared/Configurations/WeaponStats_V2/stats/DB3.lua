@@ -66,7 +66,7 @@ return {
 	HeadshotMultiplier = 2,
 	CanTeamKill = false,
 	Locked = false,
-	WalkspeedReduce = 4,
+	WalkspeedReduce = 3,
 	EquipTime = 0.4,
 	BatteryDepletionMin = 5,
 	BatteryDepletionMax = 5,
@@ -74,15 +74,16 @@ return {
 	MaxSpread = 2,
 	MinSpread = 1,
 	HeatRate = 25,
-	CoolTime = 5,
+	CoolTime = 4,
 	CoolWait = 0.2,
 	Damage = 20,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
 	VehicleMultiplier = 10,
+	BlastRadius = 20,
 	FireRate = 5,
-	ChargeWait = 1,
+	ChargeWait = 0.5,
 	Trigger = "Semi",
 	FireMode = FireMode.BurstExplosive,
 	BulletType = BulletType.Ray,
@@ -90,7 +91,7 @@ return {
 
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(0, -1, -.5) * CFrame.Angles(math.rad(0),0,math.rad(180)),
+			C0 = CFrame.new(0, -1, -0.5) * CFrame.Angles(math.rad(0),0,math.rad(180)),
 			C1 = CFrame.new()
 		}
 	},

@@ -66,4 +66,5 @@ return {
 		return math.clamp(damage, 50, 75)
 	end,
 	VehicleMultiplier = 4,
+	BlastRadius = 15,
 }

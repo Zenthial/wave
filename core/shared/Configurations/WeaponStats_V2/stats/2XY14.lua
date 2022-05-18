@@ -76,7 +76,7 @@ return {
 	HeatRate = 3,
 	CoolTime = 4,
 	CoolWait = 0.5,
-	Damage = 8,
+	Damage = 9,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
@@ -90,11 +90,11 @@ return {
 
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(0, -1, -.15) * CFrame.Angles(math.rad(-90),0,0),
+			C0 = CFrame.new(0, -1, -0.15) * CFrame.Angles(math.rad(-90),0,0),
 			C1 = CFrame.new()
 		},
 		{	limb = "Left Arm",
-			C0 = CFrame.new(0, -1, -.15) * CFrame.Angles(math.rad(-90),0,0),
+			C0 = CFrame.new(0, -1, -0.15) * CFrame.Angles(math.rad(-90),0,0),
 			C1 = CFrame.new()
 		}
 	},

@@ -63,7 +63,7 @@ return {
 	NumBarrels = 2,
 	CanSprint = true,
 	CanCrouch = true,
-	HeadshotMultiplier = 2.5,
+	HeadshotMultiplier = 2.2,
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
@@ -76,12 +76,12 @@ return {
 	HeatRate = 3,
 	CoolTime = 3,
 	CoolWait = 0.5,
-	Damage = 8,
+	Damage = 10,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
 	VehicleMultiplier = 3,
-	FireRate = 9,
+	FireRate = 10,
 	ChargeWait = 0.3,
 	Trigger = "Auto",
 	FireMode = FireMode.Single,

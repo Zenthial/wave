@@ -51,7 +51,7 @@ local Holsters = {
 
 return {
 	Name = "MSI",
-	FullName = "Magnetic Induction Rifle",
+	FullName = "Magnetic Surge Induction Rifle",
 	Category = "Marksman",
 	Description = "The Magnetic Surge Inductor rifle is the man-mobile form of an especially frightening weapons platform cooked up by an elite conference of WIJ?s top scientists. The weapon uses a system of subatomic levers to channel a power pack?s energy into a near impossibly high amperage and voltage electron bolt which arcs across from the rifle into any unsuspecting victim.",
 	QuickDescription = "Single Charged Shot",

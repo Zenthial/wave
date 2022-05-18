@@ -1,11 +1,14 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local EffectRemote = ReplicatedStorage:WaitForChild("EffectRemote")
 local LocalPlayer = Players.LocalPlayer
 
 return function(self, bool, character, skillModel)
 	local multiplier = 50000
 	
 	if bool then
-		self:DepleteEnergy(100) -- replace this line with hardcoded d0dg-p energy depletion stats
+		self:DepleteEnergy(self.Stats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
 		

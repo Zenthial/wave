@@ -23,14 +23,44 @@ if RunService:IsClient() then
         local NewRay = Ray.new(origin + Vector3.new(0, 3, 0), (hrp.CFrame.Position - (origin + Vector3.new(0, 3, 0))).Unit * radius)
         local hit, position = workspace:FindPartOnRayWithIgnoreList(NewRay, ignore)
         if hit and hit:IsDescendantOf(character) then
-            if canTK then
-                if not player.TeamColor ~= sourceTeam then return end
+            if not canTK then
+                if player.TeamColor == sourceTeam then return end
             end
             DealSelfDamage(stats.CalculateDamage(stats.MaxDamage, dist))
         end
     end
 elseif RunService:IsServer() then
-    return function()
-        
+    return function(stats, part: Part, sourceTeam: BrickColor, canTK: boolean)
+        local origin = part.Position
+        local radius
+
+        if stats.NadeRadius and stats.NadeRadius > 0 then 
+            radius = stats.NadeRadius
+        elseif stats.BlastRadius and stats.BlastRadius > 0 then
+            radius = stats.BlastRadius
+        else
+            radius = part.Size / 2
+        end
+
+        local playersNear = {}
+        local maxDamage = stats.MaxDamage or stats.Damage
+        for _, player: Player in pairs(Players:GetPlayers()) do
+            local character = player.Character
+            local hrp = character.HumanoidRootPart
+
+            local dist = (origin - hrp.Position).Magnitude
+            local ignore = CollectionService:GetTagged("Ignore")
+                
+            local NewRay = Ray.new(origin + Vector3.new(0, 3, 0), (hrp.CFrame.Position - (origin + Vector3.new(0, 3, 0))).Unit * radius)
+            local hit, position = workspace:FindPartOnRayWithIgnoreList(NewRay, ignore)
+            if hit and hit:IsDescendantOf(character) then
+                if not canTK then
+                    if player.TeamColor == sourceTeam then continue end
+                end
+                playersNear[player] = stats.CalculateDamage(maxDamage, dist)
+            end
+        end
+
+        return playersNear
     end
 end

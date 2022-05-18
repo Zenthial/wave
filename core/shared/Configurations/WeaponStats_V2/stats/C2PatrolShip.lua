@@ -66,6 +66,7 @@ return {
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
+	BlastRadius = 10,
 	FireRate = 8,
 	ChargeWait = 0.5,
 	Trigger = "Auto",

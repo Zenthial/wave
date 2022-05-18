@@ -10,6 +10,7 @@ return {
     Chatting = false,
 
     Firing = false,
+    FielxActive = false,
     
     EquippedWeapon = "",
     Reloading = false,

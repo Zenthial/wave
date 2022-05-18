@@ -67,4 +67,5 @@ return {
 		return damage
 	end,
 	VehicleMultiplier = 5,
+	BlastRadius = 15,
 }

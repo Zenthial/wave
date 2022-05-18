@@ -75,9 +75,12 @@ return {
 	HeatRate = 7,
 	CoolTime = 2,
 	CoolWait = 0.3,
-	Damage = 30,
+	Damage = 20,
 	CalculateDamage = function(damage, distance)
-		return damage
+		if distance <= 60 then
+			damage = 10 + (0.015 * ((distance - 50)^2)) - (0.18 * distance)
+		end
+		return damage / 4
 	end,
 	VehicleMultiplier = 4,
 	FireRate = 4,

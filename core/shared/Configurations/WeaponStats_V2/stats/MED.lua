@@ -53,9 +53,9 @@ return {
 	Name = "MED",
 	FullName = "Tissue Regenerator",
 	Category = "Support",
-	Description = "The Mark-ED Medical Facilitation tool is the most effective iteration of a series of handheld ?mediguns? which have been replacing traditional first aid systems in the field. The M3D fires a beam of medical nanites which coat the wounds of the patient and heal damage sustained in very short order.",
+	Description = "The Mark-ED Medical Facilitation tool is the most effective iteration of a series of handheld mediguns which have been replacing traditional first aid systems in the field. The MED fires a beam of medical nanites which coat the wounds of the patient and heal damage sustained in very short order.",
 	QuickDescription = "Constant Health Regeneration",
-	WeaponCost = 1250,
+	WeaponCost = 2000,
 	AmmoType = AmmoType.Battery,
 	Slot = 2,
 	Holster = Holsters.Hip,
@@ -63,8 +63,9 @@ return {
 	NumBarrels = 1,
 	CanSprint = true,
 	CanCrouch = true,
-	CanTeamKill = false,
+	CanTeamKill = true,
 	Locked = false,
+	HeadshotMultiplier = 4,
 	WalkspeedReduce = 2,
 	EquipTime = 0.3,
 	BatteryDepletionMin = 1,
@@ -75,7 +76,7 @@ return {
 	HeatRate = 1,
 	CoolTime = 4,
 	CoolWait = 0.25,
-	Damage = -2,
+	Damage = -1,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
@@ -89,7 +90,7 @@ return {
 
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(-0.1, -1, -.25) * CFrame.Angles(math.rad(90),0,math.rad(180)),
+			C0 = CFrame.new(-0.1, -1, -0.25) * CFrame.Angles(math.rad(90),0,math.rad(180)),
 			C1 = CFrame.new()
 		}
 	},

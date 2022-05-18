@@ -83,12 +83,13 @@ return {
 	BulletType = BulletType.Projectile,
 	BulletCache = Caches.DefaultCache,
 
-	Damage = 50,
+	Damage = 55,
 	CalculateDamage = function(damage, distance)
 		damage = damage + (60 /distance)
-		return math.clamp(damage, 50,75)
+		return math.clamp(damage, 50, 75)
 	end,
 	VehicleMultiplier = 10,
+	BlastRadius = 20,
 	HandleWelds = {
 		{	limb = "Right Arm",
 			C0 = CFrame.new(0, -.25, -.5) * CFrame.Angles(math.rad(90),0,math.rad(180)),

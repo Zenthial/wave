@@ -60,7 +60,7 @@ return {
 	Locked = false,
 	Holster = Holsters.TorsoModule,
 	Trigger = "Press",
-	EnergyDeplete = 3,
+	EnergyDeplete = 2,
 	EnergyRegen = 1,
 	EnergyMin = 20,
 }

@@ -63,6 +63,7 @@ function Movement:Start()
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalSprinting"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCrouching"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanMove"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("FielxActive"):Connect(function() self:UpdateWalkspeed() end))
 	
 	-- this is a fucking mess, but i think its a smart mess
 	-- i may not need any of this since I'm also using LocalCanMove
@@ -89,15 +90,15 @@ function Movement:UpdateWalkspeed()
 	end
 		
 	if self.Root:GetAttribute("Aiming") == true then
-		self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 4
+		self.Humanoid.WalkSpeed -= 4
 	end
 	
 	if self.Root:GetAttribute("LocalCrouching") == true then
-		self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed - 8
+		self.Humanoid.WalkSpeed -= 8
 	end
 	
 	if self.Root:GetAttribute("LocalSprinting") == true or self.Root:GetAttribute("LocalRolling") == true then
-		self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed + 10
+		self.Humanoid.WalkSpeed += 10
 	end
 	
 	if self.Root:GetAttribute("NumWeaponsEquipped") > 0 then
@@ -105,7 +106,11 @@ function Movement:UpdateWalkspeed()
 	end
 	
 	if not self.Root:GetAttribute("HasPrimaryWeapon") == true then
-		self.Humanoid.WalkSpeed = self.Humanoid.WalkSpeed + 5
+		self.Humanoid.WalkSpeed += 5
+	end
+
+	if self.Root:GetAttribute("FielxActive") == true then
+		self.Humanoid.WalkSpeed -= 10
 	end
 
 

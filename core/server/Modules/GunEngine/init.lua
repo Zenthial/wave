@@ -7,6 +7,8 @@ local tcs = require(Shared:WaitForChild("tcs"))
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
+local radiusDamage = require(Shared:WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
+
 
 local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
@@ -36,19 +38,24 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
     return result
 end)
 
+local function attemptDealDamage(healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
+    local healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
+    assert(healthComponent, "Health component not found on "..healthComponentObject.Name)
+
+
+    if hitPartName == "Head" and headshotMultiplier then
+        damage *= headshotMultiplier
+    end
+    
+    print(damage)
+    healthComponent:TakeDamage(damage)
+end
+
 -- healthComponentPart is technically a player now
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
-    local healthComponent = tcs.get_component(healthComponentPart, "Health") --[[:await()]]
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
-        local damage = stats.Damage
-
-        if hitPartName == "Head" then
-            damage *= stats.HeadshotMultiplier
-        end
-        
-        print(damage)
-        healthComponent:TakeDamage(damage)
+        attemptDealDamage(healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
     end
 end)
 
@@ -56,6 +63,19 @@ comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
     damage = math.clamp(damage, 0, 100)
     local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
     healthComponent:TakeDamage(damage)
+end)
+
+comm:BindFunction("AoERadius", function(player: Player, part: BasePart, weaponName)
+    local stats = GadgetStats[weaponName]
+    if stats == nil then
+        stats = WeaponStats[weaponName]
+    end
+
+    assert(stats ~= nil, "No stats exist for "..weaponName)
+    local playersToDamage = radiusDamage(stats, part, player.TeamColor, false)
+    for _player: Player, damage: number in pairs(playersToDamage) do
+        attemptDealDamage(_player, damage)
+    end
 end)
 
 local GunEngine = {}
@@ -85,6 +105,8 @@ function GunEngine:Start()
             renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
         end
     end)
+
+
 end
 
 function GunEngine:WeldWeapon(character: Model, weapon: Model, toBack: boolean)

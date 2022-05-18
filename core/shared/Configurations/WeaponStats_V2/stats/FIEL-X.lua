@@ -65,6 +65,7 @@ return {
 		return math.clamp(damage * (10/distance), 0, 60)
 	end,
 	VehicleMultiplier = 2,
+	BlastRadius = 15,
 	EnergyDeplete = 100,
 	EnergyRegen = 3,
 	EnergyMin = 99,

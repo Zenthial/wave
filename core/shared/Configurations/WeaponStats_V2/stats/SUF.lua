@@ -63,7 +63,7 @@ return {
 	NumBarrels = 1,
 	CanSprint = true,
 	CanCrouch = true,
-	HeadshotMultiplier = 1.3,
+	HeadshotMultiplier = 2,
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
@@ -75,8 +75,8 @@ return {
 	MinSpread = 0,
 	HeatRate = 50,
 	CoolTime = 4,
-	CoolWait = 1.25,
-	Damage = 60,
+	CoolWait = 2.25,
+	Damage = 45,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,

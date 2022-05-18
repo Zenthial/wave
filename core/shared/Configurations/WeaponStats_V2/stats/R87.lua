@@ -82,6 +82,7 @@ return {
 		damage = damage + (10 * (1/(distance/3)))
 		return math.clamp(damage, 20, 35)
 	end,
+	BlastRadius = 10,
 	FireRate = 3,
 	ChargeWait = 0,
 	Trigger = "Auto",

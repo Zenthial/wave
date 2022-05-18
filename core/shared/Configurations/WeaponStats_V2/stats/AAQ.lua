@@ -59,7 +59,7 @@ return {
 	Slot = 3,
 	Type = "Deployable",
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	DeployTime = 1.5,
 	TeamKillPrevention = true,
 	MaxSpread = 7,
@@ -69,7 +69,7 @@ return {
 		return damage
 	end,
 	VehicleMultiplier = 5,
-	FireRate = 10,
+	FireRate = 40,
 	ChargeWait = 0,
 	BulletType = BulletType.Ray,
 	BulletCache = Caches.DefaultCache,

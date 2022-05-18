@@ -58,11 +58,12 @@ return {
 	WeaponCost = 1500,
 	Slot = 3,
 	Type = "Projectile",
-	CanTeamKill = false,
+	CanTeamKill = true,
 	Locked = false,
 	Damage = -50,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
-	VehicleMultiplier = 10,
+	VehicleMultiplier = 1,
+	BlastRadius = 25,
 }

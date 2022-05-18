@@ -20,6 +20,12 @@ export type State_T = {
     ReloadActive: boolean,
     ReloadPlaying: boolean,
 
+    GrenadeActive: boolean,
+    GrenadePlaying: boolean,
+
+    FielxActive: boolean,
+    FielxPlaying: boolean,
+
     WeaponEquipped: boolean,
     WeaponName: string
 }
@@ -81,6 +87,9 @@ function AnimationState:Start()
         GrenadeActive = false,
         GrenadePlaying = false,
 
+        FielxActive = false,
+        FielxPlaying = false,
+
         WeaponEquipped = false,
         WeaponName = "",
 
@@ -96,6 +105,7 @@ function AnimationState:Start()
     local ReloadingChangedSignal = Player:GetAttributeChangedSignal("Reloading")
     local ThrowingChangedSignal = Player:GetAttributeChangedSignal("Throwing")
     local PlacingChangedSignal = Player:GetAttributeChangedSignal("Placing")
+    local FielxPunchSignal = Player:GetAttributeChangedSignal("FielxActive")
 
     cleaner:Add(SprintChangedSignal:Connect(function()
         state.SprintActive = Player:GetAttribute("LocalSprinting")
@@ -123,6 +133,12 @@ function AnimationState:Start()
 
     cleaner:Add(EquippedWeaponChangedSignal:Connect(function()
         self:HandleWeaponChange()
+    end))
+
+    cleaner:Add(FielxPunchSignal:Connect(function()
+        state.FielxActive = Player:GetAttribute("FielxActive")
+
+        self:HandleFielxChange()
     end))
 end
 
@@ -250,6 +266,22 @@ function AnimationState:HandleWeaponChange()
             task.wait(oldWeaponStats.EquipTime)
             self.AnimationHandler:Stop(oldWeaponName.."equippingArm")
         end
+    end
+end
+
+function AnimationState:HandleFielxChange()
+    if self.State.FielxActive and not self.State.FielxPlaying then
+        self.AnimationHandler:Play("globalfdBottom")
+		self.AnimationHandler:Play("globalfdMiddle")
+		self.AnimationHandler:Play("globalfdTop")
+
+        self.State.FielxPlaying = true
+    elseif not self.State.FielxActive and self.State.FielxPlaying then
+        self.AnimationHandler:Stop("globalfdBottom")
+		self.AnimationHandler:Stop("globalfdMiddle")
+		self.AnimationHandler:Stop("globalfdTop")
+
+        self.State.FielxPlaying = false
     end
 end
 

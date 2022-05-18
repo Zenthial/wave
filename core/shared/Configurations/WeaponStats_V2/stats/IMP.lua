@@ -50,49 +50,21 @@ local Holsters = {
 }
 
 return {
-	Name = "F99",
-	FullName = "Plasma Thrower",
-	Category = "Melee",
-	Description = "The F99 flamethrower is a very bulky and unwieldy weapon, but one which carries great destructive power. Capable of firing forth a stream of critical temperature plasma at close range, any targets which are caught in the fire will find themselves quickly and assuredly roasted, completely vaporizing the target at worst.",
-	QuickDescription = "Close quarters, constant area damage",
-	WeaponCost = 1750,
-	AmmoType = AmmoType.Battery,
-	Slot = 1,
-	Holster = Holsters.Back,
-	NumHandles = 1,
-	NumBarrels = 3,
-	CanSprint = false,
-	CanCrouch = false,
+	Name = "IMP",
+	FullName = "Impact Grenade",
+	Category = "Grenade",
+	Description = "The Impact Detonation Grenade is a hybrid explosive grenade issued to WIJ Shock Troopers. It has very simple and easy to use code keys which ensure proper usage of the ordnance. Upon impact, the grenade immediately explodes, unlike its predecessor, the NDG.",
+	QuickDescription = "Explosive",
+	WeaponCost = 5000,
+	Slot = 3,
+	Type = "Projectile",
 	CanTeamKill = false,
 	Locked = false,
-	WalkspeedReduce = 0,
-	EquipTime = 0.5,
-	BatteryDepletionMin = 4,
-	BatteryDepletionMax = 5,
-	ShotsDeplete = 4,
-	MaxSpread = 1,
-	MinSpread = 0.5,
-	HeatRate = 2,
-	CoolTime = 6,
-	CoolWait = 1,
-	Damage = 15,
+	Damage = 40,
 	CalculateDamage = function(damage, distance)
-		damage = damage --+ (10 * (1/(distance*2)))
-		return math.clamp(damage, 7, 50)
+		damage = damage + (250 /distance)
+		return math.clamp(damage, 20, 40)
 	end,
 	VehicleMultiplier = 4,
-	BlastRadius = 7,
-	FireRate = 10,
-	ChargeWait = 0,
-	Trigger = "Auto",
-	FireMode = FireMode.Flame,
-	BulletType = BulletType.Flame,
-	BulletCache = Caches.DefaultCache,
-
-	HandleWelds = {
-		{	limb = "Right Arm",
-			C0 = CFrame.new(.25, -2, -1.25) * CFrame.Angles(math.rad(-135),math.rad(180),0),
-			C1 = CFrame.new()
-		},
-	},
+	BlastRadius = 15,
 }

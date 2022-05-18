@@ -78,7 +78,7 @@ return {
 	CoolWait = 0.5,
 	Damage = 12,
 	CalculateDamage = function(damage, distance)
-		return math.clamp((damage * (1/(distance/15))), 1, damage)
+		return math.clamp((damage * (1 / (distance/10)) ), 1, damage)
 		--return damage + distance / 40
 	end,
 	VehicleMultiplier = 1,

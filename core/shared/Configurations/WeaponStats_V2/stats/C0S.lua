@@ -62,7 +62,7 @@ return {
 	Locked = false,
 	Damage = 2,
 	CalculateDamage = function(damage, distance)
-		return math.clamp(damage + (10 * (1 / distance)), 1, 15)
+		return math.clamp(damage + (20 * (1 / distance)), 1, 15)
 	end,
 	VehicleMultiplier = 0.2,
 }

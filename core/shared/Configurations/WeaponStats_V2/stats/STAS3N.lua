@@ -55,7 +55,7 @@ return {
 	Category = "Deployable",
 	Description = "The [Station] is a ready-made engineering package which is capable of deploying a healing station at the position of unpacking. As long as the device is functional, it will stream healing nanites into friendly units, keeping them fit for duty on the front lines of a battle.",
 	QuickDescription = "Constant Area Healing Effect",
-	WeaponCost = 5000,
+	WeaponCost = 2000,
 	Slot = 3,
 	Locked = false,
 	Type = "Deployable",
@@ -66,4 +66,5 @@ return {
 		return damage
 	end,
 	VehicleMultiplier = 5,
+	BlastRadius = 20,
 }

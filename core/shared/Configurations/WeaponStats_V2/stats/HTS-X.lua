@@ -76,6 +76,7 @@ return {
 	CalculateDamage = function(damage, distance)
 		return damage + (40 * (1/distance))
 	end,
+	BlastRadius = 30,
 	FireRate = 10,
 	ChargeWait = 0,
 	Trigger = "Semi",

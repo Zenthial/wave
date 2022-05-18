@@ -54,7 +54,7 @@ return {
 	FullName = "Scorpius Volatile Incendiary Projector",
 	Category = "Deployable",
 	QuickDescription = "Flame Turret",
-	Description = "Scorpius' Volatile Incendiary Projector is a light-armoured turret defense system outfitted with a miniaturized plasma thrower. The VOL is best used for point defense and performs well against organic targets",
+	Description = "Scorpius' Volatile Incendiary Projector is a light-armoured turret defense system outfitted with a miniaturized plasma thrower. The VOL is best used for point defense and performs well against organic targets.",
 	WeaponCost = 5000,
 	Slot = 3,
 	Type = "Deployable",
