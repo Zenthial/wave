@@ -121,6 +121,7 @@ function Health:Start()
 			newHealth = self.MaxHealth
 		end
 
+        print(newHealth, newShield, self.TotalHealth, self.MaxTotalHealth, currentTotalHealth, previousTotalHealth)
         if self.TotalHealth == self.MaxTotalHealth then
             newHealth = self.MaxHealth
             newShield = self.MaxShields
@@ -158,6 +159,7 @@ end
 
 function Health:SetTotalHealth(trueHealth: number)
     trueHealth = math.clamp(trueHealth, 0, self.MaxTotalHealth)
+    print(trueHealth)
     self.TotalHealth = trueHealth
     
     local player = self.Root :: Player

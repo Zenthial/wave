@@ -52,7 +52,7 @@ elseif RunService:IsServer() then
             local ignore = CollectionService:GetTagged("Ignore")
                 
             local NewRay = Ray.new(origin + Vector3.new(0, 3, 0), (hrp.CFrame.Position - (origin + Vector3.new(0, 3, 0))).Unit * radius)
-            local hit, position = workspace:FindPartOnRayWithIgnoreList(NewRay, ignore)
+            local hit, _ = workspace:FindPartOnRayWithIgnoreList(NewRay, ignore)
 
             if hit and hit:IsDescendantOf(character) then
                 if stats.Action == "Heal" then

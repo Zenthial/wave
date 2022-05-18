@@ -56,6 +56,8 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
         attemptDealDamage(healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
+    else
+        error(weaponName .. " does not have weapon stats or weapon stats with damage")
     end
 end)
 

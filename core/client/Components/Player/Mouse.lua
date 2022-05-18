@@ -70,14 +70,10 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: 
 
     local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread, weaponStats.MaxSpread, aiming, currentRecoil, aimBuff)
     local start = head.Position
-    
-    local collectionServiceIgnore = CollectionService:GetTagged("Ignore")
-    local ignore = {}
-    for _, thing in pairs(collectionServiceIgnore) do table.insert(ignore, thing) end
-    for _, thing in pairs(character:GetChildren()) do table.insert(ignore, thing) end
 
     local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
-    local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, ignore)
+    local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, CollectionService:GetTagged("Ignore"))
+    print(hit)
 
     return hit, position
 end

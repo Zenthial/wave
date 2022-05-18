@@ -33,6 +33,18 @@ function Player:Start()
     local player = self.Player :: Player
     player.CameraMaxZoomDistance = 25
     player.CameraMinZoomDistance = 5
+
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    for _, thing in pairs(character:GetDescendants()) do
+        if CollectionService:HasTag(thing, "Ignore") then
+            CollectionService:AddTag(thing, "Ignore")
+        end
+    end
+
+    self.Cleaner:Add(character.DescendantAdded:Connect(function(descendant)
+        CollectionService:AddTag(descendant, "Ignore")
+    end))
 end
 
 function Player:Destroy()

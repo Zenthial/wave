@@ -141,7 +141,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     local attackModule = getAttackModule(weaponStats, bulletModule, gunModel, mutableStats, storedShots)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
-    local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string) -> boolean
+    local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string, string) -> boolean
 
     local animationComponent = tcs.get_component(Player, "AnimationHandler") --[[:await()]]
 
@@ -189,6 +189,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
         local healthComponentPart = recursivelyFindHealthComponent(hitPart)
+        print(hitPart, hitPart.Parent, healthComponentPart)
         if healthComponentPart ~= nil then
             attemptDealDamageFunction(healthComponentPart, weaponStats.Name, hitPart.Name)
         end
