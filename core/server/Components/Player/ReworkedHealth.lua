@@ -97,6 +97,31 @@ function Health:SetupHealthChangeListener()
 
             self.DamageTime = tick()
             self:RegenShield(self.DamageTime)
+        -- not really sure if this case even needs to be covered
+        elseif damageDealt == 0 then
+            self:SetHealth(oldHealth)
+            self:SetShields(oldShields)
+        -- healing
+        elseif damageDealt < 0 then
+            local heals = -(damageDealt)
+            local remainder = 0
+
+            if heals + oldHealth > self.Root:GetAttribute("MaxHealth") then
+                local healthToAdd = self.Root:GetAttribute("MaxHealth") - oldHealth
+                remainder = heals - healthToAdd
+
+                self:SetHealth(self.Root:GetAttribute("MaxHealth"))
+            else
+                self:SetHealth(oldHealth + heals)
+            end
+
+            if remainder then
+                if remainder + oldShields > self.Root:GetAttribute("MaxShields") then
+                    self:SetShields(self.Root:GetAttribute("MaxShields"))
+                else
+                    self:SetShields(oldShields + remainder)
+                end
+            end
         end
     end))
 end
