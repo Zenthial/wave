@@ -38,7 +38,7 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
     return result
 end)
 
-local function attemptDealDamage(healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
+local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
     local healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
     assert(healthComponent, "Health component not found on "..healthComponentObject.Name)
 
@@ -48,6 +48,24 @@ local function attemptDealDamage(healthComponentObject: Instance, damage: number
     end
     
     print(damage)
+    healthComponent.Root:SetAttribute("LastKiller", player.Name)
+    healthComponent.Root:SetAttribute("LastKilledWeapon", weaponName)
+
+    local folder = healthComponent.Root.DamageFolder:FindFirstChild(player.Name)
+    if folder == nil then
+        folder = Instance.new("Folder")
+        folder.Name = player.Name
+        folder:SetAttribute("Damage", damage)
+        folder:SetAttribute("Hits", 1)
+
+        folder.Parent = healthComponent.Root.DamageFolder
+    else
+        folder:SetAttribute("Damage", folder:GetAttribute("Damage") + damage)
+        folder:SetAttribute("Hits", folder:GetAttribute("Hits") + 1)
+    end
+
+    folder:SetAttribute("Time", tick())
+
     healthComponent:TakeDamage(damage)
 end
 
@@ -55,7 +73,7 @@ end
 comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
     local stats = WeaponStats[weaponName]
     if stats and stats.Damage then
-        attemptDealDamage(healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
+        attemptDealDamage(player, weaponName, healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
     else
         error(weaponName .. " does not have weapon stats or weapon stats with damage")
     end
@@ -76,7 +94,7 @@ comm:BindFunction("AoERadius", function(player: Player, part: BasePart, weaponNa
     assert(stats ~= nil, "No stats exist for "..weaponName)
     local playersToDamage = radiusDamage(stats, part, player, false)
     for _player: Player, damage: number in pairs(playersToDamage) do
-        attemptDealDamage(_player, damage)
+        attemptDealDamage(player, weaponName, _player, damage)
     end
 end)
 

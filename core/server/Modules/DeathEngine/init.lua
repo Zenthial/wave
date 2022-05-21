@@ -1,12 +1,27 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
+local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+
+local Objects = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Objects")
+local Effect = Objects:WaitForChild("HumanoidDeathEffect")
 
 local createDeathBox = require(script.createDeathBox)
 
-local RESPAWN_TIMER = 5
+local RenderDeathEffect = Instance.new("RemoteEvent")
+RenderDeathEffect.Name = "RenderDeathEffect"
+RenderDeathEffect.Parent = ReplicatedStorage
+
+local KillNotifier = Instance.new("RemoteEvent") -- notifies kills, assist count as kills and assists takes (type, person)
+KillNotifier.Name = "KillNotifier"
+KillNotifier.Parent = ReplicatedStorage
+
+local RESPAWN_TIMER = GlobalOptions.RespawnTime
+local DEATH_BANNER = true
 
 type HealthComponent_T = {
     Events: {
@@ -34,6 +49,10 @@ end
 local PlayerCleaners: {[Player]: typeof(Trove)} = {}
 
 local function playerAdded(player: Player)
+    local damageFolder = Instance.new("Folder")
+    damageFolder.Name = "DamageFolder"
+    damageFolder.Parent = player
+
     local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
     if health_component ~= nil then
         local cleaner = Trove.new()
@@ -41,7 +60,61 @@ local function playerAdded(player: Player)
             if player:GetAttribute("Dead") == false then return end
             local character = player.Character
             local randPos = getRandomPos(floor)
+            local deathPosition = character.HumanoidRootPart.Position
             character.HumanoidRootPart.Position = randPos
+
+            local effect = Effect:Clone()
+            effect.CFrame = CFrame.new(deathPosition)
+            effect.Parent = workspace
+            effect["Death" .. math.random(1, 5)]:Play()
+            CollectionService:AddTag(effect, "Ignore")
+
+            local killer = player:GetAttribute("LastKiller")
+
+            task.spawn(function()
+                if killer ~= "" then
+                    local killerPlayer = Players:FindFirstChild(killer) :: Player
+                    if killerPlayer then
+                        killerPlayer:SetAttribute("Kills", killerPlayer:GetAttribute("Kills") + 1)
+                        KillNotifier:FireClient(killerPlayer, "Kill", player)
+                    end
+    
+                    for _, folder in pairs(damageFolder) do
+                        local damagePlayer = Players:FindFirstChild(folder.Name):: Player
+                        if damagePlayer == nil then continue end
+    
+                        local damage = damageFolder:GetAttribute("Damage")
+                        local timeout = damageFolder:GetAttribute("Time")
+                        local hits = damageFolder:GetAttribute("Hits")
+    
+                        if tick() - timeout <= GlobalOptions.AssistTimeout and hits >= GlobalOptions.AssistHitsThreshold then
+                            if damage >= GlobalOptions.AssistAsKillThreshold then
+                                damagePlayer:SetAttribute("AssistsAsKills", damagePlayer:GetAttribute("AssistsAsKills") + 1)
+                                KillNotifier:FireClient(damagePlayer, "AssistAsKill", player)
+                            elseif damage >= GlobalOptions.AssistThreshold then
+                                damagePlayer:SetAttribute("Assists", damagePlayer:GetAttribute("Assists") + 1)
+                                KillNotifier:FireClient(damagePlayer, "Assist", player)
+                            end
+                        end
+                    end
+
+                    damageFolder:ClearAllChildren()
+                end
+            end)
+
+            task.delay(0.2, function()
+                if DEATH_BANNER then
+                    effect.Orb.Enabled = false
+
+                    if killer ~= "" then
+                        local color = ChatStats.TeamColors[tostring(player.TeamColor)].Text or ChatStats.TeamColors["Default"].Text
+                        RenderDeathEffect:FireAllClients(effect, player.Name, killer, color)
+                        task.wait(GlobalOptions.DeathNotifierTime + 1)
+                    end
+                end
+
+                effect:Destroy()
+            end)
 
             task.delay(RESPAWN_TIMER, function()
                 if workspace:FindFirstChild("Spawns") and workspace.Spawns:FindFirstChild(player.TeamColor.Name) then

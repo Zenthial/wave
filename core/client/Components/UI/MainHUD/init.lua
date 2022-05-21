@@ -1,10 +1,10 @@
 local CollectionService = game:GetService("CollectionService")
-local TextService = game:GetService("TextService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 local tcs = require(ReplicatedStorage.Shared.tcs)
 
 local KeyboardInputPromptObject = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("MainHUD"):WaitForChild("KeyboardInputPrompt")
@@ -28,12 +28,16 @@ function MainHUD:Start()
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
     self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI") --[[:await()]]
-    print(self.HeatUI)
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
-    print(self.InventoryUI)
+
+    local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
+    end))
+
+    self.Cleaner:Add(RenderDeathEffect.OnClientEvent:Connect(function(effect, victim, killer, color)
+        self:RenderDeathEffect(effect, victim, killer, color)
     end))
 end
 
@@ -82,6 +86,29 @@ function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
     input.Parent = self.Bottom
     local inputComponent = tcs.get_component(input, "KeyboardInputPrompt")
     return inputComponent
+end
+
+function MainHUD:RenderDeathEffect(effect, victim, killer, color)
+	effect.NotifierGui.Frame.VictimName.Text = string.upper(victim) .. " DOWNED"
+	effect.NotifierGui.Frame.VictimName.TextColor3 = color
+	if killer then
+		effect.NotifierGui.Frame.KillerName.Text = "BY " .. string.upper(killer)
+	end
+
+	effect.NotifierGui.Frame:TweenSizeAndPosition(UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .3, true)
+	effect.NotifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .1, true)
+	effect.NotifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(1, -1, 0, 0), "Out", "Quad", .1, true)
+	
+	task.wait(GlobalOptions.DeathNotifierTime - .7)
+	
+	effect.NotifierGui.Frame:TweenSizeAndPosition(UDim2.new(0, 0, 1, 0), UDim2.new(.5, 0, 0, 0), "Out", "Quad", .3, true)
+	task.wait(.2)
+	-- Tween error occurs here
+	effect.NotifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(0, 0, .5, 0), "Out", "Quad", .1, true)
+	effect.NotifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(1, -1, .5, 0), "Out", "Quad", .1, true)
+	
+	task.wait(.1)
+	effect.NotifierGui.Frame.KillerName.Text = ""
 end
 
 function MainHUD:Destroy()

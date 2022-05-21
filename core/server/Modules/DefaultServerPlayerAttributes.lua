@@ -22,5 +22,10 @@ return {
     Dead = false,
 
     LastKiller = "",
-    LastKilledWeapon = ""
+    LastKilledWeapon = "",
+
+    Kills = 0,
+    Deaths = 0,
+    Assists = 0,
+    AssistsAsKills = 0,
 }
