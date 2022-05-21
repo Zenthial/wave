@@ -44,6 +44,7 @@ end
 
 function ServerInventory:Start()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
+    print(self.Root, self.Character)
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
         repeat

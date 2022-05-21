@@ -59,8 +59,13 @@ for _, module in pairs(script.Modules:GetChildren()) do
 end
 
 local function playerAdded(player: Player)
-    CollectionService:AddTag(player, "Player")
-    CollectionService:AddTag(player, "Health")
+    if not CollectionService:HasTag(player, "Player") then
+        CollectionService:AddTag(player, "Player")
+    end
+
+    if not CollectionService:HasTag(player, "Health") then
+        CollectionService:AddTag(player, "Health")
+    end
 
     local function characterAdded(character) 
         CollectionService:AddTag(character, "Character")

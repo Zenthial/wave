@@ -125,8 +125,6 @@ function GunEngine:Start()
             renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
         end
     end)
-
-
 end
 
 function GunEngine:WeldWeapon(character: Model, weapon: Model, toBack: boolean)

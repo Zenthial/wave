@@ -2,7 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 
 -- fake constants
 local TIMEOUT = 5
-local DEBUG_PRINT = false
+local DEBUG_PRINT = true
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
 
@@ -104,7 +104,7 @@ local function create(instance: Instance, component: ComponentClass)
 	if DEBUG_PRINT then print("Registering "..component.Name.." on "..instance.Name) end
     
     if component.__Instances[instance] ~= nil then
-        component.__Instances[instance]:Destroy()
+        return
     end
 
     component.__Instances[instance] = component_instance
@@ -146,6 +146,7 @@ local function create_component(component: ComponentClass)
     component.__Instances = {}
 	
 	for _, thing in ipairs(CollectionService:GetTagged(component.Tag)) do
+		if DEBUG_PRINT then print("getTagged "..component.Tag, thing) end
 		if ancestor:IsAncestorOf(thing) then
 			create(thing, component)	
 		end
@@ -155,6 +156,7 @@ local function create_component(component: ComponentClass)
 	task.wait()
 	
 	CollectionService:GetInstanceAddedSignal(component.Tag):Connect(function(instance)
+		if DEBUG_PRINT then print("instance added "..component.Tag, instance) end
 		if ancestor:IsAncestorOf(instance) then
 			create(instance, component)
 		else
