@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 -- ClientRemoteProperty
 -- Stephen Leitnick
 -- December 20, 2021

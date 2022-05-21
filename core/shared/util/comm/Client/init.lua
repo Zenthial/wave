@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 local Util = require(script.Parent.Util)
 local Types = require(script.Parent.Types)
 local Promise = require(script.Parent.Parent.Promise)

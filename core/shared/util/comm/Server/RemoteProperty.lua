@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 -- RemoteProperty
 -- Stephen Leitnick
 -- December 20, 2021

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 -- ServerComm
 -- Stephen Leitnick
 -- December 20, 2021

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 -- ClientRemoteSignal
 -- Stephen Leitnick
 -- December 20, 2021

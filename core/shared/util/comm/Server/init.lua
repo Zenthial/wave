@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-type
 local Util = require(script.Parent.Util)
 local RemoteSignal = require(script.RemoteSignal)
 local RemoteProperty = require(script.RemoteProperty)
