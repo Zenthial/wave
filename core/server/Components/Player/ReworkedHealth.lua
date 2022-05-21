@@ -29,6 +29,7 @@ Health.Tag = "Health"
 Health.Ancestor = game
 
 function Health.new(root: any)
+    print("creating component heal")
     return setmetatable({
         Root = root,
     }, Health)
@@ -43,6 +44,9 @@ function Health:Start()
     self.Root:SetAttribute("Health", DEFAULT_HEALTH_STATS.MAX_HEALTH)
     self.Root:SetAttribute("Shields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
     self.Root:SetAttribute("Dead", false)
+
+    self.RechargeTime = DEFAULT_HEALTH_STATS.RECHARGE_TIME
+    self.RechargeWait = DEFAULT_HEALTH_STATS.RECHARGE_WAIT
 
     self.DamageTime = tick()
     self.Root:SetAttribute("ShieldRegening", false)
@@ -62,14 +66,23 @@ function Health:Start()
 end
 
 function Health:SetupHealthChangeListener()
+    print("registering the health listener")
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("TotalHealth"):Connect(function()
         local totalHealth = self.Root:GetAttribute("TotalHealth")
         local oldTotalHealth = self.Root:GetAttribute("OldTotalHealth")
+        self.Root:SetAttribute("OldTotalHealth", totalHealth)
+
+        if totalHealth <= 0 then
+            self.Root:SetAttribute("Dead", true)
+        else
+            self.Root:SetAttribute("Dead", false)
+        end
 
         local oldHealth = self.Root:GetAttribute("Health")
         local oldShields = self.Root:GetAttribute("Shields")
 
         local damageDealt = oldTotalHealth - totalHealth
+        print(damageDealt)
         if damageDealt > 0 then
             local newShields
             local remainder = 0
@@ -95,7 +108,9 @@ function Health:SetupHealthChangeListener()
                 self:SetHealth(newHealth)
             end
 
-            self.DamageTime = tick()
+            if damageDealt > 0 then
+                self.DamageTime = tick()
+            end
             self:RegenShield(self.DamageTime)
         -- not really sure if this case even needs to be covered
         elseif damageDealt == 0 then
@@ -128,12 +143,6 @@ end
 
 function Health:SetTotalHealth(totalHealth)
     totalHealth = math.clamp(totalHealth, 0, self.Root:GetAttribute("MaxTotalHealth"))
-
-    if totalHealth <= 0 then
-        self.Root:SetAttribute("Dead", true)
-    else
-        self.Root:SetAttribute("Dead", false)
-    end
 
     self.Root:SetAttribute("TotalHealth", totalHealth)
 end
@@ -171,6 +180,10 @@ function Health:RegenShield(lastDamageTime: number)
             end
         end
     end)
+end
+
+function Health:TakeDamage(damage: number)
+    self:SetTotalHealth(self.Root:GetAttribute("TotalHealth") - damage)
 end
 
 function Health:Destroy()

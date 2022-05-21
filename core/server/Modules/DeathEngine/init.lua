@@ -37,8 +37,8 @@ local function playerAdded(player: Player)
     local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
     if health_component ~= nil then
         local cleaner = Trove.new()
-        cleaner:Add(health_component.Events.Died:Connect(function()
-            player:SetAttribute("Dead", true)
+        cleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
+            if player:GetAttribute("Dead") == false then return end
             local character = player.Character
             local randPos = getRandomPos(floor)
             character.HumanoidRootPart.Position = randPos
@@ -53,7 +53,6 @@ local function playerAdded(player: Player)
                 end
 
                 health_component:SetTotalHealth(100) -- probably bad to hardcode this value
-                player:SetAttribute("Dead", false)
                 player:SetAttribute("LastKiller", "")
             end)
         end))

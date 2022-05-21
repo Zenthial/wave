@@ -196,6 +196,6 @@ function Health:Destroy()
     self.Cleaner:Destroy()
 end
 
-tcs.create_component(Health)
+-- tcs.create_component(Health)
 
 return Health
