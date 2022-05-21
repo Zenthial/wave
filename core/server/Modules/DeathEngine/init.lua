@@ -52,7 +52,7 @@ local function playerAdded(player: Player)
                     character.HumanoidRootPart.Position = Vector3.new(0, 3, 0)
                 end
 
-                health_component:SetTotalHealth(100) -- probably bad to hardcode this value
+                health_component:Heal(100) -- probably bad to hardcode this value
                 player:SetAttribute("LastKiller", "")
             end)
         end))

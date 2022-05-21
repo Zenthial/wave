@@ -18,6 +18,7 @@ type Health_T = {
     __index: Health_T,
     Name: string,
     Tag: string,
+    Root: Player,
 
     Cleaner: Cleaner_T
 }
@@ -38,11 +39,11 @@ end
 function Health:Start()
     self.Root:SetAttribute("MaxHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH)
     self.Root:SetAttribute("MaxShields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
-    self.Root:SetAttribute("MaxTotalHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH + DEFAULT_HEALTH_STATS.MAX_SHIELD)
-    self.Root:SetAttribute("TotalHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH + DEFAULT_HEALTH_STATS.MAX_SHIELD)
-    self.Root:SetAttribute("OldTotalHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH + DEFAULT_HEALTH_STATS.MAX_SHIELD)
+
     self.Root:SetAttribute("Health", DEFAULT_HEALTH_STATS.MAX_HEALTH)
+    self.Root:SetAttribute("OldHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH)
     self.Root:SetAttribute("Shields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
+    self.Root:SetAttribute("OldShields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
     self.Root:SetAttribute("Dead", false)
 
     self.RechargeTime = DEFAULT_HEALTH_STATS.RECHARGE_TIME
@@ -61,93 +62,27 @@ function Health:Start()
         self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel") --[[:await()]]
     end))
 
-    self:SetTotalHealth(self.Root:GetAttribute("MaxTotalHealth"))
-    self:SetupHealthChangeListener()  
-end
-
-function Health:SetupHealthChangeListener()
-    print("registering the health listener")
-    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("TotalHealth"):Connect(function()
-        local totalHealth = self.Root:GetAttribute("TotalHealth")
-        local oldTotalHealth = self.Root:GetAttribute("OldTotalHealth")
-        self.Root:SetAttribute("OldTotalHealth", totalHealth)
-
-        if totalHealth <= 0 then
-            self.Root:SetAttribute("Dead", true)
-        else
-            self.Root:SetAttribute("Dead", false)
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Health"):Connect(function()
+        local health = self.Root:GetAttribute("Health")
+        local oldHealth = self.Root:GetAttribute("OldHealth")
+        
+        if health ~= oldHealth then
+            self:SetHealth(health)
         end
+    end))
 
-        local oldHealth = self.Root:GetAttribute("Health")
-        local oldShields = self.Root:GetAttribute("Shields")
-
-        local damageDealt = oldTotalHealth - totalHealth
-        print(damageDealt)
-        if damageDealt > 0 then
-            local newShields
-            local remainder = 0
-
-            if damageDealt <= oldShields then
-                newShields = oldShields - damageDealt
-            else
-                newShields = 0
-                remainder = damageDealt - oldShields
-            end
-
-            self:SetShields(newShields)
-            
-            if remainder > 0 then
-                local newHealth
-                
-                if remainder > oldHealth then
-                    newHealth = 0
-                else
-                    newHealth = oldHealth - remainder
-                end
-
-                self:SetHealth(newHealth)
-            end
-
-            if damageDealt > 0 then
-                self.DamageTime = tick()
-            end
-            self:RegenShield(self.DamageTime)
-        -- not really sure if this case even needs to be covered
-        elseif damageDealt == 0 then
-            self:SetHealth(oldHealth)
-            self:SetShields(oldShields)
-        -- healing
-        elseif damageDealt < 0 then
-            local heals = -(damageDealt)
-            local remainder = 0
-
-            if heals + oldHealth > self.Root:GetAttribute("MaxHealth") then
-                local healthToAdd = self.Root:GetAttribute("MaxHealth") - oldHealth
-                remainder = heals - healthToAdd
-
-                self:SetHealth(self.Root:GetAttribute("MaxHealth"))
-            else
-                self:SetHealth(oldHealth + heals)
-            end
-
-            if remainder then
-                if remainder + oldShields > self.Root:GetAttribute("MaxShields") then
-                    self:SetShields(self.Root:GetAttribute("MaxShields"))
-                else
-                    self:SetShields(oldShields + remainder)
-                end
-            end
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Shields"):Connect(function()
+        local shields = self.Root:GetAttribute("Shields")
+        local oldShields = self.Root:GetAttribute("OldShields")
+        
+        if shields ~= oldShields then
+            self:SetShields(shields)
         end
     end))
 end
 
-function Health:SetTotalHealth(totalHealth)
-    totalHealth = math.clamp(totalHealth, 0, self.Root:GetAttribute("MaxTotalHealth"))
-
-    self.Root:SetAttribute("TotalHealth", totalHealth)
-end
-
 function Health:SetShields(shields)
+    self.Root:SetAttribute("OldShields", self.Root:GetAttribute("Shields"))
     self.Root:SetAttribute("Shields", shields)
 
     if self.ShieldModelComponent ~= nil then
@@ -158,10 +93,23 @@ function Health:SetShields(shields)
             end
         end)
     end
+
+    if shields == 0 then
+        self.DamageTime = tick()
+        self:RegenShield(self.DamageTime)
+    end
 end
 
 function Health:SetHealth(health)
     health = math.clamp(health, 0, self.Root:GetAttribute("MaxHealth"))
+
+    if health == 0 and self.Root:GetAttribute("Dead") == false then
+        self.Root:SetAttribute("Dead", true)
+    elseif health > 0 and self.Root:GetAttribute("Dead") == true then
+        self.Root:SetAttribute("Dead", false)
+    end
+
+    self.Root:SetAttribute("OldHealth", self.Root:GetAttribute("Health"))
     self.Root:SetAttribute("Health", health)
 end
 
@@ -172,7 +120,7 @@ function Health:RegenShield(lastDamageTime: number)
             if lastDamageTime >= self.DamageTime then
                 self.Root:SetAttribute("ShieldRegening", true)
                 while self.Root:GetAttribute("Shields") < self.Root:GetAttribute("MaxShields") and lastDamageTime >= self.DamageTime do
-                    self:SetTotalHealth(self.Root:GetAttribute("TotalHealth") + 1)
+                    self:SetShields(self.Root:GetAttribute("Shields") + 1)
                     task.wait(0.08)
                 end
                 self.Root:SetAttribute("ShieldRegening", false)
@@ -183,7 +131,48 @@ function Health:RegenShield(lastDamageTime: number)
 end
 
 function Health:TakeDamage(damage: number)
-    self:SetTotalHealth(self.Root:GetAttribute("TotalHealth") - damage)
+    local currentHealth = self.Root:GetAttribute("Health")
+    local currentShields = self.Root:GetAttribute("Shields")
+
+    if damage > 0 then
+        if currentShields > 0 then
+            if currentShields - damage <= 0 then
+                self:SetShields(0)
+                damage = damage - currentShields
+            else
+                self:SetShields(currentShields - damage)
+                damage = 0
+            end
+        end
+
+        if damage > 0 then
+            if currentHealth - damage <= 0 then
+                self:SetHealth(0)
+            else
+                self:SetHealth(currentHealth - damage)
+            end
+        end
+    -- healing!
+    elseif damage < 0 then
+        local maxHealth = self.Root:GetAttribute("MaxHealth")
+        local heals = -(damage)
+        if currentHealth + heals <= maxHealth then
+            self:SetHealth(currentHealth + heals)
+        elseif currentHealth + heals > maxHealth then
+            self:SetHealth(maxHealth)
+            heals = heals - (maxHealth - currentHealth)
+        end
+
+        if heals > 0 then
+            local newShields = currentShields + heals
+            newShields = math.clamp(newShields, 0, self.Root:GetAttribute("MaxShields"))
+            self:SetShields(newShields)
+        end
+    end
+end
+
+function Health:Heal(health: number)
+    self:TakeDamage(-health)
 end
 
 function Health:Destroy()
