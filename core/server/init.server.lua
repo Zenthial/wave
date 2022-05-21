@@ -59,6 +59,7 @@ for _, module in pairs(script.Modules:GetChildren()) do
 end
 
 local function playerAdded(player: Player)
+    task.wait(.1) -- this is to avoid double collectionservice firing
     if not CollectionService:HasTag(player, "Player") then
         CollectionService:AddTag(player, "Player")
     end
@@ -86,7 +87,7 @@ local function playerAdded(player: Player)
 end
 
 for _,player in pairs(game.Players:GetPlayers()) do
-    playerAdded(player)
+    task.spawn(playerAdded, player)
 end
 
 Players.PlayerAdded:Connect(playerAdded)
