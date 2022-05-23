@@ -43,8 +43,12 @@ function InputController:Start()
         elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Inventory")] then
             MenuStateComponent:FeedInput()
         else
-            InventoryComponent:FeedInput(keyCode)
+            InventoryComponent:FeedKeyDown(keyCode)
         end
+    end))
+
+    cleaner:Add(keyboardInput.KeyUp:Connect(function(keyCode: Enum.KeyCode)
+        InventoryComponent:FeedKeyUp(keyCode)
     end))
 end
 
