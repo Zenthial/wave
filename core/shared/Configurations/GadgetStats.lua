@@ -58,6 +58,7 @@ end
 return {
     ["NDG"] = {
         Name = "NDG",
+        Type = "Projectile",
 
         DEBUG = false,
 
@@ -115,6 +116,7 @@ return {
 
     ["C0S"] = {
         Name = "C0S",
+        Type = "Projectile",
 
         DEBUG = true,
 

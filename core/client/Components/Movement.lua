@@ -64,6 +64,7 @@ function Movement:Start()
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCrouching"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanMove"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("FielxActive"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("PlacingDeployable"):Connect(function() self:UpdateWalkspeed() end))
 	
 	-- this is a fucking mess, but i think its a smart mess
 	-- i may not need any of this since I'm also using LocalCanMove
@@ -111,6 +112,10 @@ function Movement:UpdateWalkspeed()
 
 	if self.Root:GetAttribute("FielxActive") == true then
 		self.Humanoid.WalkSpeed -= 10
+	end
+
+	if self.Root:GetAttribute("PlacingDeployable") == true then
+		self.Humanoid.WalkSpeed = 0
 	end
 
 

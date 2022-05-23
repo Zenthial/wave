@@ -5,11 +5,14 @@ local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
+local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
 local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
 
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
+local DeployableEngine = require(Modules.DeployableEngine)
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -38,8 +41,10 @@ function Inventory.new(root: any)
             Skill = nil
         },
 
+        EquippedGadgetStats = nil,
         EquippedGadget = nil,
         EquippedSkill = nil, 
+        EquippedWeapon = nil,
 
     }, Inventory)
 end
@@ -86,6 +91,14 @@ function Inventory:Start()
             end))
         elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
+            
+            local gadgetStats = GadgetStats[weaponName]
+
+            if gadgetStats == nil then
+                gadgetStats = WeaponStats[weaponName]
+            end
+
+            self.EquippedGadgetStats = gadgetStats
             self.EquippedGadget = weaponName
         end
     end))
@@ -106,7 +119,10 @@ function Inventory:Start()
             equippedWeaponCleaner:Add(tool.Events.Fired:Connect(function(trigDelay: number)
                 MainHUDComponent:UpdateTriggerBar(trigDelay)
             end))
+
         end
+
+        self.EquippedWeapon = tool
     end))
 end
 
@@ -114,7 +130,11 @@ function Inventory:FeedInput(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
 
     if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil and LocalPlayer:GetAttribute("GadgetQuantity") > 0 then
-        GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
+        if self.EquippedGadgetStats.Type == "Projectile" then
+            GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
+        elseif self.EquippedGadgetStats.Type == "Deployable" then
+            DeployableEngine:RenderDeployable(self.EquippedGadgetStats, self.EquippedWeapon)
+        end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
         self.EquippedSkill:Equip()
     end

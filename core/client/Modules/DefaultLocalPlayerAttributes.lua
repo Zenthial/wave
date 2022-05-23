@@ -15,7 +15,7 @@ return {
     EquippedWeapon = "",
     Reloading = false,
     Throwing = false,
-    Placing = false,
+    PlacingDeployable = false,
     Charging = false,
     ChargeWait = 0,
 
