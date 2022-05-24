@@ -34,7 +34,7 @@ end
 
 function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equippedWeapon)
     if Player.Character and Player.Character.HumanoidRootPart
-        and Player:GetAttribute("NumDeployable"..deployableStats.Name) or 0 < Player:GetAttribute("MaxDeployable"..deployableStats.Name) or 1
+        and (Player:GetAttribute("NumDeployable"..deployableStats.Name) or 0) < (Player:GetAttribute("MaxDeployable"..deployableStats.Name) or 1)
     then
         local cframe: CFrame = Player.Character.HumanoidRootPart.CFrame
         local position = cframe + (cframe.LookVector * 3)
