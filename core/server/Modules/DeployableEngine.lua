@@ -22,7 +22,16 @@ function DeployableEngine:Start()
         local quantity = player:GetAttribute("GadgetQuantity")
         local deployableStats = WeaponStats[deployableName]
 
-        if deployableStats and quantity > 0 then
+        local deployableQuantity = player:GetAttribute("NumDeployable"..deployableName) -- the amount of deployables that are already deployed
+        local maxQuantity = player:GetAttribute("MaxDeployable"..deployableName)
+        if deployableQuantity == nil then
+            player:SetAttribute("NumDeployable"..deployableName, 0)
+            player:SetAttribute("MaxDeployable"..deployableName, deployableStats.MaxDeployables) -- the maximum amount of deployables allowed to be deployed for that specific deployable
+            deployableQuantity = 0
+            maxQuantity = deployableStats.MaxDeployables
+        end
+
+        if deployableStats and quantity > 0 and deployableQuantity < maxQuantity then
             local model = Deployables[deployableName].DeployableModel:Clone() :: Model
             model.Name = player.Name .. deployableName
             model:SetAttribute("Player", player.Name)
@@ -43,8 +52,8 @@ function DeployableEngine:Start()
             model.Parent = DeployablesBin
 
             player:SetAttribute("GadgetQuantity", quantity - 1)
+            player:SetAttribute("NumDeployable"..deployableName, deployableQuantity + 1)
         end
-
     end)
 end
 

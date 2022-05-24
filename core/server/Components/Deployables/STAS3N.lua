@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -31,6 +32,7 @@ end
 function STAS3N:Start()
     local start, _ = string.find(self.Root.Name, "STAS3N")
     local playerName = self.Root.Name:sub(1, start - 1)
+    self.Player = Players:FindFirstChild(playerName) :: Player
 
     local stationStream = Instance.new("RemoteEvent")
     stationStream.Name = self.Root.Name.."Stream"
@@ -63,6 +65,14 @@ function STAS3N:Start()
 end
 
 function STAS3N:Destroy()
+    if self.Player then
+        local quantity = self.Player:GetAttribute("NumDeployable" .. self.Root.Name)
+
+        if quantity > 0 then
+            self.Player:SetAttribute("NumDeployable" .. self.Root.Name, quantity - 1)
+        end
+    end
+
     self.Cleaner:Clean()
 end
 

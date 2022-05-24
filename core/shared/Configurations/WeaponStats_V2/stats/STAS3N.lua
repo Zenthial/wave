@@ -61,6 +61,8 @@ return {
 	Type = "Deployable",
 	CanTeamKill = true,
 	DeployTime = 1.5,
+    MaxDeployables = 1,
+    Quantity = 1,
 	TeamKillPrevention = true,
 	Heal = 2.5,
 	CalculateDamage = function(damage, distance)

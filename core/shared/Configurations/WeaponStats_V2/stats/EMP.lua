@@ -60,4 +60,5 @@ return {
 	Type = "Projectile",
 	CanTeamKill = false,
 	Locked = false,
+	Range = 30,
 }

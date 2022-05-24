@@ -88,6 +88,7 @@ return {
 	BulletType = BulletType.Constant,
 	BulletCache = Caches.DefaultCache,
 
+	Range = 20,
 	Action = "Heal",
 	HandleWelds = {
 		{	limb = "Right Arm",

@@ -22,7 +22,6 @@ type DeployableStats = {
 local DeployableEngine = {}
 
 function DeployableEngine:Start()
-    print("starting Deployable")
     self.Placing = false
     self.Preview = false
     self.ActiveTweens = {}
@@ -34,7 +33,9 @@ function DeployableEngine:Start()
 end
 
 function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equippedWeapon)
-    if Player.Character and Player.Character.HumanoidRootPart then
+    if Player.Character and Player.Character.HumanoidRootPart
+        and Player:GetAttribute("NumDeployable"..deployableStats.Name) or 0 < Player:GetAttribute("MaxDeployable"..deployableStats.Name) or 1
+    then
         local cframe: CFrame = Player.Character.HumanoidRootPart.CFrame
         local position = cframe + (cframe.LookVector * 3)
         local raycastResult = workspace:Raycast(position.Position, Vector3.new(0, -100, 0), raycastParams)

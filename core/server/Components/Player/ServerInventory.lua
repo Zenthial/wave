@@ -110,6 +110,8 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
 
             assert(stats, "No Grenade Stats for " .. name)
             self.Root:SetAttribute("EquippedGadget", name)
+            self.Root:SetAttribute("GadgetQuantity", stats.Quantity)
+            self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity)
             SetWeaponSignal:FireClient(self.Root, key, name)
         end
     end

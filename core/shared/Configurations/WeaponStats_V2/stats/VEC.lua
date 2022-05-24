@@ -87,6 +87,7 @@ return {
 	BulletCache = Caches.DefaultCache,
 
 	FireMode = FireMode.Misc,
+	Range = 15,
 	Action = "Repair",
 	HandleWelds = {
 		{	limb = "Right Arm",
