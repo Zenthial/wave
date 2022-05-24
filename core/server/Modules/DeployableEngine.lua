@@ -39,8 +39,8 @@ function DeployableEngine:Start()
             gui.Indicator2.BackgroundColor3 = ChatStats.TeamColors[player.TeamColor.Name].Stroke
             gui.Parent = model
             
-            model.Parent = DeployablesBin
             model:SetPrimaryPartCFrame(position)
+            model.Parent = DeployablesBin
 
             player:SetAttribute("GadgetQuantity", quantity - 1)
         end

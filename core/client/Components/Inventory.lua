@@ -133,7 +133,6 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
         if self.EquippedGadgetStats.Type == "Projectile" then
             GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
         elseif self.EquippedGadgetStats.Type == "Deployable" then
-            print("here")
             DeployableEngine:RenderDeployable(self.EquippedGadgetStats, self.EquippedWeapon)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then

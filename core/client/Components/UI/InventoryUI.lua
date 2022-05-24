@@ -76,6 +76,8 @@ function InventoryUI.new(root: any)
         Root = root,
         SkillUI = nil,
         GadgetUI = nil,
+
+        PlacingTween = nil,
     }, InventoryUI)
 end
 
@@ -87,6 +89,7 @@ function InventoryUI:Start()
     local equippedSkillSignal = Player:GetAttributeChangedSignal("EquippedSkill")
     local equippedGadgetSignal = Player:GetAttributeChangedSignal("EquippedGadget")
     local gadgetQuantitySignal = Player:GetAttributeChangedSignal("GadgetQuantity")
+    local placingDeployableSignal = Player:GetAttributeChangedSignal("PlacingDeployable")
     clearInventoryToolbar(self.Root)
 
     self.Cleaner:Add(equippedSkillSignal:Connect(function()
@@ -127,6 +130,28 @@ function InventoryUI:Start()
             
             self.GadgetUI.GadgetAmount.TextLabel.Text = quantity
         end
+    end))
+
+    self.Cleaner:Add(placingDeployableSignal:Connect(function()
+        local placing = Player:GetAttribute("PlacingDeployable")
+
+        if placing then
+            local equippedGadget = Player:GetAttribute("EquippedGadget")
+            local gadgetStats = WeaponStats[equippedGadget]
+    
+            if gadgetStats then
+                local tween = TweenService:Create(self.GadgetUI.Fill, TweenInfo.new(gadgetStats.DeployTime), {Size = UDim2.new(1, 0, 1, 0)})
+                tween:Play()
+                self.PlacingTween = tween
+            end
+        else
+            if self.PlacingTween ~= nil then
+                task.wait(0.05)
+                self.PlacingTween:Cancel()
+                self.PlacingTween = nil
+                TweenService:Create(self.GadgetUI.Fill, TweenInfo.new(0.1), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+            end
+        end        
     end))
 
     print("inventory UI started")

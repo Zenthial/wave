@@ -26,7 +26,6 @@ STAS3N.Tag = "STAS3N"
 STAS3N.Ancestor = game
 
 function STAS3N.new(root: any)
-    print("creating component")
     return setmetatable({
         Root = root,
         Active = false,
@@ -46,7 +45,7 @@ function STAS3N:Start()
         return
     end
 
-	local reactor = self.Root.Reactor
+	local reactor = self.Root:WaitForChild("Reactor") :: Part
 	local origin = reactor.Position
 	
 	while task.wait(0.25) and self.Active do

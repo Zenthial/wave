@@ -6,14 +6,11 @@ local DEBUG_PRINT = false
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
 
--- local STATIC_has_started = false -- static in the c sense
-
 export type ComponentInstance = {
 	__Initialized: boolean,
 
 	Name: string,
 	Tag: string,
-	Needs: {string}?, -- The required needs of the component
 
 	CreateDependencies: () -> {[string]: Instance}?,
 	Start: () -> (),
@@ -24,7 +21,6 @@ export type ComponentClass = {
 	Name: string, -- The name of the component
 	Tag: string, -- The tag that collection service should bind to
 	Ancestor: Instance?,
-	Needs: {string}?, -- The required needs of the component
 
 	new: (Instance) -> ComponentInstance, -- constructor
 	Start: (ComponentClass) -> (), -- ran after .new and :CreateDependencies
