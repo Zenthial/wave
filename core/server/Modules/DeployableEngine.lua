@@ -10,6 +10,10 @@ local DeployableGui = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"
 local DeployableEngine = {}
 
 function DeployableEngine:Start()
+    local DeployablesBin = Instance.new("Folder")
+    DeployablesBin.Name = "DeployablesBin"
+    DeployablesBin.Parent = workspace
+
     local RequestDeployable = Instance.new("RemoteEvent")
     RequestDeployable.Name = "RequestDeployable"
     RequestDeployable.Parent = ReplicatedStorage
@@ -35,7 +39,7 @@ function DeployableEngine:Start()
             gui.Indicator2.BackgroundColor3 = ChatStats.TeamColors[player.TeamColor.Name].Stroke
             gui.Parent = model
             
-            model.Parent = workspace
+            model.Parent = DeployablesBin
             model:MoveTo(position)
 
             player:SetAttribute("GadgetQuantity", quantity - 1)

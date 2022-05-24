@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Deployables = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Deployables")
 local RequestDeployable = ReplicatedStorage:WaitForChild("RequestDeployable") :: RemoteEvent
 
+local DeployablesBin = workspace:WaitForChild("DeployablesBin")
 local Player = Players.LocalPlayer
 
 local raycastParams = RaycastParams.new()
@@ -60,7 +61,7 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
                end
            end
 
-           preview.Parent = workspace
+           preview.Parent = DeployablesBin
            preview:MoveTo(raycastResult.Position)
            self.Preview = preview
 
