@@ -62,6 +62,7 @@ return {
 	CanTeamKill = true,
 	DeployTime = 1.5,
 	TeamKillPrevention = true,
+	Heal = 2.5,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,

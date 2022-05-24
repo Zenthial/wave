@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Deployables = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Deployables")
+local Deployables = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Deployables")
 local RequestDeployable = ReplicatedStorage:WaitForChild("RequestDeployable") :: RemoteEvent
 
 local Player = Players.LocalPlayer
@@ -26,14 +26,14 @@ function DeployableEngine:Start()
     if Player.Character == nil then
         Player.CharacterAdded:Wait()
     end
-
-    self.Character = Player.Character
 end
 
 function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equippedWeapon)
-    if self.Character and self.Character.HumanoidRootPart then
-        local cframe: CFrame = self.Character.HumanoidRootPart.CFrame
-        local position = cframe + (cframe * 3)
+    print(Player.Character, Player.Character.HumanoidRootPart)
+    if Player.Character and Player.Character.HumanoidRootPart then
+        print("here 2")
+        local cframe: CFrame = Player.Character.HumanoidRootPart.CFrame
+        local position = cframe + (cframe.LookVector * 3)
         local raycastResult = workspace:Raycast(position.Position, Vector3.new(0, -100, 0), raycastParams)
                 
         if raycastResult then
@@ -47,7 +47,6 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            self.Placing = true
 
            local preview = Deployables[deployableStats.Name].DeployableModel:Clone() :: Model
-           preview:MoveTo(position.Position)
            CollectionService:AddTag(preview, "Ignore")
            
            for _, object in pairs(preview:GetChildren()) do
@@ -62,12 +61,13 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            end
 
            preview.Parent = workspace
+           preview:MoveTo(raycastResult.Position)
            self.Preview = preview
 
            local timer = 0
            while self.Placing and timer < deployableStats.DeployTime do
                 timer = timer + 0.05
-                for _, v in pairs (_G.preview:GetChildren()) do
+                for _, v in pairs (preview:GetChildren()) do
                     if (v:IsA("Part") or v:IsA("UnionOperation")) and v.Transparency < 1 then
                         v.Transparency = v.Transparency - 0.02
                     end
@@ -76,8 +76,10 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            end
 
            if self.Placing then
-               RequestDeployable:FireServer(deployableStats.Name, position)
+               RequestDeployable:FireServer(deployableStats.Name, raycastResult.Position)
            end
+
+           preview:Destroy()
         end
     end
 end

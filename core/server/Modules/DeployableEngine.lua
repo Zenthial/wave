@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
 
-local Deployables = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Deployables")
+local Deployables = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Deployables")
 local DeployableGui = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("DeployableGui")
 
 local DeployableEngine = {}
@@ -14,14 +14,14 @@ function DeployableEngine:Start()
     RequestDeployable.Name = "RequestDeployable"
     RequestDeployable.Parent = ReplicatedStorage
 
-    RequestDeployable.OnServerEvent:Connect(function(player: Player, deployableName: string, position: CFrame)
+    RequestDeployable.OnServerEvent:Connect(function(player: Player, deployableName: string, position: Vector3)
+        local quantity = player:GetAttribute("GadgetQuantity")
         local deployableStats = WeaponStats[deployableName]
 
-        if deployableStats then
+        if deployableStats and quantity > 0 then
             local model = Deployables[deployableName].DeployableModel:Clone() :: Model
             model.Name = player.Name .. deployableName
-            model:SetAttribute("Player", player)
-            model:MoveTo(position.Position)
+            model:SetAttribute("Player", player.Name)
 
             if deployableStats.TeamKillPrevention then
                 model:SetAttribute("Team", player.TeamColor)
@@ -36,6 +36,9 @@ function DeployableEngine:Start()
             gui.Parent = model
             
             model.Parent = workspace
+            model:MoveTo(position)
+
+            player:SetAttribute("GadgetQuantity", quantity - 1)
         end
 
     end)

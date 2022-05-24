@@ -126,13 +126,14 @@ function Inventory:Start()
     end))
 end
 
-function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
+function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
     self.WeaponsToolbar:FeedInput(KeyCode)
 
     if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil and LocalPlayer:GetAttribute("GadgetQuantity") > 0 then
         if self.EquippedGadgetStats.Type == "Projectile" then
             GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
         elseif self.EquippedGadgetStats.Type == "Deployable" then
+            print("here")
             DeployableEngine:RenderDeployable(self.EquippedGadgetStats, self.EquippedWeapon)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
@@ -140,7 +141,7 @@ function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
     end
 end
 
-function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
+function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
     if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil and LocalPlayer:GetAttribute("GadgetQuantity") > 0 then
         if self.EquippedGadgetStats.Type == "Deployable" then
             DeployableEngine:CancelDeployable()

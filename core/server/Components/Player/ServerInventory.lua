@@ -101,6 +101,13 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
         elseif key == "Gadget" then
             local stats = GadgetStats[name]
 
+            if stats == nil then
+                stats = WeaponStats[name]
+                if not stats.Type == "Deployable" then
+                    stats = nil
+                end
+            end
+
             assert(stats, "No Grenade Stats for " .. name)
             self.Root:SetAttribute("EquippedGadget", name)
             SetWeaponSignal:FireClient(self.Root, key, name)
