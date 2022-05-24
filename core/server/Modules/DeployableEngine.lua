@@ -18,7 +18,7 @@ function DeployableEngine:Start()
     RequestDeployable.Name = "RequestDeployable"
     RequestDeployable.Parent = ReplicatedStorage
 
-    RequestDeployable.OnServerEvent:Connect(function(player: Player, deployableName: string, position: Vector3)
+    RequestDeployable.OnServerEvent:Connect(function(player: Player, deployableName: string, position: CFrame)
         local quantity = player:GetAttribute("GadgetQuantity")
         local deployableStats = WeaponStats[deployableName]
 
@@ -40,7 +40,7 @@ function DeployableEngine:Start()
             gui.Parent = model
             
             model.Parent = DeployablesBin
-            model:MoveTo(position)
+            model:SetPrimaryPartCFrame(position)
 
             player:SetAttribute("GadgetQuantity", quantity - 1)
         end

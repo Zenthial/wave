@@ -26,6 +26,9 @@ export type State_T = {
     FielxActive: boolean,
     FielxPlaying: boolean,
 
+    DeployableActive: boolean,
+    DeployablePlaying: boolean,
+
     WeaponEquipped: boolean,
     WeaponName: string
 }
@@ -90,6 +93,9 @@ function AnimationState:Start()
         FielxActive = false,
         FielxPlaying = false,
 
+        DeployableActive = false,
+        DeployablePlaying = false,
+
         WeaponEquipped = false,
         WeaponName = "",
 
@@ -104,7 +110,7 @@ function AnimationState:Start()
     local EquippedWeaponChangedSignal = Player:GetAttributeChangedSignal("EquippedWeapon") -- string
     local ReloadingChangedSignal = Player:GetAttributeChangedSignal("Reloading")
     local ThrowingChangedSignal = Player:GetAttributeChangedSignal("Throwing")
-    local PlacingChangedSignal = Player:GetAttributeChangedSignal("Placing")
+    local PlacingDeployableChangedSignal = Player:GetAttributeChangedSignal("PlacingDeployable")
     local FielxPunchSignal = Player:GetAttributeChangedSignal("FielxActive")
 
     cleaner:Add(SprintChangedSignal:Connect(function()
@@ -139,6 +145,12 @@ function AnimationState:Start()
         state.FielxActive = Player:GetAttribute("FielxActive")
 
         self:HandleFielxChange()
+    end))
+
+    cleaner:Add(PlacingDeployableChangedSignal:Connect(function()
+        state.DeployableActive = Player:GetAttribute("PlacingDeployable")
+
+        self:HandleDeployableChange()
     end))
 end
 
@@ -282,6 +294,22 @@ function AnimationState:HandleFielxChange()
 		self.AnimationHandler:Stop("globalfdTop")
 
         self.State.FielxPlaying = false
+    end
+end
+
+function AnimationState:HandleDeployableChange()
+    if self.State.DeployableActive and not self.State.DeployablePlaying then
+        self.AnimationHandler:Play("globaldeployableBottom")
+        self.AnimationHandler:Play("globaldeployableMiddle")
+        self.AnimationHandler:Play("globaldeployableTop")
+
+        self.State.DeployablePlaying = true
+    elseif not self.State.DeployableActive and self.State.DeployablePlaying then
+        self.AnimationHandler:Stop("globaldeployableBottom")
+        self.AnimationHandler:Stop("globaldeployableMiddle")
+        self.AnimationHandler:Stop("globaldeployableTop")
+
+        self.State.DeployablePlaying = false
     end
 end
 

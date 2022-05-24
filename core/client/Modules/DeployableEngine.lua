@@ -30,9 +30,7 @@ function DeployableEngine:Start()
 end
 
 function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equippedWeapon)
-    print(Player.Character, Player.Character.HumanoidRootPart)
     if Player.Character and Player.Character.HumanoidRootPart then
-        print("here 2")
         local cframe: CFrame = Player.Character.HumanoidRootPart.CFrame
         local position = cframe + (cframe.LookVector * 3)
         local raycastResult = workspace:Raycast(position.Position, Vector3.new(0, -100, 0), raycastParams)
@@ -41,6 +39,9 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            if equippedWeapon then
                equippedWeapon:Unequip()
            end
+
+           local hrpPos = Player.Character.HumanoidRootPart.Position
+           local modelCFrame = CFrame.new(raycastResult.Position, Vector3.new(hrpPos.X, raycastResult.Position.Y, hrpPos.Z))
 
            Player:SetAttribute("LocalSprinting", false)
            Player:SetAttribute("LocalCrouching", false)
@@ -62,7 +63,7 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            end
 
            preview.Parent = DeployablesBin
-           preview:MoveTo(raycastResult.Position)
+           preview:SetPrimaryPartCFrame(modelCFrame)
            self.Preview = preview
 
            local timer = 0
@@ -77,9 +78,10 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
            end
 
            if self.Placing then
-               RequestDeployable:FireServer(deployableStats.Name, raycastResult.Position)
+               RequestDeployable:FireServer(deployableStats.Name, modelCFrame)
            end
 
+           Player:SetAttribute("PlacingDeployable", false)
            preview:Destroy()
         end
     end
