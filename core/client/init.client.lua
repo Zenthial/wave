@@ -1,13 +1,14 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = game.Players.LocalPlayer
 
-StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+repeat
+    task.wait()
+until Player:GetAttribute("ReplicatedFirstClient") == true
 
 local modules = {}
 

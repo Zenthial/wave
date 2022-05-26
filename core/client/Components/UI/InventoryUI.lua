@@ -27,11 +27,11 @@ local function make(name: string, weaponStats)
     
     if weaponStats.Slot == 3 then
         frame.Keybind.Text = Player.Keybinds:GetAttribute("Gadget")
-        frame.GadgetAmount.Visible = true
-        frame.GadgetAmount.TextLabel.Text = "3"
+        frame.ProgressBar.Visible = true
+        frame.ProgressBar.GadgetAmount.TextLabel.Text = "3"
     elseif weaponStats.Slot == 4 then
         frame.Keybind.Text = Player.Keybinds:GetAttribute("Skill")
-        frame.GadgetAmount.Visible = false
+        frame.ProgressBar.Visible = false
     end
 
     frame.Timer.TextTransparency = 1
@@ -116,19 +116,19 @@ function InventoryUI:Start()
         local quantity = Player:GetAttribute("GadgetQuantity") :: number
         if self.GadgetUI ~= nil then
             if quantity == 0 then
-                TweenService:Create(self.GadgetUI.GadgetAmount, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 149, 0)}):Play()
-                TweenService:Create(self.GadgetUI.GadgetAmount.TextLabel, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                TweenService:Create(self.GadgetUI.ProgressBar.GadgetAmount, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 149, 0)}):Play()
+                TweenService:Create(self.GadgetUI.ProgressBar.GadgetAmount.TextLabel, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
             else
-                if self.GadgetUI.GadgetAmount.ImageColor3 == Color3.fromRGB(255, 149, 0) then
-                    TweenService:Create(self.GadgetUI.GadgetAmount, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                if self.GadgetUI.ProgressBar.GadgetAmount.ImageColor3 == Color3.fromRGB(255, 149, 0) then
+                    TweenService:Create(self.GadgetUI.ProgressBar.GadgetAmount, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 255, 255)}):Play()
                 end
 
-                if self.GadgetUI.GadgetAmount.TextLabel.TextColor3 == Color3.fromRGB(255, 255, 255) then
-                    TweenService:Create(self.GadgetUI.GadgetAmount.TextLabel, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+                if self.GadgetUI.ProgressBar.GadgetAmount.TextLabel.TextColor3 == Color3.fromRGB(255, 255, 255) then
+                    TweenService:Create(self.GadgetUI.ProgressBar.GadgetAmount.TextLabel, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(0, 0, 0)}):Play()
                 end
             end
             
-            self.GadgetUI.GadgetAmount.TextLabel.Text = quantity
+            self.GadgetUI.ProgressBar.GadgetAmount.TextLabel.Text = quantity
         end
     end))
 

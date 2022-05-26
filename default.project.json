@@ -5,6 +5,11 @@
   ],
   "tree": {
     "$className": "DataModel",
+    "ReplicatedFirst": {
+      "Client": {
+        "$path": "core/first"
+      }
+    },
     "ReplicatedStorage": {
       "Shared": {
         "$path": "core/shared"
