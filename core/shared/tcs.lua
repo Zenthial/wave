@@ -127,8 +127,10 @@ local function create_component(component: ComponentClass)
 	assert(component.Tag ~= nil, "Missing Tag property")
 	assert(component.Name ~= nil, "Missing Name property on component with tag " .. component.Tag)
 	assert(component.new ~= nil, "Missing constructor on " .. component.Name)
-	assert(component.Start ~= nil, "Missing initial function on " .. component.Name)
     assert(component.Destroy ~= nil, "Missing destructor function on " .. component.Name)
+	if component.Start == nil then
+		component.Start = function() end
+	end
 	if DEBUG_PRINT then print("called create_component with "..component.Name.." and tag "..component.Tag) end
 		
 	debug.setmemorycategory("create_component")
