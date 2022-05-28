@@ -73,7 +73,6 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: 
 
     local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
     local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, CollectionService:GetTagged("Ignore"))
-    print(hit)
 
     return hit, position
 end

@@ -13,7 +13,7 @@ local radiusDamage = require(Shared:WaitForChild("Modules"):WaitForChild("functi
 local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
 
-local Welder = require(script.Welder)
+local Welder = require(Shared.Modules.Welder)
 
 local DefaultServerPlayerAttributes = require(script.Parent.DefaultServerPlayerAttributes)
 

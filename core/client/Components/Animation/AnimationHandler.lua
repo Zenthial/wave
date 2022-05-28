@@ -2,7 +2,6 @@
 -- 1/11/2022
 ------------------------------------------------------------------------
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -16,7 +15,7 @@ local AnimationHandler = {}
 AnimationHandler.__index = AnimationHandler
 AnimationHandler.Name = "AnimationHandler"
 AnimationHandler.Tag = "AnimationHandler"
-AnimationHandler.Ancestor = Players
+AnimationHandler.Ancestor = game
 
 ------------------------------------------------------------------------
 
@@ -51,7 +50,11 @@ function AnimationHandler.new(player: Player)
 end
 
 function AnimationHandler:Start()
-    local root = self.Player.Character or self.Player.CharacterAdded:Wait()
+    local root = self.Player
+    if self.Player:IsA("Player") then
+        root = self.Player.Character or self.Player.CharacterAdded:Wait()
+    end
+
     self.Root = root;
     self.AnimationFolder = createFolder(root)
     self.Animator = findAnimator(self.Root)

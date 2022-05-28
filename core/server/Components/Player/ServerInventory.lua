@@ -4,8 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
-local Modules = game.ServerScriptService.Server.Modules
-local GunEngine = require(Modules.GunEngine)
+local Modules = game.ServerScriptService:WaitForChild("Server"):WaitForChild("Modules")
+local GunEngine = require(Modules:WaitForChild("GunEngine"))
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChild("InventoryStats"))
