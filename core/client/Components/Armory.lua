@@ -95,6 +95,10 @@ function Armory:LoadCharacter()
         CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
     end
 
+    InventoryPlayer["Right Arm"].Transparency = 0
+    InventoryPlayer["Right Leg"].Transparency = 0
+    InventoryPlayer["Left Leg"].Transparency = 0
+
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
 
@@ -105,9 +109,6 @@ function Armory:LoadCharacter()
     if not primaryFolder then error("No weapon folder for "..primaryName) end
     local secondaryFolder = Weapons[secondaryName] :: Folder
     if not secondaryFolder then error("No weapon folder for "..secondaryName) end
-
-    self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
-    self:LoadAnimationFolder(animationComponent, secondaryFolder, secondaryName)
     
     local primaryModel = primaryFolder.Model:Clone() :: Model
     primaryModel.Name = primaryName
@@ -127,6 +128,11 @@ function Armory:LoadCharacter()
 
     Welder:WeldWeapon(InventoryPlayer, primaryModel, false)
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
+
+    if #animationComponent.AnimationTracks == 0 then
+        self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
+        -- self:LoadAnimationFolder(animationComponent, secondaryFolder, secondaryName)
+    end
     
     if not animationComponent:IsPlaying(primaryName.."easeMiddle") then
         animationComponent:Play(primaryName.."easeMiddle")
@@ -257,6 +263,13 @@ function Armory:HandleSelected()
         internalCleaner:Clean()
         target.Highlight.FillTransparency = 1
         target.Highlight.OutlineColor = Color3.new(1, 1, 1)
+
+        if self.CurrentlySelected == 2 then
+            InventoryPlayer["Right Arm"].Transparency = 0.5
+            InventoryPlayer["Right Leg"].Transparency = 0.5
+            InventoryPlayer["Left Leg"].Transparency = 0.5
+        end
+
         internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
             local oldWeapon
             if self.CurrentlySelected == 1 then
