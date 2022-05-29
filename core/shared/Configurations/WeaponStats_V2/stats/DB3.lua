@@ -65,7 +65,7 @@ return {
 	CanCrouch = true,
 	HeadshotMultiplier = 2,
 	CanTeamKill = false,
-	Locked = false,
+	Locked = true,
 	WalkspeedReduce = 3,
 	EquipTime = 0.4,
 	BatteryDepletionMin = 5,

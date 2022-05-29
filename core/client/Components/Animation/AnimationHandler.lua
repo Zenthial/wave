@@ -107,6 +107,15 @@ function AnimationHandler:Play(animationName: string): AnimationTrack
     return self.AnimationTracks[animationName]
 end
 
+function AnimationHandler:IsPlaying(animationName: string): boolean
+    if (self.AnimationTracks[animationName] == nil) then 
+        warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
+        return 
+    end
+
+    return self.AnimationTracks[animationName].IsPlaying
+end
+
 function AnimationHandler:Stop(animationName: string)
     if (self.AnimationTracks[animationName] == nil) then 
         warn("Unable to stop animation: "..animationName.. " does not exist in this Animation Component!")

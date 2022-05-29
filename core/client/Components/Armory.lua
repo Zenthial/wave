@@ -13,6 +13,8 @@ local ArmoryUtil = require(script.Parent.Parent.Modules.Armory.ArmoryUtil) :: {
 }
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local Welder = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("Welder"))
+local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Weapons = Assets:WaitForChild("Weapons")
@@ -26,7 +28,7 @@ local InventoryPlayer = nil
 local RAYCAST_MAX_DISTANCE = 50
 
 type Cleaner_T = {
-    Add: (Cleaner_T, any) -> (),
+    Add: (Cleaner_T, any, string?) -> (),
     Clean: (Cleaner_T) -> ()
 }
 
@@ -37,6 +39,7 @@ type Armory_T = {
     PrimaryModel: nil | Model,
     SecondaryModel: nil | Model,
     CurrentlySelected: number,
+    ArmoryUI: {self: {}, Populate: (self: {}, slot: number) -> typeof(Signal)},
 
     Cleaner: Cleaner_T
 }
@@ -64,6 +67,7 @@ function Armory:Start()
 
     Camera.CameraType = Enum.CameraType.Scriptable
 
+    self.ArmoryUI = tcs.get_component(self.Root.Armory, "ArmoryUI")
     self:SetupListeners()
 end
 
@@ -75,6 +79,15 @@ function Armory:SetupListeners()
     self.Times += 1
 
     self:HandleMouse()
+end
+
+function Armory:RemoveWeapon(weaponName: string, stopAnimation: boolean)
+    local oldWeaponModel = InventoryPlayer:FindFirstChild(weaponName)
+    if oldWeaponModel then oldWeaponModel:Destroy() end
+    if stopAnimation then
+        local animationComponent = tcs.get_component(InventoryPlayer, "AnimationHandler")
+        animationComponent:Stop(weaponName.."easeMiddle")
+    end
 end
 
 function Armory:LoadCharacter()
@@ -107,13 +120,17 @@ function Armory:LoadCharacter()
     primaryModel.Parent = InventoryPlayer
     secondaryModel.Parent = InventoryPlayer
 
+    if self.PrimaryModel then self.PrimaryModel:Destroy() end
+    if self.SecondaryModel then self.SecondaryModel:Destroy() end
     self.PrimaryModel = primaryModel
     self.SecondaryModel = secondaryModel
 
     Welder:WeldWeapon(InventoryPlayer, primaryModel, false)
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
     
-    animationComponent:Play(primaryName.."easeMiddle")
+    if not animationComponent:IsPlaying(primaryName.."easeMiddle") then
+        animationComponent:Play(primaryName.."easeMiddle")
+    end
 
     self.Cleaner:Add(function()
         self.PrimaryModel = nil
@@ -136,7 +153,7 @@ end
 function Armory:SetupCollisionGroups(model: Model, collisionGroup: string)
     for _, thing in pairs(model:GetDescendants()) do
         if thing:IsA("BasePart") then
-            thing:SetAttribute(collisionGroup, true)
+            thing:SetAttribute("CollisionGroup", collisionGroup)
         end
     end
 end
@@ -179,11 +196,11 @@ function Armory:HandleMouse()
         if raycastResult then
             local part = raycastResult.Instance
             if part and part:IsA("BasePart") then
-                if part:GetAttribute(primaryName) ~= nil then
+                if part:GetAttribute("CollisionGroup") == primaryName then
                     self:CleanupHighlights()
                     self:HighlightPrimary()
                     self.CurrentlySelected = 1
-                elseif part:GetAttribute(secondaryName) ~= nil then
+                elseif part:GetAttribute("CollisionGroup") == secondaryName then
                     self:CleanupHighlights()
                     self:HighlightSecondary()
                     self.CurrentlySelected = 2
@@ -220,7 +237,7 @@ function Armory:HandleMouse()
 end
 
 function Armory:HandleSelected()
-    local target = self.PrimaryModel
+    local target = self.PrimaryModel :: Model & {Highlight: Highlight}
     if self.CurrentlySelected == 2 then
         target = self.SecondaryModel
     end
@@ -235,34 +252,42 @@ function Armory:HandleSelected()
     tween:Play()
     tween.Completed:Wait()
 
-    local editConnection
-    editConnection = inspectFrame.Button.MouseButton1Click:Connect(function()
-        print("edit")
-    end)
+    local internalCleaner = Trove.new()
+    internalCleaner:Add(inspectFrame.Button.MouseButton1Click:Connect(function()
+        internalCleaner:Clean()
+        target.Highlight.FillTransparency = 1
+        target.Highlight.OutlineColor = Color3.new(1, 1, 1)
+        internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
+            local oldWeapon
+            if self.CurrentlySelected == 1 then
+                oldWeapon = Player:GetAttribute("EquippedPrimary")
+                Player:SetAttribute("EquippedPrimary", itemName)
+            elseif self.CurrentlySelected == 2 then
+                oldWeapon = Player:GetAttribute("EquippedSecondary")
+                Player:SetAttribute("EquippedSecondary", itemName)
+            end
 
-    local inputConnection
-    inputConnection = UserInputService.InputBegan:Connect(function(input, processed)
+            print(oldWeapon)
+            self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
+            self:LoadCharacter()
+            self:SetupListeners()
+            internalCleaner:Clean()
+        end))
+    end))
+
+    internalCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
 
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             if self.CurrentlySelected > 0 then
-                inspectFrame:Destroy()
-                editConnection:Disconnect()
-                inputConnection:Disconnect()
+                internalCleaner:Clean()
                 self:SetupListeners()
             end
         end
-    end)
+    end))
 
-    self.Cleaner:Add(function()
-        if inputConnection and inputConnection.Connected then
-            inputConnection:Disconnect()
-        end
-
-        if editConnection and editConnection.Connected then
-            editConnection:Disconnect()
-        end
-    end)
+    internalCleaner:Add(inspectFrame)
+    self.Cleaner:Add(internalCleaner, "Clean")
 end
 
 function Armory:Destroy()

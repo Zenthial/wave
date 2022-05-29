@@ -64,7 +64,7 @@ return {
 	CanSprint = false,
 	CanCrouch = false,
 	CanTeamKill = false,
-	Locked = false,
+	Locked = true,
 	WalkspeedReduce = 0,
 	EquipTime = 0.5,
 	BatteryDepletionMin = 4,

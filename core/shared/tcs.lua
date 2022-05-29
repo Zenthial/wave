@@ -47,6 +47,7 @@ local function wait_for_class(component_name: string)
 end
 
 local function get_component(instance: Instance, component_name: string)
+	if instance == nil then error("instance is nil") end
     local class = component_name_to_class_module[component_name:lower()]
 	if class == nil then
 		print("waiting for class "..component_name)

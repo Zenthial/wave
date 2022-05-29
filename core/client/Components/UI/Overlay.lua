@@ -34,6 +34,7 @@ end
 
 function Overlay:Start()
     local main = self.Root:WaitForChild("Main")
+    main.Visible = true
     local buttonContainer = main.ButtonContainer
     local armoryButton = buttonContainer.Armory.Button :: TextButton
 

@@ -52,7 +52,7 @@ local Holsters = {
 return {
 	Name = "E31",
 	FullName = "",
-	Category = "",
+	Category = "Assault",
 	Description = "The E31 rifle is a highly experimental electron rifle based on the technology of the MSI. It is a more flexible, rapid firing platform but loses much of the potency of its progenitor rifle. The weapon uses a similar system of subatomic levers to channel a battery's power into an ultra high amperage and voltage electron bolt capable of frying anyone on the receiving end.",
 	QuickDescription = "Charged, Automatic, Single Shot",
 	WeaponCost = 4500,
