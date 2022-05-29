@@ -247,7 +247,6 @@ local statsToCreate = {
 }
 
 function ArmoryUI:GetStats(weaponName)
-    print(weaponName, WeaponStats[weaponName], WeaponStats)
     local weaponStats = WeaponStats[weaponName]
     for _, thing in pairs(self.Root.Stats:GetChildren()) do if not thing:IsA("UIListLayout") then thing:Destroy() end end
 
