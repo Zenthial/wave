@@ -44,6 +44,7 @@ function AnimationHandler.new(player: Player)
         Player = player,
         Animator = nil :: Animator,
         AnimationTracks = {},
+        NumTracks = 0,
         MarkerSignals = {},
         Loaded = false,
     }, AnimationHandler)
@@ -86,7 +87,11 @@ function AnimationHandler:Load(animation: Animation)
         until self.Animator ~= nil
     end
     local track = self.Animator:LoadAnimation(animation)
+    if self.AnimationTracks[animation.Name] then
+        self.AnimationTracks[animation.Name]:Stop()
+    end
     self.AnimationTracks[animation.Name] = track
+    self.NumTracks += 1
 
     -- print("Loaded ".. animation.Name)
 
@@ -101,7 +106,7 @@ function AnimationHandler:Play(animationName: string): AnimationTrack
     
     if (not self.AnimationTracks[animationName].IsPlaying == true) then
         self.AnimationTracks[animationName]:Play()
-        -- print(string.format("Playing %s", animationName))
+        print(string.format("Playing %s", animationName))
     end
 
     return self.AnimationTracks[animationName]
@@ -109,8 +114,7 @@ end
 
 function AnimationHandler:IsPlaying(animationName: string): boolean
     if (self.AnimationTracks[animationName] == nil) then 
-        warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
-        return 
+        return false
     end
 
     return self.AnimationTracks[animationName].IsPlaying

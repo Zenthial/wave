@@ -43,6 +43,7 @@ type Arsenal_T = {
     PrimaryModel: nil | Model,
     SecondaryModel: nil | Model,
     SkillModel: nil | Model,
+    InspectItem: nil | Model,
     CurrentlySelected: number,
     ArmoryUI: {self: {}, Populate: (self: {}, slot: number) -> typeof(Signal)},
 
@@ -62,7 +63,6 @@ function Arsenal.new(root: any)
         SecondaryModel = nil,
         SkillModel = nil,
         CurrentlySelected = 0,
-        Times = 0,
         InspectWeapon = nil,
     }, Arsenal)
 end
@@ -74,6 +74,14 @@ function Arsenal:Start()
 
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
+
+    if not CollectionService:HasTag(InventoryPlayer, "AnimationHandler") then
+        CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
+    end
+
+    local animationComponent = tcs.get_component(InventoryPlayer, "AnimationHandler")
+    self.AnimationComponent = animationComponent
+
     self:LoadCharacter()
     self:SetupInspectTable(Player:GetAttribute("EquippedPrimary"))
 
@@ -94,11 +102,10 @@ end
 
 function Arsenal:ArmorySelection()
     self.Root.ArmoryText.Visible = true
-    TweenService:Create(Camera, TweenInfo.new(if self.Times == 0 then 1 else 0.5), {
+
+    TweenService:Create(Camera, TweenInfo.new(0.5), {
         CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(5.5, -0.5, 0), InventoryPlayer.HumanoidRootPart.Position)
     }):Play()
-
-    self.Times += 1
 
     self:HandleMouse()
 end
@@ -144,8 +151,8 @@ function Arsenal:SetupInspectTable(weaponName: string)
     inspectModel.Name = "InspectModel"..weaponName
     inspectModel.Parent = workspace
     
-    if self.InspectWeapon ~= nil then self.InspectWeapon:Destroy() end
-    self.InspectWeapon = inspectModel
+    if self.InspectItem ~= nil then self.InspectItem:Destroy() end
+    self.InspectItem = inspectModel
 end
 
 function Arsenal:RemoveWeapon(weaponName: string, stopAnimation: boolean)
@@ -158,10 +165,6 @@ function Arsenal:RemoveWeapon(weaponName: string, stopAnimation: boolean)
 end
 
 function Arsenal:LoadCharacter()
-    if not CollectionService:HasTag(InventoryPlayer, "AnimationHandler") then
-        CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
-    end
-
     InventoryPlayer["Right Arm"].Transparency = 0
     InventoryPlayer["Right Leg"].Transparency = 0
     InventoryPlayer["Left Leg"].Transparency = 0
@@ -171,7 +174,6 @@ function Arsenal:LoadCharacter()
     local skillName = Player:GetAttribute("EquippedSkill")
 
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
-    local animationComponent = tcs.get_component(InventoryPlayer, "AnimationHandler")
 
     local primaryFolder = Weapons[primaryName] :: Folder
     if not primaryFolder then error("No weapon folder for "..primaryName) end
@@ -205,7 +207,8 @@ function Arsenal:LoadCharacter()
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
     Welder:WeldWeapon(InventoryPlayer, skillModel, true)
 
-    if #animationComponent.AnimationTracks == 0 then
+    local animationComponent = self.AnimationComponent
+    if animationComponent.NumTracks == 17 then -- 17 is the default number of tracks
         self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
         -- self:LoadAnimationFolder(animationComponent, secondaryFolder, secondaryName)
     end
@@ -285,7 +288,9 @@ function Arsenal:HandleMouse()
     local skillName = Player:GetAttribute("EquippedSkill")
 
     local mouse = Player:GetMouse()
-    local mouseConnection = mouse.Move:Connect(function()
+
+    local internalCleaner = Trove.new()
+    internalCleaner:Add(mouse.Move:Connect(function()
         local raycastResult = workspace:Raycast(Camera.CFrame.Position, (mouse.Hit.Position - Camera.CFrame.Position).Unit * RAYCAST_MAX_DISTANCE)
 
         if raycastResult then
@@ -309,30 +314,20 @@ function Arsenal:HandleMouse()
                 end
             end
         end
-    end)
+    end))
 
-    local inputConnection: RBXScriptConnection
-    inputConnection = UserInputService.InputBegan:Connect(function(input, processed)
+    internalCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
 
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             if self.CurrentlySelected > 0 then
-                inputConnection:Disconnect()
-                mouseConnection:Disconnect()
+                internalCleaner:Clean()
                 self:HandleSelected()
             end
         end
-    end)
+    end))
 
-    self.Cleaner:Add(function()
-        if inputConnection and inputConnection.Connected then
-            inputConnection:Disconnect()
-        end
-
-        if mouseConnection and mouseConnection.Connected then
-            mouseConnection:Disconnect()
-        end
-    end)
+    self.Cleaner:Add(internalCleaner, "Clean")
 end
 
 function Arsenal:HandleSelected()
@@ -356,7 +351,7 @@ function Arsenal:HandleSelected()
     tween.Completed:Wait()
 
     local internalCleaner = Trove.new()
-    internalCleaner:Add(inspectFrame.Button.MouseButton1Click:Connect(function()
+    internalCleaner:Add(inspectFrame.Edit.Button.MouseButton1Click:Connect(function()
         internalCleaner:Clean()
         target.Highlight.FillTransparency = 1
         target.Highlight.OutlineColor = Color3.new(1, 1, 1)
@@ -368,6 +363,7 @@ function Arsenal:HandleSelected()
         end
 
         TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
+        local itemCleaner = self:HandleItemRotation()
         internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
             local oldWeapon
             if self.CurrentlySelected == 1 then
@@ -380,6 +376,7 @@ function Arsenal:HandleSelected()
                 oldWeapon = Player:GetAttribute("EquippedSkill")
                 Player:SetAttribute("EquippedSkill", itemName)
             end
+            itemCleaner:Clean()
 
             self.Root.ArmoryText.Visible = true
             self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
@@ -402,6 +399,30 @@ function Arsenal:HandleSelected()
 
     internalCleaner:Add(inspectFrame)
     self.Cleaner:Add(internalCleaner, "Clean")
+end
+
+function Arsenal:HandleItemRotation()
+    local itemCleaner = Trove.new()
+
+    local function handleInput(_inputObject: InputObject)
+        local pressed = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+        if pressed then
+            UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+            local change = UserInputService:GetMouseDelta()
+
+            if self.InspectItem then
+                self.InspectItem:SetPrimaryPartCFrame(self.InspectItem:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(change.X), 0))
+            end
+        else
+            UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+        end
+    end
+
+    itemCleaner:Add(UserInputService.InputBegan:Connect(handleInput))
+    itemCleaner:Add(UserInputService.InputChanged:Connect(handleInput))
+    itemCleaner:Add(UserInputService.InputEnded:Connect(handleInput))
+
+    return itemCleaner
 end
 
 function Arsenal:Destroy()
