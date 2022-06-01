@@ -208,14 +208,8 @@ function Arsenal:LoadCharacter()
     Welder:WeldWeapon(InventoryPlayer, skillModel, true)
 
     local animationComponent = self.AnimationComponent
-    if animationComponent.NumTracks == 17 then -- 17 is the default number of tracks
-        self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
-        -- self:LoadAnimationFolder(animationComponent, secondaryFolder, secondaryName)
-    end
-    
-    if not animationComponent:IsPlaying(primaryName.."easeMiddle") then
-        animationComponent:Play(primaryName.."easeMiddle")
-    end
+    self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
+    animationComponent:Play(primaryName.."easeMiddle")
 
     self.Cleaner:Add(function()
         self.PrimaryModel = nil
