@@ -95,12 +95,21 @@ function Arsenal:Start()
         self:ArmorySelection()
     end))
 
+    self.Cleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
+        self.Root.Main.Visible = true
+        self.Root.Back.Visible = false
+        self.Root.ArmoryText.Visible = false
+
+        TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)}):Play()
+    end))
+
     self.ArmoryUI.Events.InspectItem:Connect(function(itemName: string)
         self:SetupInspectTable(itemName)
     end)
 end
 
 function Arsenal:ArmorySelection()
+    self.Root.Back.Visible = true
     self.Root.ArmoryText.Visible = true
 
     TweenService:Create(Camera, TweenInfo.new(0.5), {
@@ -137,11 +146,11 @@ function Arsenal:SetupInspectTable(weaponName: string)
 
     -- item specific code ahead
     if inspectModel.Name == "SP0T-R" then
-        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(90), 0))
+        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(90), 0))
     elseif inspectModel.Name == "SH3L-S" then
-        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
     elseif inspectModel.Name == "APS" then
-        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
     end
 
     for _, thing in pairs(inspectModel:GetChildren()) do
@@ -325,6 +334,7 @@ end
 
 function Arsenal:HandleSelected()
     self.Root.ArmoryText.Visible = false
+    self.Root.Back.Visible = false
 
     local target = self.PrimaryModel :: Model & {Highlight: Highlight}
     if self.CurrentlySelected == 2 then
@@ -357,23 +367,28 @@ function Arsenal:HandleSelected()
 
         TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
         local itemCleaner = self:HandleItemRotation()
+        inspectFrame:Destroy()
         internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
-            local oldWeapon
-            if self.CurrentlySelected == 1 then
-                oldWeapon = Player:GetAttribute("EquippedPrimary")
-                Player:SetAttribute("EquippedPrimary", itemName)
-            elseif self.CurrentlySelected == 2 then
-                oldWeapon = Player:GetAttribute("EquippedSecondary")
-                Player:SetAttribute("EquippedSecondary", itemName)
-            elseif self.CurrentlySelected == 4 then
-                oldWeapon = Player:GetAttribute("EquippedSkill")
-                Player:SetAttribute("EquippedSkill", itemName)
-            end
             itemCleaner:Clean()
 
             self.Root.ArmoryText.Visible = true
-            self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
-            self:LoadCharacter()
+            self.Root.Back.Visible = true
+
+            if itemName ~= nil then
+                local oldWeapon
+                if self.CurrentlySelected == 1 then
+                    oldWeapon = Player:GetAttribute("EquippedPrimary")
+                    Player:SetAttribute("EquippedPrimary", itemName)
+                elseif self.CurrentlySelected == 2 then
+                    oldWeapon = Player:GetAttribute("EquippedSecondary")
+                    Player:SetAttribute("EquippedSecondary", itemName)
+                elseif self.CurrentlySelected == 4 then
+                    oldWeapon = Player:GetAttribute("EquippedSkill")
+                    Player:SetAttribute("EquippedSkill", itemName)
+                end
+                self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
+                self:LoadCharacter()
+            end
             self:ArmorySelection()
             internalCleaner:Clean()
         end))

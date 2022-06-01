@@ -195,8 +195,9 @@ function ArmoryUI:Populate(slot: number)
             previouslySelectedComponent = itemComponent
         end))
 
-        local numItems = #category.List.Container:GetChildren() - 1 -- subtract one for the UIListLayout
-        category.List.CanvasSize = UDim2.new(0, 0, (category.List.Container.UIListLayout.Padding.Scale * numItems), (ListItem.AbsoluteSize.Y * numItems))
+        local children = category.List.Container:GetChildren()
+        local numItems = #children - 1 -- subtract one for the UIListLayout
+        category.List.CanvasSize = UDim2.new(0, 0, (category.List.Container.UIListLayout.Padding.Scale * numItems), (children[2].AbsoluteSize.Y * numItems))
 
         if currentCategory == categoryName then
             previouslySelectedComponent = itemComponent
@@ -222,6 +223,12 @@ function ArmoryUI:Populate(slot: number)
     sessionCleaner:Add(self.Root.Equip.Button.MouseButton1Click:Connect(function()
         -- need to add equip displaying based off if they own the weapon or not
         equipSignal:Fire(currentlySelected)
+        sessionCleaner:Clean()
+    end))
+
+    sessionCleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
+        -- need to add equip displaying based off if they own the weapon or not
+        equipSignal:Fire(nil)
         sessionCleaner:Clean()
     end))
 
