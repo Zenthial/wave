@@ -121,28 +121,27 @@ function Arsenal:SetupInspectTable(weaponName: string)
 
     if inspectFolder:IsA("Configuration") and inspectFolder:FindFirstChild("Model") then
         inspectModel = inspectFolder.Model:Clone() :: Model
-        inspectModel.PrimaryPart = inspectModel.Handle
-        inspectModel:SetPrimaryPartCFrame(InspectPart.CFrame - Vector3.new(.75, 0, 0))
+        inspectModel.PrimaryPart = nil
+        inspectModel:PivotTo(CFrame.new(InspectPart.CFrame.Position, InspectPart.CFrame.Position - Vector3.new(5, 0, 0)))
     elseif inspectFolder:IsA("Configuration") and inspectFolder:FindFirstChild("Projectile") then
         local model = Instance.new("Model")
         local proj = inspectFolder.Projectile:Clone()
         proj.Parent = model
-        model.PrimaryPart = proj
         inspectModel = model
-        inspectModel:SetPrimaryPartCFrame(InspectPart.CFrame - Vector3.new(.15, 0, 0))
+        inspectModel:PivotTo(InspectPart.CFrame - Vector3.new(.15, 0, 0))
     elseif inspectFolder:IsA("Model") then -- skill
         inspectModel = inspectFolder:Clone()
-        inspectModel.PrimaryPart = inspectModel.Handle
-        inspectModel:SetPrimaryPartCFrame(CFrame.new(InspectPart.CFrame.Position - Vector3.new(.15, 0, 0), InspectPart.CFrame.Position - Vector3.new(0, 0, 5)))
+        inspectModel.PrimaryPart = nil
+        inspectModel:PivotTo(CFrame.new(InspectPart.CFrame.Position, InspectPart.CFrame.Position - Vector3.new(0, 0, 5)))
     end
 
     -- item specific code ahead
     if inspectModel.Name == "SP0T-R" then
-        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(90), 0))
+        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(90), 0))
     elseif inspectModel.Name == "SH3L-S" then
-        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
     elseif inspectModel.Name == "APS" then
-        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+        inspectModel:PivotTo(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
     end
 
     for _, thing in pairs(inspectModel:GetChildren()) do
@@ -405,7 +404,7 @@ function Arsenal:HandleItemRotation()
             local change = UserInputService:GetMouseDelta()
 
             if self.InspectItem then
-                self.InspectItem:SetPrimaryPartCFrame(self.InspectItem:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(change.X), 0))
+                self.InspectItem:PivotTo(self.InspectItem:GetPivot() * CFrame.Angles(0, math.rad(change.X), 0))
             end
         else
             UserInputService.MouseBehavior = Enum.MouseBehavior.Default
