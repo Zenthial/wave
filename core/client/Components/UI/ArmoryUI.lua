@@ -67,6 +67,7 @@ function ArmoryUI.new(root: any)
         Events = {
             AttemptEquip = Signal.new(),
             AttemptPurchase = Signal.new(),
+            InspectItem = Signal.new(),
         }
     }, ArmoryUI)
 end
@@ -154,6 +155,7 @@ function ArmoryUI:Populate(slot: number)
     elseif slot == 4 then
         currentlySelected = Player:GetAttribute("EquippedSkill")
     end
+    self.Events.InspectItem:Fire(currentlySelected)
 
     -- initialize categories and items
     local categories: {[string]: {Frame: Item, List: List}} = {}
@@ -211,6 +213,7 @@ function ArmoryUI:Populate(slot: number)
             previouslySelectedItemComponent:SetSelected(false)
             previouslySelectedItemComponent = newComponent
             currentlySelected = itemName
+            self.Events.InspectItem:Fire(itemName)
             self:GetStats(itemName)
         end
     end))
@@ -266,6 +269,11 @@ function ArmoryUI:GetStats(weaponName)
 
             local value = weaponStats[statName]
             if value == nil then stat:Destroy() continue end
+            if value < 0 and statTable.name == "Damage" then
+                statTable.outOf = 100
+                value = math.abs(value)
+                stat.StatName.Text = "Heals"
+            end
             stat.StatValue.Text = value
             stat.Bar.Fill.Size = UDim2.new(math.clamp(value, 0, statTable.outOf) / statTable.outOf, 0, 1, 0)
             stat.LayoutOrder = statTable.order

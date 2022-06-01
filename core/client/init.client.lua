@@ -1,14 +1,13 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = game.Players.LocalPlayer
 
-repeat
-    task.wait()
-until Player:GetAttribute("ReplicatedFirstClient") == true
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
 local modules = {}
 
@@ -36,7 +35,7 @@ if (not game:IsLoaded()) then
     game.Loaded:Wait()
 end
 
-game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Workspace")
+CollectionService:AddTag(game:GetService("Workspace"), "Workspace")
 
 local function inject(component_instance)
 	component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance

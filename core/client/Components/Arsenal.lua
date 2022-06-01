@@ -18,12 +18,16 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Weapons = Assets:WaitForChild("Weapons")
+local Skills = Assets:WaitForChild("Skills")
 local UI = Assets:WaitForChild("UI")
 
 local InspectFrame = UI:WaitForChild("InspectFrame")
 local Camera = workspace.CurrentCamera
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 local InventoryPlayer = nil
+local ArsenalModel = workspace:WaitForChild("Arsenal") :: Model
+local InspectPart = ArsenalModel:WaitForChild("InspectPart") :: Part
 
 local RAYCAST_MAX_DISTANCE = 50
 
@@ -32,48 +36,66 @@ type Cleaner_T = {
     Clean: (Cleaner_T) -> ()
 }
 
-type Armory_T = {
-    __index: Armory_T,
+type Arsenal_T = {
+    __index: Arsenal_T,
     Name: string,
     Tag: string,
     PrimaryModel: nil | Model,
     SecondaryModel: nil | Model,
+    SkillModel: nil | Model,
     CurrentlySelected: number,
     ArmoryUI: {self: {}, Populate: (self: {}, slot: number) -> typeof(Signal)},
 
     Cleaner: Cleaner_T
 }
 
-local Armory: Armory_T = {}
-Armory.__index = Armory
-Armory.Name = "Armory"
-Armory.Tag = "Armory"
-Armory.Ancestor = game
+local Arsenal: Arsenal_T = {}
+Arsenal.__index = Arsenal
+Arsenal.Name = "Arsenal"
+Arsenal.Tag = "Arsenal"
+Arsenal.Ancestor = PlayerGui
 
-function Armory.new(root: any)
+function Arsenal.new(root: any)
     return setmetatable({
         Root = root,
         PrimaryModel = nil,
         SecondaryModel = nil,
+        SkillModel = nil,
         CurrentlySelected = 0,
         Times = 0,
-    }, Armory)
+        InspectWeapon = nil,
+    }, Arsenal)
 end
 
-function Armory:Start()
+function Arsenal:Start()
+    if Player.Character == nil then Player.CharacterAdded:Wait() end
+    repeat task.wait() until Player:GetAttribute("Loaded") == true
+    task.wait(0.5)
+
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
     self:LoadCharacter()
+    self:SetupInspectTable(Player:GetAttribute("EquippedPrimary"))
 
     Camera.CameraType = Enum.CameraType.Scriptable
+    Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
 
     self.ArmoryUI = tcs.get_component(self.Root.Armory, "ArmoryUI")
-    self:SetupListeners()
+    local Overlay = tcs.get_component(self.Root, "Overlay")
+
+    self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
+        self:ArmorySelection()
+    end))
+
+    self.ArmoryUI.Events.InspectItem:Connect(function(itemName: string)
+        self:SetupInspectTable(itemName)
+    end)
 end
 
-function Armory:SetupListeners()
+function Arsenal:ArmorySelection()
+    self.Root.ArmoryText.Visible = true
     TweenService:Create(Camera, TweenInfo.new(if self.Times == 0 then 1 else 0.5), {
-        CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position - Vector3.new(5.5, -1.2, 0), InventoryPlayer.HumanoidRootPart.Position)
+        CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(5.5, -0.5, 0), InventoryPlayer.HumanoidRootPart.Position)
     }):Play()
 
     self.Times += 1
@@ -81,7 +103,52 @@ function Armory:SetupListeners()
     self:HandleMouse()
 end
 
-function Armory:RemoveWeapon(weaponName: string, stopAnimation: boolean)
+function Arsenal:SetupInspectTable(weaponName: string)
+    local inspectFolder = Weapons:FindFirstChild(weaponName) :: Folder
+    if not inspectFolder then
+        inspectFolder = Skills:FindFirstChild(weaponName)
+    end
+    assert(inspectFolder ~= nil, "No folder for "..weaponName)
+    
+    local inspectModel: Model = nil
+
+    if inspectFolder:IsA("Configuration") and inspectFolder:FindFirstChild("Model") then
+        inspectModel = inspectFolder.Model:Clone() :: Model
+        inspectModel.PrimaryPart = inspectModel.Handle
+        inspectModel:SetPrimaryPartCFrame(InspectPart.CFrame - Vector3.new(.75, 0, 0))
+    elseif inspectFolder:IsA("Configuration") and inspectFolder:FindFirstChild("Projectile") then
+        local model = Instance.new("Model")
+        local proj = inspectFolder.Projectile:Clone()
+        proj.Parent = model
+        model.PrimaryPart = proj
+        inspectModel = model
+        inspectModel:SetPrimaryPartCFrame(InspectPart.CFrame - Vector3.new(.15, 0, 0))
+    elseif inspectFolder:IsA("Model") then -- skill
+        inspectModel = inspectFolder:Clone()
+        inspectModel.PrimaryPart = inspectModel.Handle
+        inspectModel:SetPrimaryPartCFrame(CFrame.new(InspectPart.CFrame.Position - Vector3.new(.15, 0, 0), InspectPart.CFrame.Position - Vector3.new(0, 0, 5)))
+    end
+
+    -- item specific code ahead
+    if inspectModel.Name == "SP0T-R" then
+        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(90), 0))
+    elseif inspectModel.Name == "SH3L-S" then
+        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+    elseif inspectModel.Name == "APS" then
+        inspectModel:SetPrimaryPartCFrame(inspectModel:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(180), 0))
+    end
+
+    for _, thing in pairs(inspectModel:GetChildren()) do
+        if thing:IsA("BasePart") then thing.Anchored = true end
+    end
+    inspectModel.Name = "InspectModel"..weaponName
+    inspectModel.Parent = workspace
+    
+    if self.InspectWeapon ~= nil then self.InspectWeapon:Destroy() end
+    self.InspectWeapon = inspectModel
+end
+
+function Arsenal:RemoveWeapon(weaponName: string, stopAnimation: boolean)
     local oldWeaponModel = InventoryPlayer:FindFirstChild(weaponName)
     if oldWeaponModel then oldWeaponModel:Destroy() end
     if stopAnimation then
@@ -90,7 +157,7 @@ function Armory:RemoveWeapon(weaponName: string, stopAnimation: boolean)
     end
 end
 
-function Armory:LoadCharacter()
+function Arsenal:LoadCharacter()
     if not CollectionService:HasTag(InventoryPlayer, "AnimationHandler") then
         CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
     end
@@ -101,6 +168,7 @@ function Armory:LoadCharacter()
 
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
+    local skillName = Player:GetAttribute("EquippedSkill")
 
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
     local animationComponent = tcs.get_component(InventoryPlayer, "AnimationHandler")
@@ -109,25 +177,33 @@ function Armory:LoadCharacter()
     if not primaryFolder then error("No weapon folder for "..primaryName) end
     local secondaryFolder = Weapons[secondaryName] :: Folder
     if not secondaryFolder then error("No weapon folder for "..secondaryName) end
+    local skillModel = Skills[skillName] :: Model
+    if not skillModel then error("No skill model for "..skillName) end
     
     local primaryModel = primaryFolder.Model:Clone() :: Model
     primaryModel.Name = primaryName
     local secondaryModel = secondaryFolder.Model:Clone() :: Model
     secondaryModel.Name = secondaryName
+    skillModel = skillModel:Clone()
 
     self:SetupCollisionGroups(primaryModel, primaryName)
     self:SetupCollisionGroups(secondaryModel, secondaryName)
+    self:SetupCollisionGroups(skillModel, skillName)
 
     primaryModel.Parent = InventoryPlayer
     secondaryModel.Parent = InventoryPlayer
+    skillModel.Parent = InventoryPlayer
 
     if self.PrimaryModel then self.PrimaryModel:Destroy() end
     if self.SecondaryModel then self.SecondaryModel:Destroy() end
+    if self.SkillModel then self.SkillModel:Destroy() end
     self.PrimaryModel = primaryModel
     self.SecondaryModel = secondaryModel
+    self.SkillModel = skillModel
 
     Welder:WeldWeapon(InventoryPlayer, primaryModel, false)
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
+    Welder:WeldWeapon(InventoryPlayer, skillModel, true)
 
     if #animationComponent.AnimationTracks == 0 then
         self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
@@ -141,14 +217,16 @@ function Armory:LoadCharacter()
     self.Cleaner:Add(function()
         self.PrimaryModel = nil
         self.SecondaryModel = nil
+        self.SkillModel = nil
 
         primaryModel:Destroy()
         secondaryModel:Destroy()
+        skillModel:Destroy()
         InventoryPlayer:Destroy()
     end)
 end
 
-function Armory:LoadAnimationFolder(component, folder: Folder, name: string)
+function Arsenal:LoadAnimationFolder(component, folder: Folder, name: string)
     for _, animation: Animation in pairs(folder.Anims:GetChildren()) do
         local ani = animation:Clone()
         ani.Name = name..""..ani.Name
@@ -156,7 +234,7 @@ function Armory:LoadAnimationFolder(component, folder: Folder, name: string)
     end
 end
 
-function Armory:SetupCollisionGroups(model: Model, collisionGroup: string)
+function Arsenal:SetupCollisionGroups(model: Model, collisionGroup: string)
     for _, thing in pairs(model:GetDescendants()) do
         if thing:IsA("BasePart") then
             thing:SetAttribute("CollisionGroup", collisionGroup)
@@ -164,36 +242,47 @@ function Armory:SetupCollisionGroups(model: Model, collisionGroup: string)
     end
 end
 
-function Armory:HighlightModel(model: Model)
+function Arsenal:HighlightModel(model: Model)
     local highlight = Instance.new("Highlight")
     highlight.FillColor = Color3.fromRGB(63, 149, 241)
     highlight.FillTransparency = 0.6
     highlight.Parent = model
 end
 
-function Armory:HighlightPrimary()
+function Arsenal:HighlightPrimary()
     if self.PrimaryModel then
         self:HighlightModel(self.PrimaryModel)
     end
 end
 
-function Armory:HighlightSecondary()
+function Arsenal:HighlightSecondary()
     if self.SecondaryModel then
         self:HighlightModel(self.SecondaryModel)
     end
 end
 
-function Armory:CleanupHighlights()
-    if self.PrimaryModel and self.PrimaryModel:FindFirstChild("Highlight") then
-        self.PrimaryModel.Highlight:Destroy()
-    elseif self.SecondaryModel and self.SecondaryModel:FindFirstChild("Highlight") then
-        self.SecondaryModel.Highlight:Destroy()
+function Arsenal:HighlightSkill()
+    if self.SkillModel then
+        self:HighlightModel(self.SkillModel)
     end
 end
 
-function Armory:HandleMouse()
+function Arsenal:CleanupHighlights()
+    if self.PrimaryModel and self.PrimaryModel:FindFirstChild("Highlight") then
+        self.PrimaryModel.Highlight:Destroy()
+    end
+    if self.SecondaryModel and self.SecondaryModel:FindFirstChild("Highlight") then
+        self.SecondaryModel.Highlight:Destroy()
+    end
+    if self.SkillModel and self.SkillModel:FindFirstChild("Highlight") then
+        self.SkillModel.Highlight:Destroy()
+    end
+end
+
+function Arsenal:HandleMouse()
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
+    local skillName = Player:GetAttribute("EquippedSkill")
 
     local mouse = Player:GetMouse()
     local mouseConnection = mouse.Move:Connect(function()
@@ -210,6 +299,10 @@ function Armory:HandleMouse()
                     self:CleanupHighlights()
                     self:HighlightSecondary()
                     self.CurrentlySelected = 2
+                elseif part:GetAttribute("CollisionGroup") == skillName then
+                    self:CleanupHighlights()
+                    self:HighlightSkill()
+                    self.CurrentlySelected = 4
                 else
                     self:CleanupHighlights()
                     self.CurrentlySelected = 0
@@ -242,10 +335,14 @@ function Armory:HandleMouse()
     end)
 end
 
-function Armory:HandleSelected()
+function Arsenal:HandleSelected()
+    self.Root.ArmoryText.Visible = false
+
     local target = self.PrimaryModel :: Model & {Highlight: Highlight}
     if self.CurrentlySelected == 2 then
         target = self.SecondaryModel
+    elseif self.CurrentlySelected == 4 then
+        target = self.SkillModel
     end
 
     local inspectFrame = InspectFrame:Clone()
@@ -253,7 +350,7 @@ function Armory:HandleSelected()
     inspectFrame.Parent = self.Root
 
     local boundingBox = target:GetBoundingBox()
-    local position = boundingBox.Position - Vector3.new(2, 1, 1)
+    local position = boundingBox.Position + Vector3.new(2, -1, 1)
     local tween = TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(position, boundingBox.Position)})
     tween:Play()
     tween.Completed:Wait()
@@ -270,6 +367,7 @@ function Armory:HandleSelected()
             InventoryPlayer["Left Leg"].Transparency = 0.5
         end
 
+        TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
         internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
             local oldWeapon
             if self.CurrentlySelected == 1 then
@@ -278,12 +376,15 @@ function Armory:HandleSelected()
             elseif self.CurrentlySelected == 2 then
                 oldWeapon = Player:GetAttribute("EquippedSecondary")
                 Player:SetAttribute("EquippedSecondary", itemName)
+            elseif self.CurrentlySelected == 4 then
+                oldWeapon = Player:GetAttribute("EquippedSkill")
+                Player:SetAttribute("EquippedSkill", itemName)
             end
 
-            print(oldWeapon)
+            self.Root.ArmoryText.Visible = true
             self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
             self:LoadCharacter()
-            self:SetupListeners()
+            self:ArmorySelection()
             internalCleaner:Clean()
         end))
     end))
@@ -294,7 +395,7 @@ function Armory:HandleSelected()
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             if self.CurrentlySelected > 0 then
                 internalCleaner:Clean()
-                self:SetupListeners()
+                self:ArmorySelection()
             end
         end
     end))
@@ -303,10 +404,10 @@ function Armory:HandleSelected()
     self.Cleaner:Add(internalCleaner, "Clean")
 end
 
-function Armory:Destroy()
+function Arsenal:Destroy()
     self.Cleaner:Clean()
 end
 
-tcs.create_component(Armory)
+tcs.create_component(Arsenal)
 
-return Armory
+return Arsenal

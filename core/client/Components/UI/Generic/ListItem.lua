@@ -48,9 +48,11 @@ end
 
 function ListItem:Start()
     self.Cleaner:Add(self.Root.Button.MouseButton1Click:Connect(function()
-        self.Selected = not self.Selected
-        self.Events.SelectChanged:Fire(self.Selected)
-        self:UpdateAppearance()
+        if self.Selected == false then
+            self.Selected = not self.Selected
+            self.Events.SelectChanged:Fire(self.Selected)
+            self:UpdateAppearance()
+        end
     end))
 
     self:UpdateAppearance()

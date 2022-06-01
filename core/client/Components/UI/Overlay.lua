@@ -3,6 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -16,6 +17,9 @@ type Overlay_T = {
     __index: Overlay_T,
     Name: string,
     Tag: string,
+    Events: {
+        ArmorySelected: typeof(Signal.new())
+    },
 
     Cleaner: Cleaner_T
 }
@@ -29,6 +33,10 @@ Overlay.Ancestor = PlayerGui
 function Overlay.new(root: any)
     return setmetatable({
         Root = root,
+
+        Events = {
+            ArmorySelected = Signal.new()
+        }
     }, Overlay)
 end
 
@@ -39,8 +47,8 @@ function Overlay:Start()
     local armoryButton = buttonContainer.Armory.Button :: TextButton
 
     self.Cleaner:Add(armoryButton.MouseButton1Click:Connect(function()
-        CollectionService:AddTag(self.Root, "Armory")
         main.Visible = false
+        self.Events.ArmorySelected:Fire()
     end))
 end
 
