@@ -197,7 +197,7 @@ function ArmoryUI:Populate(slot: number)
 
         local children = category.List.Container:GetChildren()
         local numItems = #children - 1 -- subtract one for the UIListLayout
-        category.List.CanvasSize = UDim2.new(0, 0, (category.List.Container.UIListLayout.Padding.Scale * numItems), (children[2].AbsoluteSize.Y * numItems))
+        category.List.CanvasSize = UDim2.new(0, 0, (category.List.Container.UIListLayout.Padding.Scale * numItems) + (ListItem.Size.Y.Scale * numItems), 0)
 
         if currentCategory == categoryName then
             previouslySelectedComponent = itemComponent

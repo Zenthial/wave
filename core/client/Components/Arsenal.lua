@@ -64,6 +64,7 @@ function Arsenal.new(root: any)
         SkillModel = nil,
         CurrentlySelected = 0,
         InspectWeapon = nil,
+        MouseCleaner = nil,
     }, Arsenal)
 end
 
@@ -74,6 +75,7 @@ function Arsenal:Start()
 
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
+    ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
 
     if not CollectionService:HasTag(InventoryPlayer, "AnimationHandler") then
         CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
@@ -100,6 +102,11 @@ function Arsenal:Start()
         self.Root.Back.Visible = false
         self.Root.ArmoryText.Visible = false
 
+        if self.MouseCleaner then
+            self.MouseCleaner:Clean()
+            self.MouseCleaner = nil     
+        end
+
         TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)}):Play()
     end))
 
@@ -116,7 +123,7 @@ function Arsenal:ArmorySelection()
         CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(5.5, -0.5, 0), InventoryPlayer.HumanoidRootPart.Position)
     }):Play()
 
-    self:HandleMouse()
+    self.MouseCleaner = self:HandleMouse()
 end
 
 function Arsenal:SetupInspectTable(weaponName: string)
@@ -142,15 +149,6 @@ function Arsenal:SetupInspectTable(weaponName: string)
         inspectModel = inspectFolder:Clone()
         inspectModel.PrimaryPart = nil
         inspectModel:PivotTo(CFrame.new(InspectPart.CFrame.Position, InspectPart.CFrame.Position - Vector3.new(0, 0, 5)))
-    end
-
-    -- item specific code ahead
-    if inspectModel.Name == "SP0T-R" then
-        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(90), 0))
-    elseif inspectModel.Name == "SH3L-S" then
-        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
-    elseif inspectModel.Name == "APS" then
-        inspectModel:PivotTo(inspectModel:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
     end
 
     for _, thing in pairs(inspectModel:GetChildren()) do
@@ -180,8 +178,6 @@ function Arsenal:LoadCharacter()
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
     local skillName = Player:GetAttribute("EquippedSkill")
-
-    ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
 
     local primaryFolder = Weapons[primaryName] :: Folder
     if not primaryFolder then error("No weapon folder for "..primaryName) end
@@ -292,6 +288,8 @@ function Arsenal:HandleMouse()
     local mouse = Player:GetMouse()
 
     local internalCleaner = Trove.new()
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {self.SkillModel, self.PrimaryModel, self.SecondaryModel}
     internalCleaner:Add(mouse.Move:Connect(function()
         local raycastResult = workspace:Raycast(Camera.CFrame.Position, (mouse.Hit.Position - Camera.CFrame.Position).Unit * RAYCAST_MAX_DISTANCE)
 
@@ -330,6 +328,8 @@ function Arsenal:HandleMouse()
     end))
 
     self.Cleaner:Add(internalCleaner, "Clean")
+
+    return internalCleaner
 end
 
 function Arsenal:HandleSelected()
@@ -394,6 +394,8 @@ function Arsenal:HandleSelected()
         end))
     end))
 
+    internalCleaner:Add(inspectFrame)
+
     internalCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
 
@@ -405,7 +407,6 @@ function Arsenal:HandleSelected()
         end
     end))
 
-    internalCleaner:Add(inspectFrame)
     self.Cleaner:Add(internalCleaner, "Clean")
 end
 
