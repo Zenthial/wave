@@ -77,6 +77,12 @@ function Arsenal:Start()
     InventoryPlayer.Parent = workspace
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
 
+    for _, thing in pairs(InventoryPlayer:GetChildren()) do
+        if thing:IsA("Accessory") and thing:FindFirstChild("Handle") then
+            thing.Handle.CanQuery = false
+        end
+    end
+
     if not CollectionService:HasTag(InventoryPlayer, "AnimationHandler") then
         CollectionService:AddTag(InventoryPlayer, "AnimationHandler")
     end
@@ -107,6 +113,11 @@ function Arsenal:Start()
             self.MouseCleaner = nil     
         end
 
+        if self.InventoryPlayerRotationCleaner then
+            self.InventoryPlayerRotationCleaner:Clean()
+            self.InventoryPlayerRotationCleaner = nil
+        end
+
         TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)}):Play()
     end))
 
@@ -123,7 +134,32 @@ function Arsenal:ArmorySelection()
         CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(5.5, -0.5, 0), InventoryPlayer.HumanoidRootPart.Position)
     }):Play()
 
+    self.InventoryPlayerRotationCleaner = self:InventoryPlayerRotation()
     self.MouseCleaner = self:HandleMouse()
+end
+
+function Arsenal:InventoryPlayerRotation()
+    local itemCleaner = Trove.new()
+
+    local function handleInput(_inputObject: InputObject)
+        local pressed = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+        if pressed then
+            UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+            local change = UserInputService:GetMouseDelta()
+
+            if InventoryPlayer then
+                InventoryPlayer:PivotTo(InventoryPlayer:GetPivot() * CFrame.Angles(0, math.rad(change.X), 0))
+            end
+        else
+            UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+        end
+    end
+
+    itemCleaner:Add(UserInputService.InputBegan:Connect(handleInput))
+    itemCleaner:Add(UserInputService.InputChanged:Connect(handleInput))
+    itemCleaner:Add(UserInputService.InputEnded:Connect(handleInput))
+
+    return itemCleaner
 end
 
 function Arsenal:SetupInspectTable(weaponName: string)
@@ -322,6 +358,10 @@ function Arsenal:HandleMouse()
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             if self.CurrentlySelected > 0 then
                 internalCleaner:Clean()
+                if self.InventoryPlayerRotationCleaner then
+                    self.InventoryPlayerRotationCleaner:Clean()
+                    self.InventoryPlayerRotationCleaner = nil
+                end
                 self:HandleSelected()
             end
         end
