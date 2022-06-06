@@ -55,7 +55,17 @@ function Welder:WeldWeapon(character: Model, weapon: Model, toBack: boolean)
     return true
 end
 
-function Welder:WeldSkill(player: Player, skill: Model)
+function Welder:WeldArtifact(character: Model, artifact: Model & { Handle: BasePart })
+    if not character then return false end
+    local holsters = HolsterStatsModule["Back"]
+
+    local handle = artifact:FindFirstChild("Handle")
+    local limbName = holsters[1].limb
+    local limb = character:FindFirstChild(limbName)
+    inverseWeld(handle, limb, holsters[1].C0, holsters[1].C1)
+end
+
+function Welder:WeldSkill(player: Model, skill: Model)
     self:WeldWeapon(player, skill, true)
 end
 
