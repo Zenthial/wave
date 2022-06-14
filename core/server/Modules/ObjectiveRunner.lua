@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
+local ServerStorage = game:GetService("ServerStorage")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
@@ -10,7 +11,7 @@ local Signal = require(Shared:WaitForChild("util"):WaitForChild("Signal"))
 local tcs = require(Shared:WaitForChild("tcs"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
-local Maps = Assets:WaitForChild("Maps")
+local Maps = ServerStorage:WaitForChild("Maps")
 
 local ObjectiveClasses = script.Parent.ObjectiveClasses :: Folder
 
@@ -18,7 +19,7 @@ local NUM_OPTIONS = 3
 local VOTE_TIMER = 15
 local ROUND_TIMER = 900
 
-function shuffle(t: {any}): {any}
+local function shuffle(t: {any}): {any}
     math.randomseed(os.time())
     local tbl = {}
     for i = 1, #t do
@@ -236,7 +237,6 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
         self.ObjectiveEndSignal:FireAllClients(mode, winner)
     end))
 
-    local objectiveStats = ObjectiveConfigurations.ModeInfo[mode]
     modeCleaner:Add(modeComponent.Events.PointsChanged:Connect(function(points: {Red: number, Blue: number})
         self.ObjectiveSignal:FireAllClients(mode, points)
     end))

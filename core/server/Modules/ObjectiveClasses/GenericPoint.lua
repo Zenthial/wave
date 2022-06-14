@@ -4,8 +4,8 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 type GenericPoint_T = {
-    Root: Model & {Point: BasePart},
-    Owner: nil | string,
+    Root: Part & {Mesh: SpecialMesh},
+    Owner: string,
     Active: boolean,
 
     Events: {
@@ -22,7 +22,7 @@ function GenericPoint.new(root)
     return setmetatable({
         Root = root,
         
-        Owner = nil,
+        Owner = "Neutral",
         Active = false,
 
         Events = {
@@ -34,7 +34,7 @@ function GenericPoint.new(root)
 end
 
 function GenericPoint:Start()
-    local rootSize = self.Root.Point.Size.Magnitude / 2
+    local rootSize = self.Root.Mesh.Scale.Magnitude / 2
     self.Active = true
 
     task.spawn(function()
@@ -54,7 +54,7 @@ function GenericPoint:Start()
                 end
             end
     
-            if self.Owner == nil then
+            if self.Owner == "Neutral" then
                 if numRed > numBlue then
                     self.Owner = "Red"
                     self.Events.OwnerChanged:Fire(self.Owner)
@@ -73,6 +73,10 @@ function GenericPoint:Start()
             task.wait(1)
         end
     end)
+end
+
+function GenericPoint:SetOwner(owner: string)
+    self.Owner = owner
 end
 
 function GenericPoint:SetActive(active: boolean)

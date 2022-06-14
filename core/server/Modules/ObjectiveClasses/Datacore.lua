@@ -49,7 +49,9 @@ function Datacore.new(root: any)
         },
 
         Events = {
-            PointsChanged = Signal.new()
+            PointsChanged = Signal.new(),
+            OwnershipChanged = Signal.new(),
+            Ended = Signal.new(),
         }
     }, Datacore)
 end
