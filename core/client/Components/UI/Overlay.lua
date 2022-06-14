@@ -1,12 +1,41 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CollectionService = game:GetService("CollectionService")
+local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
+local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
+
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local VoteFrame = Assets:WaitForChild("UI"):WaitForChild("VoteFrame")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local function createListLayout()
+    local uIListLayout = Instance.new("UIListLayout")
+    uIListLayout.Name = "uIListLayout"
+    uIListLayout.Padding = UDim.new(0.025, 0)
+    uIListLayout.FillDirection = Enum.FillDirection.Horizontal
+    uIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    uIListLayout.SortOrder = Enum.SortOrder.Name
+    uIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+    return uIListLayout
+end
+
+local function createVotingFrame(name: string, voteCount: number)
+    local frame = VoteFrame:Clone() :: Frame & {ImageLabel: ImageLabel, Title: TextLabel, Votes: TextLabel, Button: TextButton}
+    frame.Name = name
+    frame.Title.Text = string.upper(name)
+    frame.Votes.Text = "VOTES: "..tostring(voteCount)
+
+    local image = ObjectiveConfigurations.MapImages[name] or ObjectiveConfigurations.ModeImages[name] or ""
+    frame.ImageLabel.Image = image
+
+    return frame
+end
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -19,6 +48,9 @@ type Overlay_T = {
     Tag: string,
     Events: {
         ArmorySelected: typeof(Signal.new())
+    },
+    Root: {
+        Voting: Frame
     },
 
     Cleaner: Cleaner_T
@@ -49,6 +81,27 @@ function Overlay:Start()
     self.Cleaner:Add(armoryButton.MouseButton1Click:Connect(function()
         main.Visible = false
         self.Events.ArmorySelected:Fire()
+    end))
+
+    local pollSignal = ReplicatedStorage:WaitForChild("PollSignal") :: RemoteEvent
+
+    local voteCleaner = Trove.new()
+    local voteSignal = ReplicatedStorage:WaitForChild("VoteSignal") :: RemoteEvent
+    self.Cleaner:Add(voteSignal.OnClientEvent:Connect(function(map: {[string]: number})
+        print(map)
+        self.Root.Voting:ClearAllChildren()
+        createListLayout().Parent = self.Root.Voting
+
+        if map ~= nil then
+            for name, voteCount in map do
+                local frame = createVotingFrame(name, voteCount)
+                frame.Parent = self.Root.Voting
+    
+                voteCleaner:Add(frame.Button.MouseButton1Click:Connect(function()
+                    pollSignal:FireServer(name)
+                end))
+            end
+        end
     end))
 end
 

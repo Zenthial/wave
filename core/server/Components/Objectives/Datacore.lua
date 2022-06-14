@@ -8,7 +8,7 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 local Welder = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("Welder"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets") :: Folder
-local ArtifactModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Artifact") :: Model
+-- local DatacoreModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Datacore") :: Model
 
 local DISTANCE = 2.5
 
@@ -17,8 +17,8 @@ type Cleaner_T = {
     Clean: (Cleaner_T) -> ()
 }
 
-type Artifact_T = {
-    __index: Artifact_T,
+type Datacore_T = {
+    __index: Datacore_T,
     Name: string,
     Tag: string,
     Model: Model & { Handle: BasePart },
@@ -35,13 +35,13 @@ type Artifact_T = {
     Cleaner: Cleaner_T
 }
 
-local Artifact: Artifact_T = {}
-Artifact.__index = Artifact
-Artifact.Name = "Artifact"
-Artifact.Tag = "Artifact"
-Artifact.Ancestor = workspace
+local Datacore: Datacore_T = {}
+Datacore.__index = Datacore
+Datacore.Name = "Datacore"
+Datacore.Tag = "Datacore"
+Datacore.Ancestor = workspace
 
-function Artifact.new(root: any)
+function Datacore.new(root: any)
     return setmetatable({
         Root = root, -- root is the map
 
@@ -53,12 +53,12 @@ function Artifact.new(root: any)
         Events = {
             PointsChanged = Signal.new()
         }
-    }, Artifact)
+    }, Datacore)
 end
 
-function Artifact:Start()
-    local point = self.Root:FindFirstChild("ArtifactSpawn") :: BasePart
-    if not point then error("ArtifactSpawn does not exist on map " .. self.Root.Name) end
+function Datacore:Start()
+    local point = self.Root:FindFirstChild("DatacoreSpawn") :: BasePart
+    if not point then error("DatacoreSpawn does not exist on map " .. self.Root.Name) end
 
     self.Point = point
     self:SpawnModel(point.CFrame)
@@ -66,12 +66,12 @@ function Artifact:Start()
     local detectCleaner = self:CreateDetection()
 end
 
-function Artifact:SpawnModel(position: CFrame)
+function Datacore:SpawnModel(position: CFrame)
     if self.Model then
         self.Model:Destroy()
     end
 
-    local model = ArtifactModel:Clone() :: Model & { Handle: BasePart }
+    local model = DatacoreModel:Clone() :: Model & { Handle: BasePart }
     model:SetPrimaryPartCFrame(position)
     model.Parent = workspace
     model:SetAttribute("Owner", "Neutral")
@@ -79,7 +79,7 @@ function Artifact:SpawnModel(position: CFrame)
     self.Model = model
 end
 
-function Artifact:CreateDetection()
+function Datacore:CreateDetection()
     local cleaner = Trove.new()
 
     local active = true
@@ -105,19 +105,19 @@ function Artifact:CreateDetection()
     return cleaner
 end
 
-function Artifact:WeldModelToPlayer(player: Player)
+function Datacore:WeldModelToPlayer(player: Player)
     self.Model:Destroy()
 
-    local model = ArtifactModel:Clone()
+    local model = DatacoreModel:Clone()
     model.Parent = player.Character
     model:SetAttribute("Owner", player.Team.Name)
 
-    Welder:WeldArtifact(player.Character, model)
+    Welder:WeldDatacore(player.Character, model)
 
     self.Model = model
 end
 
-function Artifact:PointsHandler()
+function Datacore:PointsHandler()
     local pointsCleaner = Trove.new()
     local active = true
 
@@ -139,7 +139,7 @@ function Artifact:PointsHandler()
     return pointsCleaner
 end
 
-function Artifact:Equip(player: Player)
+function Datacore:Equip(player: Player)
     if player:GetAttribute("Dead") == false then
         self:WeldModelToPlayer(player)
         local equipCleaner = Trove.new()
@@ -156,10 +156,10 @@ function Artifact:Equip(player: Player)
     end
 end
 
-function Artifact:Destroy()
+function Datacore:Destroy()
     self.Cleaner:Clean()
 end
 
-tcs.create_component(Artifact)
+tcs.create_component(Datacore)
 
-return Artifact
+return Datacore
