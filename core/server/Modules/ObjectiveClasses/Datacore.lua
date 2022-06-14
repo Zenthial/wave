@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local ServerScriptService = game:GetService("ServerScriptService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
@@ -8,7 +7,7 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 local Welder = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("Welder"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets") :: Folder
--- local DatacoreModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Datacore") :: Model
+local DatacoreModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Datacore") :: Model
 
 local DISTANCE = 2.5
 
@@ -29,7 +28,9 @@ type Datacore_T = {
     },
 
     Events: {
-        PointsChanged: typeof(Signal)
+        PointsChanged: typeof(Signal),
+        OwnershipChanged: typeof(Signal),
+        Ended: typeof(Signal),
     },
 
     Cleaner: Cleaner_T
@@ -37,9 +38,6 @@ type Datacore_T = {
 
 local Datacore: Datacore_T = {}
 Datacore.__index = Datacore
-Datacore.Name = "Datacore"
-Datacore.Tag = "Datacore"
-Datacore.Ancestor = workspace
 
 function Datacore.new(root: any)
     return setmetatable({
@@ -57,6 +55,8 @@ function Datacore.new(root: any)
 end
 
 function Datacore:Start()
+    self.Cleaner = Trove.new()
+
     local point = self.Root:FindFirstChild("DatacoreSpawn") :: BasePart
     if not point then error("DatacoreSpawn does not exist on map " .. self.Root.Name) end
 
@@ -75,6 +75,7 @@ function Datacore:SpawnModel(position: CFrame)
     model:SetPrimaryPartCFrame(position)
     model.Parent = workspace
     model:SetAttribute("Owner", "Neutral")
+    self.Events.OwnershipChanged:Fire({D = "Neutral"})
 
     self.Model = model
 end
@@ -111,6 +112,7 @@ function Datacore:WeldModelToPlayer(player: Player)
     local model = DatacoreModel:Clone()
     model.Parent = player.Character
     model:SetAttribute("Owner", player.Team.Name)
+    self.Events.OwnershipChanged:Fire({D = player.Team.Name})
 
     Welder:WeldDatacore(player.Character, model)
 
@@ -159,7 +161,5 @@ end
 function Datacore:Destroy()
     self.Cleaner:Clean()
 end
-
-tcs.create_component(Datacore)
 
 return Datacore

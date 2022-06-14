@@ -1,13 +1,22 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Configurations = Shared:WaitForChild("Configurations")
 local ObjectiveConfigurations = require(Configurations:WaitForChild("ObjectiveConfigurations"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
+local Signal = require(Shared:WaitForChild("util"):WaitForChild("Signal"))
+local tcs = require(Shared:WaitForChild("tcs"))
+
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local Maps = Assets:WaitForChild("Maps")
+
+local ObjectiveClasses = script.Parent.ObjectiveClasses :: Folder
 
 local NUM_OPTIONS = 3
 local VOTE_TIMER = 15
+local ROUND_TIMER = 900
 
 function shuffle(t: {any}): {any}
     math.randomseed(os.time())
@@ -37,6 +46,11 @@ type ObjectiveRunner = {
     PollSignal: RemoteEvent,
     ObjectiveSignal: RemoteEvent,
     VoteSignal: RemoteEvent,
+    TimerSignal: RemoteEvent,
+    OwnershipSignal: RemoteEvent,
+    ObjectiveStartSignal: RemoteEvent,
+    ObjectiveEndSignal: RemoteEvent,
+    CurrentMap: Configuration
 }
 
 local ObjectiveRunner: ObjectiveRunner = {}
@@ -46,6 +60,26 @@ function ObjectiveRunner:Start()
     objectiveSignal.Name = "ObjectiveSignal"
     objectiveSignal.Parent = ReplicatedStorage
     self.ObjectiveSignal = objectiveSignal
+
+    local objectiveStartSignal = Instance.new("RemoteEvent")
+    objectiveStartSignal.Name = "ObjectiveStartSignal"
+    objectiveStartSignal.Parent = ReplicatedStorage
+    self.ObjectiveStartSignal = objectiveStartSignal
+
+    local objectiveEndSignal = Instance.new("RemoteEvent")
+    objectiveEndSignal.Name = "ObjectiveEndSignal"
+    objectiveEndSignal.Parent = ReplicatedStorage
+    self.ObjectiveEndSignal = objectiveEndSignal
+
+    local ownershipSignal = Instance.new("RemoteEvent")
+    ownershipSignal.Name = "OwnershipSignal"
+    ownershipSignal.Parent = ReplicatedStorage
+    self.OwnershipSignal = ownershipSignal
+
+    local timerSignal = Instance.new("RemoteEvent")
+    timerSignal.Name = "TimerSignal"
+    timerSignal.Parent = ReplicatedStorage
+    self.TimerSignal = timerSignal
 
     local pollSignal = Instance.new("RemoteEvent")
     pollSignal.Name = "PollSignal"
@@ -67,8 +101,6 @@ function ObjectiveRunner:PollUsers()
             task.wait(2)
         until not (#Players:GetPlayers() < 2)
     end
-
-    print("polling")
 
     local mapOptions = chooseRandom(ObjectiveConfigurations.Maps)
     local modeOptions = chooseRandom(ObjectiveConfigurations.Modes)
@@ -156,7 +188,7 @@ function ObjectiveRunner:PollUsers()
     pollCleaner:Clean()
     
     local modeChoice = nil
-    for mode, count in mapMap do
+    for mode, count in modeMap do
         if modeChoice == nil then
             modeChoice = mode
         elseif modeMap[modeChoice] < count then
@@ -168,7 +200,50 @@ function ObjectiveRunner:PollUsers()
 end
 
 function ObjectiveRunner:SetupObjectives(map: string, mode: string)
+    if self.CurrentMap then self.CurrentMap:Destroy() self.CurrentMap = nil end
     
+    local mapConfiguration = Maps[map]:Clone() :: Configuration
+    mapConfiguration.Parent = workspace
+
+    self.CurrentMap = mapConfiguration
+
+    local roundActive = true
+    task.spawn(function()
+        local timeLeft = ROUND_TIMER
+        self.TimerSignal:FireAllClients(timeLeft)
+
+        while roundActive do
+            task.wait(1)
+            timeLeft -= 1
+            self.TimerSignal:FireAllClients(timeLeft)
+
+            if timeLeft <= 0 then
+                roundActive = false
+            end
+        end
+    end)
+
+    local modeComponentScript = ObjectiveClasses[mode] :: ModuleScript
+    assert(modeComponentScript, "No mode class for "..mode)
+    
+    local modeComponentClass = require(modeComponentScript) :: {new: (Model) -> {Start: () -> (), Events: {OwnershipChanged: typeof(Signal), Ended: typeof(Signal), PointsChanged: typeof(Signal)}}}
+    local modeComponent = modeComponentClass.new(mapConfiguration)
+    modeComponent:Start()
+    self.ObjectiveStartSignal:FireAllClients(mode)
+
+    local modeCleaner = Trove.new()
+    modeCleaner:Add(modeComponent.Events.Ended:Connect(function(winner: string)
+        self.ObjectiveEndSignal:FireAllClients(mode, winner)
+    end))
+
+    local objectiveStats = ObjectiveConfigurations.ModeInfo[mode]
+    modeCleaner:Add(modeComponent.Events.PointsChanged:Connect(function(points: {Red: number, Blue: number})
+        self.ObjectiveSignal:FireAllClients(mode, points)
+    end))
+
+    modeCleaner:Add(modeComponentClass.Events.OwnershipChanged:Connect(function(points)
+        self.OwnershipSignal:FireAllClients(mode, points)
+    end))
 end
 
 return ObjectiveRunner

@@ -1,7 +1,7 @@
 return {
     Maps = {
         "Applejack",
-        "Homestead",
+        -- "Homestead",
         "Cityscape",
         "Academy",
         "Spearhead"
@@ -25,5 +25,26 @@ return {
         ["Domination"] = "rbxassetid://7249913269",
         ["Datacore"] = "",
         ["GunGame"] = "rbxassetid://7249914794",
+    },
+    ModeInfo = {
+        ["Hardpoint"] = {
+            Points = {"A"},
+            MaxScore = 450
+        },
+
+        ["Domination"] = {
+            Points = {"A", "B", "C"},
+            MaxScore = 900
+        },
+
+        ["Datacore"] = {
+            Points = {"D"},
+            MaxScore = 450
+        },
+
+        ["GunGame"] = {
+            Points = {},
+            MaxScore = 20
+        }
     }
 }
