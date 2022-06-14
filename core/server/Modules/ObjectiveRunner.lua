@@ -228,7 +228,7 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
     
     local modeComponentClass = require(modeComponentScript) :: {new: (Model) -> {Start: () -> (), Events: {OwnershipChanged: typeof(Signal), Ended: typeof(Signal), PointsChanged: typeof(Signal)}}}
     local modeComponent = modeComponentClass.new(mapConfiguration)
-    modeComponent:Start()
+    task.spawn(function() modeComponent:Start() end)
     self.ObjectiveStartSignal:FireAllClients(mode)
 
     local modeCleaner = Trove.new()
