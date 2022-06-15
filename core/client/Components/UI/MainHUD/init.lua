@@ -32,6 +32,10 @@ function MainHUD:Start()
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
+        self.Root.Enabled = Player:GetAttribute("InRound")
+    end))
+
     self.Cleaner:Add(ReloadingSignal:Connect(function()
         self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
     end))

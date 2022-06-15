@@ -91,17 +91,25 @@ end
 
 function ObjectiveUI:Start()
     for modeName, modeInfo in ObjectiveConfigurations.ModeInfo do
+        local tble = {}
         for _, pointString in modeInfo.Points do
-            self.ObjectiveMarkers[modeName] = createModeMarker(modeName, pointString, self.Root.Container)
+            table.insert(tble, createModeMarker(modeName, pointString, self.Root.Container))
         end
+
+        self.ObjectiveMarkers[modeName] = tble
     end
 
     self.Cleaner:Add(ObjectiveStartSignal.OnClientEvent:Connect(function(mode)
         for modeName, markers in self.ObjectiveMarkers do
             for _, marker in markers do
-                marker.Visible = modeName == mode
+                marker.Visible = (modeName == mode)
             end
         end
+
+        self.Root.Red.Score.Text = 0
+        self.Root.Blue.Score.Text = 0
+        TweenService:Create(self.Root.Red.Fill, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0.75, 0)}):Play()
+        TweenService:Create(self.Root.Blue.Fill, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0.75, 0)}):Play()
     end))
 
     self.Cleaner:Add(ObjectiveSignal.OnClientEvent:Connect(function(mode, points)
@@ -116,7 +124,7 @@ function ObjectiveUI:Start()
             assert(teamFrame, "Frame does not exist for "..teamName)
 
             teamFrame.Score.Text = teamPoints
-            TweenService:Create(teamFrame.Fill, TweenInfo.new(0.5, {Size = UDim2.new(teamPoints/maxScore, 0, 0.75, 0)})):Play()
+            TweenService:Create(teamFrame.Fill, TweenInfo.new(0.5), {Size = UDim2.new(teamPoints/maxScore, 0, 0.75, 0)}):Play()
         end
     end))
 

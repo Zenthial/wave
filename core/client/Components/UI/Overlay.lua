@@ -7,6 +7,8 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
 
+local GameStateSignal = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameStateSignal") :: RemoteFunction
+
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local VoteFrame = Assets:WaitForChild("UI"):WaitForChild("VoteFrame")
 
@@ -77,10 +79,17 @@ function Overlay:Start()
     main.Visible = true
     local buttonContainer = main.ButtonContainer
     local armoryButton = buttonContainer.Armory.Button :: TextButton
+    local playButton = buttonContainer.Play.Button :: TextButton
 
     self.Cleaner:Add(armoryButton.MouseButton1Click:Connect(function()
         main.Visible = false
         self.Events.ArmorySelected:Fire()
+    end))
+
+    self.Cleaner:Add(playButton.MouseButton1Click:Connect(function()
+        if GameStateSignal:InvokeServer("Join") then
+            self.Root.Enabled = false
+        end
     end))
 
     local pollSignal = ReplicatedStorage:WaitForChild("PollSignal") :: RemoteEvent
@@ -88,7 +97,6 @@ function Overlay:Start()
     local voteCleaner = Trove.new()
     local voteSignal = ReplicatedStorage:WaitForChild("VoteSignal") :: RemoteEvent
     self.Cleaner:Add(voteSignal.OnClientEvent:Connect(function(map: {[string]: number})
-        print(map)
         self.Root.Voting:ClearAllChildren()
         createListLayout().Parent = self.Root.Voting
 

@@ -3,12 +3,19 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
+local createObjectiveMarker = require(script.Parent.createObjectiveMarker)
 
 local Hill = ServerStorage:WaitForChild("Hill") :: Part & {Mesh: SpecialMesh}
 
 local GenericPoint = require(script.Parent.GenericPoint) :: {Start: () -> (), Events: {
     OwnerChanged: typeof(Signal)
 }}
+
+local ObjectiveColors = {
+    Red = Color3.fromRGB(235, 28, 10),
+    Blue = Color3.fromRGB(18, 141, 235),
+    Neutral = Color3.fromRGB(137, 137, 137)
+}
 
 local HARDPOINT_COOLDOWN = 60
 
@@ -79,6 +86,7 @@ function Hardpoint:Start()
     hillPoint.Transparency = 0.25
     hillPoint.CFrame = self.Root.Objectives.PointA.CFrame
     hillPoint.Parent = self.Root
+    local marker = createObjectiveMarker(hillPoint, "Hill")
 
     local points = {"PointA", "PointB", "PointC"}
     local currentPoint = "PointA"
@@ -87,6 +95,7 @@ function Hardpoint:Start()
     local point = GenericPoint.new(hillPoint)
     self.Cleaner:Add(point.Events.OwnerChanged:Connect(function(owner: string)
         currentOwner = owner
+        marker.ObjectiveNameFrame.ObjectiveName.TextColor3 = ObjectiveColors[owner]
 
         self.Events.OwnershipChanged:Fire({A = currentOwner})
     end))
@@ -117,6 +126,7 @@ function Hardpoint:Start()
             currentPoint = chosenPoint
 
             hillPoint.CFrame = self.Root.Objectives[chosenPoint].CFrame
+            point:SetOwner("Neutral")
         end
     end)
 

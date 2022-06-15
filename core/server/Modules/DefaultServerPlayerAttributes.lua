@@ -4,6 +4,8 @@ return {
     Spotted = false,
     Restrained = false,
     PlacingDeployable = false,
+
+    InRound = false,
     
     EquippedPrimary = "",
     EquippedSecondary = "",

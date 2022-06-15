@@ -16,9 +16,9 @@ return {
 
     Modes = {
         "Hardpoint",
-        "Domination",
+        -- "Domination",
         "Datacore",
-        "GunGame"
+        -- "GunGame"
     },
     ModeImages = {
         ["Hardpoint"] = "rbxassetid://7249911905",

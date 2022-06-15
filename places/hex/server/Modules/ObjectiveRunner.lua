@@ -8,16 +8,14 @@ local Configurations = Shared:WaitForChild("Configurations")
 local ObjectiveConfigurations = require(Configurations:WaitForChild("ObjectiveConfigurations"))
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(Shared:WaitForChild("util"):WaitForChild("Signal"))
-local tcs = require(Shared:WaitForChild("tcs"))
 
-local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Maps = ServerStorage:WaitForChild("Maps")
 
 local ObjectiveClasses = script.Parent.ObjectiveClasses :: Folder
 
-local NUM_OPTIONS = 3
-local VOTE_TIMER = 15
-local ROUND_TIMER = 900
+local NUM_OPTIONS = 2
+local VOTE_TIMER = 5
+local ROUND_TIMER = 300
 
 local function shuffle(t: {any}): {any}
     math.randomseed(os.time())
@@ -204,6 +202,7 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
     if self.CurrentMap then self.CurrentMap:Destroy() self.CurrentMap = nil end
     
     local mapConfiguration = Maps[map]:Clone() :: Configuration
+    mapConfiguration.Name = "CurrentMap"
     mapConfiguration.Parent = workspace
 
     self.CurrentMap = mapConfiguration
@@ -241,7 +240,7 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
         self.ObjectiveSignal:FireAllClients(mode, points)
     end))
 
-    modeCleaner:Add(modeComponentClass.Events.OwnershipChanged:Connect(function(points)
+    modeCleaner:Add(modeComponent.Events.OwnershipChanged:Connect(function(points)
         self.OwnershipSignal:FireAllClients(mode, points)
     end))
 end

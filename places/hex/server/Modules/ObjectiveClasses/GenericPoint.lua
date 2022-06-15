@@ -44,7 +44,7 @@ function GenericPoint:Start()
     
             for _, player: Player in Players:GetPlayers() do
                 if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                    if (player.Character.HumanoidRootPart.Position - self.Root.Point.Position).Magnitude <= rootSize then
+                    if (player.Character.HumanoidRootPart.Position - self.Root.Position).Magnitude <= rootSize then
                         if player.Team.Name == "Red" then
                             numRed += 1
                         elseif player.Team.Name == "Blue" then

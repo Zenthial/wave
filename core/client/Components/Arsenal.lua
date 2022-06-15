@@ -103,6 +103,18 @@ function Arsenal:Start()
         self:ArmorySelection()
     end))
 
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
+        local inRound = Player:GetAttribute("InRound")
+
+        if not inRound then
+            Camera.CameraType = Enum.CameraType.Scriptable
+            Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
+        else
+            Camera.CameraType = Enum.CameraType.Custom
+            Camera.CameraSubject = Player.Character
+        end
+    end))
+
     self.Cleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
         self.Root.Main.Visible = true
         self.Root.Back.Visible = false
