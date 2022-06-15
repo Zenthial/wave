@@ -51,6 +51,7 @@ type Hardpoint_T = {
     Events: {
         PointsChanged: typeof(Signal),
         OwnershipChanged: typeof(Signal),
+        MessageSignal: typeof(Signal),
         Ended: typeof(Signal),
     },
 
@@ -74,6 +75,7 @@ function Hardpoint.new(root: any)
         Events = {
             PointsChanged = Signal.new(),
             OwnershipChanged = Signal.new(),
+            MessageSignal = Signal.new(),
             Ended = Signal.new(),
         },
 
@@ -125,6 +127,7 @@ function Hardpoint:Start()
             local chosenPoint = if shuffledPoints[1] == currentPoint then shuffledPoints[2] else shuffledPoints[1]
             currentPoint = chosenPoint
 
+            self.Events.MessageSignal:Fire("POINT MOVING!")
             hillPoint.CFrame = self.Root.Objectives[chosenPoint].CFrame
             point:SetOwner("Neutral")
         end

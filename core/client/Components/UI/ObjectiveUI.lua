@@ -1,4 +1,5 @@
 local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -12,6 +13,7 @@ local ObjectiveSignal = ReplicatedStorage:WaitForChild("ObjectiveSignal") :: Rem
 local OwnershipSignal = ReplicatedStorage:WaitForChild("OwnershipSignal") :: RemoteEvent
 local ObjectiveStartSignal = ReplicatedStorage:WaitForChild("ObjectiveStartSignal") :: RemoteEvent
 local ObjectiveEndSignal = ReplicatedStorage:WaitForChild("ObjectiveEndSignal") :: RemoteEvent
+local MessageSignal = ReplicatedStorage:WaitForChild("MessageSignal") :: RemoteEvent
 local TimerSignal = ReplicatedStorage:WaitForChild("TimerSignal") :: RemoteEvent
 
 local ObjectiveColors = {
@@ -50,6 +52,25 @@ local function createModeMarker(mode: string, pointString: string, parent: Frame
     return marker
 end
 
+local function makeMessage(message: string)
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Name = "textLabel"
+    textLabel.Font = Enum.Font.SciFi
+    textLabel.Text = message
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextScaled = true
+    textLabel.TextSize = 14
+    textLabel.TextWrapped = true
+    textLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Size = UDim2.fromScale(1, 0.4)
+
+    local uITextSizeConstraint = Instance.new("UITextSizeConstraint")
+    uITextSizeConstraint.Name = "uITextSizeConstraint"
+    uITextSizeConstraint.Parent = textLabel
+
+    return textLabel
+end
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
@@ -69,6 +90,7 @@ type ObjectiveUI_T = {
             Score: TextLabel
         },
         Container: Frame & {UIListLayout: UIListLayout},
+        MessageContainer: Frame & {UIListLayout: UIListLayout},
         Timer: TextLabel
     },
 
@@ -140,6 +162,13 @@ function ObjectiveUI:Start()
             marker.Image = ObjectiveIcons[pointOwner]
             marker.ImageColor3 = ObjectiveColors[pointOwner]
         end
+    end))
+
+    self.Cleaner:Add(MessageSignal.OnClientEvent:Connect(function(message)
+        local messageLabel = makeMessage(message)
+        messageLabel.Parent = self.Root.MessageContainer
+
+        Debris:AddItem(messageLabel, 0.5)
     end))
 end
 

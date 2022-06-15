@@ -18,7 +18,7 @@ local VOTE_TIMER = 5
 local ROUND_TIMER = 300
 
 local function shuffle(t: {any}): {any}
-    math.randomseed(os.time())
+    math.randomseed(tick())
     local tbl = {}
     for i = 1, #t do
         tbl[i] = t[i]
@@ -49,6 +49,7 @@ type ObjectiveRunner = {
     OwnershipSignal: RemoteEvent,
     ObjectiveStartSignal: RemoteEvent,
     ObjectiveEndSignal: RemoteEvent,
+    MessageSignal: RemoteEvent,
     CurrentMap: Configuration
 }
 
@@ -89,6 +90,11 @@ function ObjectiveRunner:Start()
     voteSignal.Name = "VoteSignal"
     voteSignal.Parent = ReplicatedStorage
     self.VoteSignal = voteSignal
+
+    local messageSignal = Instance.new("RemoteEvent")
+    messageSignal.Name = "MessageSignal"
+    messageSignal.Parent = ReplicatedStorage
+    self.MessageSignal = messageSignal
 
     task.wait(10)
     self:PollUsers()
@@ -242,6 +248,10 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
 
     modeCleaner:Add(modeComponent.Events.OwnershipChanged:Connect(function(points)
         self.OwnershipSignal:FireAllClients(mode, points)
+    end))
+
+    modeCleaner:Add(modeComponent.Events.MessageSignal:Connect(function(message: string)
+        self.MessageSignal:FireAllClients(message)
     end))
 end
 
