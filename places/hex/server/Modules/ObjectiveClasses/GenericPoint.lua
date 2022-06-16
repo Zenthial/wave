@@ -77,6 +77,7 @@ end
 
 function GenericPoint:SetOwner(owner: string)
     self.Owner = owner
+    self.Events.OwnerChanged:Fire(self.Owner)
 end
 
 function GenericPoint:SetActive(active: boolean)

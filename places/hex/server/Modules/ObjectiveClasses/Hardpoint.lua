@@ -86,7 +86,7 @@ end
 function Hardpoint:Start()
     local hillPoint = Hill:Clone()
     hillPoint.Transparency = 0.25
-    hillPoint.CFrame = self.Root.Objectives.PointA.CFrame
+    hillPoint.Position = self.Root.Objectives.PointA.Position
     hillPoint.Parent = self.Root
     local marker = createObjectiveMarker(hillPoint, "Hill")
 
@@ -98,6 +98,7 @@ function Hardpoint:Start()
     self.Cleaner:Add(point.Events.OwnerChanged:Connect(function(owner: string)
         currentOwner = owner
         marker.ObjectiveNameFrame.ObjectiveName.TextColor3 = ObjectiveColors[owner]
+        hillPoint.Color = ObjectiveColors[owner]
 
         self.Events.OwnershipChanged:Fire({A = currentOwner})
     end))
@@ -128,7 +129,7 @@ function Hardpoint:Start()
             currentPoint = chosenPoint
 
             self.Events.MessageSignal:Fire("POINT MOVING!")
-            hillPoint.CFrame = self.Root.Objectives[chosenPoint].CFrame
+            hillPoint.Position = self.Root.Objectives[chosenPoint].Position
             point:SetOwner("Neutral")
         end
     end)

@@ -1,6 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
@@ -15,6 +16,9 @@ local ObjectiveStartSignal = ReplicatedStorage:WaitForChild("ObjectiveStartSigna
 local ObjectiveEndSignal = ReplicatedStorage:WaitForChild("ObjectiveEndSignal") :: RemoteEvent
 local MessageSignal = ReplicatedStorage:WaitForChild("MessageSignal") :: RemoteEvent
 local TimerSignal = ReplicatedStorage:WaitForChild("TimerSignal") :: RemoteEvent
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local ObjectiveColors = {
     Red = Color3.fromRGB(235, 28, 10),
@@ -101,7 +105,7 @@ local ObjectiveUI: ObjectiveUI_T = {}
 ObjectiveUI.__index = ObjectiveUI
 ObjectiveUI.Name = "ObjectiveUI"
 ObjectiveUI.Tag = "ObjectiveUI"
-ObjectiveUI.Ancestor = game
+ObjectiveUI.Ancestor = PlayerGui
 
 function ObjectiveUI.new(root: any)
     return setmetatable({
@@ -112,6 +116,12 @@ function ObjectiveUI.new(root: any)
 end
 
 function ObjectiveUI:Start()
+    for _, thing in self.Root.Container:GetChildren() do
+        if not thing:IsA("UIListLayout") then
+            thing:Destroy()
+        end
+    end
+
     for modeName, modeInfo in ObjectiveConfigurations.ModeInfo do
         local tble = {}
         for _, pointString in modeInfo.Points do
@@ -125,6 +135,7 @@ function ObjectiveUI:Start()
         for modeName, markers in self.ObjectiveMarkers do
             for _, marker in markers do
                 marker.Visible = (modeName == mode)
+                print(modeName, mode, marker.Visible)
             end
         end
 

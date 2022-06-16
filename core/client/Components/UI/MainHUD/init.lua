@@ -24,7 +24,7 @@ function MainHUD.new(root: any)
 end
 
 function MainHUD:Start()
-    print("main hud starting")
+    self.Root.Enabled = false
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
     self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI") --[[:await()]]

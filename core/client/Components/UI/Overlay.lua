@@ -75,6 +75,7 @@ function Overlay.new(root: any)
 end
 
 function Overlay:Start()
+    self.Root.Enabled = true
     local main = self.Root:WaitForChild("Main")
     main.Visible = true
     local buttonContainer = main.ButtonContainer
