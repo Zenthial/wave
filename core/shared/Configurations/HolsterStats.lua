@@ -50,7 +50,14 @@ local module = {
 		limb = "Torso",
 		C0 = CFrame.new(-1.15,-.65,0),
 		C1 = CFrame.Angles(math.rad(110),0,0)--CFrame.Angles(math.rad(110),0,0)
-	}	
+	},
+	Datacore = {
+		{
+			limb = "Torso",
+			C0 = CFrame.new(0, 0, 0.6),
+			C1 = CFrame.Angles(math.rad(90), math.rad(180), math.rad(90))
+		},
+	}
 }
 
 return module

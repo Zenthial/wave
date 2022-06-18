@@ -89,7 +89,7 @@ function Hardpoint:Start()
     hillPoint.Transparency = 0.25
     hillPoint.Position = self.Root.Objectives.PointA.Position
     hillPoint.Parent = self.Root
-    print("firing marker")
+
     self.Events.MarkerSignal:Fire(hillPoint, "Hill")
 
     local points = {"PointA", "PointB", "PointC"}

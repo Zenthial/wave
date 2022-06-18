@@ -259,7 +259,6 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
     end))
 
     modeCleaner:Add(modeComponent.Events.MarkerSignal:Connect(function(markerObject: Instance, markerName: string)
-        print("here is marker object")
         self.MarkerSignal:FireAllClients(markerObject, markerName)
     end))
 

@@ -30,8 +30,8 @@ type Datacore_T = {
     Events: {
         PointsChanged: typeof(Signal),
         OwnershipChanged: typeof(Signal),
-        MessageChanged: typeof(Signal),
-        MarkerChanged: typeof(Signal),
+        MessageSignal: typeof(Signal),
+        MarkerSignal: typeof(Signal),
         Ended: typeof(Signal),
     },
 
@@ -81,22 +81,21 @@ function Datacore:SpawnModel(position: CFrame)
     model:SetPrimaryPartCFrame(position)
     model.Parent = workspace
     model:SetAttribute("Owner", "Neutral")
+    self.Events.MarkerSignal:Fire(model, "Datacore")
     self.Events.OwnershipChanged:Fire({D = "Neutral"})
 
     self.Model = model
 end
 
 function Datacore:CreateDetection()
-    local cleaner = Trove.new()
-
     local active = true
     while active do
         for _, player in pairs(Players:GetPlayers()) do
             if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                 local hrp = player.Character.HumanoidRootPart
                 if (hrp.Position - self.Model.Handle.Position).Magnitude <= DISTANCE then
+                    active = false
                     self:Equip(player)
-                    cleaner:Clean()
                     break
                 end
             end
@@ -104,12 +103,6 @@ function Datacore:CreateDetection()
 
         task.wait(0.25)
     end
-
-    cleaner:Add(function()
-        active = false
-    end)
-
-    return cleaner
 end
 
 function Datacore:WeldModelToPlayer(player: Player)
@@ -118,6 +111,7 @@ function Datacore:WeldModelToPlayer(player: Player)
     local model = DatacoreModel:Clone()
     model.Parent = player.Character
     model:SetAttribute("Owner", player.Team.Name)
+    self.Events.MarkerSignal:Fire(model, "Datacore")
     self.Events.OwnershipChanged:Fire({D = player.Team.Name})
 
     Welder:WeldDatacore(player.Character, model)
@@ -133,9 +127,11 @@ function Datacore:PointsHandler()
         while active do
             if self.Model and self.Model:GetAttribute("Owner") ~= "Neutral" then
                 if self.Points[self.Model:GetAttribute("Owner")] == nil then self.Points[self.Model:GetAttribute("Owner")] = 0 end
+
                 self.Points[self.Model:GetAttribute("Owner")] += 1
                 self.Events.PointsChanged:Fire(self.Points)
             end
+
             task.wait(1)
         end
     end)
@@ -153,6 +149,7 @@ function Datacore:Equip(player: Player)
         local equipCleaner = Trove.new()
 
         equipCleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
+            equipCleaner:Clean()
             self:SpawnModel(self.Point.CFrame)
             self:CreateDetection()
         end))

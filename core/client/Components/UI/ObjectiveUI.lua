@@ -206,8 +206,10 @@ function ObjectiveUI:Start()
     self.Cleaner:Add(MarkerSignal.OnClientEvent:Connect(function(markerParent: Instance, markerName: string)
         if billboardMarkers[markerName] then billboardMarkers[markerName]:Destroy() end
         billboardMarkers[markerName] = createObjectiveMarker(markerParent, markerName)
-        
-        print("created billboard marker")
+
+        self.Cleaner:Add(markerParent.Destroying:Connect(function()
+            if billboardMarkers[markerName] then billboardMarkers[markerName]:Destroy() end
+        end))
     end))
 end
 

@@ -55,9 +55,9 @@ function Welder:WeldWeapon(character: Model, weapon: Model, toBack: boolean)
     return true
 end
 
-function Welder:WeldArtifact(character: Model, artifact: Model & { Handle: BasePart })
+function Welder:WeldDatacore(character: Model, artifact: Model & { Handle: BasePart })
     if not character then return false end
-    local holsters = HolsterStatsModule["Back"]
+    local holsters = HolsterStatsModule["Datacore"]
 
     local handle = artifact:FindFirstChild("Handle")
     local limbName = holsters[1].limb
