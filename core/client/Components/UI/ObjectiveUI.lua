@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
+local createObjectiveMarker = require(ReplicatedStorage:WaitForChild("HEXShared"):WaitForChild("createObjectiveMarker"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local UI = Assets:WaitForChild("UI")
@@ -14,6 +15,7 @@ local ObjectiveSignal = ReplicatedStorage:WaitForChild("ObjectiveSignal") :: Rem
 local OwnershipSignal = ReplicatedStorage:WaitForChild("OwnershipSignal") :: RemoteEvent
 local ObjectiveStartSignal = ReplicatedStorage:WaitForChild("ObjectiveStartSignal") :: RemoteEvent
 local ObjectiveEndSignal = ReplicatedStorage:WaitForChild("ObjectiveEndSignal") :: RemoteEvent
+local MarkerSignal = ReplicatedStorage:WaitForChild("MarkerSignal") :: RemoteEvent
 local MessageSignal = ReplicatedStorage:WaitForChild("MessageSignal") :: RemoteEvent
 local TimerSignal = ReplicatedStorage:WaitForChild("TimerSignal") :: RemoteEvent
 
@@ -116,7 +118,15 @@ function ObjectiveUI.new(root: any)
 end
 
 function ObjectiveUI:Start()
+    local billboardMarkers = {}
+
     for _, thing in self.Root.Container:GetChildren() do
+        if not thing:IsA("UIListLayout") then
+            thing:Destroy()
+        end
+    end
+
+    for _, thing in self.Root.MessageContainer:GetChildren() do
         if not thing:IsA("UIListLayout") then
             thing:Destroy()
         end
@@ -135,7 +145,6 @@ function ObjectiveUI:Start()
         for modeName, markers in self.ObjectiveMarkers do
             for _, marker in markers do
                 marker.Visible = (modeName == mode)
-                print(modeName, mode, marker.Visible)
             end
         end
 
@@ -143,6 +152,14 @@ function ObjectiveUI:Start()
         self.Root.Blue.Score.Text = 0
         TweenService:Create(self.Root.Red.Fill, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0.75, 0)}):Play()
         TweenService:Create(self.Root.Blue.Fill, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0.75, 0)}):Play()
+    end))
+
+    self.Cleaner:Add(ObjectiveEndSignal.OnClientEvent:Connect(function(winner: string)
+        for _, billboardMarker: BillboardGui in billboardMarkers do
+            billboardMarker:Destroy()
+        end
+
+        billboardMarkers = {}
     end))
 
     self.Cleaner:Add(ObjectiveSignal.OnClientEvent:Connect(function(mode, points)
@@ -172,6 +189,10 @@ function ObjectiveUI:Start()
 
             marker.Image = ObjectiveIcons[pointOwner]
             marker.ImageColor3 = ObjectiveColors[pointOwner]
+
+            if billboardMarkers[pointName] then
+                billboardMarkers[pointName].ObjectiveNameFrame.ObjectiveName.TextColor3 = ObjectiveColors[pointOwner]
+            end
         end
     end))
 
@@ -180,6 +201,13 @@ function ObjectiveUI:Start()
         messageLabel.Parent = self.Root.MessageContainer
 
         Debris:AddItem(messageLabel, 0.5)
+    end))
+
+    self.Cleaner:Add(MarkerSignal.OnClientEvent:Connect(function(markerParent: Instance, markerName: string)
+        if billboardMarkers[markerName] then billboardMarkers[markerName]:Destroy() end
+        billboardMarkers[markerName] = createObjectiveMarker(markerParent, markerName)
+        
+        print("created billboard marker")
     end))
 end
 

@@ -96,6 +96,11 @@ function ObjectiveRunner:Start()
     messageSignal.Parent = ReplicatedStorage
     self.MessageSignal = messageSignal
 
+    local markerSignal = Instance.new("RemoteEvent")
+    markerSignal.Name = "MarkerSignal"
+    markerSignal.Parent = ReplicatedStorage
+    self.MarkerSignal = markerSignal
+
     task.wait(10)
     self:PollUsers()
 end
@@ -234,12 +239,11 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
     
     local modeComponentClass = require(modeComponentScript) :: {new: (Model) -> {Start: () -> (), Events: {OwnershipChanged: typeof(Signal), Ended: typeof(Signal), PointsChanged: typeof(Signal)}}}
     local modeComponent = modeComponentClass.new(mapConfiguration)
-    task.spawn(function() modeComponent:Start() end)
-    self.ObjectiveStartSignal:FireAllClients(mode)
 
     local modeCleaner = Trove.new()
     modeCleaner:Add(modeComponent.Events.Ended:Connect(function(winner: string)
         self.ObjectiveEndSignal:FireAllClients(mode, winner)
+        modeCleaner:Clean()
     end))
 
     modeCleaner:Add(modeComponent.Events.PointsChanged:Connect(function(points: {Red: number, Blue: number})
@@ -253,6 +257,14 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
     modeCleaner:Add(modeComponent.Events.MessageSignal:Connect(function(message: string)
         self.MessageSignal:FireAllClients(message)
     end))
+
+    modeCleaner:Add(modeComponent.Events.MarkerSignal:Connect(function(markerObject: Instance, markerName: string)
+        print("here is marker object")
+        self.MarkerSignal:FireAllClients(markerObject, markerName)
+    end))
+
+    task.spawn(function() modeComponent:Start() end)
+    self.ObjectiveStartSignal:FireAllClients(mode)
 end
 
 return ObjectiveRunner

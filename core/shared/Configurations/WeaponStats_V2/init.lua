@@ -1,3 +1,4 @@
+local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("PartCache"))
 
@@ -60,6 +61,12 @@ export type WeaponStats_T = {
     CoolTime: number,
     CoolWait: number,
 }
+
+if RunService:IsClient() then
+    local BulletCaches = Instance.new("Folder")
+    BulletCaches.Name = "BulletCaches"
+    BulletCaches.Parent = workspace
+end
 
 local WeaponStats = {}
 

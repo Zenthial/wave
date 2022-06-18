@@ -9,7 +9,7 @@ local Welder = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Mo
 local Assets = ReplicatedStorage:WaitForChild("Assets") :: Folder
 local DatacoreModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Datacore") :: Model
 
-local DISTANCE = 2.5
+local DISTANCE = 5
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -30,6 +30,8 @@ type Datacore_T = {
     Events: {
         PointsChanged: typeof(Signal),
         OwnershipChanged: typeof(Signal),
+        MessageChanged: typeof(Signal),
+        MarkerChanged: typeof(Signal),
         Ended: typeof(Signal),
     },
 
@@ -51,6 +53,8 @@ function Datacore.new(root: any)
         Events = {
             PointsChanged = Signal.new(),
             OwnershipChanged = Signal.new(),
+            MessageSignal = Signal.new(),
+            MarkerSignal = Signal.new(),
             Ended = Signal.new(),
         }
     }, Datacore)
@@ -59,13 +63,13 @@ end
 function Datacore:Start()
     self.Cleaner = Trove.new()
 
-    local point = self.Root:FindFirstChild("DatacoreSpawn") :: BasePart
-    if not point then error("DatacoreSpawn does not exist on map " .. self.Root.Name) end
+    local point = self.Root.Objectives:FindFirstChild("Hill") :: BasePart
+    if not point then error("Hill does not exist on map " .. self.Root.Name) end
 
     self.Point = point
     self:SpawnModel(point.CFrame)
 
-    local detectCleaner = self:CreateDetection()
+    local _detectCleaner = self:CreateDetection()
 end
 
 function Datacore:SpawnModel(position: CFrame)
@@ -90,7 +94,7 @@ function Datacore:CreateDetection()
         for _, player in pairs(Players:GetPlayers()) do
             if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                 local hrp = player.Character.HumanoidRootPart
-                if (hrp.Position - self.Model.Handle.Position) <= DISTANCE then
+                if (hrp.Position - self.Model.Handle.Position).Magnitude <= DISTANCE then
                     self:Equip(player)
                     cleaner:Clean()
                     break

@@ -35,7 +35,11 @@ if RunService:IsClient() then
         local bullet = weapon:FindFirstChild("Bullet") or weapon:FindFirstChild("Projectile")
         if bullet then
             CollectionService:AddTag(bullet, "Ignore")
-            Caches.DefaultCache = PartCache.new(bullet, 50)
+
+            local cacheFolder = Instance.new("Folder")
+            cacheFolder.Name = script.Name .. "Cache"
+            cacheFolder.Parent = workspace:WaitForChild("BulletCaches")
+            Caches.DefaultCache = PartCache.new(bullet, 50, cacheFolder)
         end
     end
 end
