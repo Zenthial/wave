@@ -16,7 +16,7 @@ return {
 
     Modes = {
         "Hardpoint",
-        -- "Domination",
+        "Domination",
         "Datacore",
         -- "GunGame"
     },

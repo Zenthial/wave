@@ -85,16 +85,19 @@ function Hardpoint.new(root: any)
 end
 
 function Hardpoint:Start()
+    local points = {"PointA", "PointB", "PointC"}
+    local currentOwner = "Neutral"
+
+    local shuffledPoints = shuffle(points)
+    local currentPoint = shuffledPoints[1]
+
     local hillPoint = Hill:Clone()
     hillPoint.Transparency = 0.25
-    hillPoint.Position = self.Root.Objectives.PointA.Position
+    hillPoint.Position = self.Root.Objectives[currentPoint].Position
     hillPoint.Parent = self.Root
 
     self.Events.MarkerSignal:Fire(hillPoint, "Hill")
 
-    local points = {"PointA", "PointB", "PointC"}
-    local currentPoint = "PointA"
-    local currentOwner = "Neutral"
 
     local point = GenericPoint.new(hillPoint)
     self.Cleaner:Add(point.Events.OwnerChanged:Connect(function(owner: string)
@@ -138,10 +141,6 @@ function Hardpoint:Start()
     self.Cleaner:Add(function()
         self.Active = false
     end)
-end
-
-function Hardpoint:SetActive(active)
-    self.Active = active    
 end
 
 function Hardpoint:Destroy()

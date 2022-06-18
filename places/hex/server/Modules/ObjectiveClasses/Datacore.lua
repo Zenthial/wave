@@ -5,6 +5,7 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Welder = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("Welder"))
+local ObjectiveConfigurations = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ObjectiveConfigurations"))
 
 local Assets = ReplicatedStorage:WaitForChild("Assets") :: Folder
 local DatacoreModel = Assets:WaitForChild("ObjectiveModels"):WaitForChild("Datacore") :: Model
@@ -82,6 +83,7 @@ function Datacore:SpawnModel(position: CFrame)
     model.Parent = workspace
     model:SetAttribute("Owner", "Neutral")
     self.Events.MarkerSignal:Fire(model, "Datacore")
+    self.Events.MessageSignal:Fire(string.upper("Datacore spawned"))
     self.Events.OwnershipChanged:Fire({D = "Neutral"})
 
     self.Model = model
@@ -112,6 +114,7 @@ function Datacore:WeldModelToPlayer(player: Player)
     model.Parent = player.Character
     model:SetAttribute("Owner", player.Team.Name)
     self.Events.MarkerSignal:Fire(model, "Datacore")
+    self.Events.MessageSignal:Fire(string.upper("Datacore picked up by ".. player.Name))
     self.Events.OwnershipChanged:Fire({D = player.Team.Name})
 
     Welder:WeldDatacore(player.Character, model)
@@ -125,11 +128,17 @@ function Datacore:PointsHandler()
 
     task.spawn(function()
         while active do
-            if self.Model and self.Model:GetAttribute("Owner") ~= "Neutral" then
-                if self.Points[self.Model:GetAttribute("Owner")] == nil then self.Points[self.Model:GetAttribute("Owner")] = 0 end
+            local currentOwner = self.Model:GetAttribute("Owner")
+            if self.Model and currentOwner ~= "Neutral" then
+                if self.Points[currentOwner] == nil then self.Points[currentOwner] = 0 end
 
-                self.Points[self.Model:GetAttribute("Owner")] += 1
+                self.Points[currentOwner] += 1
                 self.Events.PointsChanged:Fire(self.Points)
+
+                if self.Points[currentOwner] >= ObjectiveConfigurations.ModeInfo.Datacore.MaxScore then
+                    self.Events.Ended:Fire(currentOwner)
+                    self.Cleaner:Clean()
+                end
             end
 
             task.wait(1)
@@ -143,11 +152,26 @@ function Datacore:PointsHandler()
     return pointsCleaner
 end
 
+function Datacore:CreateHighlight(player: Player): Highlight
+    if player.Character then
+        local highlight = Instance.new("Highlight")
+        highlight.FillColor = BrickColor.new("Gold").Color
+        highlight.OutlineColor = BrickColor.new("Gold").Color
+        highlight.OutlineTransparency = 0.5
+        highlight.FillTransparency = 1
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+        highlight.Parent = player.Character
+        
+        return highlight
+    end
+end
+
 function Datacore:Equip(player: Player)
     if player:GetAttribute("Dead") == false then
         self:WeldModelToPlayer(player)
+        
         local equipCleaner = Trove.new()
-
         equipCleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
             equipCleaner:Clean()
             self:SpawnModel(self.Point.CFrame)
@@ -155,6 +179,7 @@ function Datacore:Equip(player: Player)
         end))
 
         equipCleaner:Add(self:PointsHandler(), "Clean")
+        equipCleaner:Add(self:CreateHighlight(player))
     else
         self:SpawnModel(self.Point.CFrame)
         self:CreateDetection()

@@ -200,7 +200,7 @@ function ObjectiveUI:Start()
         local messageLabel = makeMessage(message)
         messageLabel.Parent = self.Root.MessageContainer
 
-        Debris:AddItem(messageLabel, 0.5)
+        Debris:AddItem(messageLabel, 0.75)
     end))
 
     self.Cleaner:Add(MarkerSignal.OnClientEvent:Connect(function(markerParent: Instance, markerName: string)

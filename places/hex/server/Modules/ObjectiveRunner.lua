@@ -13,7 +13,7 @@ local Maps = ServerStorage:WaitForChild("Maps")
 
 local ObjectiveClasses = script.Parent.ObjectiveClasses :: Folder
 
-local NUM_OPTIONS = 2
+local NUM_OPTIONS = 3
 local VOTE_TIMER = 5
 local ROUND_TIMER = 300
 
