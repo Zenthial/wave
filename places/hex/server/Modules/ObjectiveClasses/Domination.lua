@@ -94,18 +94,21 @@ function Domination:Start()
     local points = { PointA = GenericPoint.new(pointAPart), PointB = GenericPoint.new(pointBPart), PointC = GenericPoint.new(pointCPart) }
 
     local pointOwners = {
-        PointA = "Neutral",
-        PointB = "Neutral",
-        PointC = "Neutral",
+        A = "Neutral",
+        B = "Neutral",
+        C = "Neutral",
     }
 
     for pointName, pointClass: typeof(GenericPoint) in points do
         self.Cleaner:Add(pointClass.Events.OwnerChanged:Connect(function(owner: string)
-            pointOwners[pointName] = owner
+            pointOwners[string.sub(pointName, string.len(pointName), string.len(pointName))] = owner
             pointClass.Root.Color = ObjectiveColors[owner]
     
             self.Events.OwnershipChanged:Fire(pointOwners)
+            self.Events.MessageSignal:Fire(string.upper(owner .. " captured " .. string.sub(pointName, string.len(pointName), string.len(pointName))))
         end))
+
+        self.Events.MarkerSignal:Fire(pointClass.Root, string.sub(pointName, string.len(pointName), string.len(pointName)))
 
         pointClass:Start()
     end

@@ -105,6 +105,7 @@ function Hardpoint:Start()
         hillPoint.Color = ObjectiveColors[owner]
 
         self.Events.OwnershipChanged:Fire({A = currentOwner})
+        self.Events.MessageSignal:Fire(string.upper("Point captured by " .. owner))
     end))
     point:Start()
 
