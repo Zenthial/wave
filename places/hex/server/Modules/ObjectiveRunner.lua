@@ -218,6 +218,11 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
 
     self.CurrentMap = mapConfiguration
 
+    local currentTeamPoints = {
+        Red = 0,
+        Blue = 0
+    }
+
     local roundActive = true
     task.spawn(function()
         local timeLeft = ROUND_TIMER
@@ -230,6 +235,9 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
 
             if timeLeft <= 0 then
                 roundActive = false
+
+                local winner = if currentTeamPoints.Red > currentTeamPoints.Blue then "Red" else "Blue"
+                self.ObjectiveEndSignal:FireAllClients(winner)
             end
         end
     end)
@@ -242,11 +250,12 @@ function ObjectiveRunner:SetupObjectives(map: string, mode: string)
 
     local modeCleaner = Trove.new()
     modeCleaner:Add(modeComponent.Events.Ended:Connect(function(winner: string)
-        self.ObjectiveEndSignal:FireAllClients(mode, winner)
+        self.ObjectiveEndSignal:FireAllClients(winner)
         modeCleaner:Clean()
     end))
 
     modeCleaner:Add(modeComponent.Events.PointsChanged:Connect(function(points: {Red: number, Blue: number})
+        currentTeamPoints = points
         self.ObjectiveSignal:FireAllClients(mode, points)
     end))
 
