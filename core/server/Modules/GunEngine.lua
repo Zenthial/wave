@@ -9,7 +9,6 @@ local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local radiusDamage = require(Shared:WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
 
-
 local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
 

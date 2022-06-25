@@ -6,7 +6,7 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 local getFlavorText = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("getFlavorText"))
 
 local ObjectiveEndSignal = ReplicatedStorage:WaitForChild("ObjectiveEndSignal") :: RemoteEvent
-local Camera = workspace.CurrentCamera
+local GameStateSignal = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameStateSignal") :: RemoteFunction
 
 local DETAIL_SIZE = UDim2.new(0.831, 0, 0.002, 0)
 local BACKGROUND_TRANSPARENCY = 0.25
@@ -67,6 +67,21 @@ function VictoryUI:ShowUI(winner: string)
     self.Root.Title.Text = ""
     self.Root.Code.Text = string.lower(winner .. " wins!")
     self.Root.Flavor.Text = getFlavorText()
+
+    task.wait(5)
+
+    GameStateSignal:InvokeServer("Leave")
+
+    self.Root.Visible = false
+    self.Root.GuiPart.Size = UDim2.new(0, 0, 0.002, 0)
+    self.Root.BackgroundTransparency = 1
+    
+
+    for _, thing in pairs(self.Root:GetChildren()) do
+        if thing:IsA("TextLabel") then
+            thing.TextTransparency = 1
+        end
+    end
 end
 
 function VictoryUI:Destroy()

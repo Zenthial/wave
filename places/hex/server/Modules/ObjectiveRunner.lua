@@ -146,7 +146,7 @@ function ObjectiveRunner:PollUsers()
             self.VoteSignal:FireAllClients(mapMap)
         end
     end))
-    self.VoteSignal:FireAllClients(mapMap)
+    self.VoteSignal:FireAllClients(mapMap, VOTE_TIMER)
     
     task.wait(VOTE_TIMER)
     self.VoteSignal:FireAllClients(nil)
@@ -191,7 +191,7 @@ function ObjectiveRunner:PollUsers()
             self.VoteSignal:FireAllClients(modeMap)
         end
     end))
-    self.VoteSignal:FireAllClients(modeMap)
+    self.VoteSignal:FireAllClients(modeMap, VOTE_TIMER)
     
     task.wait(VOTE_TIMER)
     self.VoteSignal:FireAllClients(nil)
