@@ -24,6 +24,15 @@ export type PlayerProfile_T = {
     },
 }
 
+export type WeaponStats_T: {
+    Kills: number,
+    Assists: number,
+    Headshots: number,
+    SecondsPlayed: number,
+    GamesWon: number,
+    Heals: number
+}
+
 local PlayerProfile = {
     Options = {
         LowDetail = false,
@@ -85,6 +94,8 @@ local PlayerProfile = {
         MostKills = 0,
         TimePlayed = 0,
     },
+    
+    
 
     WeaponSpecificStats = {}
 }
