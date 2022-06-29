@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -84,10 +85,20 @@ local function recursivelyFindHealthComponent(part: BasePart)
     local player: Player | nil = Players:GetPlayerFromCharacter(part)
     if player ~= nil then
         return player
-    elseif part.Parent ~= workspace then
+    elseif part.Parent ~= workspace then 
         return recursivelyFindHealthComponent(part.Parent)
     else
         return nil
+    end
+end
+
+local function recursivelyCheckShieldModel(part: BasePart)
+    if part.Name == "APS" and part:IsA("Model") and CollectionService:HasTag("APS") then
+        return part
+    elseif part.Parent ~= workspace then
+        return recursivelyCheckShieldModel(part.Parent)
+    else
+        return false
     end
 end
 
@@ -142,6 +153,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string, string) -> boolean
+    local attemptDealShieldDamageFunction = comm:GetFunction("AttempDealShieldDamage")
 
     local animationComponent = tcs.get_component(Player, "AnimationHandler") --[[:await()]]
 
@@ -192,6 +204,12 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         print(hitPart, hitPart.Parent, healthComponentPart)
         if healthComponentPart ~= nil then
             attemptDealDamageFunction(healthComponentPart, weaponStats.Name, hitPart.Name)
+        else
+            local shieldComponentPart = recursivelyFindShieldModel(hitPart)
+            print(shieldComponentPart)
+            if shieldComponentPart ~= nil then
+                attemptDealShieldDamageFunction(shieldComponentPart, weaponStats.Name, hitPart.Name)
+            end
         end
     end))
 

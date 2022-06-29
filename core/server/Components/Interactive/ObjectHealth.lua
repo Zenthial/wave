@@ -40,9 +40,17 @@ function ObjectHealth:Start()
     assert(typeof(regenRate) == "number", "RegenSpeed was not a number")
 
     self.Root:SetAttribute("CurrentHealth", defaultHealth)
+    self.Root:SetAttribute("Dead", false)
 
     self.MaxHealth = defaultHealth
     self.CurrentHealth = defaultHealth
+
+    self.CanRegen = false
+    self.Dead = false
+    
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("CanRegen"):Connect(function()
+        self.CanRegen = self.Root:GetAttribute("CanRegen")
+    end))
 
     if regenSpeed > 0 and regenRate > 0 then
         self.Active = true
@@ -52,9 +60,17 @@ end
 
 function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number)
     while self.Active do
-        if self.CurrentHealth < self.MaxHealth then
+        if self.CurrentHealth < self.MaxHealth and not self.Dead and self.CanRegen then
             self.CurrentHealth = math.clamp(self.CurrentHealth + regenRate, 0, self.MaxHealth)
             self.Root:SetAttribute("CurrentHealth", self.CurrentHealth)
+        end
+
+        if self.CurrentHealth <= 0 then
+            self.Dead = true
+            self.Root:SetAttribute("Dead", true)
+            self.CanRegen = false
+            task.wait(deathRechargeWait)
+            self.CanRegen = true
         end
 
         task.wait(regenSpeed)
@@ -62,7 +78,10 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number)
 end
 
 function ObjectHealth:TakeDamage(damage)
+    local newHealth = math.clamp(self.CurrentHealth + damage, 0, self.MaxHealth)
 
+    self.Root:SetAttribute("CurrentHealth", newHealth)
+    self.CurrentHealth = newHealth
 end
 
 function ObjectHealth:Destroy()
