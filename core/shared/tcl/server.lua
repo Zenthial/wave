@@ -1,4 +1,4 @@
-local ReplicatedStorage = game:GetService("ReplicaetdStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
@@ -41,14 +41,14 @@ end
 
 function TCLServer:Send(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
-    assert(typeof(remote) == "RemoteEvent", "Port "..portString.." does not exist")
+    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireClient(player, ...)
 end
 
 function TCLServer:SendToAll(portString: string, ...) 
     local remote = self.PortRemotes[portString]
-    assert(typeof(remote) == "RemoteEvent", "Port "..portString.." does not exist")
+    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireAllClients(...)
 end
@@ -57,7 +57,12 @@ function TCLServer:GetPort(portString: string)
     return self.PortRemotes[portString]
 end
 
-local portRemote = Instance.new("RemoteEvent")
+local portRemote = Instance.new("RemoteFunction")
 portRemote.Name = "PortRemote"
+portRemote.Parent = PortsFolder
+
+portRemote.OnServerInvoke = function(player: Player, portString: string)
+    return TCLServer:GetPort(portString)
+end
 
 return TCLServer
