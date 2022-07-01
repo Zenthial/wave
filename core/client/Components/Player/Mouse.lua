@@ -55,11 +55,13 @@ function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming
 	return Vector3.new(x,y,z)
 end
 
-function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: boolean, currentRecoil: number?, aimBuff: number?): (BasePart, Vector3)
+function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats?, aiming: boolean?, currentRecoil: number?, aimBuff: number?): (BasePart, Vector3)
     local character = self.Player.Character
     if not character then return end
     local head = character:FindFirstChild("Head") :: BasePart
     if not head then return end
+
+    if weaponStats == nil then weaponStats = {} end
 
     local mouseObject = self.MouseObject :: Mouse
     local mousePosition = mouseObject.Hit.Position
@@ -68,7 +70,7 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats, aiming: 
     if currentRecoil == nil then currentRecoil = DEFAULT_RECOIL end
     if aimBuff == nil then aimBuff = DEFAULT_AIMBUFF end
 
-    local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread, weaponStats.MaxSpread, aiming, currentRecoil, aimBuff)
+    local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread or 0, weaponStats.MaxSpread or 0, aiming or false, currentRecoil, aimBuff)
     local start = head.Position
 
     local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
