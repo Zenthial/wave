@@ -43,7 +43,7 @@ function InputController:Start()
             end
         elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Inventory")] then
             MenuStateComponent:FeedInput()
-        elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot") then
+        elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
             SpottingComponent:FeedInput()
         else
             InventoryComponent:FeedKeyDown(keyCode)

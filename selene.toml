@@ -1,0 +1,8 @@
+std="roblox+testez"
+
+[rules]
+multiple_statements = "allow"
+shadowing = "allow"
+unused_variable = "allow"
+deprecated = "allow"
+empty_if = "allow"

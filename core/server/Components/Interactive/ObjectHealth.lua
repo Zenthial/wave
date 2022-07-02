@@ -38,6 +38,8 @@ function ObjectHealth:Start()
     assert(typeof(regenSpeed) == "number", "RegenSpeed was not a number")
     local regenRate = self.Root:GetAttribute("RegenRate")
     assert(typeof(regenRate) == "number", "RegenSpeed was not a number")
+    local deathRechargeWait = self.Root:GetAttribute("DeathRechargeRate")
+    assert(typeof(regenRate) == "number", "DeathRechargeRate was not a number")
 
     self.Root:SetAttribute("CurrentHealth", defaultHealth)
     self.Root:SetAttribute("Dead", false)
@@ -54,11 +56,11 @@ function ObjectHealth:Start()
 
     if regenSpeed > 0 and regenRate > 0 then
         self.Active = true
-        self:StartRegenLoop(regenSpeed, regenRate)
+        self:StartRegenLoop(regenSpeed, regenRate, deathRechargeWait)
     end
 end
 
-function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number)
+function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deathRechargeWait: number)
     while self.Active do
         if self.CurrentHealth < self.MaxHealth and not self.Dead and self.CanRegen then
             self.CurrentHealth = math.clamp(self.CurrentHealth + regenRate, 0, self.MaxHealth)

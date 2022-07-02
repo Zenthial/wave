@@ -1,12 +1,12 @@
-local server = require(script.server.lua)
-local client = require(script.client.lua)
+local client = require(script.client)
 
 local RunService = game:GetService("RunService")
 
-if RunService:IsServer() then
+if RunService:IsServer() or RunService:IsStudio() then
+    local server = require(script.server)
     return server
 elseif RunService:IsClient() then
     return client
 end
 
-return server
+return client

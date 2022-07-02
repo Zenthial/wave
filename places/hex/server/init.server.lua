@@ -8,11 +8,11 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 --Setup
 
 local function LoadComponent(Item)
-    if (not Item:IsA("ModuleScript")) then
+    if not Item:IsA("ModuleScript") then
         return
     end
 
-    if (Item.Name:sub(1, 1) == "_") then
+    if Item.Name:sub(1, 1) == "_" then
         -- Skip scripts prefixed with this
         return
     end

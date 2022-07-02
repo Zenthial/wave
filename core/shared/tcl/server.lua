@@ -4,7 +4,7 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local PortsFolder = Instance.new("Folder")
-PortsFolder.Name = PortsFolder
+PortsFolder.Name = "PortsFolder"
 PortsFolder.Parent = ReplicatedStorage:WaitForChild("Shared")
 
 local TCLServer = {
@@ -16,7 +16,8 @@ local TCLServer = {
 function TCLServer:Listen(portString: string)
     local portSignal = Signal.new()
     local portCleaner = Trove.new()
-    local portRemote = Instance.new("RemoteEvent", PortsFolder)
+    local portRemote = Instance.new("RemoteEvent")
+    portRemote.Parent = PortsFolder
 
     if self.PortCleaners[portString] ~= nil then
         error("Only one server provider allowed per port")

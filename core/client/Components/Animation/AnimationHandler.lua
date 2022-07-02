@@ -99,12 +99,12 @@ function AnimationHandler:Load(animation: Animation)
 end
 
 function AnimationHandler:Play(animationName: string): AnimationTrack
-    if (self.AnimationTracks[animationName] == nil) then 
+    if self.AnimationTracks[animationName] == nil then 
         warn("Unable to play animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
     
-    if (not self.AnimationTracks[animationName].IsPlaying == true) then
+    if not self.AnimationTracks[animationName].IsPlaying == true then
         self.AnimationTracks[animationName]:Play()
         print(string.format("Playing %s", animationName))
     end
@@ -113,7 +113,7 @@ function AnimationHandler:Play(animationName: string): AnimationTrack
 end
 
 function AnimationHandler:IsPlaying(animationName: string): boolean
-    if (self.AnimationTracks[animationName] == nil) then 
+    if self.AnimationTracks[animationName] == nil then 
         return false
     end
 
@@ -121,12 +121,12 @@ function AnimationHandler:IsPlaying(animationName: string): boolean
 end
 
 function AnimationHandler:Stop(animationName: string)
-    if (self.AnimationTracks[animationName] == nil) then 
+    if self.AnimationTracks[animationName] == nil then 
         warn("Unable to stop animation: "..animationName.. " does not exist in this Animation Component!")
         return 
     end
 
-    if (self.AnimationTracks[animationName].IsPlaying) then
+    if self.AnimationTracks[animationName].IsPlaying then
         self.AnimationTracks[animationName]:Stop()
         -- print(string.format("Stopping %s", animationName))
     end
@@ -135,16 +135,16 @@ function AnimationHandler:Stop(animationName: string)
 end
 
 function AnimationHandler:DestroyTrack(animationName: string)
-    if (self.AnimationTracks[animationName] == nil) then 
+    if self.AnimationTracks[animationName] == nil then 
         warn("AnimationHandler: ".. animationName .." has already been removed or never existed!")
         return 
     end
 
     self.AnimationTracks[animationName]:Destroy()
     self.AnimationTracks[animationName] = nil
-    if (self.AnimationFolder:FindFirstChild(animationName)) then self.AnimationFolder:FindFirstChild(animationName):Destroy() end
+    if self.AnimationFolder:FindFirstChild(animationName) then self.AnimationFolder:FindFirstChild(animationName):Destroy() end
 
-    if (self.MarkerSignals[animationName.."Signals"]) then
+    if self.MarkerSignals[animationName.."Signals"] then
         self.MarkerSignals[animationName.."Signals"]:Destroy()
         self.MarkerSignals[animationName.."Signals"] = nil
     end

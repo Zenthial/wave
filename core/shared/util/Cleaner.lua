@@ -44,7 +44,7 @@ Cleaner._Validators[TYPE_TABLE] = function(Item, self)
     assert(Item ~= self, ERR_CLEANER_SELF_REFERENCE)
     assert(Item.Disconnect ~= nil or Item.Destroy ~= nil or Item.Clean ~= nil or Item[1] ~= nil, ERR_INVALID_OBJECT)
 
-    if (Item[1] ~= nil) then
+    if Item[1] ~= nil then
         local Validators = Cleaner._Validators
 
         for _, Value in ipairs(Item) do
@@ -64,22 +64,22 @@ Cleaner._Validators[TYPE_SCRIPT_CONNECTION] = function() end
 
 Cleaner._Supported[TYPE_TABLE] = function(Item)
     -- Custom Signal libraries
-    if (Item.Disconnect) then
+    if Item.Disconnect then
         Item:Disconnect()
     end
 
     -- Lua objects with standard lifecycle denoted by Destroy
-    if (Item.Destroy) then
+    if Item.Destroy then
         Item:Destroy()
     end
 
     -- Single cleaner
-    if (Item.Clean) then
+    if Item.Clean then
         Item:Clean()
     end
 
     -- Array of cleanables (can include other Cleaners)
-    if (Item[1]) then
+    if Item[1] then
         local NextCleaner = Cleaner.new()
 
         for _, Value in ipairs(Item) do
@@ -133,7 +133,7 @@ function Cleaner:Add(...: CleanableObject)
         local Validator = Validators[Type]
         assert(Validator, ERR_UNSUPPORTED_TYPE:format(Type))
 
-        if (Validator) then
+        if Validator then
             Validator(Item, self)
         end
 
@@ -142,7 +142,7 @@ function Cleaner:Add(...: CleanableObject)
     end
 
     -- Add after Clean called? Likely result of bad yielding, so clean up whatever is doing this.
-    if (self._DidClean) then
+    if self._DidClean then
         self:Clean()
     end
 end
@@ -225,7 +225,7 @@ function Cleaner.Wrap(Class)
     local OriginalDestroy = Class.Destroy
 
     Class.Destroy = function(self, ...)
-        if (OriginalDestroy) then
+        if OriginalDestroy then
             OriginalDestroy(self, ...)
         end
 

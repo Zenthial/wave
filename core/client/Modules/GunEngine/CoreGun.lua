@@ -205,7 +205,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         if healthComponentPart ~= nil then
             attemptDealDamageFunction(healthComponentPart, weaponStats.Name, hitPart.Name)
         else
-            local shieldComponentPart = recursivelyFindShieldModel(hitPart)
+            local shieldComponentPart = recursivelyCheckShieldModel(hitPart)
             print(shieldComponentPart)
             if shieldComponentPart ~= nil then
                 attemptDealShieldDamageFunction(shieldComponentPart, weaponStats.Name, hitPart.Name)

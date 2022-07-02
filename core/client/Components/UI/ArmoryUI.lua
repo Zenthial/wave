@@ -131,9 +131,7 @@ local function getAlphabeticalKey(dictionary: {[string]: any}): string
     local lowestAlphabetical = nil
 
     for key, _ in pairs(dictionary) do
-        if lowestAlphabetical == nil then
-            lowestAlphabetical = key
-        elseif lowestAlphabetical > key then -- if its higher lexicographically then it is higher in the alphabet
+        if lowestAlphabetical == nil or lowestAlphabetical > key then -- if its higher lexicographically then it is higher in the alphabet
             lowestAlphabetical = key
         end
     end

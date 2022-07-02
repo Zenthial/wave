@@ -7,7 +7,7 @@ local Players = game:GetService("Players")
 if RunService:IsClient() then
     local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
     local Comm = ClientComm.GetClientComm()
-    DealSelfDamage = Comm:GetFunction("DealSelfDamage")
+    local DealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
     return function(stats, part: Part, sourceTeam: BrickColor, canTK: boolean)
         local origin = part.Position

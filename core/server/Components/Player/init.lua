@@ -29,7 +29,7 @@ function Player:Start()
     self.Player:SetAttribute("Loaded", false)
 
     local playerFolder = Instance.new("Folder")
-    playerFolder.Name = self.Root.Name
+    playerFolder.Name = self.Player.Name
     playerFolder.Parent = PlayerFolders
 
     self.Cleaner:Add(playerLoadedSignal.OnServerEvent:Connect(function(player: Player)

@@ -12,11 +12,11 @@ StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 local modules = {}
 
 local function LoadComponent(Item)
-    if (not Item:IsA("ModuleScript")) then
+    if not Item:IsA("ModuleScript") then
         return
     end
 
-    if (Item.Name:sub(1, 1) == "_") then
+    if Item.Name:sub(1, 1) == "_" then
         -- Skip scripts prefixed with this
         return
     end
@@ -31,7 +31,7 @@ local function Recurse(Root, Operator)
     end
 end
 
-if (not game:IsLoaded()) then
+if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
@@ -72,7 +72,7 @@ local function characterAdded(character)
     end
 end
 
-if (Player.Character) then
+if Player.Character then
     characterAdded(Player.Character)
 end
 

@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
-local tcl = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcl"))
+-- local tcl = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcl"))
 
 local Player = Players.LocalPlayer
 
@@ -37,7 +37,7 @@ function SpottingComponent:FeedInput()
         local spottedPlayer = recursivelyFindHealthComponent(hitPart)
 
         if spottedPlayer then
-            tcl:Send("Spot", spottedPlayer)
+            -- tcl:Send("Spot", spottedPlayer)
         end
     end    
 end

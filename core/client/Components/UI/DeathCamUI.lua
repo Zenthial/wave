@@ -69,7 +69,7 @@ function DeathCamUI:ToggleDeathCam()
     local blur = Instance.new("BlurEffect")
     blur.Size = 0
     blur.Parent = Lighting
-    TweenService:Create(blur, Instance.new(0.15), {Size = 20}):Play()
+    TweenService:Create(blur, TweenInfo.new(0.15), {Size = 20}):Play()
 
 
     local killer = Players.LocalPlayer:GetAttribute("LastKiller")

@@ -60,7 +60,7 @@ function Movement:Start()
 end
 
 function Movement:EnableSprint()
-    if (self.Player:GetAttribute("CanSprint") == false) then return end
+    if self.Player:GetAttribute("CanSprint") == false then return end
     self.Player:SetAttribute("Sprinting", true)
     self.Player:SetAttribute("Crouching", false)
     self:UpdateWalkspeed()
@@ -72,7 +72,7 @@ function Movement:DisableSprint()
 end
 
 function Movement:EnableCrouch()
-    if (self.Player:GetAttribute("CanCrouch") == false) then return end
+    if self.Player:GetAttribute("CanCrouch") == false then return end
     if self.Player:GetAttribute("Sprinting") == true and self.Player:GetAttribute("CanRoll") == true then
         self.Player:SetAttribute("Rolling", true)
         self.Player:SetAttribute("Sprinting", false)

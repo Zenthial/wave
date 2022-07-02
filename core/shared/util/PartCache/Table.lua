@@ -93,7 +93,7 @@ end
 -- ONLY SUPPORTS ORDINAL TABLES (ARRAYS). Allocates a new table by getting the length of the current table and increasing its capacity by the specified amount.
 -- This uses Roblox's table.create function.
 Table.expand = function (tbl, byAmount)
-	if (byAmount < 0) then
+	if byAmount < 0 then
 		error("Cannot expand a table by a negative amount of objects.")
 	end
 	
