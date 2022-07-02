@@ -78,6 +78,10 @@ comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentP
     end
 end)
 
+comm:BindFunction("AttemptDealShieldDamage", function(player: Player, shieldComponentPart: BasePart, weaponName: string, hitPartName: string)
+    print(player, shieldComponentPart, weaponName, hitPartName)
+end)
+
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
     damage = math.clamp(damage, 0, 100)
     local healthComponent = tcs.get_component(player, "Health") --[[:await()]]

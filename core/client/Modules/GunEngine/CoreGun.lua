@@ -153,7 +153,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string, string) -> boolean
-    local attemptDealShieldDamageFunction = comm:GetFunction("AttempDealShieldDamage")
+    local attemptDealShieldDamageFunction = comm:GetFunction("AttemptDealShieldDamage")
 
     local animationComponent = tcs.get_component(Player, "AnimationHandler") --[[:await()]]
 

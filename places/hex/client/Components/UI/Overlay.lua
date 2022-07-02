@@ -77,13 +77,16 @@ end
 function Overlay:Start()
     self.Root.Enabled = true
     local main = self.Root:WaitForChild("Main")
+    local voting = self.Root:WaitForChild("Voting")
     main.Visible = true
+    voting.Visible = true
     local buttonContainer = main.ButtonContainer
     local armoryButton = buttonContainer.Armory.Button :: TextButton
     local playButton = buttonContainer.Play.Button :: TextButton
 
     self.Cleaner:Add(armoryButton.MouseButton1Click:Connect(function()
         main.Visible = false
+        voting.Visible = false
         self.Events.ArmorySelected:Fire()
     end))
 

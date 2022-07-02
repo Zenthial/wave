@@ -117,6 +117,7 @@ function Arsenal:Start()
 
     self.Cleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
         self.Root.Main.Visible = true
+        self.Root.Voting.Visible = true
         self.Root.Back.Visible = false
         self.Root.ArmoryText.Visible = false
 
