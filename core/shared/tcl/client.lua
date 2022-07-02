@@ -5,10 +5,17 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 
 local PortRemote = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PortsFolder"):WaitForChild("PortRemote") :: RemoteFunction
 
-local TCLClient = {}
+local TCLClient = {
+    Cache = {}
+}
 
 function TCLClient:Send(portString: string, ...)
-    local portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
+    local portRemote = self.Cache[portString]
+
+    if portRemote == nil then
+        portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
+        self.Cache[portString] = portRemote
+    end
 
     if portRemote ~= nil then
         portRemote:FireServer(...)
@@ -16,7 +23,12 @@ function TCLClient:Send(portString: string, ...)
 end
 
 function TCLClient:Listen(portString: string)
-    local portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
+    local portRemote = self.Cache[portString]
+
+    if portRemote == nil then
+        portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
+        self.Cache[portString] = portRemote
+    end
 
     if portRemote ~= nil then
         local portSignal = Signal.new()
