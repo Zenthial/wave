@@ -19,7 +19,13 @@ function TCLClient:Listen(portString: string)
     local portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
 
     if portRemote ~= nil then
-        portRemote:FireServer(...)
+        local portSignal = Signal.new()
+
+        portRemote.OnClientEvent:Connect(function(...)
+            portSignal:Fire(...)
+        end)
+
+        return portSignal
     else
         return nil
     end

@@ -24,7 +24,7 @@ export type PlayerProfile_T = {
     },
 }
 
-export type WeaponStats_T: {
+export type WeaponStats_T = {
     Kills: number,
     Assists: number,
     Headshots: number,
