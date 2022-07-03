@@ -22,16 +22,11 @@ Mouse.Ancestor = Players
 function Mouse.new(Player: Player)
     return setmetatable({
         Player = Player,
-
-        MouseObject = Player:GetMouse(),
     }, Mouse)
 end
 
 function Mouse:Start()
-    local mouseObject = self.MouseObject :: Mouse
-    self.Cleaner:Add(mouseObject.Move:Connect(function()
-        -- mouse move
-    end))
+    self.MouseObject = self.Player:GetMouse()
 
     print("mouse initialized")
 end

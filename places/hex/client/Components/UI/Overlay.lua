@@ -101,20 +101,22 @@ function Overlay:Start()
     local voteCleaner = Trove.new()
     local voteSignal = ReplicatedStorage:WaitForChild("VoteSignal") :: RemoteEvent
     self.Cleaner:Add(voteSignal.OnClientEvent:Connect(function(map: {[string]: number}, timer)
-        self.Root.Voting:ClearAllChildren()
-        createListLayout().Parent = self.Root.Voting
+        self.Root.Voting.Container:ClearAllChildren()
+        createListLayout().Parent = self.Root.Voting.Container
 
         if map ~= nil then
-            task.spawn(function()
-                for i = timer, 1 do
-                    self.Root.Alert.Text = "Vote Timer: " .. i .. "s"
-                    task.wait(1)
-                end    
-            end)
+            if timer ~= nil then
+                task.spawn(function()
+                    for i = timer, 1 do
+                        self.Root.Alert.Text = "Vote Timer: " .. i .. "s"
+                        task.wait(1)
+                    end    
+                end)
+            end
 
             for name, voteCount in map do
                 local frame = createVotingFrame(name, voteCount)
-                frame.Parent = self.Root.Container.Voting
+                frame.Parent = self.Root.Voting.Container
     
                 voteCleaner:Add(frame.Button.MouseButton1Click:Connect(function()
                     pollSignal:FireServer(name)

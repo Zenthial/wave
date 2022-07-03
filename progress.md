@@ -2,8 +2,8 @@
 
 Things that still need to be worked on:
     Skill Functions
-        D0DG-P (old) (d)
-        HEAL-X (d)        
+        [x] D0DG-P (old)
+        [x] HEAL-X        
 
     Grenade Functions
     Test all Weapons (outsource this to someone)

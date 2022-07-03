@@ -93,13 +93,13 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
-function GunEngine:CreateGun(weaponName: string, model): Gun
+function GunEngine.CreateGun(weaponName: string, model): Gun
     local stats = WeaponStatsModule[weaponName]
     assert(stats, "No weapon stats for ".. weaponName)
     return CoreGun.new(stats, model)
 end
 
-function GunEngine:CreateSkill(skillName: string, model)
+function GunEngine.CreateSkill(skillName: string, model)
     local stats = WeaponStatsModule[skillName]
     assert(stats, "No skill stats for ".. skillName)
     return CoreSkill.new(stats, model)

@@ -18,6 +18,9 @@ local CoreSkill = {}
 CoreSkill.__index = CoreSkill
 
 function CoreSkill.new(skillStats, model)
+    local func = Functions[skillStats.Name]
+    if func == nil then error("No skill function for " .. skillStats.Name) end
+
     local self = setmetatable({
         CurrentEnergy = 100;
         MaxEnergy = 100;
@@ -27,6 +30,8 @@ function CoreSkill.new(skillStats, model)
 
         Stats = skillStats;
         Model = model;
+
+        SkillFunction = func;
 
         Movement = tcs.get_component(LocalPlayer, "Movement") --[[:await()]];
 
@@ -40,17 +45,27 @@ function CoreSkill.new(skillStats, model)
 end
 
 function CoreSkill:Equip()
-    local func = Functions[self.Stats.Name]
-    if func == nil then error("No skill function for " .. self.Stats.Name) end
+    print(LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil and self.CurrentEnergy >= self.Stats.EnergyMin)
     if LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil and self.CurrentEnergy >= self.Stats.EnergyMin then
         self.Events.FunctionStarted:Fire()
-        func(self, true, LocalPlayer.Character, self.Model)
+        print("calling skill function")
+        self.SkillFunction(self, true, LocalPlayer.Character, self.Model)
         -- self.Events.FunctionEnded:Fire()
     end
 end
 
 function CoreSkill:DepleteEnergy(depletionAmount: number)
     self.CurrentEnergy = math.clamp(self.CurrentEnergy - depletionAmount, self.MinEnergy, self.MaxEnergy)
+    
+    if self.CurrentEnergy <= self.Stats.EnergyMin then
+        if LocalPlayer.Character ~= nil and LocalPlayer.Character.Humanoid ~= nil and self.CurrentEnergy >= self.Stats.EnergyMin then
+            self.Regening = false
+            self.Events.FunctionStarted:Fire()
+            self.SkillFunction(self, false, LocalPlayer.Character, self.Model)
+            -- self.Events.FunctionEnded:Fire()
+        end
+    end
+    
     self.Events.EnergyChanged:Fire(self.CurrentEnergy)
 end
 

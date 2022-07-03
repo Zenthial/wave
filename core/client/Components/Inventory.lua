@@ -67,14 +67,14 @@ function Inventory:Start()
 
         if inventoryKey == "Primary" or inventoryKey == "Secondary" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local gun = GunEngine:CreateGun(weaponName, model)
+            local gun = GunEngine.CreateGun(weaponName, model)
             local success = self.WeaponsToolbar:Add(gun)
             if not success then
                 print("failed to add weapon " .. weaponName)
             end
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local skill = GunEngine:CreateSkill(weaponName, model)
+            local skill = GunEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
             
             if skillCleaner ~= nil then
