@@ -5,11 +5,11 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 
 local PortRemote = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PortsFolder"):WaitForChild("PortRemote") :: RemoteFunction
 
-local TCLClient = {
+local CourierClient = {
     Cache = {}
 }
 
-function TCLClient:Send(portString: string, ...)
+function CourierClient:Send(portString: string, ...)
     local portRemote = self.Cache[portString]
 
     if portRemote == nil then
@@ -22,7 +22,7 @@ function TCLClient:Send(portString: string, ...)
     end
 end
 
-function TCLClient:Listen(portString: string)
+function CourierClient:Listen(portString: string)
     local portRemote = self.Cache[portString]
 
     if portRemote == nil then
@@ -43,4 +43,5 @@ function TCLClient:Listen(portString: string)
     end
 end
 
-return TCLClient
+return CourierClient
+

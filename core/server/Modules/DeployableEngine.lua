@@ -14,11 +14,11 @@ function DeployableEngine:Start()
     DeployablesBin.Name = "DeployablesBin"
     DeployablesBin.Parent = workspace
 
-    local RequestDeployable = Instance.new("RemoteEvent")
+    local RequestDeployable = Instance.new("RemoteFunction")
     RequestDeployable.Name = "RequestDeployable"
     RequestDeployable.Parent = ReplicatedStorage
 
-    RequestDeployable.OnServerEvent:Connect(function(player: Player, deployableName: string, position: CFrame)
+    RequestDeployable.OnServerInvoke = function(player: Player, deployableName: string, position: CFrame)
         local quantity = player:GetAttribute("GadgetQuantity")
         local deployableStats = WeaponStats[deployableName]
 
@@ -53,8 +53,12 @@ function DeployableEngine:Start()
 
             player:SetAttribute("GadgetQuantity", quantity - 1)
             player:SetAttribute("NumDeployable"..deployableName, deployableQuantity + 1)
+
+            return model
         end
-    end)
+
+        return nil
+    end
 end
 
 return DeployableEngine

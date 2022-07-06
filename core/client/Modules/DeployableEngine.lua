@@ -3,6 +3,8 @@ local CollectionService = game:GetService("CollectionService")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+
 local Deployables = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Deployables")
 local RequestDeployable = ReplicatedStorage:WaitForChild("RequestDeployable") :: RemoteEvent
 
@@ -26,9 +28,20 @@ function DeployableEngine:Start()
     self.Preview = false
     self.ActiveTweens = {}
     self.ActiveThread = nil
+    self.CurrentDeployable = nil
 
     if Player.Character == nil then
         Player.CharacterAdded:Wait()
+    end
+end
+
+function DeployableEngine:FeedInput(deployableStats: DeployableStats, equippedWeapon)
+    if self.CurrentDeployable == nil then
+        self:RenderDeployable(deployableStats, equippedWeapon)
+    elseif self.CurrentDeployable ~= nil and self.CurrentDeployable.Name == "C4" then
+        -- exists only for c4
+        local deployableComponent = tcs.get_component(self.CurrentDeployable, self.CurrentDeployable.Name)
+        deployableComponent:Trigger()
     end
 end
 
@@ -87,7 +100,7 @@ function DeployableEngine:RenderDeployable(deployableStats: DeployableStats, equ
             task.wait(deployableStats.DeployTime)
  
             if self.Placing and preview ~= nil and preview.Parent ~= nil then
-                RequestDeployable:FireServer(deployableStats.Name, modelCFrame)
+                self.CurrentDeployable = RequestDeployable:InvokeServer(deployableStats.Name, modelCFrame)
                 
                 preview:Destroy()
                 Player:SetAttribute("PlacingDeployable", false)

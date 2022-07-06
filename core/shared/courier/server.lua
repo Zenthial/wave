@@ -7,13 +7,13 @@ local PortsFolder = Instance.new("Folder")
 PortsFolder.Name = "PortsFolder"
 PortsFolder.Parent = ReplicatedStorage:WaitForChild("Shared")
 
-local TCLServer = {
+local CourierServer = {
     PortSignals = {},
     PortRemotes = {},
     PortCleaners = {}
 }
 
-function TCLServer:Listen(portString: string)
+function CourierServer:Listen(portString: string)
     local portSignal = Signal.new()
     local portCleaner = Trove.new()
     local portRemote = Instance.new("RemoteEvent")
@@ -40,21 +40,21 @@ function TCLServer:Listen(portString: string)
     return portSignal
 end
 
-function TCLServer:Send(portString: string, player: Player, ...)
+function CourierServer:Send(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireClient(player, ...)
 end
 
-function TCLServer:SendToAll(portString: string, ...) 
+function CourierServer:SendToAll(portString: string, ...) 
     local remote = self.PortRemotes[portString]
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireAllClients(...)
 end
 
-function TCLServer:GetPort(portString: string)
+function CourierServer:GetPort(portString: string)
     return self.PortRemotes[portString]
 end
 
@@ -63,7 +63,7 @@ portRemote.Name = "PortRemote"
 portRemote.Parent = PortsFolder
 
 portRemote.OnServerInvoke = function(player: Player, portString: string)
-    return TCLServer:GetPort(portString)
+    return CourierServer:GetPort(portString)
 end
 
-return TCLServer
+return CourierServer

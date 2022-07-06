@@ -1,11 +1,11 @@
-local client = require(script.client)
 
 local RunService = game:GetService("RunService")
 
-if RunService:IsServer() or RunService:IsStudio() then
+if RunService:IsServer() then
     local server = require(script.server)
     return server
 elseif RunService:IsClient() then
+    local client = require(script.client)
     return client
 end
 
