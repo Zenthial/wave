@@ -7,6 +7,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 ------------------------------------------------------------------------
@@ -36,6 +37,7 @@ game:GetService("CollectionService"):AddTag(game:GetService("Workspace"), "Works
 
 local function inject(component_instance)
 	component_instance.Cleaner = Trove.new() -- create a cleaner and throw it into the component_instance
+    component_instance.Courier = courier
 end
 
 tcs.set_inject_function(inject)

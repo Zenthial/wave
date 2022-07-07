@@ -2,6 +2,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local skillFunctions = require(ServerScriptService:WaitForChild("Server"):WaitForChild("Helper"):WaitForChild("skillFunctions"))
 local setTableTransparency = skillFunctions.setTableTransparency
 local createShieldModel = skillFunctions.createShieldModel
@@ -72,6 +73,14 @@ function SkillHandler:Start()
         request = string.lower(request)
      	if request == "create" then
      	    createShieldModel(player)       
+        end
+    end))
+
+    local SH3L_SRemote = createRemote(self.Root.Name.."SH3L_SRemote")
+    self.Cleaner:Add(SH3L_SRemote.OnServerEvent:Connect(function(player: Player)
+        if player:GetAttribute("EquippedSkill") == "SH3L-S" then
+            local healthComponent = tcs.get_component(player, "Health")
+            healthComponent:TakeDamage(-WeaponStats["SH3L-S"].Heal)
         end
     end))
 end

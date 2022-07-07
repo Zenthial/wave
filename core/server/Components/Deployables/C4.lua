@@ -1,10 +1,7 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
-
-local LocalPlayer = Players.LocalPlayer
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -34,33 +31,25 @@ C4.Ancestor = workspace
 function C4.new(root: any)
     return setmetatable({
         Root = root,
-        Active = false,
     }, C4)
 end
 
 function C4:Start()
-    self.Active = true
-    local gadgetStats = WeaponStats["C4"]
-    self.Stats = gadgetStats
-end
-
-function C4:Trigger()
-    local playersNear = {}
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player.Character and player:GetAttribute("Dead") == false then
-            if (player.Character.HumanoidRootPart.Position - self.Root.Handle.Position).Magnitude <= self.Stats.BlastRadius then
-                table.insert(playersNear, #playersNear, player)            
+    self.Courier:Listen("C4Damage"):Connect(function(player: Player, playerTable: {Player})
+        if player:GetAttribute("EquippedGadget") == "C4" then
+            for _, plr in pairs(playerTable) do
+                task.spawn(function()
+                    if plr.Character then
+                        local playerHealthComponent = tcs.get_component(plr, "Health")
+                        playerHealthComponent:TakeDamage(WeaponStats["C4"].CalculateDamage(WeaponStats["C4"].Damage, (plr.Character.HumanoidRootPart.Position - self.Root.Handle.Position).Magnitude))
+                    end
+                end)
             end
         end
-    end
-
-    self.Courier:Send("C4Damage", playersNear)
-    self:Destroy()
+    end)
 end
 
 function C4:Destroy()
-    self.Active = false
     self.Cleaner:Clean()
 end
 
