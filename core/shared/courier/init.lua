@@ -8,5 +8,3 @@ elseif RunService:IsClient() then
     local client = require(script.client)
     return client
 end
-
-return client
