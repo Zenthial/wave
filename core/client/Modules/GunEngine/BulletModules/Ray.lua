@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
@@ -30,7 +31,7 @@ function Ray:Draw(target: Vector3): boolean
     if self.GunModel ~= nil then
         local gunModel = self.GunModel :: GunModel
         if gunModel.Barrel ~= nil then            
-            Ray.StaticDraw(gunModel.Barrel.Position, target, self.WeaponStats.BulletCache)
+            Ray.StaticDraw(Players.LocalPlayer, gunModel.Barrel.Position, target, self.WeaponStats.BulletCache)
 
             return true
         end
@@ -39,7 +40,7 @@ function Ray:Draw(target: Vector3): boolean
     return false
 end
 
-function Ray.StaticDraw(startPosition: Vector3, endPosition: Vector3, bulletCache: PartCache.PartCache)
+function Ray.StaticDraw(_player: Player, startPosition: Vector3, endPosition: Vector3, bulletCache: PartCache.PartCache)
     local bullet = bulletCache:GetPart() :: BasePart
     CollectionService:AddTag(bullet, "Ignore")
     
