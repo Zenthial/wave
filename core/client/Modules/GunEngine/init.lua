@@ -46,13 +46,13 @@ function GunEngine:Start()
     local raySignal = comm:GetSignal("DrawRay")
     local nadeSignal = comm:GetSignal("RenderGrenade")
 
-    Cleaner:Add(raySignal:Connect(function(startPosition: Vector3, endPosition: Vector3, weaponName: string)
+    Cleaner:Add(raySignal:Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
         local weaponStats = WeaponStatsModule[weaponName]
 
         if weaponStats then
             local mod = requiredBulletModules[weaponStats.BulletType]
             if mod then
-                mod.StaticDraw(startPosition, endPosition, weaponStats.BulletCache)
+                mod.StaticDraw(player, startPosition, endPosition, weaponStats.BulletCache)
             end
         else
             error("WeaponStats don't exist??")

@@ -118,7 +118,7 @@ function GunEngine:Start()
     drawRaySignal:Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
         -- could be spammed fired to cause people to lag, check some kind of script invocation timer thingy, could make sure that the time between shots isn't shorter than the fire rate
         -- something like LastShot = tick(), if currentShot - LastShot < fireRate then kick, though probably would just want to watch them
-        drawRaySignal:FireExcept(player, startPosition, endPosition, weaponName)
+        drawRaySignal:FireExcept(player, player, startPosition, endPosition, weaponName)
     end)
 
     renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
