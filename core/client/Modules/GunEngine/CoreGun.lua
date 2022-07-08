@@ -104,20 +104,22 @@ end
 
 local function chargeWait(waitTime: number): boolean
     local retVal = true
+    local con
+   
     task.spawn(function()
-        local con
-
         con = Mouse.LeftUp:Connect(function()
             retVal = false
             Player:SetAttribute("Charging", false)
             con:Disconnect()
         end)
     end)
+    
     task.wait(waitTime)
 
     if retVal == false then
         return false
     else
+        con:Disconnect()
         return Mouse:IsLeftDown()
     end
 end
@@ -271,7 +273,6 @@ end
 function CoreGun:Attack()
     if self.AmmoModule:CanFire() then
         Player:SetAttribute("LocalSprinting", false)
-        print(self.WeaponStats.ChargeWait)
         if self.WeaponStats.ChargeWait > 0 then
             Player:SetAttribute("ChargeWait", self.WeaponStats.ChargeWait)
             Player:SetAttribute("Charging", true)

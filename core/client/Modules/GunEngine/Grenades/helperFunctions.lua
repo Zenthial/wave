@@ -49,7 +49,7 @@ local function CanRayBounce(cast, rayResult, segmentVelocity)
 	end
 	
 	-- And if the hit count is over GadgetStats.NumBounces, don't allow piercing and instead stop the ray.
-	if cast.UserData.Hits > gadgetStats.NumBounces then
+	if cast.UserData.Hits > (gadgetStats.NumBounces or 0) then
 		return false
 	end
 	
