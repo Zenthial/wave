@@ -4,8 +4,9 @@ One of my main goals is to add some abstraction to event handling, like using th
 
 Component Generation VSC Snippet
 ```json
-"Component": {
+	"tcs": {
 		"prefix": [
+			"tcs, component_tcs",
 			"component"
 		],
 		"body": [
@@ -18,12 +19,18 @@ Component Generation VSC Snippet
 			"\tClean: (Cleaner_T) -> ()",
 			"}",
 			"",
-			"type ${0:$TM_FILENAME_BASE}_T = {",
-			"\t__index: ${0:$TM_FILENAME_BASE}_T",
-			"\tName: string",
-			"\tTag: string",
+			"type Courier_T = {",
+			"\tListen: (Courier_T, Port: string) -> {Connect: RBXScriptSignal},",
+			"\tSend: (Courier_T, Port: string, ...any) -> ()",
+			"}",
 			"",
-			"\tCleaner: Cleaner_T",
+			"type ${0:$TM_FILENAME_BASE}_T = {",
+			"\t__index: ${0:$TM_FILENAME_BASE}_T,",
+			"\tName: string,",
+			"\tTag: string,",
+			"",
+			"\tCleaner: Cleaner_T,",
+			"\tCourier: Courier_T",
 			"}",
 			"",
 			"local ${0:$TM_FILENAME_BASE}: ${0:$TM_FILENAME_BASE}_T = {}",
@@ -31,16 +38,11 @@ Component Generation VSC Snippet
 			"${0:$TM_FILENAME_BASE}.Name = \"${0:$TM_FILENAME_BASE}\"",
 			"${0:$TM_FILENAME_BASE}.Tag = \"${0:$TM_FILENAME_BASE}\"",
 			"${0:$TM_FILENAME_BASE}.Ancestor = game",
-			"${0:$TM_FILENAME_BASE}.Needs = {\"Cleaner\"}",
 			"",
 			"function ${0:$TM_FILENAME_BASE}.new(root: any)",
 			"\treturn setmetatable({",
 			"\t\tRoot = root,",
 			"\t}, ${0:$TM_FILENAME_BASE})",
-			"end",
-			"",
-			"function ${0:$TM_FILENAME_BASE}:CreateDependencies()",
-			"\treturn {}",
 			"end",
 			"",
 			"function ${0:$TM_FILENAME_BASE}:Start()",
