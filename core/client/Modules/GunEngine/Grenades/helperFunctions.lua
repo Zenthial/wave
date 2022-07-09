@@ -1,39 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
 local FastCast = require(ReplicatedStorage.Shared.Modules.FastCastRedux)
 local GadgetStats = require(ReplicatedStorage.Shared.Configurations.GadgetStats)
 
 local CastBehavior = FastCast.newBehavior()
-
-local function HandleGadgetStats(player: Player, NadeCaster, CastParams, gadgetStats: GadgetStats.GadgetStats_T)
-    FastCast.DebugLogging = gadgetStats.DEBUG
-    FastCast.VisualizeCasts = gadgetStats.DEBUG
-    NadeCaster.CastTerminating:Connect(OnRayTerminated)
-
-    CastParams.IgnoreWater = true
-    CastParams.FilterType = Enum.RaycastFilterType.Blacklist
-
-    local ignoreTable = {}
-    for _, part in next, player.Character:GetChildren() do
-        table.insert(ignoreTable, part)
-    end
-    for _, thing in next, CollectionService:GetTagged("Ignore") do
-        table.insert(ignoreTable, thing)
-    end
-
-    CastParams.FilterDescendantsInstances = ignoreTable
-
-    if gadgetStats.Bounce == true then
-        CastBehavior.CanPierceFunction = CanRayBounce
-    end
-
-    CastBehavior.RaycastParams = CastParams
-    CastBehavior.MaxDistance = gadgetStats.MaxDistance
-    CastBehavior.CosmeticBulletProvider = gadgetStats.Cache
-    CastBehavior.CosmeticBulletContainer = gadgetStats.CacheFolder
-    CastBehavior.Acceleration = gadgetStats.Gravity
-    CastBehavior.AutoIgnoreContainer = false -- We already do this! We don't need the default value of true (see the bottom of this script)
-end
 
 local function CanRayBounce(cast, rayResult, segmentVelocity)
     local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
@@ -120,6 +91,36 @@ local function OnRayTerminated(cast)
 		gadgetStats.TerminationBehavior(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
+end
+
+local function HandleGadgetStats(player: Player, NadeCaster, CastParams, gadgetStats: GadgetStats.GadgetStats_T)
+    FastCast.DebugLogging = gadgetStats.DEBUG
+    FastCast.VisualizeCasts = gadgetStats.DEBUG
+    NadeCaster.CastTerminating:Connect(OnRayTerminated)
+
+    CastParams.IgnoreWater = true
+    CastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+    local ignoreTable = {}
+    for _, part in next, player.Character:GetChildren() do
+        table.insert(ignoreTable, part)
+    end
+    for _, thing in next, CollectionService:GetTagged("Ignore") do
+        table.insert(ignoreTable, thing)
+    end
+
+    CastParams.FilterDescendantsInstances = ignoreTable
+
+    if gadgetStats.Bounce == true then
+        CastBehavior.CanPierceFunction = CanRayBounce
+    end
+
+    CastBehavior.RaycastParams = CastParams
+    CastBehavior.MaxDistance = gadgetStats.MaxDistance
+    CastBehavior.CosmeticBulletProvider = gadgetStats.Cache
+    CastBehavior.CosmeticBulletContainer = gadgetStats.CacheFolder
+    CastBehavior.Acceleration = gadgetStats.Gravity
+    CastBehavior.AutoIgnoreContainer = false -- We already do this! We don't need the default value of true (see the bottom of this script)
 end
 
 return {

@@ -23,7 +23,7 @@ local CastParams = RaycastParams.new()
 function Grenades:RenderNade(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadgetStats: GadgetStats.GadgetStats_T)
     print(player, position, direction, movementSpeed, gadgetStats)
 	if not player.Character then print("returning") return end
-    handleGadgetStats(player, NadeCaster, CastParams, gadgetStats)
+    HandleGadgetStats(player, NadeCaster, CastParams, gadgetStats)
 
     local directionalCF = CFrame.new(Vector3.new(), direction)
 	direction = (directionalCF * CFrame.fromOrientation(0, 0, RNG:NextNumber(0, TAU)) * CFrame.fromOrientation(math.rad(RNG:NextNumber(gadgetStats.MinSpreadAngle, gadgetStats.MaxSpreadAngle)), 0, 0)).LookVector
