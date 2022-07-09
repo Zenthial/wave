@@ -127,8 +127,6 @@ function Inventory:Start()
 end
 
 function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
-    self.WeaponsToolbar:FeedInput(KeyCode)
-
     if KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Gadget")] and self.EquippedGadget ~= nil and LocalPlayer:GetAttribute("GadgetQuantity") > 0 then
         if self.EquippedGadgetStats.Type == "Projectile" then
             GunEngine:RenderGrenadeForLocalPlayer(self.EquippedGadget)
@@ -137,6 +135,8 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
         self.EquippedSkill:Equip()
+    else
+        self.WeaponsToolbar:FeedInput(KeyCode)
     end
 end
 

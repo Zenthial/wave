@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The O73 is an experimental pistol developed by Alpharus. An odd weapon, it does not fire phaser energy like conventional energy weapons. Instead it generates, slows down, and propels a constant beam of tachyon particles at the target. While the particles are easily stopped by modern shielding, the unique tech of the O73 allows it to continually bombard and ultimately kill a target. Due to its expense, only military officers are issued this weapon",
 	QuickDescription = "Beam Pistol",
 	WeaponCost = 5000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = true,
 	WalkspeedReduce = 0,
-	EquipTime = 0.2,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 20,
@@ -88,8 +70,8 @@ return {
 	FireRate = 0,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Constant,
-	BulletType = BulletType.Constant,
+	FireMode = "Constant",
+	BulletType = "Constant",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The YOLTOR no. 16 is a weighty weapon as far as sidearms are concerned. While the technology in this pistol is often ridiculed by its competitors as unreliable and inefficient, and often troops will favor its older cousin the Y14, the Y16 has an advantage over any other WIJ pistol in that it fires automatically, much like many WIJ assault rifles.",
 	QuickDescription = "Automatic, Single Shot",
 	WeaponCost = 750,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.1,
 	BatteryDepletionMin = 3,
 	BatteryDepletionMax = 4,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 10,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

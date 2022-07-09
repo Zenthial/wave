@@ -32,7 +32,6 @@ function InputController:Start()
     end))
 
     cleaner:Add(keyboardInput.KeyDown:Connect(function(keyCode: Enum.KeyCode)
-        print(keyCode, LocalPlayer.Keybinds:GetAttributes())
         if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Chat")] then
             LocalPlayer:SetAttribute("Chatting", true)
         elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Menu")] then

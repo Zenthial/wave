@@ -58,6 +58,7 @@ function ServerInventory:Start()
 end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
+    print(inv)
     for key, name in pairs(inv) do
         self.ActiveServerInventory[key] = name
 
@@ -110,8 +111,8 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
 
             assert(stats, "No Grenade Stats for " .. name)
             self.Root:SetAttribute("EquippedGadget", name)
-            self.Root:SetAttribute("GadgetQuantity", stats.Quantity)
-            self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity)
+            self.Root:SetAttribute("GadgetQuantity", stats.Quantity or 2)
+            self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity or 2)
             SetWeaponSignal:FireClient(self.Root, key, name)
         end
     end

@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "When it comes to dispatching armor on foot, the AT Anti-Armor Phaser is the solution. With the increasing use of armored units by hostile forces against WIJ strongholds, the use of the AT Anti-Armor Phaser has grown. Hundreds of these weapons were airdropped into CASTLE Cobalt during the great siege of the last century.",
 	QuickDescription = "Charged Shot",
 	WeaponCost = 3750,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -68,9 +51,8 @@ return {
 	CanSprint = true,
 	CanCrouch = true,
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	WalkspeedReduce = 3,
-	EquipTime = 0.4,
 	BatteryDepletionMin = 20,
 	BatteryDepletionMax = 20,
 	ShotsDeplete = 1,
@@ -88,8 +70,8 @@ return {
 	FireRate = 3,
 	ChargeWait = 2,
 	Trigger = "Semi",
-	FireMode = FireMode.SingleExplosive,
-	BulletType = BulletType.Ray,
+	FireMode = "SingleExplosive",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

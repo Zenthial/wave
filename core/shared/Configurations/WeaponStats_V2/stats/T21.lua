@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The T21 Automatic Shotgun is a variant of the T11. This model trades a heavy disruption coil for a lighter, more rapid fire model backed up by a drum-magazine battery. This allows close quarters combatants to keep up the pressure during their engagements.",
 	QuickDescription = "Automatic, 5 Pellet Shots",
 	WeaponCost = 1900,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -91,8 +73,8 @@ return {
 	FireRate = 4,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.Shotgun,
-	BulletType = BulletType.Ray,
+	FireMode = "Shotgun",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

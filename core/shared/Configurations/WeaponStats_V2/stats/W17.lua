@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The WIJ Mark 17 Individual Defense and Combat Initiator has proven to be effective under many combat scenarios. It is a highly popular rifle throughout the WIJ forces, as it is very durable. The W17 Assault Rifle is produced on the planet Gorius 5 by GORIUS ARMORIES for the WIJ Corporation.",
 	QuickDescription = "Automatic, Single Shot",
 	WeaponCost = 0,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 11,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

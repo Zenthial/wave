@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The Dual Barrel Mark 3 is an experimental plasma cannon entering the final stages of R&D from HilTech. The weapon is named as such for its two sets of triple-barreled plasma cannons, which when charged up are capable of delivering a rapid burst of three plasma shots at a given target, resulting in heavy damage and suppressive capability.",
 	QuickDescription = "Multi-Barrel Plasma Burst Cannon",
 	WeaponCost = 3000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -69,9 +52,8 @@ return {
 	CanCrouch = true,
 	HeadshotMultiplier = 2,
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	WalkspeedReduce = 3,
-	EquipTime = 0.4,
 	BatteryDepletionMin = 5,
 	BatteryDepletionMax = 5,
 	ShotsDeplete = 1,
@@ -89,8 +71,8 @@ return {
 	FireRate = 5,
 	ChargeWait = 0.5,
 	Trigger = "Semi",
-	FireMode = FireMode.BurstExplosive,
-	BulletType = BulletType.Ray,
+	FireMode = "BurstExplosive",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

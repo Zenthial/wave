@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The DUB Rifle is a specialized variant of the E31 experimental electron rifle. Like it's predecessor, the rifle utilizes a system of subatomic levers to channel a battery’s power into an ultra high amperage and voltage electron bolt. This particular variant curiously includes a specialized audio module that will play music.",
 	QuickDescription = "DUB WUB WUB WUB",
 	WeaponCost = 4500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = true,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 1,
 	BatteryDepletionMax = 1,
 	ShotsDeplete = 20,
@@ -88,8 +70,8 @@ return {
 	FireRate = 20,
 	ChargeWait = 0.3,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Streak,
+	FireMode = "Single",
+	BulletType = "Streak",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

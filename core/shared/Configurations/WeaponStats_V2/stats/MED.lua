@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The Mark-ED Medical Facilitation tool is the most effective iteration of a series of handheld mediguns which have been replacing traditional first aid systems in the field. The MED fires a beam of medical nanites which coat the wounds of the patient and heal damage sustained in very short order.",
 	QuickDescription = "Constant Health Regeneration",
 	WeaponCost = 2000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	Locked = false,
 	HeadshotMultiplier = 4,
 	WalkspeedReduce = 2,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 1,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 20,
@@ -88,8 +70,8 @@ return {
 	FireRate = 0,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Misc,
-	BulletType = BulletType.Constant,
+	FireMode = "Misc",
+	BulletType = "Constant",
 	BulletCache = Caches.DefaultCache,
 
 	Range = 20,

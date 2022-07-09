@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The REX is a high powered mini-gun capable of both legendary fire rate and damage against targets. Only a small number of these miniguns exist in the hands of HICOM councillors and bodyguards, due to the exorbitant cost of the starship-grade technology used ( the REX is in essence a point defense phaser downsized to be carried by a trooper) and the fact the science to build these beastly miniguns is known to only a few specific manufacturing personnel at any given time.",
 	QuickDescription = "Automatic, Single Shot",
 	WeaponCost = 150000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -68,9 +51,8 @@ return {
 	CanSprint = false,
 	CanCrouch = false,
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	WalkspeedReduce = 5,
-	EquipTime = 0.5,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 15,
@@ -87,8 +69,8 @@ return {
 	FireRate = 13,
 	ChargeWait = 0.5,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

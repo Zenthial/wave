@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The SKP-B is an evolution of the SKP as a go-to weapon for special ops. In addition to a silencer and EM optics, the phase coil has been modified to fire in high power, easily controllable bursts. As such it handles perfectly in both tight quarters and long range action.",
 	QuickDescription = "Semi Automatic, 3 Shot Burst",
 	WeaponCost = 1500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.2,
 	BatteryDepletionMin = 3,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 15,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Burst,
-	BulletType = BulletType.Ray,
+	FireMode = "Burst",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

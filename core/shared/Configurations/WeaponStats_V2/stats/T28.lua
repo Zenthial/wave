@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The T28 DB Shotgun is an example of taking a concept and pushing it to its outermost extremes.  By strapping two disruption coils side by side this weapons system is able to punish those who happen to be on the firing end of it.",
 	QuickDescription = "Charged, 2 Shot Burst",
 	WeaponCost = 4000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -70,7 +53,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 2,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -90,8 +72,8 @@ return {
 	FireRate = 4,
 	ChargeWait = 0.5,
 	Trigger = "Auto",
-	FireMode = FireMode.Shotgun,
-	BulletType = BulletType.Ray,
+	FireMode = "Shotgun",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

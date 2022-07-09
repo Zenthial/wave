@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The F99 flamethrower is a very bulky and unwieldy weapon, but one which carries great destructive power. Capable of firing forth a stream of critical temperature plasma at close range, any targets which are caught in the fire will find themselves quickly and assuredly roasted, completely vaporizing the target at worst.",
 	QuickDescription = "Close quarters, constant area damage",
 	WeaponCost = 1750,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -68,9 +51,8 @@ return {
 	CanSprint = false,
 	CanCrouch = false,
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.5,
 	BatteryDepletionMin = 4,
 	BatteryDepletionMax = 5,
 	ShotsDeplete = 4,
@@ -89,8 +71,8 @@ return {
 	FireRate = 10,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.Flame,
-	BulletType = BulletType.Flame,
+	FireMode = "Flame",
+	BulletType = "Flame",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

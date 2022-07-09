@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "As part of project Blue Armament in the late 190s, YOLTOR proposed this cheap and compact marksman rifle with pinpoint accuracy thanks to its EM optical scope. What the B55 lacks in raw punishing power, it makes up in a battery which lasts nearly forever and a reliability found in few other weapons.",
 	QuickDescription = "Semi Automatic, 3 Shot Burst Fire",
 	WeaponCost = 500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 20,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Burst,
-	BulletType = BulletType.Ray,
+	FireMode = "Burst",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

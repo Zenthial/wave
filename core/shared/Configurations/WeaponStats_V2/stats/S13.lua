@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The Sigma-13 Sniper Rifle is the lighter cousin of the more popularly known SUF. While lacking the direct punch of the SUF, the S13 fires more quickly, is more readily available to WIJ forces and maintains the pinpoint accuracy of its larger variant.",
 	QuickDescription = "Semi Automatic, Single Shot",
 	WeaponCost = 1000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 1,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 3,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 1,
@@ -88,8 +70,8 @@ return {
 	FireRate = 20,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

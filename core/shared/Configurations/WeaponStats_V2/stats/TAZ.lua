@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "",
 	QuickDescription = "",
 	WeaponCost = 0,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = true,
 	WalkspeedReduce = 0,
-	EquipTime = 0.1,
 	BatteryDepletionMin = 10,
 	BatteryDepletionMax = 15,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 1,
 	ChargeWait = 0.5,
 	Trigger = "Semi",
-	FireMode = FireMode.Launcher,
-	BulletType = BulletType.Projectile,
+	FireMode = "Launcher",
+	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {
