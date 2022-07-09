@@ -173,6 +173,7 @@ end
 function Nametag:DestroyNametag(nametag: BillboardGui)
     nametag.Active = false
     nametag:Destroy()
+	print("TEST")
 end
 
 function Nametag:Destroy()
