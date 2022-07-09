@@ -19,6 +19,7 @@ function DeployableEngine:Start()
     RequestDeployable.Parent = ReplicatedStorage
 
     RequestDeployable.OnServerInvoke = function(player: Player, deployableName: string, position: CFrame)
+        print(player:GetAttributes())
         local quantity = player:GetAttribute("GadgetQuantity")
         local deployableStats = WeaponStats[deployableName]
 
@@ -30,6 +31,8 @@ function DeployableEngine:Start()
             deployableQuantity = 0
             maxQuantity = deployableStats.MaxDeployables
         end
+
+        assert(maxQuantity ~= nil, "maxQuantity must be a number, did you forget to set MaxDeployables on a Deployable?")
 
         if deployableStats and quantity > 0 and deployableQuantity < maxQuantity then
             local model = Deployables[deployableName].DeployableModel:Clone() :: Model
