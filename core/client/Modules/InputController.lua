@@ -14,15 +14,17 @@ local MainMenu = MainHUD:WaitForChild("Menu")
 local InputController = {}
 
 function InputController:Start()
+    print("starting")
     local cleaner = Trove.new()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
 
-    local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory") --[[:await()]]
-    local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState") --[[:await()]]
-    local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu") --[[:await()]]
+    local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory")
+    local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState")
+    local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu")
     -- local SpottingComponent = tcs.get_component(LocalPlayer, "Spotting")
 
+    print("got all components")
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()
     end))
@@ -46,6 +48,7 @@ function InputController:Start()
         -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
         --     SpottingComponent:FeedInput()
         else
+            print(keyCode)
             InventoryComponent:FeedKeyDown(keyCode)
         end
     end))

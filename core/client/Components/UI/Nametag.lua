@@ -72,8 +72,7 @@ local Nametag = {}
 Nametag.__index = Nametag
 Nametag.Name = "Nametag"
 Nametag.Tag = "Player"
--- Nametag.Ancestor = PlayerGui
-Nametag.Needs = {"Cleaner"}
+Nametag.Ancestor = PlayerGui
 
 function Nametag.new(player: any)
     print(player)

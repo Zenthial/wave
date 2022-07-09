@@ -55,5 +55,6 @@ return {
 	end,
 	VehicleMultiplier = 5,
     Quantity = 2,
+    MaxDeployables = 1,
 	BlastRadius = 20,
 }
