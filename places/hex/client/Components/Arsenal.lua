@@ -73,6 +73,7 @@ function Arsenal:Start()
     repeat task.wait() until Player:GetAttribute("Loaded") == true
     task.wait(0.5)
 
+    local MainHUD
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)

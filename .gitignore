@@ -9,5 +9,6 @@
 ./**.DS_Store
 
 ./out
+./old
 
 wave_dev_place.rbxl
