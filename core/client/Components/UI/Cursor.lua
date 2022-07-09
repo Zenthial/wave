@@ -42,7 +42,7 @@ end
 
 function Cursor:Start()
     self.Root.Visible = true
-    self:WordForNotExpand()
+    self:Contract()
 
     UserInputService.MouseIconEnabled = false
     self.Cleaner:Add(UserInputService.InputChanged:Connect(function(inputObject)
@@ -55,7 +55,7 @@ function Cursor:Start()
     local ChargingChangedSignal = Player:GetAttributeChangedSignal("Charging")
     self.Cleaner:Add(EquippedWeaponChangedSignal:Connect(function()
         if Player:GetAttribute("EquippedWeapon") == "" then
-            self:WordForNotExpand()
+            self:Contract()
         else
             self:Expand()
         end
@@ -74,7 +74,7 @@ function Cursor:Expand()
     TweenService:Create(self.Root.Icon, TweenInfo.new(ICON_TWEEN), {Size = ICON_SIZE}):Play()
 end
 
-function Cursor:WordForNotExpand()
+function Cursor:Contract()
     TweenService:Create(self.Root.Icon, TweenInfo.new(ICON_TWEEN), {Size = ICON_CLOSED_SIZE}):Play()
 end
 

@@ -4,8 +4,8 @@ local Players = game:GetService("Players")
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
 local Player = Players.LocalPlayer
-local PlayerFolder = ReplicatedStorage:WaitForChild("PlayerFolders"):WaitForChild(Players.LocalPlayer)
-local SH3L_SRemote = PlayerFolder:WaitForChild(Players.LocalPlayer.."SH3L_SRemote") :: RemoteEvent
+local PlayerFolder = ReplicatedStorage:WaitForChild("PlayerFolders"):WaitForChild(Players.LocalPlayer.Name):WaitForChild("SkillRemoteFolder")
+local SH3L_SRemote = PlayerFolder:WaitForChild(Players.LocalPlayer.Name.."_SH3L_SRemote") :: RemoteEvent
 
 local REGEN_RATE = 0.3
 local active = false

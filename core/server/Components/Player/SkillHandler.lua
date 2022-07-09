@@ -76,7 +76,7 @@ function SkillHandler:Start()
         end
     end))
 
-    local SH3L_SRemote = createRemote(self.Root.Name.."SH3L_SRemote")
+    local SH3L_SRemote = createRemote(self.Root.Name.."_SH3L_SRemote")
     self.Cleaner:Add(SH3L_SRemote.OnServerEvent:Connect(function(player: Player)
         if player:GetAttribute("EquippedSkill") == "SH3L-S" then
             local healthComponent = tcs.get_component(player, "Health")

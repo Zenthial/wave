@@ -1,0 +1,43 @@
+{
+    "name": "game",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "Shared": {
+                "$path": "core/shared"
+            },
+            "SwordfishShared": {
+                "$path": "places/swordfish/shared"
+            }
+        },
+        "ServerScriptService": {
+            "Server": {
+                "$path": "core/server"
+            },
+            "SwordfishServer": {
+                "$path": "places/swordfish/server"
+            }
+        },
+        "StarterPlayer": {
+            "StarterPlayerScripts": {
+                "Client": {
+                    "$path": "core/client"
+                },
+                "SwordfishClient": {
+                    "$path": "places/swordfish/client"
+                }
+            }
+        },
+        "SoundService": {
+            "$properties": {
+                "RespectFilteringEnabled": true
+            }
+        },
+        "Chat": {
+            "$properties": {
+                "BubbleChatEnabled": false,
+                "LoadDefaultChat": false
+            }
+        }
+    }
+}
