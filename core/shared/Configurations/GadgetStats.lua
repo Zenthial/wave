@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Gadgets = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Gadgets")
+local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local PartCache = require(ReplicatedStorage.Shared.util.PartCache)
 
 local radiusDamage = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
@@ -44,6 +45,7 @@ local CacheFolder = nil
 local Caches = {
     NDG = nil,
     C0S = nil,
+    PBW = nil,
 }
 
 if RunService:IsClient() then
@@ -53,6 +55,7 @@ if RunService:IsClient() then
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
+    Caches.PBW = PartCache.new(Weapons.PBW.Projectile, 30, CacheFolder)
 end
 
 return {
@@ -188,5 +191,59 @@ return {
 
             active = false
         end
-    }
+    },
+
+    ["PBW"] = {
+        Name = "PBW",
+        Type = "Projectile",
+        Quantity = 2,
+
+        DEBUG = false,
+
+        ProjectileSpeed = 200,
+        MaxDistance = 1000,
+
+        NadeRadius = 10,
+        MaxDamage = 40,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 0,
+        DelayTime = 0.3,
+
+        Gravity = Vector3.new(0, -3, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.PBW,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/20)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+
+        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
+        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            grenade.Anchored = false
+            grenade.CanCollide = true
+            grenade.CanTouch = false
+            grenade.CanQuery = false
+            task.wait(stats.PopTime)
+            local character = sourcePlayer.Character
+            if character then
+                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                grenade.ParticleEmitter1:Destroy()
+				grenade.ParticleEmitter2.Enabled = true
+                grenade.Explode:Play()
+				grenade.Transparency = 1
+
+                radiusDamage(stats, grenade, nil, false)
+            end
+            task.wait(stats.DelayTime)
+            
+        end
+    },
 } :: {[string]: GadgetStats_T}
