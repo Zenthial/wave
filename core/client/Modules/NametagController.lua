@@ -1,3 +1,7 @@
+-- Preston (seliso)
+-- 7/10/2022
+--------------------------------------------------------------------------------------------
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
@@ -10,8 +14,8 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 
 local client = Players.LocalPlayer
 
-local NametagController = {}
-NametagController.__index = NametagController
+--------------------------------------------------------------------------------------------
+-- Local methods
 
 local function setTagToEnemy(nameTag)
     nameTag:SetColor(Color3.fromRGB(254, 85, 85), Color3.fromRGB(254, 85, 85))
@@ -78,6 +82,12 @@ local function clientTeamChange(prop: string)
         setTagToAlly(nameTag)
     end
 end
+
+--------------------------------------------------------------------------------------------
+-- Class
+
+local NametagController = {}
+NametagController.__index = NametagController
 
 function NametagController.new()
     local self = setmetatable({}, NametagController)
