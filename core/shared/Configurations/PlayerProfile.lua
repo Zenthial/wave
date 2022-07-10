@@ -6,6 +6,7 @@ export type PlayerProfile_T = {
         Shadows: boolean,
         Particles: boolean,
         BulletHoles: boolean,
+        UITheme: number
     },
 
     Keybinds: {
@@ -41,6 +42,7 @@ local PlayerProfile = {
         Shadows = true,
         Particles = true,
         BulletHoles = true,
+        UITheme = 1
     },
 
     Keybinds = {

@@ -1,7 +1,9 @@
 {
   "name": "game",
   "servePlaceIds": [
-    9452951872
+    9452951872,
+    0,
+    10168072912
   ],
   "tree": {
     "$className": "DataModel",
@@ -20,6 +22,11 @@
         "Client": {
           "$path": "core/client"
         }
+      }
+    },
+    "ReplicatedFirst": {
+      "Loading": {
+        "$path": "core/loading"
       }
     },
     "SoundService": {
