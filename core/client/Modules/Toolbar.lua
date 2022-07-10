@@ -62,7 +62,7 @@ function Toolbar:Add(item: any, slot: number?): boolean
         local tableFull = true
         local freeSlot = -1
 
-        for i, v in ipairs(self.Slots) do
+        for i, v in pairs(self.Slots) do
             if v == false then
                 tableFull = false
                 freeSlot = i
@@ -108,6 +108,7 @@ end
 function Toolbar:FeedInput(keyCode: Enum.KeyCode)
     local index = table.find(self.ToolbarKeys, keyCode)
 
+    print(index)
     if index then
         if self.EquippedTool ~= nil then
             if self.EquippedTool.Unequip ~= nil then
@@ -117,6 +118,7 @@ function Toolbar:FeedInput(keyCode: Enum.KeyCode)
             self.Events.ToolChanged:Fire(nil)
         end
 
+        print(self.EquippedSlot, self.Slots, self.Slots[index])
         if self.EquippedSlot ~= index and self.Slots[index] ~= false then
             self.EquippedSlot = index
             self.EquippedTool = self.Slots[index]

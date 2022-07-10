@@ -60,17 +60,24 @@ function Auto:Attack()
     
         task.spawn(function()
             local gunModel = self.GunModel :: GunModel
-            if gunModel ~= nil and gunModel.Barrel ~= nil then         
-                local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
-                
-                if hit ~= nil then
-                    self.Events.CheckHitPart:Fire(hit)
-                end
-
-                self.StoredShots.LastShot.StartPosition = gunModel.Barrel.Position
-                self.StoredShots.LastShot.EndPosition = target
-                self.StoredShots.LastShot.Timestamp = tick()
-                local _ = self.BulletModule:Draw(target)
+            if gunModel ~= nil and gunModel.Barrel ~= nil then
+                if self.WeaponStats.FireMode == "Launcher" then
+                    self.StoredShots.LastShot.StartPosition = gunModel.Barrel.Position
+                    self.StoredShots.LastShot.EndPosition = mouse:GetPosition()
+                    self.StoredShots.LastShot.Timestamp = tick()
+                    local _ = self.BulletModule:Draw(mouse:GetPosition())
+                else
+                    local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
+                    
+                    if hit ~= nil then
+                        self.Events.CheckHitPart:Fire(hit)
+                    end
+    
+                    self.StoredShots.LastShot.StartPosition = gunModel.Barrel.Position
+                    self.StoredShots.LastShot.EndPosition = target
+                    self.StoredShots.LastShot.Timestamp = tick()
+                    local _ = self.BulletModule:Draw(target)
+                end      
             end
         end)
 

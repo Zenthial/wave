@@ -67,7 +67,7 @@ return {
         DEBUG = false,
 
         ProjectileSpeed = 150,
-        MaxDistance = 1000,
+        MaxDistance = 300,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -126,7 +126,7 @@ return {
         DEBUG = true,
 
         ProjectileSpeed = 150,
-        MaxDistance = 1000,
+        MaxDistance = 300,
 
         NadeRadius = -1,
         MaxDamage = -1,
@@ -201,7 +201,7 @@ return {
         DEBUG = false,
 
         ProjectileSpeed = 200,
-        MaxDistance = 1000,
+        MaxDistance = 300,
 
         NadeRadius = 10,
         MaxDamage = 40,
@@ -254,8 +254,8 @@ return {
 
         DEBUG = false,
 
-        ProjectileSpeed = 230,
-        MaxDistance = 1000,
+        ProjectileSpeed = 500,
+        MaxDistance = 300,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -266,7 +266,7 @@ return {
         PopTime = 0.6,
         DelayTime = 0.1,
 
-        Gravity = Vector3.new(0, -200, 0),
+        Gravity = Vector3.new(0, -1000, 0),
 
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
@@ -281,7 +281,7 @@ return {
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
         TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = false
+            grenade.Anchored = true
             grenade.CanCollide = true
             grenade.CanTouch = false
             grenade.CanQuery = false

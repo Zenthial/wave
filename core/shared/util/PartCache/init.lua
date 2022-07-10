@@ -138,7 +138,7 @@ function PartCacheStatic:ReturnPart(part: BasePart)
 		part.CFrame = CF_REALLY_FAR_AWAY
 		part.Anchored = true
 	else
-		error("Attempted to return part \"" .. part.Name .. "\" (" .. part:GetFullName() .. ") to the cache, but it's not in-use! Did you call this on the wrong part?")
+		-- error("Attempted to return part \"" .. part.Name .. "\" (" .. part:GetFullName() .. ") to the cache, but it's not in-use! Did you call this on the wrong part?")
 	end
 end
 

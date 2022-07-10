@@ -50,6 +50,10 @@ function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming
 	return Vector3.new(x,y,z)
 end
 
+function Mouse:GetPosition()
+    return self.MouseObject.Hit.Position    
+end
+
 function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats?, aiming: boolean?, currentRecoil: number?, aimBuff: number?): (BasePart, Vector3)
     local character = self.Player.Character
     if not character then return end
