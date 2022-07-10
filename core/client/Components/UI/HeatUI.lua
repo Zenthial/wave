@@ -24,7 +24,6 @@ local HeatUI = {}
 HeatUI.__index = HeatUI
 HeatUI.Name = "HeatUI"
 HeatUI.Tag = "HeatUI"
-HeatUI.Needs = {"Cleaner"}
 HeatUI.Ancestor = PlayerGui
 
 --[[
