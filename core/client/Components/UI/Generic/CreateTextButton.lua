@@ -1,6 +1,6 @@
 return function(Frame: Frame, ButtonText: string)
     local textButton = Instance.new("TextButton")
-    textButton.Name = "TextButton"
+    textButton.Name = "Button"
     textButton.Font = Enum.Font.SourceSans
     textButton.Text = ""
     textButton.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -8,6 +8,7 @@ return function(Frame: Frame, ButtonText: string)
     textButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     textButton.Size = UDim2.new(1, -2, 1, -6)
     textButton.ZIndex = 4
+    textButton.AutoButtonColor = false
 
     local uICorner = Instance.new("UICorner")
     uICorner.Name = "UICorner"
