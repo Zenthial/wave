@@ -4,5 +4,25 @@
     ],
     "cSpell.words": [
         "RESPAWNING"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#1c3691",
+        "activityBar.activeBorder": "#d62950",
+        "activityBar.background": "#1c3691",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#d62950",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "sash.hoverBorder": "#1c3691",
+        "statusBar.background": "#142666",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#1c3691",
+        "statusBarItem.remoteBackground": "#142666",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#142666",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#14266699",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#142666"
 }
