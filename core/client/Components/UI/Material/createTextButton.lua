@@ -1,4 +1,6 @@
-return function(Frame: Frame, ButtonText: string)
+return function(frame: Frame, buttonText: string)
+    frame.BackgroundTransparency = 1
+    
     local textButton = Instance.new("TextButton")
     textButton.Name = "Button"
     textButton.Font = Enum.Font.SourceSans
@@ -40,7 +42,7 @@ return function(Frame: Frame, ButtonText: string)
     local textLabel = Instance.new("TextLabel")
     textLabel.Name = "TextLabel"
     textLabel.Font = Enum.Font.SourceSans
-    textLabel.Text = ButtonText
+    textLabel.Text = buttonText
     textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
     textLabel.TextSize = 14
     textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -50,8 +52,6 @@ return function(Frame: Frame, ButtonText: string)
     textLabel.Size = UDim2.fromScale(1, 1)
     textLabel.ZIndex = 5
 
-    textLabel.Parent = Frame
-    textButton.Parent = Frame
-
-    Frame.BackgroundTransparency = 1
+    textLabel.Parent = frame
+    textButton.Parent = frame
 end

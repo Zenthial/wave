@@ -1,5 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local Themes = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("Themes"))
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 type Cleaner_T = {
@@ -36,23 +41,14 @@ type Button_T = {
 
 local Button: Button_T = {}
 Button.__index = Button
-Button.Name = "Button"
+Button.Name = "MaterialUI"
 Button.Tag = "Button"
-Button.Ancestor = game
+Button.Ancestor = PlayerGui
 
 function Button.new(root: Frame)
     return setmetatable({
         Root = root,
     }, Button)
-end
-
-function Button:UpdateAppearance()
-    -- This should utilize the associated color themes of the button
-end
-
-function Button:SetHovered(Hovered: boolean)
-    self.Hovered = Hovered
-    self:UpdateAppearance()
 end
 
 function Button:Start()
@@ -67,6 +63,21 @@ function Button:Start()
     self.Cleaner:Add(self.Root.Button.MouseLeave:Connect(function()    
         self:SetHovered(false)
     end))
+end
+
+function Button:ChangeTheme(newTheme: number)
+    self.Theme = newTheme
+
+    self:UpdateAppearance()
+end
+
+function Button:UpdateAppearance()
+    -- This should utilize the associated color themes of the button
+end
+
+function Button:SetHovered(hovered: boolean)
+    self.Hovered = hovered
+    self:UpdateAppearance()
 end
 
 function Button:Destroy()

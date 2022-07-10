@@ -7,10 +7,12 @@ return {
         SecondaryVariable = Color3.fromHex("#0000b2"), -- NEEDS TO BE DIFFERENT
         Error = Color3.fromHex("#0000b2"), -- NEEDS TO BE A RED
         Background = Color3.fromHex("#FFFFFF"),
+        Surface = Color3.fromHex("#FFFFFF"), -- NEEDS TO BE FIXED
         OnPrimary = Color3.fromHex("#FFFFFF"),
         OnSecondary = Color3.fromHex("#FFFFFF"), -- NEEDS TO BE DIFFERENT
         OnError = Color3.fromHex("#FFFFFF"),
-        OnBackground = Color3.fromHex("#000000")
+        OnBackground = Color3.fromHex("#000000"),
+        OnSurface = Color3.fromHex("#000000")
     }
 
     -- TODO: Add white theme, dark themes
