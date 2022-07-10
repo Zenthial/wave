@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The Magnetic Surge Inductor rifle is the man-mobile form of an especially frightening weapons platform cooked up by an elite conference of WIJ?s top scientists. The weapon uses a system of subatomic levers to channel a power pack?s energy into a near impossibly high amperage and voltage electron bolt which arcs across from the rifle into any unsuspecting victim.",
 	QuickDescription = "Single Charged Shot",
 	WeaponCost = 6000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 2,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 10,
 	BatteryDepletionMax = 10,
 	ShotsDeplete = 1,
@@ -88,8 +70,8 @@ return {
 	FireRate = 3,
 	ChargeWait = 0.15,
 	Trigger = "Semi",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Streak,
+	FireMode = "Single",
+	BulletType = "Streak",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

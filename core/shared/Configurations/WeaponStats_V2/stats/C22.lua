@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The C22 'lockphaser', a calling back to the bullet based projectile weapons of old, is a simple yet elegant piece capable of putting clean holes in its targets, the gun itself infamous for its special cocking mechanism which must be primed to prepare the phase coil for firing each time.",
 	QuickDescription = "Semi Automatic, 4 Pellet Shots",
 	WeaponCost = 4000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 2,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 2,
-	EquipTime = 0.1,
 	BatteryDepletionMin = 4,
 	BatteryDepletionMax = 6,
 	ShotsDeplete = 10,
@@ -92,8 +74,8 @@ return {
 	FireRate = 4,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Shotgun,
-	BulletType = BulletType.Ray,
+	FireMode = "Shotgun",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

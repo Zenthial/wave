@@ -263,14 +263,14 @@ end
 
 function CoreGun:MouseDown()
     self.MutableStats.MouseDown = true
-    self:Attack()
+    self:Fire()
 end
 
 function CoreGun:MouseUp()
     self.MutableStats.MouseDown = false
 end
 
-function CoreGun:Attack()
+function CoreGun:Fire()
     if self.AmmoModule:CanFire() then
         Player:SetAttribute("LocalSprinting", false)
         if self.WeaponStats.ChargeWait > 0 then

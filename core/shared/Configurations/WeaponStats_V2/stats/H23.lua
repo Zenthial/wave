@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The HilTech Type-23 Revolver is a heavy duty phaser pistol favored among border worlds enforcement agencies and criminal forces alike. Shot per shot the phase coils in the H23 are heavier than its YOLTOR competitors, capable of putting out the pain where it counts. The H23 is a bit more unwieldy than its competitors however.",
 	QuickDescription = "Semi Automatic, Single Shot",
 	WeaponCost = 1250,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.1,
 	BatteryDepletionMin = 4,
 	BatteryDepletionMax = 5,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 10,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

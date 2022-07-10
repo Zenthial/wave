@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The ability for a squad commander to call in orbital fire support is invaluable. Once a target has been designated by the D01, a command is relayed to a appropriately equipped warship or satellite in orbit to fire its phaser array to a devastating effect, within seconds.",
 	QuickDescription = "Single Shot",
 	WeaponCost = 94000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = true,
 	WalkspeedReduce = 0,
-	EquipTime = 0.1,
 	BatteryDepletionMin = 100,
 	BatteryDepletionMax = 100,
 	ShotsDeplete = 1,
@@ -88,8 +70,8 @@ return {
 	FireRate = 0,
 	ChargeWait = 4,
 	Trigger = "Semi",
-	FireMode = FireMode.OrbitalStrike,
-	BulletType = BulletType.OrbitalRay,
+	FireMode = "OrbitalStrike",
+	BulletType = "OrbitalRay",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

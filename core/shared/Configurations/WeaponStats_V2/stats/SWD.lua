@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The SWD Power Sword device is not a blade but in reality a small hand-held plasma and force field generator. When activated the device flash-forges a searing hot blade of high temperature plasma, contained by forcefields to give it both physical tangibility and a sharpness meeting and exceeding that of the finest carbon nanotube blades utilized by non-WIJian species.",
 	QuickDescription = "Plasma blade",
 	WeaponCost = 300,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -69,7 +52,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = -7,
-	EquipTime = 0.2,
 	MinSpread = 0,
 	MaxSpread = 0,
 	HeatRate = 0,

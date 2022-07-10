@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "This version of the Stun Stick has been repurposed for recreational purposes. Compared to it's predecessor, this stick is capable of rendering it's target immobile for a near-infinite duration, but has been rendered non-lethal in any and every fashion. WIJ Alliance soldiers would often utilize this tool to play games such as Freeze Tag in their spare time, or during Training sessions.",
 	QuickDescription = "Tagging Stick",
 	WeaponCost = 0,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -69,7 +52,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = -5,
-	EquipTime = 0.2,
 	MinSpread = 0,
 	MaxSpread = 0,
 	HeatRate = 0,

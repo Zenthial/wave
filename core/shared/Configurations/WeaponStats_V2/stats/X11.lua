@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "This experimental assault rifle known as a ?pulsed beamer? due to its firing method is one of the latest fancy toys to come out of GORIUS R&D. This weapon uses a specially configured phase coil which emits light phase beams so quickly that the weapon could be mistaken for a sustained beam weapon.",
 	QuickDescription = "Charged fire, Constanst Beam",
 	WeaponCost = 5500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 5,
 	BatteryDepletionMax = 5,
 	ShotsDeplete = 20,
@@ -88,8 +70,8 @@ return {
 	FireRate = 3,
 	ChargeWait = 0.5,
 	Trigger = "Semi",
-	FireMode = FireMode.Constant,
-	BulletType = BulletType.Constant,
+	FireMode = "Constant",
+	BulletType = "Constant",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "Manufactured by GORIUS Armories, The SKPa (StarKnight Photon accelerator), named SKP for convenience is an autophaser with a high fire rate and respectable damage in a compact and stylish package. SKP makes up for what it lacks in accuracy with a devastating rate of fire.",
 	QuickDescription = "Automatic, Single Shot",
 	WeaponCost = 1500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 2,
 	Holster = Holsters.Hip,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.2,
 	BatteryDepletionMin = 4,
 	BatteryDepletionMax = 5,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 14,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Ray,
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -56,11 +39,11 @@ local Holsters = {
 return {
 	Name = "E31",
 	FullName = "",
-	Category = "Assault",
+	Category = "",
 	Description = "The E31 rifle is a highly experimental electron rifle based on the technology of the MSI. It is a more flexible, rapid firing platform but loses much of the potency of its progenitor rifle. The weapon uses a similar system of subatomic levers to channel a battery's power into an ultra high amperage and voltage electron bolt capable of frying anyone on the receiving end.",
 	QuickDescription = "Charged, Automatic, Single Shot",
 	WeaponCost = 4500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -88,8 +70,8 @@ return {
 	FireRate = 10,
 	ChargeWait = 0.3,
 	Trigger = "Auto",
-	FireMode = FireMode.Single,
-	BulletType = BulletType.Streak,
+	FireMode = "Single",
+	BulletType = "Streak",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

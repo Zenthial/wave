@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The G25 Triggered Grenade Launcher is unlike all other weapons in WIJ's arsenal due to it firing a charged particle as opposed to a directed phaser. The weapon is renowned for being particularly tricky to use however those familiar with its nature can tap into its lethal nature by laying traps and disrupting the movement of enemy units.",
 	QuickDescription = "Single Explosive Projectile",
 	WeaponCost = 3000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 2,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 12.5,
 	BatteryDepletionMax = 12.5,
 	ShotsDeplete = 1,
@@ -83,8 +65,8 @@ return {
 	FireRate = 0,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Launcher,
-	BulletType = BulletType.Projectile,
+	FireMode = "Launcher",
+	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,
 
 	Damage = 55,

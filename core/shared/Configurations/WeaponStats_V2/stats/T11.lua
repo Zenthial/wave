@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The T11 Tactical Shotgun is a close-in weapon used in breach and clear engagements. The electromagnetic disruption provided by one shot of the T11 equates that of an entire squad firepower and can potentially vaporize a soldier in one shot. However the heavy EM flux used to generate this powerful disruption blast degrades very fast over distance.",
 	QuickDescription = "Semi Automatic, 5 Pellet Shots",
 	WeaponCost = 500,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -71,7 +54,6 @@ return {
 	CanTeamKill = false,
 	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 2,
 	BatteryDepletionMax = 3,
 	ShotsDeplete = 10,
@@ -94,8 +76,8 @@ return {
 	FireRate = 4,
 	ChargeWait = 0,
 	Trigger = "Semi",
-	FireMode = FireMode.Shotgun,
-	BulletType = BulletType.Ray,
+	FireMode = "Shotgun",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {

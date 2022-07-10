@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -65,13 +48,13 @@ return {
 	Type = "Deployable",
 	CanTeamKill = true,
 	DeployTime = 1.5,
-    MaxDeployables = 1,
-    Quantity = 1,
 	TeamKillPrevention = true,
 	Heal = 2.5,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,
 	VehicleMultiplier = 5,
+    Quantity = 2,
+    MaxDeployables = 1,
 	BlastRadius = 20,
 }

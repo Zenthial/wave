@@ -6,23 +6,6 @@ local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
-local FireMode = {
-    Single = "Single",
-    Shotgun = "Shotgun",
-    Burst = "Burst",
-}
-
-local BulletType = {
-    Ray = "Ray",
-    Streak = "Streak",
-    Projectile = "Projectile",
-}
-
-local AmmoType = {
-    Battery = "Battery",
-    Ammo = "Ammo"
-}
-
 local Caches = {
     DefaultCache = nil
 }
@@ -60,7 +43,7 @@ return {
 	Description = "The HilTech Type 87 Heavy Assault Rifle is classified as a 'Charged Railgun' which fires ultra-high intensity phaser bolts at its target. The bolts explode on impact with the surface they hit, and due to their higher energy yield can pierce through cover, hitting any unfortunate enemy that is directly behind said cover.",
 	QuickDescription = "Semi Automatic, Single Explosise Beam",
 	WeaponCost = 5000,
-	AmmoType = AmmoType.Battery,
+	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
@@ -69,9 +52,8 @@ return {
 	CanCrouch = true,
 	HeadshotMultiplier = 2,
 	CanTeamKill = false,
-	Locked = true,
+	Locked = false,
 	WalkspeedReduce = 0,
-	EquipTime = 0.3,
 	BatteryDepletionMin = 3,
 	BatteryDepletionMax = 4,
 	ShotsDeplete = 1,
@@ -90,8 +72,8 @@ return {
 	FireRate = 3,
 	ChargeWait = 0,
 	Trigger = "Auto",
-	FireMode = FireMode.SingleExplosive,
-	BulletType = BulletType.Ray,
+	FireMode = "SingleExplosive",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
 	HandleWelds = {
