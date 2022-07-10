@@ -105,6 +105,7 @@ local module = {
         
     "TOMSPELL WAS HERE LETS GO BABY",
     "Did you know, there are 100 of these including this one.", --not number 101
+    "'the top bar stays on during ###' - tomspell" --102
     }
     
 return module
