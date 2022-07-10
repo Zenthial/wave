@@ -1,9 +1,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local Teams = game:GetService("Teams")
 
-local TeamsConfiguration = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations")):WaitForChild("Teams")
+local TeamsConfiguration = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("Teams"))
 
 local TeamCreator = {}
+
+local function playerJoin(player: Player, playerJoinFunctions)
+    for teamObject: Team, func in pairs(playerJoinFunctions) do
+        if func(player) then
+            player.Team = teamObject
+        end
+    end    
+end
 
 function TeamCreator:Start()
     local place = "Swordfish"
@@ -19,17 +28,16 @@ function TeamCreator:Start()
         teamObject.TeamColor = team.Color
         teamObject:SetAttribute("Value", team.Value)
         teamObject.AutoAssignable = team.AutoAssignable
+        teamObject.Parent = Teams
 
-        table.insert(playerJoinFunctions, team.Function)
+        playerJoinFunctions[teamObject] = team.Function
     end
 
-    Players.PlayerAdded:Connect(function(player)
-        for _, func in ipairs(playerJoinFunctions) do
-            if func(player) then
-                                
-            end
-        end
-    end)
+    Players.PlayerAdded:Connect(function(player) playerJoin(player, playerJoinFunctions) end)
+
+    for _, player in pairs(Players:GetPlayers()) do
+        playerJoin(player, playerJoinFunctions)
+    end
 end
 
 return TeamCreator

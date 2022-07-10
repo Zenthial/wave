@@ -2,7 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 
 -- fake constants
 local TIMEOUT = 5
-local DEBUG_PRINT = true
+local DEBUG_PRINT = false
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
 

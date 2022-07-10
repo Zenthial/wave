@@ -48,7 +48,6 @@ function InputController:Start()
         -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
         --     SpottingComponent:FeedInput()
         else
-            print(keyCode)
             InventoryComponent:FeedKeyDown(keyCode)
         end
     end))
