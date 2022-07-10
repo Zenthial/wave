@@ -238,7 +238,6 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
 end
 
 function CoreGun:Equip()
-    Player:SetAttribute("EquippedWeapon", self.WeaponStats.Name)
     local result = self.WeldWeaponFunction(self.Model, false) :: boolean
     if result == false then
         error("Weld failed, does this weapon have stats?")
@@ -247,10 +246,10 @@ function CoreGun:Equip()
     if self.Model.Handle:FindFirstChild("Equip") then
         self.Model.Handle.Equip:Play()
     end
+    Player:SetAttribute("EquippedWeapon", self.WeaponStats.Name)
 end
 
 function CoreGun:Unequip()
-    Player:SetAttribute("EquippedWeapon", "")
     local result = self.WeldWeaponFunction(self.Model, true) :: boolean
     if result == false then
         error("Weld failed, does this weapon have stats?")
@@ -259,6 +258,7 @@ function CoreGun:Unequip()
     if self.Model.Handle:FindFirstChild("Unequip") then
         self.Model.Handle.Unequip:Play()
     end
+    Player:SetAttribute("EquippedWeapon", "")
 end
 
 function CoreGun:MouseDown()

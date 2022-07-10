@@ -20,8 +20,8 @@ function InputController:Start()
     local mouseInput = Input.Mouse.new()
 
     local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory")
-    local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState")
-    local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu")
+    -- local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState")
+    -- local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu")
     -- local SpottingComponent = tcs.get_component(LocalPlayer, "Spotting")
 
     print("got all components")
@@ -36,15 +36,15 @@ function InputController:Start()
     cleaner:Add(keyboardInput.KeyDown:Connect(function(keyCode: Enum.KeyCode)
         if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Chat")] then
             LocalPlayer:SetAttribute("Chatting", true)
-        elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Menu")] then
-            -- redo this, as inventory component shouldn't be accessing state variables of MainMenuComponent
-            if MainMenuComponent.Open then
-                MainMenuComponent:CloseMenu()
-            else
-                MainMenuComponent:OpenMenu()
-            end
-        elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Inventory")] then
-            MenuStateComponent:FeedInput()
+        -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Menu")] then
+        --     -- redo this, as inventory component shouldn't be accessing state variables of MainMenuComponent
+        --     if MainMenuComponent.Open then
+        --         MainMenuComponent:CloseMenu()
+        --     else
+        --         MainMenuComponent:OpenMenu()
+        --     end
+        -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Inventory")] then
+        --     MenuStateComponent:FeedInput()
         -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
         --     SpottingComponent:FeedInput()
         else

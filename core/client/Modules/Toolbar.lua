@@ -121,7 +121,9 @@ function Toolbar:FeedInput(keyCode: Enum.KeyCode)
             self.EquippedSlot = index
             self.EquippedTool = self.Slots[index]
             self.Events.ToolChanged:Fire(self.EquippedTool)
+            print(self.EquippedTool)
             if self.EquippedTool.Equip ~= nil then
+                print("equipping")
                 self.EquippedTool:Equip()
             end
         else

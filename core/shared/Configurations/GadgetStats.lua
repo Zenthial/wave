@@ -246,4 +246,63 @@ return {
             
         end
     },
+
+    ["G25"] = {
+        Name = "NDG",
+        Type = "Projectile",
+        Quantity = 2,
+
+        DEBUG = false,
+
+        ProjectileSpeed = 230,
+        MaxDistance = 1000,
+
+        NadeRadius = 20,
+        MaxDamage = 50,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 0.6,
+        DelayTime = 0.1,
+
+        Gravity = Vector3.new(0, -200, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.NDG,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/20)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+
+        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
+        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            grenade.Anchored = false
+            grenade.CanCollide = true
+            grenade.CanTouch = false
+            grenade.CanQuery = false
+            task.wait(stats.PopTime)
+            local character = sourcePlayer.Character
+            if character then
+                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                local explosion = Instance.new("Explosion")
+                explosion.Position = grenade.Position
+                explosion.BlastRadius = stats.NadeRadius
+                explosion.BlastPressure = 0
+                explosion.DestroyJointRadiusPercent = 0
+                explosion.Parent = workspace
+
+                task.delay(1, function()
+                    explosion:Destroy()
+                end)
+
+                radiusDamage(stats, grenade, nil, false)
+            end
+            task.wait(stats.DelayTime)
+        end
+    },
 } :: {[string]: GadgetStats_T}

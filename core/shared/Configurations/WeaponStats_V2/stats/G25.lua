@@ -3,6 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("PartCache"))
+local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
@@ -68,6 +69,7 @@ return {
 	FireMode = "Launcher",
 	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,
+	GadgetStatsPointer = GadgetStats["G25"],
 
 	Damage = 55,
 	CalculateDamage = function(damage, distance)

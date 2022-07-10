@@ -136,6 +136,7 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
         self.EquippedSkill:Equip()
     else
+        print(KeyCode)
         self.WeaponsToolbar:FeedInput(KeyCode)
     end
 end

@@ -64,7 +64,7 @@ function Auto:Attack()
                 if gunModel ~= nil and gunModel.Barrel ~= nil then         
                     local hit, target = mouse:Raycast(gunModel.Barrel.Position, self.WeaponStats, self.MutableStats.Aiming, self.MutableStats.CurrentRecoil, self.MutableStats.AimBuff)
                     
-                    if hit ~= nil then
+                    if hit ~= nil and self.WeaponStats.FireMode ~= "Launcher" then
                         self.Events.CheckHitPart:Fire(hit)
                     end
 
