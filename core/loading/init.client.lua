@@ -6,6 +6,8 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local IntroUI = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("IntroUI"):Clone()
 
+local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+
 IntroUI.Parent = PlayerGui
 
--- some type of intro UI here. IDFK what it will be though
+StarterGui:RemoveDefaultLoadingScreen()
