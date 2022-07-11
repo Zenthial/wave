@@ -59,6 +59,10 @@ function LandVehicle:Start()
     self.BodyGyro = bodyGyro
 
     local mainTurret = self.Root:FindFirstChild("Turret")
+    if mainTurret ~= nil and self.Root:GetAttribute("DriverMansTurret") == nil then -- if it has a main turret and no variable saying the driver shouldnt get it, then give it to them
+        self.Root:SetAttribute("DriversMansTurret", true)
+    end
+    local driverMansMainTurret = self.Root:GetAttribute("DriverMansTurret") or false
 
     local vehicleSeatComponent = tcs.get_component(self.Root.Chassis.VehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
@@ -75,13 +79,13 @@ function LandVehicle:Start()
         if newOccupant ~= nil then
             self.Courier:Send("BindToVehicle", newOccupant, self.Root)
 
-            if mainTurret ~= nil then
+            if mainTurret ~= nil and driverMansMainTurret == true then
                 self.Courier:Send("BindToTurret", newOccupant, mainTurret)
             end
         else
             self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
 
-            if mainTurret ~= nil then
+            if mainTurret ~= nil and driverMansMainTurret == true then
                 self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret)
             end
         end
