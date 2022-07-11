@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 -- fake constants
-local TIMEOUT = 5
+local TIMEOUT = 8
 local DEBUG_PRINT = false
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
@@ -38,7 +38,7 @@ local function wait_for_class(component_name: string)
 		class = component_name_to_class_module[component_name:lower()]
 
 		if tick() - start > TIMEOUT then
-			if DEBUG_WARN then warn("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name) end
+			error("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name .. "! Did you pass the wrong component name?")
 		end 
 		task.wait()
 	end
