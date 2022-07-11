@@ -31,6 +31,7 @@ type Background_T = {
             }
         }
     },
+    Theme: number,
 
     Cleaner: Cleaner_T,
     Courier: Courier_T
@@ -38,18 +39,30 @@ type Background_T = {
 
 local Background: Background_T = {}
 Background.__index = Background
-Background.Name = "MaterialUI"
+Background.Name = "Background"
 Background.Tag = "Background"
 Background.Ancestor = PlayerGui
 
 function Background.new(root: Frame)
     return setmetatable({
         Root = root,
+        Theme = 1
     }, Background)
 end
 
 function Background:Start()
+    local Theme = tcs.get_component(self.Root, "Theme")
+    local UICreation = tcs.get_component(self.Root, "UICreation")
 
+    if not UICreation.Created then
+        UICreation.Events.CreatedChanged:Wait()
+    end
+
+    self.Cleaner:Add(Theme.Events.ThemeChange:Connect(function(newTheme)
+        self:ChangeTheme(newTheme)
+    end))
+
+    self:UpdateAppearance()
 end
 
 function Background:ChangeTheme(newTheme: number)
@@ -59,7 +72,7 @@ function Background:ChangeTheme(newTheme: number)
 end
 
 function Background:UpdateAppearance()
-    self.Root.Surface.BackgroundColor3 = Themes[self.Theme].Background
+    self.Root:WaitForChild("Background").BackgroundColor3 = Themes[self.Theme].Background
 end
 
 function Background:Destroy()

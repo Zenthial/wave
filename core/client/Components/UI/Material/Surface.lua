@@ -38,7 +38,7 @@ type Surface_T = {
 
 local Surface: Surface_T = {}
 Surface.__index = Surface
-Surface.Name = "MaterialUI"
+Surface.Name = "Surface"
 Surface.Tag = "Surface"
 Surface.Ancestor = PlayerGui
 

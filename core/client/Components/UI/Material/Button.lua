@@ -34,6 +34,7 @@ type Button_T = {
     },
     Selected: boolean,
     Hovered: boolean,
+    Theme: number,
 
     Cleaner: Cleaner_T,
     Courier: Courier_T
@@ -41,13 +42,14 @@ type Button_T = {
 
 local Button: Button_T = {}
 Button.__index = Button
-Button.Name = "MaterialUI"
+Button.Name = "Button"
 Button.Tag = "Button"
 Button.Ancestor = PlayerGui
 
 function Button.new(root: Frame)
     return setmetatable({
         Root = root,
+        Theme = 1
     }, Button)
 end
 
