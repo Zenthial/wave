@@ -22,7 +22,7 @@ function CourierClient:Send(portString: string, ...)
     end
 end
 
-function CourierClient:Listen(portString: string)
+function CourierClient:Listen(portString: string): typeof(Signal)
     local portRemote = self.Cache[portString]
 
     if portRemote == nil then
@@ -39,7 +39,7 @@ function CourierClient:Listen(portString: string)
 
         return portSignal
     else
-        return nil
+        error("no remote created for " .. portString)
     end
 end
 

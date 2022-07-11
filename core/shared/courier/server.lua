@@ -13,7 +13,7 @@ local CourierServer = {
     PortCleaners = {}
 }
 
-function CourierServer:Listen(portString: string)
+function CourierServer:Listen(portString: string): typeof(Signal)
     local portSignal = Signal.new()
     local portCleaner = Trove.new()
     local portRemote = Instance.new("RemoteEvent")
@@ -47,6 +47,15 @@ function CourierServer:Send(portString: string, player: Player, ...)
     remote:FireClient(player, ...)
 end
 
+function CourierServer:SendTo(portString: string, players: {Player}, ...)
+    local remote = self.PortRemotes[portString]
+    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+
+    for _, player in ipairs(players) do
+        remote:FireClient(player, ...)        
+    end
+end
+
 function CourierServer:SendToAll(portString: string, ...) 
     local remote = self.PortRemotes[portString]
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
@@ -55,7 +64,16 @@ function CourierServer:SendToAll(portString: string, ...)
 end
 
 function CourierServer:GetPort(portString: string)
-    return self.PortRemotes[portString]
+    local remote = self.PortRemotes[portString]
+    if remote then
+        return remote
+    else
+        local portRemote = Instance.new("RemoteEvent")
+        portRemote.Parent = PortsFolder
+
+        self.PortRemotes[portString] = portRemote
+        return portRemote
+    end
 end
 
 local portRemote = Instance.new("RemoteFunction")
