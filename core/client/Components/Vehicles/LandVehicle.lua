@@ -32,16 +32,6 @@ type LandVehicle_T = {
                 BodyVelocity: BodyVelocity
             }
         },
-        Turret: Model & {
-            Y: Model & {
-                XZ: Folder
-            }
-        },
-        Turret2: Model & {
-            Y: Model & {
-                XZ: Folder
-            }
-        },
     },
     Engine: Part,
     Seat: VehicleSeat,

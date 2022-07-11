@@ -26,16 +26,6 @@ type LandVehicle_T = {
                 BodyVelocity: BodyVelocity
             }
         },
-        Turret: Model & {
-            Y: Model & {
-                XZ: Folder
-            }
-        },
-        Turret2: Model & {
-            Y: Model & {
-                XZ: Folder
-            }
-        },
     },
     FlipDebounce: boolean,
 
@@ -68,6 +58,8 @@ function LandVehicle:Start()
     self.BodyVelocity = bodyVelocity
     self.BodyGyro = bodyGyro
 
+    local mainTurret = self.Root:FindFirstChild("Turret")
+
     local vehicleSeatComponent = tcs.get_component(self.Root.Chassis.VehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if self:IsVehicleFlipped() then
@@ -82,8 +74,16 @@ function LandVehicle:Start()
 
         if newOccupant ~= nil then
             self.Courier:Send("BindToVehicle", newOccupant, self.Root)
+
+            if mainTurret ~= nil then
+                self.Courier:Send("BindToTurret", newOccupant, mainTurret)
+            end
         else
             self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
+
+            if mainTurret ~= nil then
+                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret)
+            end
         end
     end))
 end

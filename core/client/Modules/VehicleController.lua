@@ -19,6 +19,20 @@ function VehicleController:Start()
             landVehicleComponent:Unbind()
         end
     end)
+
+    Courier:Listen("BindToTurret"):Connect(function(turret: Model)
+        if CollectionService:HasTag(turret, "Turret") then
+            local turretComponent = tcs.get_component(turret, "Turret")
+            turretComponent:Bind()
+        end
+    end)
+
+    Courier:Listen("UnbindFromTurret"):Connect(function(turret: Model)
+        if CollectionService:HasTag(turret, "Turret") then
+            local turretComponent = tcs.get_component(turret, "Turret")
+            turretComponent:Unbind()
+        end
+    end)
 end
 
 return VehicleController
