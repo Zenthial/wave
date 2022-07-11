@@ -60,28 +60,30 @@ function MountedTurret:Start()
     local middle = body.Middle
     local core = body.Core
     local vehicleSeat = self.Root.Seat
+    assert(body ~= nil, "No Y model in "..self.Root.Name)
+    assert(middle ~= nil, "No Middle part in "..self.Root.Name)
+    assert(core ~= nil, "No Core part in "..self.Root.Name)
+    assert(vehicleSeat ~= nil, "No Seat in "..self.Root.Name)
 
-    if middle and core then
-        self.Core = core
-        self.Middle = middle
+    self.Core = core
+    self.Middle = middle
 
-        local hingeXZ = core:FindFirstChild("XZ")
-        local hingeY = core:FindFirstChild("Y")
-        assert(hingeXZ, "No XZ Hinge for " .. self.Root.Name)
-        assert(hingeY, "No Y Hinge for " .. self.Root.Name)
-       
-        self:InitializeProximityPrompt()
- 
-        local vehicleSeatComponent = tcs.get_component(vehicleSeat, "VehicleSeat")
-        self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
-            if newOccupant ~= nil then
-                self.Courier:Send("BindToTurret", newOccupant, self.Root)
-            else
-                self.ProximityPromt.Enabled = true
-                self.Courier:Send("UnbindFromTurret", oldOccupant, self.Root)
-            end
-        end))
-    end
+    local hingeXZ = core:FindFirstChild("XZ")
+    local hingeY = core:FindFirstChild("Y")
+    assert(hingeXZ, "No XZ Hinge for " .. self.Root.Name)
+    assert(hingeY, "No Y Hinge for " .. self.Root.Name)
+   
+    self:InitializeProximityPrompt()
+
+    local vehicleSeatComponent = tcs.get_component(vehicleSeat, "VehicleSeat")
+    self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
+        if newOccupant ~= nil then
+            self.Courier:Send("BindToTurret", newOccupant, self.Root)
+        else
+            self.ProximityPromt.Enabled = true
+            self.Courier:Send("UnbindFromTurret", oldOccupant, self.Root)
+        end
+    end))
 end
 
 function MountedTurret:InitializeProximityPrompt()

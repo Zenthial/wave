@@ -38,33 +38,41 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
 end)
 
 local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
-    local healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
-    assert(healthComponent, "Health component not found on "..healthComponentObject.Name)
+    local healthComponent = nil
+    if healthComponentObject:IsA("Player") then
+        healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
+    elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
+        healthComponent = nil -- grab aps health thing later
+    elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
+        healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
+    end 
+
+    assert(healthComponent, "Health component, VehicleHealth component, or ShieldHealth not found on "..healthComponentObject.Name)
 
 
     if hitPartName == "Head" and headshotMultiplier then
         damage *= headshotMultiplier
     end
     
-    print(damage)
     healthComponent.Root:SetAttribute("LastKiller", player.Name)
     healthComponent.Root:SetAttribute("LastKilledWeapon", weaponName)
 
-    local folder = healthComponent.Root.DamageFolder:FindFirstChild(player.Name)
-    if folder == nil then
-        folder = Instance.new("Folder")
-        folder.Name = player.Name
-        folder:SetAttribute("Damage", damage)
-        folder:SetAttribute("Hits", 1)
+    if healthComponent.Root:FindFirstChild("DamageFolder") then
+        local folder = healthComponent.Root.DamageFolder:FindFirstChild(player.Name)
+        if folder == nil then
+            folder = Instance.new("Folder")
+            folder.Name = player.Name
+            folder:SetAttribute("Damage", damage)
+            folder:SetAttribute("Hits", 1)
 
-        folder.Parent = healthComponent.Root.DamageFolder
-    else
-        folder:SetAttribute("Damage", folder:GetAttribute("Damage") + damage)
-        folder:SetAttribute("Hits", folder:GetAttribute("Hits") + 1)
+            folder.Parent = healthComponent.Root.DamageFolder
+        else
+            folder:SetAttribute("Damage", folder:GetAttribute("Damage") + damage)
+            folder:SetAttribute("Hits", folder:GetAttribute("Hits") + 1)
+        end
+
+        folder:SetAttribute("Time", tick())
     end
-
-    folder:SetAttribute("Time", tick())
-
     healthComponent:TakeDamage(damage)
 end
 

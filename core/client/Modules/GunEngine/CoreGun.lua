@@ -81,7 +81,7 @@ local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
     end
 end
 
-local function recursivelyFindHealthComponent(part: BasePart)
+local function _recursivelyFindHealthComponent(part: BasePart)
     local player: Player | nil = Players:GetPlayerFromCharacter(part)
     if player ~= nil then
         return player
@@ -89,6 +89,21 @@ local function recursivelyFindHealthComponent(part: BasePart)
         return recursivelyFindHealthComponent(part.Parent)
     else
         return nil
+    end
+end
+
+local function recursivelyFindHealthComponentInstance(part: BasePart)
+    if part:GetAttribute("Health") ~= nil then
+        return part
+    else
+        local player: Player | nil = Players:GetPlayerFromCharacter(part)
+        if player then
+            return player
+        elseif part.Parent ~= workspace then
+            return recursivelyFindHealthComponentInstance(part.Parent)
+        else
+            return nil
+        end
     end
 end
 
@@ -202,16 +217,11 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     end))
 
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
-        local healthComponentPart = recursivelyFindHealthComponent(hitPart)
+        local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
+
         print(hitPart, hitPart.Parent, healthComponentPart)
-        if healthComponentPart ~= nil then
-            attemptDealDamageFunction(healthComponentPart, weaponStats.Name, hitPart.Name)
-        else
-            local shieldComponentPart = recursivelyCheckShieldModel(hitPart)
-            print(shieldComponentPart)
-            if shieldComponentPart ~= nil then
-                attemptDealShieldDamageFunction(shieldComponentPart, weaponStats.Name, hitPart.Name)
-            end
+        if healthComponentInstance ~= nil then
+            attemptDealDamageFunction(healthComponentInstance, weaponStats.Name, hitPart.Name)
         end
     end))
 

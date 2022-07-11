@@ -68,6 +68,7 @@ function VehicleSeat:Start()
                         
                         jumpConnection:Disconnect()
                     end)
+                    self.Cleaner:Add(jumpConnection)
                 end
             else
                 self.Root:SetNetworkOwner(nil)
