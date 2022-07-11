@@ -57,12 +57,15 @@ function LandVehicle:Start()
     self.BodyAngularVelocity = bodyAngularVelocity
     self.BodyVelocity = bodyVelocity
     self.BodyGyro = bodyGyro
+    self.OccupantPlayer = nil
 
     local mainTurret = self.Root:FindFirstChild("Turret")
     if mainTurret ~= nil and self.Root:GetAttribute("DriverMansTurret") == nil then -- if it has a main turret and no variable saying the driver shouldnt get it, then give it to them
         self.Root:SetAttribute("DriversMansTurret", true)
     end
     local driverMansMainTurret = self.Root:GetAttribute("DriverMansTurret") or false
+
+    self:InitializeDriverProximityPrompt()
 
     local vehicleSeatComponent = tcs.get_component(self.Root.Chassis.VehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
@@ -83,6 +86,7 @@ function LandVehicle:Start()
                 self.Courier:Send("BindToTurret", newOccupant, mainTurret)
             end
         else
+            self.ProximityPrompt.Enabled = true   
             self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
@@ -90,6 +94,31 @@ function LandVehicle:Start()
             end
         end
     end))
+end
+
+function LandVehicle:InitializeDriverProximityPrompt()
+    local prompt = Instance.new("ProximityPrompt")
+    prompt.Enabled = true
+    prompt.ClickablePrompt = false
+    prompt.ActionText = "Driver Seat"
+    prompt.ObjectText = "Enter the Driver's Seat"
+    prompt.KeyboardKeyCode = Enum.KeyCode.E
+    prompt.MaxActivationDistance = 20
+    prompt.HoldDuration = 3
+    prompt.RequiresLineOfSight = true
+
+    self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
+        if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then
+            local hum = player.Character.Humanoid
+            if hum.Sit == true then return end
+            self.OccupantPlayer = player
+            prompt.Enabled = false
+            self.Root.Chassis.VehicleSeat:Sit(hum)
+        end
+    end))
+
+    prompt.Parent = self.Root
+    self.ProximityPrompt = prompt
 end
 
 function LandVehicle:IsVehicleFlipped()

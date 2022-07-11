@@ -48,6 +48,7 @@ function VehicleSeat.new(root: any)
 end
 
 function VehicleSeat:Start()
+    self.Root.Disabled = true -- disable the seat so players cant walk on it to get into it, they must use the proximity prompt
     self.Cleaner:Add(self.Root.Changed:Connect(function(property: string)
         if property == "Occupant" then
             local occupant = self.Root.Occupant
