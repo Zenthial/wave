@@ -159,6 +159,8 @@ function LandVehicle:UpdateMovement()
 end
 
 function LandVehicle:UpdateCamera()
+    Camera.CameraType = Enum.CameraType.Scriptable
+
     self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
     self.MouseDeltas = Vector2.new(0,0)
     self.CameraAngles = Vector2.new(self.CameraAngles.X, self.CameraAngles.Y)
@@ -167,12 +169,6 @@ function LandVehicle:UpdateCamera()
     local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
 
     Camera.CFrame = CFrame.new(self.Engine.CFrame.Position) * CFrame.Angles(0, math.rad(90), 0) * angles1 * angles2 * CFrame.new((VehicleStats[self.Root.Name].CameraOut or Vector3.new(0, 15, 65)))
-end
-
-function LandVehicle:SetCamera()
-    Camera.CameraType = Enum.CameraType.Scriptable
-
-    Camera.CFrame = CFrame.new(self.Engine.CFrame.Position) * CFrame.Angles(0, math.rad(90), 0) * CFrame.new((VehicleStats[self.Root.Name].CameraOut or Vector3.new(0, 15, 65)))
 end
 
 function LandVehicle:RunServiceLoop()
@@ -221,8 +217,6 @@ function LandVehicle:Bind()
     local sessionCleaner = Trove.new()
     self.Cleaner:Add(sessionCleaner, "Clean")
     self.SessionCleaner = sessionCleaner
-
-    self:SetCamera()
 
     self:Move(0)
 
