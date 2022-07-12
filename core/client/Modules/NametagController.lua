@@ -30,7 +30,7 @@ local function playerAdded(player: Player)
         if  player.Character == nil then return end 
         if prop ~= "TeamColor" then return end
         
-        local nameTag = tcs.get_component(player.Character, "NameTag")
+        local nameTag = tcs.get_component(player.Character, "Tag")
 
         if nameTag == nil then return end
 
@@ -45,12 +45,18 @@ local function playerAdded(player: Player)
     end 
 
     local function characterAdded(character)
-        CollectionService:AddTag(character, "NameTag")
-    
-        local nameTag = tcs.get_component(character, "NameTag")
-    
-        nameTag:SetName(player.DisplayName)
+        --tag setup
+        CollectionService:AddTag(character, "Tag")
+        local nameTag = tcs.get_component(character, "Tag")
         nameTag:SetAdornee(character.Head)
+
+        CollectionService:AddTag(nameTag.Tag, "SubtextTag")
+        local subtextTag = tcs.get_component(nameTag.Tag, "SubtextTag")
+        subtextTag:SetText(player.DisplayName)
+
+        CollectionService:AddTag(nameTag.Tag, "HealthTag")
+        local healthTag = tcs.get_component(nameTag.Tag, "HealthTag")
+        healthTag:ConnectTo(player)
 
         changeTeam("TeamColor")
     end
@@ -68,7 +74,7 @@ local function clientTeamChange(prop: string)
     for _, player in ipairs(Players:GetPlayers()) do
         if player == client then continue end
 
-        local nameTag = tcs.get_component(player.Character, "NameTag")
+        local nameTag = tcs.get_component(player.Character, "Tag")
 
         if nameTag == nil then return end
 
