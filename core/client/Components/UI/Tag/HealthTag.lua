@@ -56,20 +56,20 @@ function HealthTag:Start()
 end
 
 function HealthTag:ConnectTo(subject : any)
-    subject:GetAttributeChangedSignal("Health"):Connect(function() 
+    self.Cleaner:Add(subject:GetAttributeChangedSignal("Health"):Connect(function() 
         local totalHealth = (subject:GetAttribute("Health") or 0 ) + (subject:GetAttribute("Shields") or 0)
         local totalMaxHealth = (subject:GetAttribute("MaxHealth") or 0 ) + (subject:GetAttribute("MaxShields") or 0)
 
         self.Tag.Bar.Frame.Size = UDim2.new((totalHealth / totalMaxHealth),0, 1,0)
-    end)
+    end))
 
     if subject:GetAttribute("Shields") ~= nil then
-        subject:GetAttributeChangedSignal("Shields"):Connect(function() 
+        self.Cleaner:Add(subject:GetAttributeChangedSignal("Shields"):Connect(function() 
             local totalHealth = (subject:GetAttribute("Health") or 0 ) + (subject:GetAttribute("Shields") or 0)
             local totalMaxHealth = (subject:GetAttribute("MaxHealth") or 0 ) + (subject:GetAttribute("MaxShields") or 0)
     
             self.Tag.Bar.Frame.Size = UDim2.new((totalHealth / totalMaxHealth),0, 1,0)
-        end)
+        end))
     end
 end
 

@@ -43,7 +43,8 @@ function Tag:Start()
     self.Tag:SetAttribute("PrimaryColor", Color3.fromRGB(255,255,255))
     self.Tag:SetAttribute("SecondaryColor", Color3.fromRGB(255,255,255))
     self.Tag.Enabled = true
-
+    self:SetAdornee(self.Root)
+    
     --blah blah blah this should be inside of destroy but who cares
 	--this looks really nice though
 	self.Cleaner:Add(function() 
