@@ -5,6 +5,9 @@ local healthTag = uiAssets:WaitForChild("Tags", 5).HealthTag
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
+local TweenService = game:GetService("TweenService")
+local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out)
+
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
@@ -44,11 +47,25 @@ function HealthTag:Start()
         local bool = self.Root:GetAttribute("Enabled")
 
         if bool then
-            self.Tag.Visible = true
+            self.Tag.Bar.UIStroke.Enabled = true
+            self.Tag.Bar.BackgroundTransparency = 0
+            TweenService:Create(self.Tag, tweenInfo, { Size = UDim2.new(0, 125, 0, 10) }):Play()
             return
         end
 
-        self.Tag.Visible = false
+        local tween = TweenService:Create(self.Tag, tweenInfo, {Size = UDim2.new(0, 0, 0, 10),})
+
+        local connection = nil
+        connection = tween.Completed:Connect(function()
+            connection:Disconnect()
+            local newBool = self.Root:GetAttribute("Enabled")
+            if newBool then return end
+
+            self.Tag.Bar.UIStroke.Enabled = false
+            self.Tag.Bar.BackgroundTransparency = 1
+        end)
+
+        tween:Play()
     end
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Enabled"):Connect(rootEnable))
