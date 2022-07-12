@@ -157,26 +157,30 @@ function AirVehicle:RunServiceLoop()
     if UserInputService:IsKeyDown(Enum.KeyCode.Z) then
         self.PreviousMousePosition = Vector3.new(self.PreviousMousePosition.X,EngineC.p.Y,self.PreviousMousePosition.Z)
     end
-    local targetYaw, targetPitch = getYPR(CFrame.new(EngineC.Position, self.PreviousMousePosition))
+    local targetYaw, targetPitch, targetRoll = getYPR(CFrame.new(EngineC.Position, self.PreviousMousePosition))
     local coreLook = Vector3.new(EngineC.LookVector.X, EngineC.LookVector.Y * (self.Stats.CounterGravity or .1), EngineC.LookVector.Z)
     local velocity = coreLook
 
     if UserInputService:IsKeyDown(Enum.KeyCode.E) and self.Flying then
-        velocity = velocity + (EngineC.UpVector * self.RiseSpeed.X)
+        velocity += (EngineC.UpVector * self.RiseSpeed.X)
     elseif UserInputService:IsKeyDown(Enum.KeyCode.Q) and self.Flying then
-        velocity = velocity - (EngineC.UpVector * self.RiseSpeed.Y)
+        velocity -= (EngineC.UpVector * self.RiseSpeed.Y)
     end
 
-    if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
-        velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
-        velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    else
-        self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
-    end
+    --if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
+        --velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
+        --self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    --elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
+       -- velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
+       -- self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    --else
+       -- self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
+    -- end
     
+    if self.Flying then
+        self.Roll = targetRoll
+    end
+
     if not self.TakingOffOrLanding then
         velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
     end
