@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
@@ -83,5 +84,18 @@ portRemote.Parent = PortsFolder
 portRemote.OnServerInvoke = function(player: Player, portString: string)
     return CourierServer:GetPort(portString)
 end
+
+local sendToOthersRemote = Instance.new("RemoteEvent")
+sendToOthersRemote.Name = "SendToOthersRemote"
+sendToOthersRemote.Parent = PortsFolder
+
+sendToOthersRemote.OnServerEvent:Connect(function(player: Player, port: string, ...)
+    local remote = CourierServer.PortRemotes[port] :: RemoteEvent
+    if remote then
+        for _, plr in pairs(Players:GetPlayers()) do
+            remote:FireClient(plr, ...)
+        end
+    end
+end)
 
 return CourierServer

@@ -7,6 +7,8 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
+local CameraLimits = require(script.Parent.CameraLimits)
+
 local Camera = workspace.CurrentCamera
 
 type Cleaner_T = {
@@ -23,7 +25,7 @@ type LandVehicle_T = {
     __index: LandVehicle_T,
     Name: string,
     Tag: string,
-    Root: {
+    Root: Model & {
         Chassis: Model & {
             VehicleSeat: VehicleSeat,
             Engine: Part & {

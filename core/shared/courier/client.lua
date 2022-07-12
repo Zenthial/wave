@@ -4,6 +4,7 @@ local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("ut
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local PortRemote = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PortsFolder"):WaitForChild("PortRemote") :: RemoteFunction
+local SendToOthersRemote = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PortsFolder"):WaitForChild("SendToOthersRemote") :: RemoteFunction
 
 local CourierClient = {
     Cache = {}
@@ -20,6 +21,10 @@ function CourierClient:Send(portString: string, ...)
     if portRemote ~= nil then
         portRemote:FireServer(...)
     end
+end
+
+function CourierClient:SendToOthers(portString: string, ...)
+    SendToOthersRemote:FireServer(portString, ...)
 end
 
 function CourierClient:Listen(portString: string): typeof(Signal)

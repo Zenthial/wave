@@ -20,10 +20,24 @@ function VehicleController:Start()
         end
     end)
 
+    Courier:Listen("BindToPlane"):Connect(function(vehicle: Model)
+        if CollectionService:HasTag(vehicle, "AirVehicle") then
+            local airVehicleComponent = tcs.get_component(vehicle, "AirVehicle")
+            airVehicleComponent:Bind()
+        end
+    end)
+
+    Courier:Listen("UnbindFromPlane"):Connect(function(vehicle: Model)
+        if CollectionService:HasTag(vehicle, "AirVehicle") then
+            local airVehicleComponent = tcs.get_component(vehicle, "AirVehicle")
+            airVehicleComponent:Unbind()
+        end
+    end)
+
     Courier:Listen("BindToTurret"):Connect(function(turret: Model)
         if CollectionService:HasTag(turret, "Turret") then
             local turretComponent = tcs.get_component(turret, "Turret")
-            turretComponent:Bind()
+            turretComponent:Bind(true)
         end
     end)
 
@@ -32,6 +46,24 @@ function VehicleController:Start()
             local turretComponent = tcs.get_component(turret, "Turret")
             turretComponent:Unbind()
         end
+    end)
+
+    Courier:Listen("BindToMountedTurret"):Connect(function(turret: Model)
+        if CollectionService:HasTag(turret, "MountedTurret") then
+            local turretComponent = tcs.get_component(turret, "MountedTurret")
+            turretComponent:Bind()
+        end
+    end)
+
+    Courier:Listen("UnbindFromMountedTurret"):Connect(function(turret: Model)
+        if CollectionService:HasTag(turret, "MountedTurret") then
+            local turretComponent = tcs.get_component(turret, "MountedTurret")
+            turretComponent:Unbind()
+        end
+    end)
+
+    Courier:Listen("UpdateServo"):Connect(function(servo: HingeConstraint, angle: number)
+        servo.TargetAngle = angle
     end)
 end
 

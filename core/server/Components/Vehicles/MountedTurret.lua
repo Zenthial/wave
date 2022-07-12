@@ -29,6 +29,7 @@ type MountedTurret_T = {
             Middle: Part,
             Seat: Seat
         },
+        BaseMount: Part,
     },
 
     Core: Part & {
@@ -56,6 +57,7 @@ function MountedTurret.new(root: any)
 end
 
 function MountedTurret:Start()
+    print("mounted turret started")
     local body = self.Root.Y
     local middle = body.Middle
     local core = body.Core
@@ -78,10 +80,10 @@ function MountedTurret:Start()
     local vehicleSeatComponent = tcs.get_component(vehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if newOccupant ~= nil then
-            self.Courier:Send("BindToTurret", newOccupant, self.Root)
+            self.Courier:Send("BindToMountedTurret", newOccupant, self.Root)
         else
-            self.ProximityPromt.Enabled = true
-            self.Courier:Send("UnbindFromTurret", oldOccupant, self.Root)
+            self.ProximityPrompt.Enabled = true
+            self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root)
         end
     end))
 end
@@ -89,13 +91,13 @@ end
 function MountedTurret:InitializeProximityPrompt()
     local prompt = Instance.new("ProximityPrompt")
     prompt.Enabled = true
-    prompt.ClickablePrompt = false
-    prompt.ActionText = "Turret Seat"
-    prompt.ObjectText = "Enter the Turret Seat"
+    prompt.ClickablePrompt = true
+    prompt.ObjectText = "Turret Seat"
+    prompt.ActionText = "Man the Turret"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
     prompt.MaxActivationDistance = 20
-    prompt.HoldDuration = 3
-    prompt.RequiresLineOfSight = true
+    prompt.HoldDuration = 1
+    prompt.RequiresLineOfSight = false
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then
@@ -107,12 +109,14 @@ function MountedTurret:InitializeProximityPrompt()
         end
     end))
 
-    prompt.Parent = self.Root
+    prompt.Parent = self.Root.BaseMount
     self.ProximityPrompt = prompt
 end
 
 function MountedTurret:Destroy()
     self.Cleaner:Clean()
 end
+
+tcs.create_component(MountedTurret)
 
 return MountedTurret

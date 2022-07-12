@@ -12,6 +12,11 @@ type Cleaner_T = {
     Clean: (Cleaner_T) -> (Cleaner_T, Instance, string?)
 }
 
+type Courier_T = {
+    Listen: (Courier_T, Port: string) -> {Connect: RBXScriptSignal},
+    Send: (Courier_T, Port: string, ...any) -> ()
+}
+
 type Turret_T = {
     __index: Turret_T,
     Name: string,
@@ -40,6 +45,7 @@ type Turret_T = {
     SessionCleaner: typeof(Trove),
 
     Cleaner: Cleaner_T,
+    Courier: Courier_T,
 }
 
 local Turret: Turret_T = {}
@@ -99,7 +105,7 @@ function Turret:GetXZ(goalPosition: Vector3)
 	return math.clamp(TargetAngle, ClampLower, ClampUpper)
 end
 
-function Turret:Bind()
+function Turret:Bind(networkOwner: boolean)
     local sessionCleaner = Trove.new()
     self.SessionCleaner = sessionCleaner
     self.Cleaner:Add(sessionCleaner, "Clean")
@@ -109,8 +115,13 @@ function Turret:Bind()
         local positionXZ = self:GetXZ(goalPosition)
         local positionY = self:GetY(goalPosition)
 
-        self.HingeXZ.TargetAngle = positionXZ
-        self.HingeY.TargetAngle = positionY
+        if networkOwner then
+            self.HingeXZ.TargetAngle = positionXZ
+            self.HingeY.TargetAngle = positionY
+        else
+            self.Courier:SendToOthers("UpdateServo", self.HingeXZ, positionXZ)
+            self.Courier:SendToOthers("UpdateServo", self.HingeY, positionY)
+        end
     end))
 end
 

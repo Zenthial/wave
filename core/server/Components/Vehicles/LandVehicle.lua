@@ -61,7 +61,7 @@ function LandVehicle:Start()
 
     local mainTurret = self.Root:FindFirstChild("Turret")
     if mainTurret ~= nil and self.Root:GetAttribute("DriverMansTurret") == nil then -- if it has a main turret and no variable saying the driver shouldnt get it, then give it to them
-        self.Root:SetAttribute("DriversMansTurret", true)
+        self.Root:SetAttribute("DriverMansTurret", true)
     end
     local driverMansMainTurret = self.Root:GetAttribute("DriverMansTurret") or false
 
@@ -99,13 +99,13 @@ end
 function LandVehicle:InitializeDriverProximityPrompt()
     local prompt = Instance.new("ProximityPrompt")
     prompt.Enabled = true
-    prompt.ClickablePrompt = false
-    prompt.ActionText = "Driver Seat"
-    prompt.ObjectText = "Enter the Driver's Seat"
+    prompt.ClickablePrompt = true
+    prompt.ObjectText = "Driver Seat"
+    prompt.ActionText = "Drive the " .. self.Root.Name
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 20
-    prompt.HoldDuration = 3
-    prompt.RequiresLineOfSight = true
+    prompt.MaxActivationDistance = 25
+    prompt.HoldDuration = 1
+    prompt.RequiresLineOfSight = false
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then
@@ -117,7 +117,7 @@ function LandVehicle:InitializeDriverProximityPrompt()
         end
     end))
 
-    prompt.Parent = self.Root
+    prompt.Parent = self.Root.Chassis.Hatch
     self.ProximityPrompt = prompt
 end
 

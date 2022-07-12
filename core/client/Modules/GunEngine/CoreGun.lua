@@ -81,17 +81,6 @@ local function getBulletModule(gunModel: GunModel, stats: WeaponStats)
     end
 end
 
-local function _recursivelyFindHealthComponent(part: BasePart)
-    local player: Player | nil = Players:GetPlayerFromCharacter(part)
-    if player ~= nil then
-        return player
-    elseif part.Parent ~= workspace then 
-        return recursivelyFindHealthComponent(part.Parent)
-    else
-        return nil
-    end
-end
-
 local function recursivelyFindHealthComponentInstance(part: BasePart)
     if part:GetAttribute("Health") ~= nil then
         return part
@@ -104,16 +93,6 @@ local function recursivelyFindHealthComponentInstance(part: BasePart)
         else
             return nil
         end
-    end
-end
-
-local function recursivelyCheckShieldModel(part: BasePart)
-    if part.Name == "APS" and part:IsA("Model") and CollectionService:HasTag("APS") then
-        return part
-    elseif part.Parent ~= workspace then
-        return recursivelyCheckShieldModel(part.Parent)
-    else
-        return false
     end
 end
 
@@ -219,7 +198,7 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     cleaner:Add(attackModule.Events.CheckHitPart:Connect(function(hitPart)
         local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
 
-        print(hitPart, hitPart.Parent, healthComponentPart)
+        print(hitPart, hitPart.Parent, healthComponentInstance)
         if healthComponentInstance ~= nil then
             attemptDealDamageFunction(healthComponentInstance, weaponStats.Name, hitPart.Name)
         end

@@ -57,23 +57,31 @@ function VehicleSeat:Start()
                 local player = Players:GetPlayerFromCharacter(character)
 
                 if player then
-                    self.Root:SetNetworkOwner(player)
+                    if self.Root:IsA("VehicleSeat") then
+                        self.Root:SetNetworkOwner(player)
+                    end
                     self.Events.OccupantChanged:Fire(player, self.Occupant)
                     self.Occupant = player
 
                     local jumpConnection = nil :: RBXScriptSignal
                     jumpConnection = occupant.Jumping:Connect(function()
-                        self.Root.Steer = 0
-                        self.Root.Throttle = 0
+                        if self.Root:IsA("VehicleSeat") then
+                            self.Root.Steer = 0
+                            self.Root.Throttle = 0
+                        end
                         
                         jumpConnection:Disconnect()
                     end)
                     self.Cleaner:Add(jumpConnection)
                 end
             else
-                self.Root:SetNetworkOwner(nil)
-                self.Root.Steer = 0
-                self.Root.Throttle = 0
+                if self.Root:IsA("VehicleSeat") then
+                    self.Root:SetNetworkOwner(nil)
+                end
+                if self.Root:IsA("VehicleSeat") then
+                    self.Root.Steer = 0
+                    self.Root.Throttle = 0
+                end
 
                 self.Events.OccupantChanged:Fire(nil, self.Occupant)
                 self.Occupant = nil
