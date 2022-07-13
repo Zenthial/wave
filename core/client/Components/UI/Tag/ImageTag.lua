@@ -55,6 +55,11 @@ function ImageTag:Start()
     rootEnable()
 end
 
+
+function ImageTag:SetImage(id: number)
+    self.Tag.ImageLabel = id
+end
+
 function ImageTag:Destroy()
     self.Cleaner:Clean()
     self.Tag:Destroy()
