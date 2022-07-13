@@ -32,7 +32,7 @@ MainMenu.Name = "MainMenu"
 MainMenu.Tag = "MainMenu"
 MainMenu.Ancestor = game
 
-function MainMenu.new(root: any)
+function MainMenu.new(root: ScreenGui)
     return setmetatable({
         Root = root,
     }, MainMenu)
@@ -43,7 +43,7 @@ function MainMenu:Start()
     local IntroComponent = tcs:get_component(IntroUI, "Intro")
 
     self.Cleaner:Add(IntroComponent.Events.IntroComplete:Connect(function()
-        
+        self.Root.Enabled = true
     end))
 end
 
