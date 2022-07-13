@@ -64,6 +64,7 @@
         "scope": "lua",
         "description": "autofills the material tcs component",
         "body": [
+            "-- ${0:$CURRENT_MONTH}/${0:$CURRENT_DATE}/${0:$CURRENT_YEAR}/",
             "local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
             "local Players = game:GetService(\"Players\")",
             "",

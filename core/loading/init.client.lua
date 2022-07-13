@@ -1,5 +1,5 @@
-local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
@@ -10,4 +10,9 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 
 IntroUI.Parent = PlayerGui
 
-StarterGui:RemoveDefaultLoadingScreen()
+ReplicatedFirst:RemoveDefaultLoadingScreen()
+
+task.wait(3)
+
+IntroUI:Destroy()
+-- This is temporary until we decide what we want
