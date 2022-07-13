@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 type Cleaner_T = {
@@ -34,6 +35,10 @@ Intro.Ancestor = PlayerGui
 function Intro.new(root: ScreenGui)
     return setmetatable({
         Root = root,
+
+        Events = {
+            IntroComplete = Signal.new()
+        }
     }, Intro)
 end
 
