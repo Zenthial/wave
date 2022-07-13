@@ -1,5 +1,9 @@
 -- 07/11/2022/
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -35,7 +39,12 @@ function MainMenu.new(root: any)
 end
 
 function MainMenu:Start()
+    local IntroUI = PlayerGui:WaitForChild("IntroUI")
+    local IntroComponent = tcs:get_component(IntroUI, "Intro")
 
+    self.Cleaner:Add(IntroComponent.Events.IntroComplete:Connect(function()
+        
+    end))
 end
 
 function MainMenu:Destroy()

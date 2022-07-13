@@ -48,6 +48,10 @@ function Intro:Start()
     BackgroundCreation:CreateBackground()
 end
 
+function Intro:Complete()
+    self.Events.IntroComplete:Fire()
+end
+
 function Intro:Destroy()
     self.Cleaner:Clean()
 end
