@@ -1,12 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local uiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
-local healthTag = uiAssets:WaitForChild("Tags", 5).HealthTag
+local UiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
+local _HealthTag = UiAssets:WaitForChild("Tags", 5).HealthTag
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local TweenService = game:GetService("TweenService")
-local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out)
+local TweenInfo1 = TweenInfo.new(1, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out)
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -36,7 +36,8 @@ HealthTag.Ancestor = game
 function HealthTag.new(root: any)
     return setmetatable({
         Root = root,
-        Tag = healthTag:Clone()
+        Tag = _HealthTag:Clone()
+
     }, HealthTag)
 end
 
@@ -49,11 +50,11 @@ function HealthTag:Start()
         if bool then
             self.Tag.Bar.UIStroke.Enabled = true
             self.Tag.Bar.BackgroundTransparency = 0
-            TweenService:Create(self.Tag, tweenInfo, { Size = UDim2.new(0, 125, 0, 10) }):Play()
+            TweenService:Create(self.Tag, TweenInfo1, { Size = UDim2.new(0, 125, 0, 10) }):Play()
             return
         end
 
-        local tween = TweenService:Create(self.Tag, tweenInfo, {Size = UDim2.new(0, 0, 0, 10),})
+        local tween = TweenService:Create(self.Tag, TweenInfo1, {Size = UDim2.new(0, 0, 0, 10),})
 
         local connection = nil
         connection = tween.Completed:Connect(function()
@@ -73,20 +74,19 @@ function HealthTag:Start()
 end
 
 function HealthTag:ConnectTo(subject : any)
-    self.Cleaner:Add(subject:GetAttributeChangedSignal("Health"):Connect(function() 
+    local function healthUpd()
         local totalHealth = (subject:GetAttribute("Health") or 0 ) + (subject:GetAttribute("Shields") or 0)
         local totalMaxHealth = (subject:GetAttribute("MaxHealth") or 0 ) + (subject:GetAttribute("MaxShields") or 0)
 
-        self.Tag.Bar.Frame.Size = UDim2.new((totalHealth / totalMaxHealth),0, 1,0)
-    end))
+        local percent = (totalHealth / totalMaxHealth)
+
+        TweenService:Create(self.Tag.Bar.Frame, TweenInfo1, {Size = UDim2.new(percent, 0, 01, 0),})
+    end
+
+    self.Cleaner:Add(subject:GetAttributeChangedSignal("Health"):Connect(healthUpd))
 
     if subject:GetAttribute("Shields") ~= nil then
-        self.Cleaner:Add(subject:GetAttributeChangedSignal("Shields"):Connect(function() 
-            local totalHealth = (subject:GetAttribute("Health") or 0 ) + (subject:GetAttribute("Shields") or 0)
-            local totalMaxHealth = (subject:GetAttribute("MaxHealth") or 0 ) + (subject:GetAttribute("MaxShields") or 0)
-    
-            self.Tag.Bar.Frame.Size = UDim2.new((totalHealth / totalMaxHealth),0, 1,0)
-        end))
+        self.Cleaner:Add(subject:GetAttributeChangedSignal("Shields"):Connect(healthUpd))
     end
 end
 

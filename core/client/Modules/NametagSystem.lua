@@ -5,14 +5,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
-local Teams = game:GetService("Teams")
 
-local util = ReplicatedStorage:WaitForChild("Shared").util
-local promise = require(util.Promise)
+--local util = ReplicatedStorage:WaitForChild("Shared").util
+--local promise = require(util.Promise)
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
-local client = Players.LocalPlayer
+local Client = Players.LocalPlayer
 
 --------------------------------------------------------------------------------------------
 -- Local methods
@@ -34,7 +33,7 @@ local function playerAdded(player: Player)
 
         if nameTag == nil then return end
 
-        if player.TeamColor ~= client.TeamColor then
+        if player.TeamColor ~= Client.TeamColor then
             nameTag:Disable()
             setTagToEnemy(nameTag)
             return
@@ -72,13 +71,13 @@ local function clientTeamChange(prop: string)
     if prop ~= "TeamColor" then return end
 
     for _, player in ipairs(Players:GetPlayers()) do
-        if player == client then continue end
+        if player == Client then continue end
 
         local nameTag = tcs.get_component(player.Character, "Tag")
 
         if nameTag == nil then return end
 
-        if player.TeamColor ~= client.TeamColor then
+        if player.TeamColor ~= Client.TeamColor then
             nameTag:Disable()
             setTagToEnemy(nameTag)
             continue
@@ -92,28 +91,18 @@ end
 --------------------------------------------------------------------------------------------
 -- Class
 
-local NametagController = {}
-NametagController.__index = NametagController
+local NametagSystem = {}
 
-function NametagController.new()
-    local self = setmetatable({}, NametagController)
-    return self
-end
-
-function NametagController:Start()
+function NametagSystem:Start()
     
     for _, player in ipairs(Players:GetPlayers()) do
-        if player == client then continue end
+        if player == Client then continue end
         playerAdded(player)
     end
     Players.PlayerAdded:Connect(playerAdded)
 
     clientTeamChange("TeamColor")
-    client.Changed:Connect(clientTeamChange)
+    Client.Changed:Connect(clientTeamChange)
 end
 
-function NametagController:Destroy()
-    
-end
-
-return NametagController
+return NametagSystem

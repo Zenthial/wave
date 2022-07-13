@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local uiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
-local titleTag = uiAssets:WaitForChild("Tags", 5).TitleTag
+local UiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
+local _TitleTag = UiAssets:WaitForChild("Tags", 5).TitleTag
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -33,7 +33,7 @@ TitleTag.Ancestor = game
 function TitleTag.new(root: any)
     return setmetatable({
         Root = root,
-        Tag = titleTag:Clone()
+        Tag = _TitleTag:Clone()
     }, TitleTag)
 end
 
@@ -53,10 +53,6 @@ function TitleTag:Start()
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Enabled"):Connect(rootEnable))
     rootEnable()
-    
-    self.Cleaner:Add(function() 
-		self.Tag:Destroy()
-	end)
 end
 
 function TitleTag:SetText(str : string)
@@ -65,6 +61,7 @@ end
 
 function TitleTag:Destroy()
     self.Cleaner:Clean()
+    self.Tag:Destroy()
 end
 
 tcs.create_component(TitleTag)

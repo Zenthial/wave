@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local uiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
-local arrowTag = uiAssets:WaitForChild("Tags", 5).ArrowTag
+local UiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
+local _ImageTag = UiAssets:WaitForChild("Tags", 5).ImageTag
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -15,8 +15,8 @@ type Courier_T = {
     Send: (Courier_T, Port: string, ...any) -> ()
 }
 
-type ArrowTag_T = {
-    __index: ArrowTag_T,
+type ImageTag_T = {
+    __index: ImageTag_T,
     Name: string,
     Tag: string,
 
@@ -24,20 +24,20 @@ type ArrowTag_T = {
     Courier: Courier_T
 }
 
-local ArrowTag: ArrowTag_T = {}
-ArrowTag.__index = ArrowTag
-ArrowTag.Name = "ArrowTag"
-ArrowTag.Tag = "ArrowTag"
-ArrowTag.Ancestor = game
+local ImageTag: ImageTag_T = {}
+ImageTag.__index = ImageTag
+ImageTag.Name = "ImageTag"
+ImageTag.Tag = "ImageTag"
+ImageTag.Ancestor = game
 
-function ArrowTag.new(root: any)
+function ImageTag.new(root: any)
     return setmetatable({
         Root = root,
-        Tag = arrowTag:Clone()
-    }, ArrowTag)
+        Tag = _ImageTag:Clone()
+    }, ImageTag)
 end
 
-function ArrowTag:Start()
+function ImageTag:Start()
     self.Tag.Parent = self.Root
 
     local function rootEnable()
@@ -53,16 +53,13 @@ function ArrowTag:Start()
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Enabled"):Connect(rootEnable))
     rootEnable()
-    
-    self.Cleaner:Add(function() 
-		self.Tag:Destroy()
-	end)
 end
 
-function ArrowTag:Destroy()
+function ImageTag:Destroy()
     self.Cleaner:Clean()
+    self.Tag:Destroy()
 end
 
-tcs.create_component(ArrowTag)
+tcs.create_component(ImageTag)
 
-return ArrowTag
+return ImageTag
