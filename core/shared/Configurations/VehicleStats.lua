@@ -75,7 +75,7 @@ local Vehicles = {
 		DirectionP = 500,
 	},
 	["Sweeper"] = {
-		Speed = 300,
+		Speed = 600,
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
 		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
 		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity

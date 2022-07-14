@@ -167,19 +167,25 @@ function AirVehicle:RunServiceLoop()
         velocity -= (EngineC.UpVector * self.RiseSpeed.Y)
     end
 
-    --if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
-        --velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
-        --self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
-       -- velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
-       -- self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --else
-       -- self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
-    -- end
-    
-    if self.Flying then
-        self.Roll = targetRoll
+    if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
+        velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
+        self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
+       velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
+       self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    else
+       self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
     end
+    
+    -- if self.Flying then
+    --     if (self.Roll - targetRoll) > 0 then
+    --         self.Roll = targetRoll + math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    --     elseif (self.Roll - targetRoll) < 0 then
+    --         self.Roll = targetRoll + math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    --     else
+    --         self.Roll = targetRoll
+    --     end
+    -- end
 
     if not self.TakingOffOrLanding then
         velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
@@ -201,7 +207,7 @@ function AirVehicle:RunServiceLoop()
     self:UpdateCamera()
     
     if self.Flying then
-        self:Move(Vector3.new(500000, 1500000, 500000) * (200 / 200), nil, velocity)
+        self:Move(Vector3.new(500000, 1500000, 500000), 500, velocity)
     else
         self:Move(Vector3.new(0, 0, 0), nil, velocity)
     end
