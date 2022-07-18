@@ -62,6 +62,18 @@ local function get_component(instance: Instance, component_name: string)
     return component_instance
 end
 
+local function has_component(instance: Instance, component_name: string)
+	if instance == nil then error("instance is nil") end
+    local class = component_name_to_class_module[component_name:lower()]
+	if class == nil then
+		return false
+	end
+	
+    local component_instance = class.__Instances[instance]
+	
+    return component_instance ~= nil
+end
+
 local function await_component(instance: Instance, component_name: string)
 	local component_instance = get_component(instance, component_name)
 
@@ -189,5 +201,6 @@ return {
 	debug = set_debug,
 	await_start = await_start,
 	set_timeout = set_timeout,
+	has_component = has_component,
 	set_inject_function = set_inject_function
 }
