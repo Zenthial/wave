@@ -264,7 +264,7 @@ function AnimationState:HandleWeaponChange()
 
     if self.State.WeaponEquipped then
         self.AnimationHandler:Play(newWeaponName.."equippingArm")
-        task.wait(newWeaponStats.EquipTime)
+        task.wait(0.3) -- equip time
         self.AnimationHandler:Stop(newWeaponName.."equippingArm")
 
         self.AnimationHandler:Play(newWeaponName.."equipMiddle")
@@ -275,7 +275,7 @@ function AnimationState:HandleWeaponChange()
 
         if oldWeaponStats.Slot == 1 then
             self.AnimationHandler:Play(oldWeaponName.."equippingArm")
-            task.wait(oldWeaponStats.EquipTime)
+            task.wait(0.3) -- equip time
             self.AnimationHandler:Stop(oldWeaponName.."equippingArm")
         end
     end

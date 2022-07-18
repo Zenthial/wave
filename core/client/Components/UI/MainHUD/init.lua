@@ -27,7 +27,7 @@ function MainHUD:Start()
     self.Root.Enabled = false
     local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
-    self.HeatUI = tcs.get_component(self.Bottom:WaitForChild("HeatContainer"), "HeatUI") --[[:await()]]
+    self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("GunToolbar"), "GunToolbar")
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
@@ -37,7 +37,7 @@ function MainHUD:Start()
     end))
 
     self.Cleaner:Add(ReloadingSignal:Connect(function()
-        self.HeatUI:SetOverheated(Player:GetAttribute("Reloading"))
+        self.GunToolbar:SetOverheated(Player:GetAttribute("Reloading"))
     end))
 
     self.Cleaner:Add(RenderDeathEffect.OnClientEvent:Connect(function(effect, victim, killer, color)
@@ -46,27 +46,29 @@ function MainHUD:Start()
 end
 
 function MainHUD:UpdateEquippedWeapon(weapon)
-    local HeatUIComponent = self.HeatUI
+    local GunToolbar = self.GunToolbar
     if weapon == nil then
-        HeatUIComponent:SetName(nil)
-        HeatUIComponent:SetHeat(0)
-        -- HeatUIComponent:SetKeybind("")
-        HeatUIComponent:TriggerBar(0.01)
+        GunToolbar:SetViewport(nil)
+        GunToolbar:SetOverheated(nil)
+        GunToolbar:SetName(nil)
+        GunToolbar:SetHeat(nil)
+        GunToolbar:TriggerBar(0.01)
     else
-        HeatUIComponent:SetName(weapon.WeaponStats.Name)
-        HeatUIComponent:SetHeat(0)
-        HeatUIComponent:SetKeybind("1")
+        GunToolbar:SetViewport(weapon.WeaponStats.Name)
+        GunToolbar:SetOverheated(false)
+        GunToolbar:SetName(weapon.WeaponStats.Name)
+        GunToolbar:SetHeat(0)
     end
 end
 
 function MainHUD:UpdateHeat(heat: number)
-    local HeatUIComponent = self.HeatUI
-    HeatUIComponent:SetHeat(heat)
+    local GunToolbarComponent = self.GunToolbar
+    GunToolbarComponent:SetHeat(heat)
 end
 
 function MainHUD:UpdateTriggerBar(trigDelay: number)
-    local HeatUIComponent = self.HeatUI
-    HeatUIComponent:TriggerBar(trigDelay)
+    local GunToolbarComponent = self.GunToolbar
+    GunToolbarComponent:TriggerBar(trigDelay)
 end
 
 function MainHUD:SetSkillActive()
