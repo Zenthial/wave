@@ -85,6 +85,8 @@ local function recursivelyFindHealthComponent(part: BasePart)
     local player: Player | nil = Players:GetPlayerFromCharacter(part)
     if player ~= nil then
         return player
+    elseif CollectionService:HasTag(part, "ObjectHealth") then
+        return part
     elseif part.Parent ~= workspace then 
         return recursivelyFindHealthComponent(part.Parent)
     else

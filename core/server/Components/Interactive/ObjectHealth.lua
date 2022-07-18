@@ -80,6 +80,7 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
 end
 
 function ObjectHealth:TakeDamage(damage)
+    print("I AM TAKING DAMAGE")
     local newHealth = math.clamp(self.CurrentHealth + damage, 0, self.MaxHealth)
 
     self.Root:SetAttribute("CurrentHealth", newHealth)
@@ -92,4 +93,5 @@ function ObjectHealth:Destroy()
 end
 
 tcs.create_component(ObjectHealth)
+
 return ObjectHealth

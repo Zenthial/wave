@@ -38,17 +38,23 @@ comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: 
 end)
 
 local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
+    print("GOIN")
     local healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
-    assert(healthComponent, "Health component not found on "..healthComponentObject.Name)
+    print(healthComponent)
+    local objectHealthComponent = tcs.get_component(healthComponentObject, "ObjectHealth")
+    print("DAMAGE", healthComponent, objectHealthComponent)
+    assert(not (healthComponent == nil and objectHealthComponent == nil), "Health component not found on "..healthComponentObject.Name)
 
-
+    print("DID I MAKE IT THIS FAR")
     if hitPartName == "Head" and headshotMultiplier then
         damage *= headshotMultiplier
     end
     
     print(damage)
-    healthComponent.Root:SetAttribute("LastKiller", player.Name)
-    healthComponent.Root:SetAttribute("LastKilledWeapon", weaponName)
+    if healthComponent ~= nil then
+        healthComponent.Root:SetAttribute("LastKiller", player.Name)
+        healthComponent.Root:SetAttribute("LastKilledWeapon", weaponName)
+    end
 
     local folder = healthComponent.Root.DamageFolder:FindFirstChild(player.Name)
     if folder == nil then
@@ -65,7 +71,11 @@ local function attemptDealDamage(player: Player, weaponName: string, healthCompo
 
     folder:SetAttribute("Time", tick())
 
-    healthComponent:TakeDamage(damage)
+    if healthComponent ~= nil then
+        healthComponent:TakeDamage(damage)
+    else
+        objectHealthComponent:TakeDamage(damage)
+    end
 end
 
 -- healthComponentPart is technically a player now
