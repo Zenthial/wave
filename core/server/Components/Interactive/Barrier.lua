@@ -36,7 +36,6 @@ function Barrier.new(root: BasePart)
 end
 
 function Barrier:Start()
-    print("Am I starting?")
     local defaultHealth = self.Root:GetAttribute("DefaultHealth")
     assert(defaultHealth ~= nil, "DefaultHealth not found!")
 
