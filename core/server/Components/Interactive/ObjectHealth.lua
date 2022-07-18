@@ -1,4 +1,3 @@
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -40,6 +39,8 @@ function ObjectHealth:Start()
     assert(typeof(regenRate) == "number", "RegenSpeed was not a number")
     local deathRechargeWait = self.Root:GetAttribute("DeathRechargeRate")
     assert(typeof(regenRate) == "number", "DeathRechargeRate was not a number")
+    local canRegen = self.Root:GetAttribute("CanRegen")
+    assert(typeof(canRegen) == "boolean", "CanRegen was not a boolean")
 
     self.Root:SetAttribute("CurrentHealth", defaultHealth)
     self.Root:SetAttribute("Dead", false)
@@ -47,7 +48,7 @@ function ObjectHealth:Start()
     self.MaxHealth = defaultHealth
     self.CurrentHealth = defaultHealth
 
-    self.CanRegen = false
+    self.CanRegen = self.Root:GetAttribute("CanRegen")
     self.Dead = false
     
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("CanRegen"):Connect(function()
@@ -80,11 +81,10 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
 end
 
 function ObjectHealth:TakeDamage(damage)
-    print("I AM TAKING DAMAGE")
-    local newHealth = math.clamp(self.CurrentHealth + damage, 0, self.MaxHealth)
+    local newHealth = math.clamp(self.CurrentHealth - damage, 0, self.MaxHealth)
 
-    self.Root:SetAttribute("CurrentHealth", newHealth)
     self.CurrentHealth = newHealth
+    self.Root:SetAttribute("CurrentHealth", newHealth)
 end
 
 function ObjectHealth:Destroy()

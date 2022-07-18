@@ -36,6 +36,7 @@ function Barrier.new(root: BasePart)
 end
 
 function Barrier:Start()
+    print("Am I starting?")
     local defaultHealth = self.Root:GetAttribute("DefaultHealth")
     assert(defaultHealth ~= nil, "DefaultHealth not found!")
 
@@ -45,7 +46,21 @@ function Barrier:Start()
     until self.Root:GetAttribute("CurrentHealth") ~= nil
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("CurrentHealth"):Connect(function()
-        self.Root.Transparency = (self.Root:GetAttribute("CurrentHealth")*originalTransparency)/self.Root:GetAttribute("DefaultHealth")
+        local healthFraction = self.Root:GetAttribute("CurrentHealth")/self.Root:GetAttribute("DefaultHealth")
+        local transparencyCalc = 1 - healthFraction
+
+        if originalTransparency > 0 then
+            transparencyCalc = transparencyCalc * originalTransparency
+        end
+        self.Root.Transparency = math.clamp(transparencyCalc, 0, 1)
+    end))
+
+    self.Cleaner:Add(self.Root:GetPropertyChangedSignal("Transparency"):Connect(function()
+        if self.Root.Transparency == 1 then
+            self.Root.CanCollide = false
+        else
+            self.Root.CanCollide = true
+        end
     end))
 end
 
