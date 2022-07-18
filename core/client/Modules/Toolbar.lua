@@ -51,9 +51,11 @@ function Toolbar:SetKeys(keys)
 end
 
 function Toolbar:Add(item: any, slot: number?): boolean
+    print("ADD")
     local bool = false
 
     if slot and slot <= #self.Slots then
+        print("does this go?")
         self.Slots[slot] = item
         bool = true
     elseif slot and slot > #self.Slots then
@@ -71,6 +73,7 @@ function Toolbar:Add(item: any, slot: number?): boolean
         end
 
         if not tableFull then
+            print("NOT FUL")
             self.Slots[freeSlot] = item
             bool = true
         else
@@ -106,18 +109,24 @@ function Toolbar:SetToolbarKeys(keyDict: {[number]: Enum.KeyCode})
 end
 
 function Toolbar:FeedInput(keyCode: Enum.KeyCode)
+    print("RECIEVING")
     local index = table.find(self.ToolbarKeys, keyCode)
 
     if index then
+        print("index?", index, self.EquippedTool)
         if self.EquippedTool ~= nil then
+            print("YES")
             if self.EquippedTool.Unequip ~= nil then
+                print("I only unequip")
                 self.EquippedTool:Unequip()
             end
             self.EquippedTool = nil
             self.Events.ToolChanged:Fire(nil)
         end
 
+        print(self.Slots, self.EquippedSlot)
         if self.EquippedSlot ~= index and self.Slots[index] ~= false then
+            print("Not valid?")
             self.EquippedSlot = index
             self.EquippedTool = self.Slots[index]
             self.Events.ToolChanged:Fire(self.EquippedTool)
