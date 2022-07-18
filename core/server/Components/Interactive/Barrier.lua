@@ -1,6 +1,7 @@
--- 07/17/2022/
+-- 07/18/2022/
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WorkspaceService = game:GetService("Workspace")
+local CollectionService = game:GetService("CollectionService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -57,8 +58,10 @@ function Barrier:Start()
     self.Cleaner:Add(self.Root:GetPropertyChangedSignal("Transparency"):Connect(function()
         if self.Root.Transparency == 1 then
             self.Root.CanCollide = false
+            CollectionService:AddTag(self.Root, "Ignore")
         else
             self.Root.CanCollide = true
+            CollectionService:RemoveTag(self.Root, "Ignore") -- Will not throw an error if the tag never existed.
         end
     end))
 end
