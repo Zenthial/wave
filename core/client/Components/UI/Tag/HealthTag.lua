@@ -73,14 +73,14 @@ function HealthTag:Start()
     rootEnable()
 end
 
-function HealthTag:ConnectTo(subject : any)
+function HealthTag:ConnectTo(subject : Instance)
     local function healthUpd()
         local totalHealth = (subject:GetAttribute("Health") or 0 ) + (subject:GetAttribute("Shields") or 0)
         local totalMaxHealth = (subject:GetAttribute("MaxHealth") or 0 ) + (subject:GetAttribute("MaxShields") or 0)
 
         local percent = (totalHealth / totalMaxHealth)
 
-        TweenService:Create(self.Tag.Bar.Frame, TweenInfo1, {Size = UDim2.new(percent, 0, 01, 0),})
+        TweenService:Create(self.Tag.Bar.Frame, TweenInfo1, {Size = UDim2.new(percent, 0, 1, 0),})
     end
 
     self.Cleaner:Add(subject:GetAttributeChangedSignal("Health"):Connect(healthUpd))
