@@ -63,6 +63,7 @@ end
 
 function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deathRechargeWait: number)
     while self.Active do
+        task.wait(regenSpeed)
         if self.CurrentHealth < self.MaxHealth and not self.Dead and self.CanRegen then
             self.CurrentHealth = math.clamp(self.CurrentHealth + regenRate, 0, self.MaxHealth)
             self.Root:SetAttribute("CurrentHealth", self.CurrentHealth)
@@ -75,8 +76,6 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
             task.wait(deathRechargeWait)
             self.CanRegen = true
         end
-
-        task.wait(regenSpeed)
     end
 end
 
@@ -85,6 +84,10 @@ function ObjectHealth:TakeDamage(damage)
 
     self.CurrentHealth = newHealth
     self.Root:SetAttribute("CurrentHealth", newHealth)
+    --[[if self.Root:GetAttribute("RegenSpeed") > 0 and self.Root:GetAttribute("RegenRate") > 0 then
+        self.Active = true
+        task.spawn(self:StartRegenLoop(self.Root:GetAttribute("RegenSpeed"), self.Root:GetAttribute("RegenRate"), self.Root:GetAttribute("DeathRechargeRate")))
+    end]]--
 end
 
 function ObjectHealth:Destroy()
