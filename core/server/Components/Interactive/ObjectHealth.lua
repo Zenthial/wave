@@ -13,6 +13,7 @@ type ObjectHealth_T = {
     Tag: string,
     Debounce: boolean,
     Root: BasePart,
+    Thread: thread | nil,
 
     Cleaner: Cleaner_T
 }
@@ -27,6 +28,7 @@ function ObjectHealth.new(root: any)
     return setmetatable({
         Active = false,
         Root = root,
+        Thread = nil,
     }, ObjectHealth)
 end
 
@@ -54,11 +56,6 @@ function ObjectHealth:Start()
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("CanRegen"):Connect(function()
         self.CanRegen = self.Root:GetAttribute("CanRegen")
     end))
-
-    if regenSpeed > 0 and regenRate > 0 then
-        self.Active = true
-        self:StartRegenLoop(regenSpeed, regenRate, deathRechargeWait)
-    end
 end
 
 function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deathRechargeWait: number)
@@ -80,17 +77,23 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
 end
 
 function ObjectHealth:TakeDamage(damage)
+    pcall(function()
+        task.cancel(self.Thread) -- Behavior is temporary. May not error in the future should a thread not exist
+    end)
     local newHealth = math.clamp(self.CurrentHealth - damage, 0, self.MaxHealth)
 
     self.CurrentHealth = newHealth
     self.Root:SetAttribute("CurrentHealth", newHealth)
-    --[[if self.Root:GetAttribute("RegenSpeed") > 0 and self.Root:GetAttribute("RegenRate") > 0 then
+    if self.Root:GetAttribute("RegenSpeed") > 0 and self.Root:GetAttribute("RegenRate") > 0 then
         self.Active = true
-        task.spawn(self:StartRegenLoop(self.Root:GetAttribute("RegenSpeed"), self.Root:GetAttribute("RegenRate"), self.Root:GetAttribute("DeathRechargeRate")))
-    end]]--
+        self.Thread = task.spawn(self:StartRegenLoop(self.Root:GetAttribute("RegenSpeed"), self.Root:GetAttribute("RegenRate"), self.Root:GetAttribute("DeathRechargeRate")))
+    end
 end
 
 function ObjectHealth:Destroy()
+    pcall(function()
+        task.cancel(self.Thread) -- Behavior is temporary. May not error in the future should a thread not exist
+    end)
     self.Active = false
     self.Cleaner:Clean()
 end
