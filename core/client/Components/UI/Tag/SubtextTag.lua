@@ -75,6 +75,10 @@ function SubtextTag:SetText(str : string)
     self.Tag.Text = str
 end
 
+function SubtextTag:SetColor(color : Color3)
+    self.Tag.TextColor3 = color
+end
+
 function SubtextTag:Destroy()
     self.Cleaner:Clean()
     self.Tag:Destroy()

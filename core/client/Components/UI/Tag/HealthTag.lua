@@ -48,27 +48,14 @@ function HealthTag:Start()
         local bool = self.Root:GetAttribute("Enabled")
 
         if bool then
-            self.Tag.Bar.UIStroke.Enabled = true
-            self.Tag.Bar.BackgroundTransparency = 0
-            TweenService:Create(self.Tag, TweenInfo1, { Size = UDim2.new(0, 125, 0, 10) }):Play()
+            self:Enable()
             return
         end
 
-        local tween = TweenService:Create(self.Tag, TweenInfo1, {Size = UDim2.new(0, 0, 0, 10),})
-
-        local connection = nil
-        connection = tween.Completed:Connect(function()
-            connection:Disconnect()
-            local newBool = self.Root:GetAttribute("Enabled")
-            if newBool then return end
-
-            self.Tag.Bar.UIStroke.Enabled = false
-            self.Tag.Bar.BackgroundTransparency = 1
-        end)
-
-        tween:Play()
+        self:Disable()
     end
 
+    self.Tag.Size = UDim2.new(0, 0, 0, 10)
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Enabled"):Connect(rootEnable))
     rootEnable()
 end
@@ -90,12 +77,42 @@ function HealthTag:ConnectTo(subject : Instance)
     end
 end
 
+function HealthTag:Enable()
+    self.Tag.Bar.UIStroke.Enabled = true
+    self.Tag.Bar.BackgroundTransparency = 0
+    TweenService:Create(self.Tag, TweenInfo1, { Size = UDim2.new(0, 125, 0, 10) }):Play()
+end
+
+function HealthTag:Disable()
+    local tween = TweenService:Create(self.Tag, TweenInfo1, {Size = UDim2.new(0, 0, 0, 10),})
+
+    local connection = nil
+    connection = tween.Completed:Connect(function()
+        connection:Disconnect()
+        local newBool = self.Root:GetAttribute("Enabled")
+        if newBool then return end
+
+        if not self.Tag then return end
+        if not self.Tag:FindFirstChild("Tag") then return end
+
+        self.Tag.Bar.UIStroke.Enabled = false
+        --self.Tag.Bar.BackgroundTransparency = 1
+    end)
+
+    tween:Play()
+    tween.Completed:Wait()
+end
+
 function HealthTag:Disconnect()
     self.Cleaner:Clean()
 end
 
 function HealthTag:Destroy()
-    self.Tag:Destroy()
+    local tag = self.Tag
+    task.spawn(function() 
+        self:Disable()
+        if tag then tag:Destroy() end
+    end)
     self.Cleaner:Clean()
 end
 

@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 -- fake constants
-local TIMEOUT = 10
+local TIMEOUT = 5
 local DEBUG_PRINT = false
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
@@ -70,8 +70,9 @@ local function await_component(instance: Instance, component_name: string)
 		
 		while component_instance == nil do
 			component_instance = get_component(instance, component_name)
-			if tick() - start % TIMEOUT == 0 then
+			if tick() > (start + TIMEOUT) then
 				if DEBUG_WARN then warn("POTENTIAL INFINITE TIMEOUT ON INSTANCE "..instance.Name.." FOR COMPONENT "..component_name) end
+				return nil
 			end
 			task.wait()
 		end
@@ -99,7 +100,7 @@ end
 local function create(instance: Instance, component: ComponentClass)
 	local component_instance = component.new(instance) :: ComponentInstance -- .new is ran synchronously
 	if DEBUG_PRINT then print("Registering "..component.Name.." on "..instance.Name) end
-    
+
     if component.__Instances[instance] ~= nil then
         return
     end
@@ -120,7 +121,7 @@ local function destroy(instance: Instance, component: ComponentClass) -- destruc
     local component_instance = get_component(instance, component.Name)
 	if component_instance then
 		component_instance:Destroy()
-		component.__Instances[component_instance] = nil
+		component.__Instances[instance] = nil
 	end
 end
 
@@ -185,7 +186,9 @@ end
 
 return {
     create_component = create_component,
+	await_component = await_component,
 	get_component = await_component,
+	getcomponent = get_component,
 	debug = set_debug,
 	await_start = await_start,
 	set_timeout = set_timeout,

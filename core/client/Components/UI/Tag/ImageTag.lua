@@ -44,21 +44,26 @@ function ImageTag:Start()
         local bool = self.Root:GetAttribute("Enabled")
 
         if bool then
-            self.Tag.Visible = true
+            self.Tag.ImageTransparency = 0
             return
         end
 
-        self.Tag.Visible = false
+        self.Tag.ImageTransparency = 1
     end
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Enabled"):Connect(rootEnable))
     rootEnable()
 end
 
-
 function ImageTag:SetImage(id: number)
-    self.Tag.ImageLabel = id
+    self.Tag.Image = "http://www.roblox.com/asset/?id=" .. id
 end
+
+function  ImageTag:SetColor(color : Color3)
+    self.Tag.ImageColor3 = color
+    self.Tag.Frame.BackgroundColor3 = color
+end
+
 
 function ImageTag:Destroy()
     self.Cleaner:Clean()

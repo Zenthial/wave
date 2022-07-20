@@ -40,18 +40,13 @@ end
 function Tag:Start()
     self.Tag.Parent = self.Root
     self.Tag:SetAttribute("Enabled", false)
-    self.Tag:SetAttribute("PrimaryColor", Color3.fromRGB(255,255,255))
-    self.Tag:SetAttribute("SecondaryColor", Color3.fromRGB(255,255,255))
+    self.Tag:SetAttribute("Tick", 0)
     self.Tag.Enabled = true
     self:SetAdornee(self.Root)
 end
 
 function Tag:SetAdornee(instance: Instance)
 	self.Tag.Adornee = instance
-end
-
-function Tag:SetColor(healthColor: Color3, nameTagColor: Color3)
-
 end
 
 function Tag:Enable()
