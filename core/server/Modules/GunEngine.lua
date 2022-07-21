@@ -40,7 +40,7 @@ end)
 local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
     local healthComponent, objectHealthComponent
     if tcs.has_component(healthComponentObject, "Health") then
-        healthComponent = tcs.has_component(healthComponentObject, "Health")
+        healthComponent = tcs.get_component(healthComponentObject, "Health")
     elseif tcs.has_component(healthComponentObject, "ObjectHealth") then
         objectHealthComponent = tcs.get_component(healthComponentObject, "ObjectHealth")
     end
