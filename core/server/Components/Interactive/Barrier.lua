@@ -1,6 +1,5 @@
 -- 07/18/2022/
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local WorkspaceService = game:GetService("Workspace")
 local CollectionService = game:GetService("CollectionService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -28,7 +27,7 @@ local Barrier: Barrier_T = {}
 Barrier.__index = Barrier
 Barrier.Name = "Barrier"
 Barrier.Tag = "Barrier"
-Barrier.Ancestor = WorkspaceService
+Barrier.Ancestor = workspace
 
 function Barrier.new(root: BasePart)
     return setmetatable({

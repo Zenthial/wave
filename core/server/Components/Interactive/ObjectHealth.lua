@@ -14,6 +14,11 @@ type ObjectHealth_T = {
     Debounce: boolean,
     Root: BasePart,
     Thread: thread | nil,
+    DefaultHealth: number,
+    RegenSpeed: number,
+    RegenRate: number,
+    DeathRechargeRate: number,
+    CanRegen: boolean,
 
     Cleaner: Cleaner_T
 }
@@ -33,22 +38,22 @@ function ObjectHealth.new(root: any)
 end
 
 function ObjectHealth:Start()
-    local defaultHealth = self.Root:GetAttribute("DefaultHealth")
-    assert(typeof(defaultHealth) == "number", "DefaultHealth was not a number")
-    local regenSpeed = self.Root:GetAttribute("RegenSpeed")
-    assert(typeof(regenSpeed) == "number", "RegenSpeed was not a number")
-    local regenRate = self.Root:GetAttribute("RegenRate")
-    assert(typeof(regenRate) == "number", "RegenSpeed was not a number")
-    local deathRechargeWait = self.Root:GetAttribute("DeathRechargeRate")
-    assert(typeof(regenRate) == "number", "DeathRechargeRate was not a number")
-    local canRegen = self.Root:GetAttribute("CanRegen")
-    assert(typeof(canRegen) == "boolean", "CanRegen was not a boolean")
+    self.DefaultHealth = self.Root:GetAttribute("DefaultHealth")
+    assert(typeof(self.DefaultHealth) == "number", "DefaultHealth was not a number")
+    self.RegenSpeed = self.Root:GetAttribute("RegenSpeed")
+    assert(typeof(self.RegenSpeed) == "number", "RegenSpeed was not a number")
+    self.RegenRate = self.Root:GetAttribute("RegenRate")
+    assert(typeof(self.RegenRate) == "number", "RegenSpeed was not a number")
+    self.DeathRechargeWait = self.Root:GetAttribute("DeathRechargeRate")
+    assert(typeof(self.DeathRechargeRate) == "number", "DeathRechargeRate was not a number")
+    self.CanRegen = self.Root:GetAttribute("CanRegen")
+    assert(typeof(self.CanRegen) == "boolean", "CanRegen was not a boolean")
 
-    self.Root:SetAttribute("CurrentHealth", defaultHealth)
+    self.Root:SetAttribute("CurrentHealth", self.DefaultHealth)
     self.Root:SetAttribute("Dead", false)
 
-    self.MaxHealth = defaultHealth
-    self.CurrentHealth = defaultHealth
+    self.MaxHealth = self.DefaultHealth
+    self.CurrentHealth = self.DefaultHealth
 
     self.CanRegen = self.Root:GetAttribute("CanRegen")
     self.Dead = false
@@ -56,6 +61,8 @@ function ObjectHealth:Start()
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("CanRegen"):Connect(function()
         self.CanRegen = self.Root:GetAttribute("CanRegen")
     end))
+
+    -- should we think about adding listeners for the other attributes too? Might be useful if we implement this for mechs or things and change regen rates in phases?
 end
 
 function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deathRechargeWait: number)
@@ -84,9 +91,9 @@ function ObjectHealth:TakeDamage(damage)
 
     self.CurrentHealth = newHealth
     self.Root:SetAttribute("CurrentHealth", newHealth)
-    if self.Root:GetAttribute("RegenSpeed") > 0 and self.Root:GetAttribute("RegenRate") > 0 then
+    if self.RegenSpeed > 0 and self.RegenRate > 0 then
         self.Active = true
-        self.Thread = task.spawn(self:StartRegenLoop(self.Root:GetAttribute("RegenSpeed"), self.Root:GetAttribute("RegenRate"), self.Root:GetAttribute("DeathRechargeRate")))
+        self.Thread = task.spawn(self:StartRegenLoop(self.RegenSpeed, self.RegenRate, self.DeathRechargeRate))
     end
 end
 
