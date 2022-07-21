@@ -121,7 +121,6 @@ function Movement:UpdateWalkspeed()
 		self.Humanoid.WalkSpeed = 0
 	end
 
-
     -- if not self.Root:GetAttribute("PlayerAvailable") == true or self.Root:GetAttribute("PlacingDeployable") == true or self.Root:GetAttribute("Restrained") == true then
 	-- 	self.Humanoid.WalkSpeed = 0
 	-- end
