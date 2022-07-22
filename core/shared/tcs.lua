@@ -37,8 +37,8 @@ local function wait_for_class(component_name: string)
 	while class == nil do
 		class = component_name_to_class_module[component_name:lower()]
 
-		if tick() - start % TIMEOUT == 0 then
-			if DEBUG_WARN then warn("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name) end
+		if tick() - start > TIMEOUT then
+			error("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name)
 		end 
 		task.wait()
 	end
