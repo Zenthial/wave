@@ -12,7 +12,6 @@ local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChil
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStats = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
-local comm = require(Modules.ServerComm)
 
 local WeaponModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local SkillModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Skills")
@@ -65,12 +64,16 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
 end
 
 function ServerInventory:UnequipItem(itemKey: string)
+    local oldItemName = self.ActiveServerInventory[itemKey]
+    local model = self.Character:FindFirstChild(oldItemName)
+    if model then model:Destroy() end
+
     self.ActiveServerInventory[itemKey] = ""
     self.Root:SetAttribute("Equipped"..itemKey, "")
-    SetWeaponSignal:FireClient(self.Root, key, "", nil)
+    SetWeaponSignal:FireClient(self.Root, itemKey, "", nil)
 end
 
-function ServerInventory:SetItem(itemKey: string, itemName: string)
+function ServerInventory:SetItem(key: string, name: string)
     if key == "Primary" or key == "Secondary" then
         local stats = WeaponStats[name]
         local model = WeaponModels[name].Model:Clone() :: Model
@@ -125,7 +128,7 @@ function ServerInventory:SetItem(itemKey: string, itemName: string)
         SetWeaponSignal:FireClient(self.Root, key, name)
     end
 
-    self.ActiveServerInventory[itemKey] = itemName
+    self.ActiveServerInventory[key] = name
 end
 
 function ServerInventory:Destroy()
