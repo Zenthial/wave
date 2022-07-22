@@ -1,9 +1,12 @@
+local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+
+local SwordfishPlayerAttributes = require(script.Modules.SwordfishPlayerAttributes)
 
 ------------------------------------------------------------------------
 --Setup
@@ -54,3 +57,9 @@ for _, module in pairs(script.Modules:GetChildren()) do
         end
     end)
 end
+
+Players.PlayerAdded:Connect(function(player: Player)
+    for attributeName, attributeValue in SwordfishPlayerAttributes do
+        player:SetAttribute(attributeName, attributeValue)
+    end
+end)

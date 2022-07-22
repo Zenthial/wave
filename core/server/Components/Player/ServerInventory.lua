@@ -12,7 +12,6 @@ local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChil
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStats = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
-local comm = require(Modules.ServerComm)
 
 local WeaponModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local SkillModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Skills")
@@ -60,62 +59,76 @@ end
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
     print(inv)
     for key, name in pairs(inv) do
-        self.ActiveServerInventory[key] = name
-
-        if key == "Primary" or key == "Secondary" then
-            local stats = WeaponStats[name]
-            local model = WeaponModels[name].Model:Clone() :: Model
-
-            for _, thing in pairs(model:GetChildren()) do
-                CollectionService:AddTag(thing, "Ignore")
-            end
-            
-            model.Name = name
-            model.Parent = self.Character
-
-            assert(stats, "No Weapon Stats for " .. name)
-            assert(model, "No model for " .. name)
-
-            local success = GunEngine:WeldWeapon(self.Character, model, true)
-            if not success then
-                error("failed to weld")
-            end
-
-            self.Root:SetAttribute("Equipped"..key, name)
-            SetWeaponSignal:FireClient(self.Root, key, name, model)
-        elseif key == "Skill" then
-            local stats = SkillStats[name]
-            local model = SkillModels[name]:Clone() :: Model
-            model.Name = name
-            model.Parent = self.Character
-
-            assert(stats, "No Skill Stats for " .. name)
-            assert(model, "No model for " .. name)
-
-            local success = GunEngine:WeldWeapon(self.Character, model, true)
-            if not success then
-                error("failed to weld")
-            end
-
-            self.Root:SetAttribute("EquippedSkill", name)
-            SetWeaponSignal:FireClient(self.Root, key, name, model)
-        elseif key == "Gadget" then
-            local stats = GadgetStats[name]
-
-            if stats == nil then
-                stats = WeaponStats[name]
-                if not stats.Type == "Deployable" then
-                    stats = nil
-                end
-            end
-
-            assert(stats, "No Grenade Stats for " .. name)
-            self.Root:SetAttribute("EquippedGadget", name)
-            self.Root:SetAttribute("GadgetQuantity", stats.Quantity or 2)
-            self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity or 2)
-            SetWeaponSignal:FireClient(self.Root, key, name)
-        end
+        self:SetItem(key, name)
     end
+end
+
+function ServerInventory:UnequipItem(itemKey: string)
+    local oldItemName = self.ActiveServerInventory[itemKey]
+    local model = self.Character:FindFirstChild(oldItemName)
+    if model then model:Destroy() end
+
+    self.ActiveServerInventory[itemKey] = ""
+    self.Root:SetAttribute("Equipped"..itemKey, "")
+    SetWeaponSignal:FireClient(self.Root, itemKey, "", nil)
+end
+
+function ServerInventory:SetItem(key: string, name: string)
+    if key == "Primary" or key == "Secondary" then
+        local stats = WeaponStats[name]
+        local model = WeaponModels[name].Model:Clone() :: Model
+
+        for _, thing in pairs(model:GetChildren()) do
+            CollectionService:AddTag(thing, "Ignore")
+        end
+        
+        model.Name = name
+        model.Parent = self.Character
+
+        assert(stats, "No Weapon Stats for " .. name)
+        assert(model, "No model for " .. name)
+
+        local success = GunEngine:WeldWeapon(self.Character, model, true)
+        if not success then
+            error("failed to weld")
+        end
+
+        self.Root:SetAttribute("Equipped"..key, name)
+        SetWeaponSignal:FireClient(self.Root, key, name, model)
+    elseif key == "Skill" then
+        local stats = SkillStats[name]
+        local model = SkillModels[name]:Clone() :: Model
+        model.Name = name
+        model.Parent = self.Character
+
+        assert(stats, "No Skill Stats for " .. name)
+        assert(model, "No model for " .. name)
+
+        local success = GunEngine:WeldWeapon(self.Character, model, true)
+        if not success then
+            error("failed to weld")
+        end
+
+        self.Root:SetAttribute("EquippedSkill", name)
+        SetWeaponSignal:FireClient(self.Root, key, name, model)
+    elseif key == "Gadget" then
+        local stats = GadgetStats[name]
+
+        if stats == nil then
+            stats = WeaponStats[name]
+            if not stats.Type == "Deployable" then
+                stats = nil
+            end
+        end
+
+        assert(stats, "No Grenade Stats for " .. name)
+        self.Root:SetAttribute("EquippedGadget", name)
+        self.Root:SetAttribute("GadgetQuantity", stats.Quantity or 2)
+        self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity or 2)
+        SetWeaponSignal:FireClient(self.Root, key, name)
+    end
+
+    self.ActiveServerInventory[key] = name
 end
 
 function ServerInventory:Destroy()

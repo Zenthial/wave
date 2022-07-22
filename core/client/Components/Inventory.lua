@@ -8,8 +8,6 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 
-local Toolbar = require(script.Parent.Parent.Modules.Toolbar)
-
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
 local DeployableEngine = require(Modules.DeployableEngine)
@@ -34,46 +32,34 @@ Inventory.Ancestor = Players
 function Inventory.new(root: any)
     return setmetatable({
         Root = root,
-    
-        Items = {
-            Weapons = {},
-            Gadgets = {},
-            Skill = nil
-        },
 
         EquippedGadgetStats = nil,
         EquippedGadget = nil,
         EquippedSkill = nil, 
         EquippedWeapon = nil,
+        EquippedPrimary = nil,
+        EquippedSecondary = nil,
 
+        EquippedWeaponCleaner = nil,
     }, Inventory)
 end
 
 function Inventory:Start()
     self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD") --[[:await()]]
-    self.WeaponsToolbar = Toolbar.new(3) :: typeof(Toolbar)
-    -- self.SkillsToolbar = Toolbar.new(2) :: typeof(Toolbar)
-    -- self.SkillsToolbar:SetKeys(DEFAULT_SKILL_KEYS)
 
     local MainHUDComponent = self.MainHUD
     local skillCleaner = Trove.new() :: typeof(Trove)
 
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
-        print(inventoryKey, weaponName)
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
-        if model == nil then
+        if model == nil and weaponName ~= nil then
             model = character:FindFirstChild(weaponName)
         end
 
         if inventoryKey == "Primary" or inventoryKey == "Secondary" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local gun = GunEngine.CreateGun(weaponName, model)
-            local success = self.WeaponsToolbar:Add(gun, if inventoryKey == "Primary" then 1 else 2)
-            if not success then
-                print("failed to add weapon " .. weaponName)
-            else
-                print("added weapon " .. weaponName, success)
-            end
+            self["Equipped"..inventoryKey] = gun
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = GunEngine.CreateSkill(weaponName, model)
@@ -104,28 +90,38 @@ function Inventory:Start()
             self.EquippedGadget = weaponName
         end
     end))
+end
 
-    local equippedWeaponCleaner = nil :: typeof(Trove)
-    self.Cleaner:Add(self.WeaponsToolbar.Events.ToolChanged:Connect(function(tool)
-        if equippedWeaponCleaner ~= nil then
-            equippedWeaponCleaner:Clean()
-        end
-        MainHUDComponent:UpdateEquippedWeapon(tool)
+function Inventory:HandleWeapon(gunPointer)
+    if self.EquippedWeapon == gunPointer then
+        gunPointer:Unequip()
+        self.EquippedWeapon = nil
+    elseif self.EquippedWeapon == nil then
+        self.EquippedWeapon = gunPointer
+        gunPointer:Equip()
+    elseif self.EquippedWeapon ~= gunPointer then
+        self.EquippedWeapon:Unequip()
+        self.EquippedWeapon = gunPointer
+        gunPointer:Equip()
+    end
 
-        if tool ~= nil then
-            equippedWeaponCleaner = Trove.new()
-            equippedWeaponCleaner:Add(tool.Events.AmmoChanged:Connect(function(heat: number)
-                MainHUDComponent:UpdateHeat(heat)
-            end))
+    if self.EquippedWeaponCleaner then
+        self.EquippedWeaponCleaner:Clean()
+        self.EquippedWeaponCleaner = nil
+    end
 
-            equippedWeaponCleaner:Add(tool.Events.Fired:Connect(function(trigDelay: number)
-                MainHUDComponent:UpdateTriggerBar(trigDelay)
-            end))
+    if self.EquippedWeapon then
+        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
+            self.MainHUD:UpdateHeat(heat)
+        end))
 
-        end
+        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
+            self.MainHUD:UpdateTriggerBar(trigDelay)
+        end))
+    end
 
-        self.EquippedWeapon = tool
-    end))
+    local name = self.EquippedWeapon and self.EquippedWeapon.Name or nil
+    self.MainHUD:UpdateEquippedWeapon(name)
 end
 
 function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
@@ -138,8 +134,11 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
         self.EquippedSkill:Equip()
     else
-        print(KeyCode)
-        self.WeaponsToolbar:FeedInput(KeyCode)
+        if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
+            self:HandleWeapon(self.EquippedPrimary)
+        elseif KeyCode == Enum.KeyCode.Two and self.EquippedSecondary ~= nil then
+            self:HandleWeapon(self.EquippedSecondary)
+        end
     end
 end
 
