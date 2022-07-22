@@ -27,6 +27,15 @@ return {
                 return false
             end,
             Value = 2
+        },
+        {
+            Name = "Civilians",
+            Color = BrickColor.new("Grey"),
+            AutoAssignable = true,
+            Function = function(player: Player)
+                return true
+            end,
+            Value = 3
         }
     }
 }
