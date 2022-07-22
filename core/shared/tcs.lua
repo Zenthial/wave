@@ -33,17 +33,17 @@ local component_name_to_class_module: {[string]: ComponentClass} = {}
 
 local function wait_for_class(component_name: string)
     local class = component_name_to_class_module[component_name:lower()]
-	local start = tick()
-	while class == nil do
-		class = component_name_to_class_module[component_name:lower()]
+    local start = tick()
+    while class == nil do
+        class = component_name_to_class_module[component_name:lower()]
 
-		if tick() - start > TIMEOUT then
-			error("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name .. "! Did you pass the wrong component name?")
-		end 
-		task.wait()
-	end
+        if tick() - start > TIMEOUT then
+            error("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name .. "! Did you pass the wrong component name?")
+        end 
+        task.wait()
+    end
 
-	return class
+    return class
 end
 
 local function get_component(instance: Instance, component_name: string)
@@ -99,7 +99,7 @@ local function await_start(component_instance: ComponentInstance)
 
 	local start = tick()
 	while component_instance.__Initialized ~= true do
-		if tick() - start % TIMEOUT == 0 then
+		if tick() - start > TIMEOUT then
 			if DEBUG_WARN then warn("POTENTIAL INFINITE WAIT IN COMPONENT "..component_instance.Name.." START METHOD") end
 		end
 		task.wait()

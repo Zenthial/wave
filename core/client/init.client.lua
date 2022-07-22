@@ -25,6 +25,20 @@ local function LoadComponent(Item)
     require(Item)
 end
 
+local function LoadModule(module: ModuleScript)
+    if module:IsA("ModuleScript") then
+        local m = require(module)
+        modules[module.Name] = m
+        if typeof(m) == "table" then
+            if m["Start"] ~= nil and typeof(m["Start"]) == "function" then
+                task.spawn(function()
+                    m:Start()
+                end)
+            end
+        end
+    end
+end
+
 local function Recurse(Root, Operator)
     for _, Item in pairs(Root:GetChildren()) do
         Operator(Item)
@@ -55,18 +69,10 @@ Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), Loa
 -- tcs.start().sync()
 
 for _, module in pairs(script.Modules:GetChildren()) do
-    if module:IsA("ModuleScript") then
-        local m = require(module)
-        modules[module.Name] = m
-        if typeof(m) == "table" then
-            if m["Start"] ~= nil and typeof(m["Start"]) == "function" then
-                task.spawn(function()
-                    m:Start()
-                end)
-            end
-        end
-    end
+    LoadModule(module)
 end
+
+script.Modules.ChildAdded:Connect(LoadModule)
 
 local function characterAdded(character)
     if not CollectionService:HasTag(character, "Character") then
