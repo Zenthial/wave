@@ -6,6 +6,7 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("C
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
+local GenericClassHandler = require(script.Parent.GenericClassHandler)
 
 local function getItemStats(itemKey: string, itemName: string)
     if itemKey == "Gadget" then
@@ -28,6 +29,13 @@ function ArmoryHandler:Start()
         local itemStats = getItemStats(itemName)
 
         if points < itemStats.Cost then return end -- how did they even equip it???
+        
+        local currentClass = player:GetAttribute("CurrentClass")
+        if currentClass ~= nil then
+            local inClass = GenericClassHandler:IsItemInClass(currentClass, itemType, itemName)
+            if not inClass then return end
+        end
+
         if equip then
             serverInventory:UnequipItem(itemType)
             serverInventory:SetItem(itemType, itemName)
@@ -42,3 +50,4 @@ function ArmoryHandler:Start()
 end
 
 return ArmoryHandler
+
