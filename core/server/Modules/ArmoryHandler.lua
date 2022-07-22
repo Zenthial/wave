@@ -39,6 +39,10 @@ function ArmoryHandler:Start()
     Courier:Listen("RequestSkin"):Connect(function(player: Player, itemName: string, skinName: string)
 
     end)
+
+    Courier:Listen("RequestClassChange"):Connect(function(player: Player, className: string)
+
+    end)
 end
 
 return ArmoryHandler
