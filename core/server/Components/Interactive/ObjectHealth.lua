@@ -80,7 +80,7 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
 end
 
 function ObjectHealth:TakeDamage(damage)
-    local newHealth = math.clamp(self.CurrentHealth + damage, 0, self.MaxHealth)
+    local newHealth = math.clamp(self.CurrentHealth - damage, 0, self.MaxHealth)
 
     self.Root:SetAttribute("CurrentHealth", newHealth)
     self.CurrentHealth = newHealth

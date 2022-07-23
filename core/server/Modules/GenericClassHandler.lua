@@ -8,7 +8,7 @@ local GenericClassHandler = {
 }
 
 function GenericClassHandler:RegisterClass(className, classInfo)
-    if classInfo.PlayerLimit = nil then
+    if classInfo.PlayerLimit == nil then
         classInfo.PlayerLimit = 999
     end
 
@@ -44,9 +44,9 @@ function GenericClassHandler:ChangeClass(player: Player, newClass: string, class
     serverInventory:UnequipItem("Skill", player:GetAttribute("EquippedSKill"))
 
     local currentPoints = player:GetAttribute("Points")
-    self.PlayersPoints[player.Name][className] = currentPoints
+    self.PlayersPoints[player.Name][newClass] = currentPoints
 
-    local classPoints = self.PlayersPoints[player.Name][className] or 0
+    local classPoints = self.PlayersPoints[player.Name][newClass] or 0
     player:SetAttribute("Points", classPoints)
 end
 

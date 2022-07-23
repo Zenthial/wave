@@ -35,9 +35,6 @@ end
 
 function ArmoryChecker:Start()
     local character = Player.Character or Player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
-
-    local distance = self.Root.Size / 2
 
     local active = true
     self.Cleaner:Add(function()

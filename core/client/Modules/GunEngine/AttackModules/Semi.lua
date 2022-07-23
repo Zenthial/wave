@@ -14,11 +14,10 @@ type GunModelAdditionalInfo = {
 }
 type GunModel = Model & GunModelAdditionalInfo
 
-local Auto = {}
-Auto.__index = Auto
-Auto.__Tag = "Auto"
+local Semi = {}
+Semi.__index = Semi
 
-function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats, storedShots)
+function Semi.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStats, storedShots)
     local self = setmetatable({
         WeaponStats = stats,
         BulletModule = bulletModule,
@@ -42,15 +41,15 @@ function Auto.new(stats: WeaponStats, bulletModule: table, gunModel, mutableStat
             TriggerReload = Signal.new(),
             CheckHitPart = Signal.new()
         }
-    }, Auto)
+    }, Semi)
     return self
 end
 
-function Auto:SetCanFire(bool: boolean)
+function Semi:SetCanFire(bool: boolean)
     self.CanFire = bool
 end
 
-function Auto:Attack()
+function Semi:Attack()
     local mouse = self.MouseComponent
     local mouseInput = self.MouseInput :: typeof(Input.Mouse)
 
@@ -89,8 +88,8 @@ function Auto:Attack()
     end
 end
 
-function Auto:Destroy()
+function Semi:Destroy()
     self.Cleaner:Destroy()
 end
 
-return Auto
+return Semi

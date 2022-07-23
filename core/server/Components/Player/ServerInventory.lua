@@ -78,15 +78,15 @@ function ServerInventory:SetItem(key: string, name: string)
         local stats = WeaponStats[name]
         local model = WeaponModels[name].Model:Clone() :: Model
 
+        assert(stats, "No Weapon Stats for " .. name)
+        assert(model, "No model for " .. name)
+
         for _, thing in pairs(model:GetChildren()) do
             CollectionService:AddTag(thing, "Ignore")
         end
         
         model.Name = name
         model.Parent = self.Character
-
-        assert(stats, "No Weapon Stats for " .. name)
-        assert(model, "No model for " .. name)
 
         local success = GunEngine:WeldWeapon(self.Character, model, true)
         if not success then
