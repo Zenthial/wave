@@ -1,11 +1,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local GenericClassHandler = {
     PlayersPoints = {},
     Classes = {}
 }
+
+function GenericClassHandler:Start()
+    Courier:ListenFunction("GetClassItems", function(player: Player, itemType: string)
+        return self:GetClassItems(player, itemType)
+    end)
+end
 
 function GenericClassHandler:RegisterClass(className, classInfo)
     if classInfo.PlayerLimit == nil then
@@ -48,6 +55,12 @@ function GenericClassHandler:ChangeClass(player: Player, newClass: string, class
 
     local classPoints = self.PlayersPoints[player.Name][newClass] or 0
     player:SetAttribute("Points", classPoints)
+end
+
+function GenericClassHandler:GetClassItems(player: Player, itemType: string)
+    local currentClass = player:GetAttribute("CurrentClass")
+
+    return self.Classes[currentClass][itemType]
 end
 
 return GenericClassHandler

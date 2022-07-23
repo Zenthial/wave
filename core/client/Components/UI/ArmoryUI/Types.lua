@@ -1,5 +1,13 @@
 export type Root = Frame & {
-    ItemSwitchLister: {
+    Details: Folder & {
+        TopClassDetail: Frame,
+        TopClassRightDetail: Frame,
+        TopClassLeftDetail: Frame,
+    },
+
+    Title: TextLabel,
+
+    ItemSwitcherList: {
         UIListLayout: UIListLayout,
         PrimaryButton: Frame & {
             Button: TextButton,
@@ -28,7 +36,7 @@ export type Root = Frame & {
             RarityName: TextLabel,
             BG: Frame & {
                 EquipButton: Frame & {
-                    Button: TextLabel,
+                    Button: TextButton,
                     Icon: ImageLabel,
                     ButtonName: TextLabel
                 },
@@ -81,6 +89,24 @@ export type Root = Frame & {
     Search: Frame & {
         Icon: ImageLabel,
         Search: TextBox
+    }
+}
+
+export type ItemDisplay = Frame & {
+    ViewportFrame: ViewportFrame,
+    Locked: Frame & {
+        ItemName: TextLabel,
+        Price: TextLabel
+    },
+    MainFrame: Frame & {
+        Button: TextButton,
+        ItemName: TextLabel,
+        Price: TextLabel
+    },
+    Selected: Frame,
+    TierFrame: Frame & {
+        TierName: TextLabel,
+        TierRating: TextLabel
     }
 }
 

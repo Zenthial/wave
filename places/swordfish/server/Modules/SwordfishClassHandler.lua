@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Courier"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local GenericClassHandler = require(ServerScriptService:WaitForChild("Server"):WaitForChild("Modules"):WaitForChild("GenericClassHandler"))
 local SwordfishClasses = require(ReplicatedStorage:WaitForChild("SwordfishShared"):WaitForChild("Modules"):WaitForChild("SwordfishClasses"))

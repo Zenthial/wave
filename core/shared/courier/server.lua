@@ -41,6 +41,17 @@ function CourierServer:Listen(portString: string): typeof(Signal)
     return portSignal
 end
 
+function CourierServer:ListenFunction(portString: string, func): typeof(Signal)
+    local portRemote = Instance.new("RemoteFunction")
+    portRemote.Parent = PortsFolder
+
+
+    self.PortRemotes[portString] = portRemote
+
+
+    portRemote.OnServerInvoke = func
+end
+
 function CourierServer:Send(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")

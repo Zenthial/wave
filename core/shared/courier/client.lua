@@ -23,6 +23,19 @@ function CourierClient:Send(portString: string, ...)
     end
 end
 
+function CourierClient:SendFunction(portString: string, ...)
+    local portRemote = self.Cache[portString]
+
+    if portRemote == nil then
+        portRemote = PortRemote:InvokeServer(portString) :: RemoteEvent | nil
+        self.Cache[portString] = portRemote
+    end
+
+    if portRemote ~= nil then
+        portRemote:InvokeServer(...)
+    end
+end
+
 function CourierClient:SendToOthers(portString: string, ...)
     SendToOthersRemote:FireServer(portString, ...)
 end
