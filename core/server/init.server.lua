@@ -47,7 +47,7 @@ Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), Loa
 
 -- tcs.start().sync()
 
-for _, module in pairs(script.Modules:GetChildren()) do
+function LoadModule(module: ModuleScript)
     task.spawn(function()
         if module:IsA("ModuleScript") then
             local m = require(module)
@@ -59,6 +59,12 @@ for _, module in pairs(script.Modules:GetChildren()) do
         end
     end)
 end
+
+for _, module in pairs(script.Modules:GetChildren()) do
+    LoadModule(module)
+end
+
+script.Modules.ChildAdded:Connect(LoadModule) -- Technically this is unnecessary as server sided things never need to be waited on, but it doesn't hurt either.
 
 local function playerAdded(player: Player)
     task.wait(.1) -- this is to avoid double collectionservice firing

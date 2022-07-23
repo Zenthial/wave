@@ -2,7 +2,8 @@
   "name": "game",
   "servePlaceIds": [
     9452951872,
-    10172158061
+    10172158061,
+    10168072912
   ],
   "tree": {
     "$className": "DataModel",

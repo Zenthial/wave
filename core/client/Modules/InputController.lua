@@ -14,7 +14,6 @@ local MainMenu = MainHUD:WaitForChild("Menu")
 local InputController = {}
 
 function InputController:Start()
-    print("starting")
     local cleaner = Trove.new()
     local keyboardInput = Input.Keyboard.new()
     local mouseInput = Input.Mouse.new()
@@ -24,7 +23,6 @@ function InputController:Start()
     local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu")
     -- local SpottingComponent = tcs.get_component(LocalPlayer, "Spotting")
 
-    print("got all components")
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()
     end))

@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 -- fake constants
-local TIMEOUT = 5
+local TIMEOUT = 8
 local DEBUG_PRINT = false
 local DEBUG_WARN = true
 local INJECT_FUNCTION = function(component_instance) end
@@ -33,17 +33,18 @@ local component_name_to_class_module: {[string]: ComponentClass} = {}
 
 local function wait_for_class(component_name: string)
     local class = component_name_to_class_module[component_name:lower()]
-	local start = tick()
-	while class == nil do
-		class = component_name_to_class_module[component_name:lower()]
+  
+    local start = tick()
+    while class == nil do
+        class = component_name_to_class_module[component_name:lower()]
 
-		if tick() - start % TIMEOUT == 0 then
-			if DEBUG_WARN then warn("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name) end
-		end 
-		task.wait()
-	end
+        if tick() - start > TIMEOUT then
+            error("POTENTIAL INFINITE TIMEOUT FOR COMPONENT "..component_name .. "! Did you pass the wrong component name?")
+        end 
+        task.wait()
+    end
 
-	return class
+    return class
 end
 
 local function get_component(instance: Instance, component_name: string)
@@ -60,6 +61,18 @@ local function get_component(instance: Instance, component_name: string)
     -- assert(component_instance, "No component instance for instance "..instance.Name.." on class "..component_name)
 	
     return component_instance
+end
+
+local function has_component(instance: Instance, component_name: string)
+	if instance == nil then error("instance is nil") end
+    local class = component_name_to_class_module[component_name:lower()]
+	if class == nil then
+		return false
+	end
+	
+    local component_instance = class.__Instances[instance]
+	
+    return component_instance ~= nil
 end
 
 local function await_component(instance: Instance, component_name: string)
@@ -88,7 +101,7 @@ local function await_start(component_instance: ComponentInstance)
 
 	local start = tick()
 	while component_instance.__Initialized ~= true do
-		if tick() - start % TIMEOUT == 0 then
+		if tick() - start > TIMEOUT then
 			if DEBUG_WARN then warn("POTENTIAL INFINITE WAIT IN COMPONENT "..component_instance.Name.." START METHOD") end
 		end
 		task.wait()
@@ -192,5 +205,6 @@ return {
 	debug = set_debug,
 	await_start = await_start,
 	set_timeout = set_timeout,
+	has_component = has_component,
 	set_inject_function = set_inject_function
 }

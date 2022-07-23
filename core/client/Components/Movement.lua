@@ -62,9 +62,12 @@ function Movement:Start()
 
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalSprinting"):Connect(function() self:UpdateWalkspeed() end))
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCrouching"):Connect(function() self:UpdateWalkspeed() end))
-	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanMove"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("LocalCanMove"):Connect(function() self:UpdateWalkspeed() end)) -- Potential to implement updatejumppower
 	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("FielxActive"):Connect(function() self:UpdateWalkspeed() end))
-	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("PlacingDeployable"):Connect(function() self:UpdateWalkspeed() end))
+	self.Cleaner:Add(self.Root:GetAttributeChangedSignal("PlacingDeployable"):Connect(function() 
+		self:UpdateWalkspeed() 
+		self:UpdateJumpHeight()
+	end))
 	
 	-- this is a fucking mess, but i think its a smart mess
 	-- i may not need any of this since I'm also using LocalCanMove
@@ -84,7 +87,7 @@ end
 function Movement:UpdateWalkspeed()
 	self.Humanoid.WalkSpeed = 16
 
-	if self.Root:GetAttribute("LocalCanMove") == false then
+	if self.Root:GetAttribute("LocalCanMove") == false then -- Why the hell is this not used for placing deployables?
 		self.Humanoid.WalkSpeed = 0
 
 		return
@@ -118,10 +121,18 @@ function Movement:UpdateWalkspeed()
 		self.Humanoid.WalkSpeed = 0
 	end
 
-
     -- if not self.Root:GetAttribute("PlayerAvailable") == true or self.Root:GetAttribute("PlacingDeployable") == true or self.Root:GetAttribute("Restrained") == true then
 	-- 	self.Humanoid.WalkSpeed = 0
 	-- end
+end
+
+function Movement:UpdateJumpHeight()
+	self.Humanoid.JumpHeight = 7.2
+
+	-- Worth implementing CAnMove here?
+	if self.Root:GetAttribute("PlacingDeployable") == true then
+		self.Humanoid.JumpHeight = 0 
+	end
 end
 
 function Movement:Destroy()
