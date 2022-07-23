@@ -64,7 +64,6 @@ function  ImageTag:SetColor(color : Color3)
     self.Tag.Frame.BackgroundColor3 = color
 end
 
-
 function ImageTag:Destroy()
     self.Cleaner:Clean()
     self.Tag:Destroy()

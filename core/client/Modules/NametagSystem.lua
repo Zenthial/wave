@@ -25,7 +25,7 @@ local function getTeamColor(player: Player): Color3
         return Color3.fromRGB(254, 85, 85)
     end
 
-    local allyColor =Color3.fromRGB(47, 110, 255)
+    local allyColor = Color3.fromRGB(47, 110, 255)
 
     if playerSameStrikeTeam(Client, player) then
         allyColor = Color3.fromRGB(83, 255, 195)
@@ -45,6 +45,7 @@ local function updTagColors(player)
     local tags = {
         tcs.getcomponent(nameTag.Tag, "TitleTag"),
         tcs.getcomponent(nameTag.Tag, "SubtextTag"),
+        tcs.getcomponent(nameTag.Tag, "PlayerInfoTag"),
         tcs.getcomponent(nameTag.Tag, "ImageTag")
     }
     for _, tag in pairs(tags) do 
@@ -71,7 +72,6 @@ local function changeStrikeTeam(player)
     end
 
     --remove tag
-
      CollectionService:RemoveTag(nameTag.Tag, "HealthTag")
 end
 
@@ -100,9 +100,9 @@ local function playerAdded(player: Player)
         local nameTag = tcs.await_component(character, "Tag")
         nameTag:SetAdornee(character.Head)
 
-        CollectionService:AddTag(nameTag.Tag, "TitleTag")
-        local titleTag = tcs.await_component(nameTag.Tag, "TitleTag")
-        titleTag:SetText(player.DisplayName)
+        CollectionService:AddTag(nameTag.Tag, "PlayerInfoTag")
+        local playerInfoTag = tcs.await_component(nameTag.Tag, "PlayerInfoTag")
+        playerInfoTag:ConnectTo(player)
 
         changeTeam("TeamColor")
         changeStrikeTeam(player)

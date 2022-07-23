@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UiAssets = ReplicatedStorage:WaitForChild("Assets", 5).UI
-local _HealthTag = UiAssets:WaitForChild("Tags", 5).HealthTag
+local _PlayerInfoTag = UiAssets:WaitForChild("Tags", 5).PlayerInfoTag
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -18,8 +18,8 @@ type Courier_T = {
     Send: (Courier_T, Port: string, ...any) -> ()
 }
 
-type HealthTag_T = {
-    __index: HealthTag_T,
+type PlayerInfoTag_T = {
+    __index: PlayerInfoTag_T,
     Name: string,
     Tag: string,
 
@@ -27,32 +27,32 @@ type HealthTag_T = {
     Courier: Courier_T
 }
 
-local HealthTag: HealthTag_T = {}
-HealthTag.__index = HealthTag
-HealthTag.Name = "HealthTag"
-HealthTag.Tag = "HealthTag"
-HealthTag.Ancestor = game
+local PlayerInfoTag: PlayerInfoTag_T = {}
+PlayerInfoTag.__index = PlayerInfoTag
+PlayerInfoTag.Name = "PlayerInfoTag"
+PlayerInfoTag.Tag = "PlayerInfoTag"
+PlayerInfoTag.Ancestor = game
 
-function HealthTag.new(root: any)
+function PlayerInfoTag.new(root: any)
+    local _tag = _PlayerInfoTag:Clone()
     return setmetatable({
         Root = root,
-        Tag = _HealthTag:Clone()
-
-    }, HealthTag)
+        Tag = _tag,
+        NameText = _tag.Frame.NameText,
+        LevelText = _tag.Frame.LevelText
+    }, PlayerInfoTag)
 end
 
-function HealthTag:Start()
+function PlayerInfoTag:Start()
     self.Tag.Parent = self.Root
-    self.Tag.Bar.Position = UDim2.new(-1, 0, 0.5, 0)
+    self.Tag.Frame.Position = UDim2.new(1,0,0,0)
 
     local function rootEnable()
         local bool = self.Root:GetAttribute("Enabled")
-
         if bool then
             self:Enable()
             return
         end
-
         self:Disable()
     end
 
@@ -60,31 +60,24 @@ function HealthTag:Start()
     rootEnable()
 end
 
-function HealthTag:ConnectTo(subject : Instance)
-    local function healthUpd()
-
-    end
-
-    self.Cleaner:Add(subject:GetAttributeChangedSignal("Health"):Connect(healthUpd))
-
-    if subject:GetAttribute("Shields") ~= nil then
-        self.Cleaner:Add(subject:GetAttributeChangedSignal("Shields"):Connect(healthUpd))
-    end
+function PlayerInfoTag:ConnectTo(subject : Instance)
+    self.NameText.Text = subject.DisplayName
+    self.LevelText.Text = "[LVL 1]"
 end
 
-function HealthTag:Enable()
-    TweenService:Create(self.Tag.Bar, TweenInfo1, { Position = UDim2.new(0, 0, 0.5, 0) }):Play()
+function PlayerInfoTag:Enable()
+    TweenService:Create(self.Tag.Frame, TweenInfo1, { Position = UDim2.new(0, 0, 0, 0) }):Play()
 end
 
-function HealthTag:Disable()
-    TweenService:Create(self.Tag.Bar, TweenInfo1, { Position = UDim2.new(-1, 0, 0.5, 0) }):Play()
+function PlayerInfoTag:Disable()
+    TweenService:Create(self.Tag.Frame, TweenInfo1, { Position = UDim2.new(1, 0, 0, 0) }):Play()
 end
 
-function HealthTag:Disconnect()
-    self.Cleaner:Clean()
+function PlayerInfoTag:SetColor(color : Color3)
+    
 end
 
-function HealthTag:Destroy()
+function PlayerInfoTag:Destroy()
     self:Disable()
     self.Cleaner:Clean()
     task.delay(0.5, function() 
@@ -92,6 +85,6 @@ function HealthTag:Destroy()
     end)
 end
 
-tcs.create_component(HealthTag)
+tcs.create_component(PlayerInfoTag)
 
-return HealthTag
+return PlayerInfoTag
