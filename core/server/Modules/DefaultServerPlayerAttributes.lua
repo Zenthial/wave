@@ -14,6 +14,8 @@ return {
     GadgetQuantity = 3,
     MaxGadgetQuantity = 3,
 
+    Points = 0,
+
     Sprinting = false,
     CanSprint = true,
     Crouching = false,

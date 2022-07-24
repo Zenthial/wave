@@ -83,6 +83,10 @@ export type Root = Frame & {
                 UIListLayout: UIListLayout,
                 UIPadding: UIPadding,
             }
+        },
+        Details: Folder & {
+            TopDetail: Frame,
+            BottomDetail: Frame,
         }
     },
 

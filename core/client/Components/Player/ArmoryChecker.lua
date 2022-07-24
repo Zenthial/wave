@@ -49,13 +49,13 @@ function ArmoryChecker:Start()
 
         local objects = workspace:GetPartsInPart(self.Root, params)
         if #objects == 0 then
-            if Player:GetAttribute("InArmoryChecker") == true then
-                Player:SetAttribute("InArmoryChecker", false)
+            if Player:GetAttribute("InArmory") == true then
+                Player:SetAttribute("InArmory", false)
                 print("left ArmoryChecker")
             end
         else
-            if Player:GetAttribute("InArmoryChecker") == false then
-                Player:SetAttribute("InArmoryChecker", true)
+            if Player:GetAttribute("InArmory") == false then
+                Player:SetAttribute("InArmory", true)
                 print("entered ArmoryChecker")
             end
         end

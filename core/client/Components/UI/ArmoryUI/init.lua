@@ -53,19 +53,51 @@ function ArmoryUI:Start()
     self:ResetArmoryUI()
     self:HookItemButtons()
     self:LoadItems("Primary")
+    self:Close()
+
+    Player:GetAttributeChangedSignal("InArmory"):Connect(function()
+        if Player:GetAttribute("InArmory") then
+            self:LoadItems("Primary")
+            self:Open()
+        else
+            self:Close()
+        end
+    end)
+end
+
+function ArmoryUI:Open()
+    self.Root.Visible = true
+    
+    TweenService:Create(self.Root.Details.TopClassDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassDetail:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.Details.TopClassRightDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassRightDetail:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.Details.TopClassLeftDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassLeftDetail:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.Title, TweenInfo.new(0.5), {Position = self.Root.Title:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemSwitcherList, TweenInfo.new(0.5), {Position = self.Root.Title:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Details.TopDetail, TweenInfo.new(0.5), {Size = self.Root.ItemDisplay.Details.TopDetail:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Details.BottomDetail, TweenInfo.new(0.5), {Size = self.Root.ItemDisplay.Details.BottomDetail:GetAttribute("Out")}):Play()
+
+    task.wait(.2)
+    TweenService:Create(self.Root.ItemDisplay.ScrollingFrame, TweenInfo.new(0.5), {Position = self.Root.ItemDisplay.ScrollingFrame:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Title, TweenInfo.new(0.5), {Position = self.Root.ItemDisplay.Title:GetAttribute("In")}):Play()
 end
 
 function ArmoryUI:Close()
     -- this might be slightly confusing upon first read
     -- objects that are tweening their SIZE on close use the "In" value, cause they are tweening into themselves towards 0
     -- objects that are tweening their POSITION on close use the "Out" value, cause they are tweening out from the main viewport
-    TweenService:Create(self.Root.Details.TopClassDetail, TweenInfo.new(0.25), {Size = self.Root.Details.TopClassDetail:GetAttribute("In")}):Play()
-    TweenService:Create(self.Root.Details.TopClassRightDetail, TweenInfo.new(0.25), {Size = self.Root.Details.TopClassRightDetail:GetAttribute("In")}):Play()
-    TweenService:Create(self.Root.Details.TopClassLeftDetail, TweenInfo.new(0.25), {Size = self.Root.Details.TopClassLeftDetail:GetAttribute("In")}):Play()
-    TweenService:Create(self.Root.Title, TweenInfo.new(0.25), {Position = self.Root.Title:GetAttribute("Out")}):Play()
-    TweenService:Create(self.Root.ItemSwitcherList, TweenInfo.new(0.25), {Position = self.Root.Title:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.Details.TopClassDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassDetail:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.Details.TopClassRightDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassRightDetail:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.Details.TopClassLeftDetail, TweenInfo.new(0.5), {Size = self.Root.Details.TopClassLeftDetail:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.Title, TweenInfo.new(0.5), {Position = self.Root.Title:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemSwitcherList, TweenInfo.new(0.5), {Position = self.Root.Title:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Details.TopDetail, TweenInfo.new(0.5), {Size = self.Root.ItemDisplay.Details.TopDetail:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Details.BottomDetail, TweenInfo.new(0.5), {Size = self.Root.ItemDisplay.Details.BottomDetail:GetAttribute("In")}):Play()
+
+    task.wait(.2)
+    TweenService:Create(self.Root.ItemDisplay.ScrollingFrame, TweenInfo.new(0.5), {Position = self.Root.ItemDisplay.ScrollingFrame:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemDisplay.Title, TweenInfo.new(0.5), {Position = self.Root.ItemDisplay.Title:GetAttribute("Out")}):Play()
     
-    task.wait(0.35)
+    task.wait(1)
     self.Root.Visible = false
 end
 
@@ -80,24 +112,29 @@ function ArmoryUI:LoadItems(itemType: string)
     local equippedItem = Player:GetAttribute("Equipped"..itemType)
 
     self.Root.ItemDisplay.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-    for _, itemInfo in items do 
-        local itemDisplay = Functions.CreateItemDisplay(itemInfo, itemInfo.Name == equippedItem)
-        itemDisplay.Parent = self.Root.ItemDisplay.ScrollingFrame.Container
-        self.Root.ItemDisplay.ScrollingFrame.CanvasSize += UDim2.new(0, 0, 0, itemDisplay.AbsoluteSize.Y)
-        
-        if itemInfo.Name == equippedItem then
-            self.SelectedItem = itemDisplay
-        end
-        
-        self.ItemDisplayCleaner:Clean(itemDisplay.MainFrame.Button.MouseButton1Click:Connect(function()
-            TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.25), {BackgroundColor3 = itemDisplay.MainFrame:GetAttribute("Selected")}):Play()
-            TweenService:Create(self.SelectedItem.MainFrame, TweenInfo.new(0.25), {BackgroundColor3 = self.SelectedItem.MainFrame:GetAttribute("Default")}):Play()
-            TweenService:Create(self.SelectedItem.Selected, TweenInfo.new(0.25), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_ITEM_SIZE.Y.Scale, 0)}):Play()
-            TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.25), {BackgroundTransparency = 0, Size = SELECTED_ITEM_SIZE}):Play()
+    for _, itemInfo in items do
+        task.spawn(function()
+            local itemDisplay = Functions.CreateItemDisplay(itemInfo, itemInfo.Name == equippedItem)
+            itemDisplay.LayoutOrder = itemInfo.WeaponCost
+            itemDisplay.Parent = self.Root.ItemDisplay.ScrollingFrame.Container
+            self.Root.ItemDisplay.ScrollingFrame.CanvasSize += UDim2.new(0, 0, 0, itemDisplay.AbsoluteSize.Y)
+            
+            if itemInfo.Name == equippedItem then
+                self.SelectedItem = itemDisplay
+            end
+            
+            self.ItemDisplayCleaner:Add(itemDisplay.MainFrame.Button.MouseButton1Click:Connect(function()
+                TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = itemDisplay.MainFrame:GetAttribute("Selected")}):Play()
+                TweenService:Create(self.SelectedItem.MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = self.SelectedItem.MainFrame:GetAttribute("Default")}):Play()
+                TweenService:Create(self.SelectedItem.Selected, TweenInfo.new(0.5), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_ITEM_SIZE.Y.Scale, 0)}):Play()
+                TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_ITEM_SIZE}):Play()
+    
+                self.SelectedItem = itemDisplay
+                self:FillSelected(itemInfo)
+            end))
 
-            self.SelectedItem = itemDisplay
-            self:FillSelected(itemInfo)
-        end))
+            self.ItemDisplayCleaner:Add(itemDisplay)
+        end)
     end
 end
 
@@ -116,8 +153,8 @@ function ArmoryUI:HookItemButtons()
                 local itemType = button.Name:sub(1, button.Name:len() - string.len("Button"))
                 self:LoadItems(itemType)
 
-                TweenService:Create(button.SelectedFrame, TweenInfo.new(0.25), {BackgroundTransparency = 0, Size = SELECTED_FRAME_SIZE}):Play()
-                TweenService:Create(self.SelectedButton.SelectedFrame, TweenInfo.new(0.25), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_FRAME_SIZE.Y.Scale, 0)}):Play()
+                TweenService:Create(button.SelectedFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_FRAME_SIZE}):Play()
+                TweenService:Create(self.SelectedButton.SelectedFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_FRAME_SIZE.Y.Scale, 0)}):Play()
             end))
         end
     end 
@@ -138,9 +175,9 @@ function ArmoryUI:ResetArmoryUI()
 end
 
 function ArmoryUI:FillSelected(selectedStats)
-    local tier = Constructors.GetTier(selectedStats.WeaponCost)
-    local tierName = Constructors.GetTierName(tier)
-    local tierColor = Constructors.TierColors[tier]
+    local tier = Functions.GetTier(selectedStats.WeaponCost)
+    local tierName = Functions.GetTierName(tier)
+    local tierColor = Functions.TierColors[tier]
 
     local info = self.Root.ItemInfo
     info.Top.ItemName.Text = selectedStats.Name
@@ -195,7 +232,7 @@ function ArmoryUI:FillBar(weaponStats)
         local newStatValue = weaponStats[statName]
         local oldStatValue = equippedWeaponStats[statName]
 
-        local bar = Constructors.CreateBarStat(statTable.Name, oldStatValue, newStatValue, statTable.MaxValue)
+        local bar = Functions.CreateBarStat(statTable.Name, oldStatValue, newStatValue, statTable.MaxValue)
         bar.Parent = self.Root.ItemInfo.Stats.Parent
     end
 end

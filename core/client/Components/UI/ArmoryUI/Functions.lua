@@ -151,8 +151,9 @@ local function fill_viewport(viewport: ViewportFrame, modelFolder: Configuration
     viewportModel:SetModel(inspectModel)
     viewportModel:Calibrate()
     
-    local cameraPosition = viewportModel:GetFitDistance(Vector3.new(0, 0, 0))
-    camera.CFrame = CFrame.new(cameraPosition, Vector3.new(0, 0, 0))
+    local cF = inspectModel:GetBoundingBox()
+    local distance = viewportModel:GetFitDistance(cF.Position)
+    camera.CFrame = CFrame.new(cF.Position) * CFrame.new(0, 0, distance)
 end
 
 local function get_item(itemName: string)
@@ -166,10 +167,10 @@ local function get_item(itemName: string)
 end
 
 local function createItemDisplay(weaponStats, selected: boolean)
-    local tier = getTier(weaponStats.Cost)
+    local tier = getTier(weaponStats.WeaponCost)
 
     local points = Player:GetAttribute("Points")
-    local pointsRemaining = weaponStats.Cost - points :: number
+    local pointsRemaining = weaponStats.WeaponCost - points :: number
     local formattedPoints = comma_value(points)
     local stringPoints = get_string(formattedPoints)
 
@@ -182,9 +183,9 @@ local function createItemDisplay(weaponStats, selected: boolean)
     itemDisplay.Selected.Size = (selected and SELECTED_SIZE) or UNSELECTED_SIZE
     
     itemDisplay.Locked.ItemName.Text = weaponStats.Name
-    itemDisplay.Locked.Price = tostring(pointsRemaining) .. " Points Remaining"
+    itemDisplay.Locked.Price.Text = tostring(pointsRemaining) .. " Points Remaining"
 
-    itemDisplay.TierFrame.TierRating = string.format(FORMAT, tostring(tier))
+    itemDisplay.TierFrame.TierRating.Text = string.format(FORMAT, tostring(tier))
 
     itemDisplay.ViewportFrame.BackgroundColor3 = TIER_COLORS[tier]
     fill_viewport(itemDisplay.ViewportFrame, get_item(weaponStats.Name))

@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
-local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Courier"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local SkillStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("SkillStats"))

@@ -151,11 +151,15 @@ function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
 end
 
 function Inventory:MouseDown()
-    self.WeaponsToolbar:MouseDown()
+    if self.EquippedWeapon then
+        self.EquippedWeapon:MouseDown()
+    end
 end
 
 function Inventory:MouseUp()
-    self.WeaponsToolbar:MouseUp()
+    if self.EquippedWeapon then
+        self.EquippedWeapon:MouseUp()
+    end
 end
 
 function Inventory:Destroy()
