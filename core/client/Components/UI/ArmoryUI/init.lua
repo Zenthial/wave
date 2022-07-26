@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Types = require(script.Types)
 local Functions = require(script.Functions)
 
@@ -141,7 +142,7 @@ function ArmoryUI:LoadItems(itemType: string)
                     TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_ITEM_SIZE}):Play()
         
                     self.SelectedItem = itemDisplay
-                    self:FillSelected(itemInfo)
+                    self:HandleEquip(self:FillSelected(itemInfo), itemType, itemInfo)
                 end))
     
                 self.Cleaner:Add(itemDisplay)
@@ -191,6 +192,12 @@ function ArmoryUI:ResetArmoryUI()
             thing:Destroy()
         end
     end
+end
+
+function ArmoryUI:HandleEquip(equipSignal: RBXScriptSignal, itemType: string, weaponStats)
+    self.Cleaner:Add(equipSignal:Connect(function()
+        Courier:Send("RequestChange", itemType, weaponStats.Name, Player:GetAttribute("Equipped"..itemType) == weaponStats.Name)
+    end))
 end
 
 function ArmoryUI:FillSelected(selectedStats)

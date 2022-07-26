@@ -1,8 +1,8 @@
 local HttpService = game:GetService("HttpService")
 
 local MAINFRAME_WEBSITE = "http://tommyscholly.com"
-local SKINS_ENDPOINT = "/skins"
-
+local SKINS_ENDPOINT = "/userskins"
+local STATS_ENDPOINT = "/users/stats"
 
 local HttpWrapper = {}
 
@@ -12,8 +12,8 @@ function HttpWrapper:GetSkins(player: Player)
         Url = MAINFRAME_WEBSITE..SKINS_ENDPOINT..tostring(player.UserId)
     })
 
-    print(response.Status)
-    if response.Status == 200 then
+    print(response.StatusCode)
+    if response.StatusCode == 200 then
         return response.Body --[[
             {
                 ["W17"] = {"one", "two", "three"}
@@ -22,6 +22,27 @@ function HttpWrapper:GetSkins(player: Player)
     else
         return nil
     end
+end
+
+function HttpWrapper:UpdatePlayerStats(player: Player)
+    local statsFolder = player:FindFirstChild("Stats")
+    assert(statsFolder ~= nil and typeof(statsFolder) == "Folder", "No Stats Folder found on "..player.Name)
+
+    local response = HttpService:RequestAsync({
+        Method = "POST",
+        Body = {
+            UserId = player.UserId,
+            Stats = statsFolder:GetAttributes()
+        },
+        Url = MAINFRAME_WEBSITE..STATS_ENDPOINT..tostring(player.UserId)
+    })
+
+    print(response.StatusCode)
+    return response.StatusCode
+end
+
+function HttpWrapper:GetPlayerStats(player: Player)
+    
 end
 
 return HttpWrapper

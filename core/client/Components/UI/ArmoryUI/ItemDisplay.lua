@@ -124,7 +124,6 @@ function ItemDisplay:SetWeapon(weaponStats, selected: boolean)
         self.Root.MainFrame.Visible = false
     end
 
-
     self.Cleaner:Add(Player:GetAttributeChangedSignal("Points"):Connect(function()
         local currentPoints = Player:GetAttribute("Points")
         pointsRemaining = weaponStats.WeaponCost - currentPoints

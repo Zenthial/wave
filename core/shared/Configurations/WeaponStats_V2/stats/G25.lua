@@ -84,4 +84,6 @@ return {
 			C1 = CFrame.new()
 		}
 	},
+
+    GadgetStatsPointer = GadgetStats["G25"]
 }

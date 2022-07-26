@@ -41,6 +41,7 @@ local Player = Players.LocalPlayer
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Weapons = Assets:WaitForChild("Weapons")
 local Skills = Assets:WaitForChild("Skills")
+local Gadgets = Assets:WaitForChild("Gadgets")
 local ArmoryUIAssets = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("Armory")
 local ItemDisplay = ArmoryUIAssets:WaitForChild("ItemDisplay") :: ItemDisplay
 local BarStat = ArmoryUIAssets:WaitForChild("BarStat") :: BarStat
@@ -85,6 +86,8 @@ local function comma_value(n: number) -- credit http://richard.warburton.it
 end
 
 local function get_string(str: string)
+    return str .. " Points"
+
     if str:len() == 6 then
         return string.format(FORMAT, str).." Points"
     elseif str:len() == 5 then
@@ -126,6 +129,10 @@ local function get_item(itemName: string)
     local item = Weapons:FindFirstChild(itemName)
     if item == nil then
         item = Skills:FindFirstChild(itemName)
+
+        if item == nil then
+            item = Gadgets:FindFirstChild(itemName)
+        end
     end
 
     assert(item, "No item in Weapons or Skills for "..itemName)
