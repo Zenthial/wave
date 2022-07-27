@@ -86,19 +86,19 @@ local function comma_value(n: number) -- credit http://richard.warburton.it
 end
 
 local function get_string(str: string)
-    return str .. " Points"
+    return string.format(FORMAT, str) .. " Points"
 
-    if str:len() == 6 then
-        return string.format(FORMAT, str).." Points"
-    elseif str:len() == 5 then
-        return "0"..string.format(FORMAT, str).." Points"
-    elseif str:len() == 3 then
-        return "00,"..string.format(FORMAT, str).." Points"
-    elseif str:len() == 2 then
-        return "00,0"..string.format(FORMAT, str).." Points"
-    elseif str:len() == 1 then
-        return "00,00"..string.format(FORMAT, str).." Points"
-    end
+    -- if str:len() == 6 then
+    --     return string.format(FORMAT, str).." Points"
+    -- elseif str:len() == 5 then
+    --     return "0"..string.format(FORMAT, str).." Points"
+    -- elseif str:len() == 3 then
+    --     return "00,"..string.format(FORMAT, str).." Points"
+    -- elseif str:len() == 2 then
+    --     return "00,0"..string.format(FORMAT, str).." Points"
+    -- elseif str:len() == 1 then
+    --     return "00,00"..string.format(FORMAT, str).." Points"
+    -- end
 end
 
 local function getTier(cost)
@@ -126,12 +126,12 @@ local function getTierName(tier: number)
 end
 
 local function get_item(itemName: string)
-    local item = Weapons:FindFirstChild(itemName)
+    local item = Gadgets:FindFirstChild(itemName)
     if item == nil then
         item = Skills:FindFirstChild(itemName)
 
         if item == nil then
-            item = Gadgets:FindFirstChild(itemName)
+            item = Weapons:FindFirstChild(itemName)
         end
     end
 
@@ -143,6 +143,7 @@ local function createItemDisplay(weaponStats, selected: boolean, parent: Instanc
     local itemDisplay = ItemDisplay:Clone()
     CollectionService:AddTag(itemDisplay, "ItemDisplay")
     itemDisplay.LayoutOrder = weaponStats.WeaponCost
+    itemDisplay.Name = weaponStats.Name
     itemDisplay.Parent = parent
 
     local displayComponent = tcs.get_component(itemDisplay, "ItemDisplay")
@@ -156,13 +157,12 @@ local function createBarStat(statName: string, oldValue: number, newValue: numbe
 
     bar.StatName.Text = statName
     bar.Bar.RedFill.Size = UDim2.new(math.clamp(oldValue, 0, maxValue)/maxValue, 0, 1, 0)
+    bar.Bar.Tick.Position = UDim2.new(math.clamp(newValue, 0, maxValue)/maxValue, 0, 1, 0)
     
     if newValue > oldValue then
         bar.Bar.GreenFill.Size = UDim2.new(math.clamp(newValue, 0, maxValue)/maxValue, 0, 1, 0)
         bar.Bar.WhiteFill.Size = UDim2.new(math.clamp(oldValue, 0, maxValue)/maxValue, 0, 1, 0)
-        bar.Bar.Tick.Position = UDim2.new(math.clamp(newValue, 0, maxValue)/maxValue, 0, 1, 0)
     else
-        bar.Bar.Tick.Position = UDim2.new(math.clamp(oldValue, 0, maxValue)/maxValue, 0, 1, 0)
         bar.Bar.WhiteFill.Size = UDim2.new(math.clamp(newValue, 0, maxValue)/maxValue, 0, 1, 0)
         bar.Bar.GreenFill.Size = UDim2.new(0, 0, 1, 0)
     end

@@ -57,10 +57,11 @@ function ServerInventory:Start()
 end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
-    print(inv)
     for key, name in pairs(inv) do
         self:SetItem(key, name)
     end
+
+    self.Root:SetAttribute("ServerSideInventoryLoaded", true)
 end
 
 function ServerInventory:UnequipItem(itemKey: string)
@@ -70,7 +71,7 @@ function ServerInventory:UnequipItem(itemKey: string)
 
     self.ActiveServerInventory[itemKey] = ""
     self.Root:SetAttribute("Equipped"..itemKey, "")
-    SetWeaponSignal:FireClient(self.Root, itemKey, "", nil)
+    SetWeaponSignal:FireClient(self.Root, itemKey, "", nil, false)
 end
 
 function ServerInventory:SetItem(key: string, name: string)
@@ -94,7 +95,7 @@ function ServerInventory:SetItem(key: string, name: string)
         end
 
         self.Root:SetAttribute("Equipped"..key, name)
-        SetWeaponSignal:FireClient(self.Root, key, name, model)
+        SetWeaponSignal:FireClient(self.Root, key, name, model, true)
     elseif key == "Skill" then
         local stats = SkillStats[name]
         local model = SkillModels[name]:Clone() :: Model
@@ -110,7 +111,7 @@ function ServerInventory:SetItem(key: string, name: string)
         end
 
         self.Root:SetAttribute("EquippedSkill", name)
-        SetWeaponSignal:FireClient(self.Root, key, name, model)
+        SetWeaponSignal:FireClient(self.Root, key, name, model, true)
     elseif key == "Gadget" then
         local stats = GadgetStats[name]
 
@@ -125,7 +126,7 @@ function ServerInventory:SetItem(key: string, name: string)
         self.Root:SetAttribute("EquippedGadget", name)
         self.Root:SetAttribute("GadgetQuantity", stats.Quantity or 2)
         self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity or 2)
-        SetWeaponSignal:FireClient(self.Root, key, name)
+        SetWeaponSignal:FireClient(self.Root, key, name, nil, true)
     end
 
     self.ActiveServerInventory[key] = name

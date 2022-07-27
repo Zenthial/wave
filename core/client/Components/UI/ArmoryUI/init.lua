@@ -14,6 +14,7 @@ local SELECTED_FRAME_SIZE = UDim2.new(0.9, 0, 0.1, 0)
 local SELECTED_ITEM_SIZE = UDim2.new(0.55, 0, 0.06, 0)
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -44,7 +45,7 @@ local ArmoryUI: ArmoryUI_T = {}
 ArmoryUI.__index = ArmoryUI
 ArmoryUI.Name = "ArmoryUI"
 ArmoryUI.Tag = "ArmoryUI"
-ArmoryUI.Ancestor = game
+ArmoryUI.Ancestor = PlayerGui
 
 function ArmoryUI.new(root: any)
     return setmetatable({
@@ -58,10 +59,16 @@ end
 function ArmoryUI:Start()
     self:ResetArmoryUI()
     self:HookItemButtons()
-    self.PrimaryDisplay = self:LoadItems("Primary")
-    self.SecondaryDisplay = self:LoadItems("Secondary")
-    self.GadgetDisplay = self:LoadItems("Gadget")
-    self.SkillDisplay = self:LoadItems("Skill")
+    self:HookSearchBar()
+
+    repeat
+        task.wait()
+    until Player:GetAttribute("ServerSideInventoryLoaded") == true
+
+    self.PrimaryDisplay = self:LoadItems("Primary", true)
+    self.SecondaryDisplay = self:LoadItems("Secondary", false)
+    self.GadgetDisplay = self:LoadItems("Gadget", false)
+    self.SkillDisplay = self:LoadItems("Skill", false)
 
     self.PrimaryDisplay.Visible = true
     self.ActiveDisplay = self.PrimaryDisplay
@@ -88,8 +95,15 @@ function ArmoryUI:Open()
     TweenService:Create(self.Root.ItemSwitcherList, TweenInfo.new(0.5), {Position = self.Root.ItemSwitcherList:GetAttribute("In")}):Play()
     TweenService:Create(self.ActiveDisplay.Details.TopDetail, TweenInfo.new(0.5), {Size = self.ActiveDisplay.Details.TopDetail:GetAttribute("Out")}):Play()
     TweenService:Create(self.ActiveDisplay.Details.BottomDetail, TweenInfo.new(0.5), {Size = self.ActiveDisplay.Details.BottomDetail:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Details.TopDetail, TweenInfo.new(0.5), {Size = self.Root.ItemInfo.Details.TopDetail:GetAttribute("Out")}):Play()
 
     task.wait(.2)
+    TweenService:Create(self.Root.ItemInfo.Title, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Title:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Top, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Top:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Stats, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Stats:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.Search, TweenInfo.new(0.5), {Position = self.Root.Search:GetAttribute("In")}):Play()
+
+    task.wait(0.015)
     TweenService:Create(self.ActiveDisplay.ScrollingFrame, TweenInfo.new(0.5), {Position = self.ActiveDisplay.ScrollingFrame:GetAttribute("In")}):Play()
     TweenService:Create(self.ActiveDisplay.Title, TweenInfo.new(0.5), {Position = self.ActiveDisplay.Title:GetAttribute("In")}):Play()
 end
@@ -105,17 +119,27 @@ function ArmoryUI:Close()
     TweenService:Create(self.Root.ItemSwitcherList, TweenInfo.new(0.5), {Position = self.Root.ItemSwitcherList:GetAttribute("Out")}):Play()
     TweenService:Create(self.ActiveDisplay.Details.TopDetail, TweenInfo.new(0.5), {Size = self.ActiveDisplay.Details.TopDetail:GetAttribute("In")}):Play()
     TweenService:Create(self.ActiveDisplay.Details.BottomDetail, TweenInfo.new(0.5), {Size = self.ActiveDisplay.Details.BottomDetail:GetAttribute("In")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Details.TopDetail, TweenInfo.new(0.5), {Size = self.Root.ItemInfo.Details.TopDetail:GetAttribute("In")}):Play()
 
     task.wait(.2)
+    
+    TweenService:Create(self.Root.ItemInfo.Title, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Title:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Top, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Top:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.ItemInfo.Stats, TweenInfo.new(0.5), {Position = self.Root.ItemInfo.Stats:GetAttribute("Out")}):Play()
+    TweenService:Create(self.Root.Search, TweenInfo.new(0.5), {Position = self.Root.Search:GetAttribute("Out")}):Play()
+    
+
+    task.wait(0.015)
     TweenService:Create(self.ActiveDisplay.ScrollingFrame, TweenInfo.new(0.5), {Position = self.ActiveDisplay.ScrollingFrame:GetAttribute("Out")}):Play()
     TweenService:Create(self.ActiveDisplay.Title, TweenInfo.new(0.5), {Position = self.ActiveDisplay.Title:GetAttribute("Out")}):Play()
-    
+
     task.wait(1)
     self.Root.Visible = false
 end
 
-function ArmoryUI:LoadItems(itemType: string)
+function ArmoryUI:LoadItems(itemType: string, activeFrame: boolean)
     local itemDisplayFrame = self.Root.ItemDisplay:Clone()
+    itemDisplayFrame.Name = itemType
     itemDisplayFrame.Title.Text = itemType
     if itemType == "Primary" or "Secondary" then
         itemDisplayFrame.Title.Text ..= " Weapons"
@@ -129,17 +153,18 @@ function ArmoryUI:LoadItems(itemType: string)
         if itemInfo.Locked ~= true then
             task.spawn(function()
                 local itemDisplay = Functions.CreateItemDisplay(itemInfo, itemInfo.Name == equippedItem, itemDisplayFrame.ScrollingFrame.Container)
-                itemDisplayFrame.ScrollingFrame.CanvasSize += UDim2.new(0, 0, 0, itemDisplay.AbsoluteSize.Y)
+                itemDisplayFrame.ScrollingFrame.CanvasSize += UDim2.new(0, 0, (itemDisplay.Size.Y.Scale + itemDisplayFrame.ScrollingFrame.Container.UIListLayout.Padding.Scale) * 2, 0)
                 
-                if itemInfo.Name == equippedItem then
+                if itemInfo.Name == equippedItem and activeFrame then
                     self.SelectedItem = itemDisplay
+                    self:FillSelected(itemInfo)
                 end
                 
                 self.Cleaner:Add(itemDisplay.MainFrame.Button.MouseButton1Click:Connect(function()
-                    TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = itemDisplay.MainFrame:GetAttribute("Selected")}):Play()
                     TweenService:Create(self.SelectedItem.MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = self.SelectedItem.MainFrame:GetAttribute("Default")}):Play()
                     TweenService:Create(self.SelectedItem.Selected, TweenInfo.new(0.5), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_ITEM_SIZE.Y.Scale, 0)}):Play()
-                    TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_ITEM_SIZE}):Play()
+                    TweenService:Create(itemDisplay.MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = itemDisplay.MainFrame:GetAttribute("Selected")}):Play()
+                    TweenService:Create(itemDisplay.Selected, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_ITEM_SIZE}):Play()
         
                     self.SelectedItem = itemDisplay
                     self:HandleEquip(self:FillSelected(itemInfo), itemType, itemInfo)
@@ -172,12 +197,29 @@ function ArmoryUI:HookItemButtons()
                 self[itemType.."Display"].Visible = true
                 self.ActiveDisplay.Visible = false
                 self.ActiveDisplay = self[itemType.."Display"]
-
+                
                 TweenService:Create(button.SelectedFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0, Size = SELECTED_FRAME_SIZE}):Play()
                 TweenService:Create(self.SelectedButton.SelectedFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, SELECTED_FRAME_SIZE.Y.Scale, 0)}):Play()
+                
+                self.SelectedButton = button
             end))
         end
     end 
+end
+
+function ArmoryUI:HookSearchBar()
+    self.Root.Search.Search.ClearTextOnFocus = true
+    self.Root.Search.Search.FocusLost:Connect(function()
+        local text = string.lower(self.Root.Search.Search.Text)
+
+        local activeDisplayChildren = self.ActiveDisplay.ScrollingFrame.Container:GetChildren()
+        for _, frame: Frame in activeDisplayChildren do
+            if not frame:IsA("Frame") then continue end
+            local nameStr = string.lower(frame.Name)
+            local match = string.sub(nameStr, 0, string.len(text)) == text
+            frame.Visible = match
+        end
+    end)
 end
 
 function ArmoryUI:ResetArmoryUI() 
@@ -187,23 +229,30 @@ function ArmoryUI:ResetArmoryUI()
         end
     end
 
-    for _, thing in self.Root.ItemInfo.Stats:GetChildren() do 
+    self:ClearBarStats()    
+end
+
+function ArmoryUI:ClearBarStats()
+    for _, thing in self.Root.ItemInfo.Stats.BarStats:GetChildren() do
         if not thing:IsA("UIListLayout") and not thing:IsA("UIPadding") then
             thing:Destroy()
         end
-    end
+    end    
 end
 
 function ArmoryUI:HandleEquip(equipSignal: RBXScriptSignal, itemType: string, weaponStats)
     self.Cleaner:Add(equipSignal:Connect(function()
-        Courier:Send("RequestChange", itemType, weaponStats.Name, Player:GetAttribute("Equipped"..itemType) == weaponStats.Name)
+        print("Equipping: ", Player:GetAttribute("Equipped"..itemType), weaponStats.Name, not (Player:GetAttribute("Equipped"..itemType) == weaponStats.Name))
+        courier:Send("RequestChange", itemType, weaponStats.Name, not (Player:GetAttribute("Equipped"..itemType) == weaponStats.Name))
     end))
 end
 
 function ArmoryUI:FillSelected(selectedStats)
+    self:ClearBarStats()
+
     local tier = Functions.GetTier(selectedStats.WeaponCost)
     local tierName = Functions.GetTierName(tier)
-    local tierColor = Functions.TierColors[tier]
+    local tierColor = Functions.TIER_COLORS[tier]
 
     local info = self.Root.ItemInfo
     info.Top.ItemName.Text = selectedStats.Name
@@ -259,7 +308,7 @@ function ArmoryUI:FillBar(weaponStats)
         local oldStatValue = equippedWeaponStats[statName]
 
         local bar = Functions.CreateBarStat(statTable.Name, oldStatValue, newStatValue, statTable.MaxValue)
-        bar.Parent = self.Root.ItemInfo.Stats.Parent
+        bar.Parent = self.Root.ItemInfo.Stats.BarStats
     end
 end
 

@@ -18,6 +18,10 @@ function ShieldModel.new(root: any)
 end
 
 function ShieldModel:Start()
+    self.Cleaner:Add(self.Root.Destroying:Connect(function()
+        self.Model = nil
+    end))
+    
     self.Model = makeShieldModel(self.Root)
 
     self.__call = function()
