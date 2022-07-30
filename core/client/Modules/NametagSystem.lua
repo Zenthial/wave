@@ -38,18 +38,19 @@ local function updTagColors(player)
     if player.Character == nil then return end 
 
     local teamColor = getTeamColor(player)
-    local nameTag = tcs.getcomponent(player.Character, "Tag")
+    local nameTag = tcs.get_component(player.Character, "Tag")
 
     if nameTag == nil then return end
 
     local tags = {
-        tcs.getcomponent(nameTag.Tag, "TitleTag"),
-        tcs.getcomponent(nameTag.Tag, "SubtextTag"),
-        tcs.getcomponent(nameTag.Tag, "PlayerInfoTag"),
-        tcs.getcomponent(nameTag.Tag, "ImageTag")
+        TitleTag = tcs.has_component(nameTag.Tag, "TitleTag"),
+        SubtextTag = tcs.has_component(nameTag.Tag, "SubtextTag"),
+        PlayerInfoTag = tcs.has_component(nameTag.Tag, "PlayerInfoTag"),
+        ImageTag = tcs.has_component(nameTag.Tag, "ImageTag")
     }
-    for _, tag in pairs(tags) do 
-        if tag == nil then continue end
+    for tagName, hasTag in pairs(tags) do 
+        if hasTag == false then continue end
+        local tag = tcs.get_component(nameTag.Tag, tagName)
         tag:SetColor(teamColor)
     end
 end
@@ -60,7 +61,7 @@ local function changeStrikeTeam(player)
     --add tag if player is on same striketeam along with being on the same team
     updTagColors(player)
 
-    local nameTag = tcs.getcomponent(player.Character, "Tag")
+    local nameTag = tcs.get_component(player.Character, "Tag")
 
     if nameTag == nil then return end
 
@@ -76,12 +77,11 @@ local function changeStrikeTeam(player)
 end
 
 local function playerAdded(player: Player)
-
     local function changeTeam(prop: string)    
         if player.Character == nil then return end 
         if prop ~= "TeamColor" then return end
 
-        local nameTag = tcs.getcomponent(player.Character, "Tag")
+        local nameTag = tcs.get_component(player.Character, "Tag")
 
         if nameTag == nil then return end
 
@@ -132,8 +132,7 @@ local function clientTeamChange(prop: string)
     for _, player in ipairs(Players:GetPlayers()) do
         if player == Client then continue end
 
-        local nameTag = tcs.getcomponent(player.Character, "Tag")
-
+        local nameTag = tcs.get_component(player.Character, "Tag")
         if nameTag == nil then return end
 
         clientChangeStrikeTeam()
@@ -153,7 +152,6 @@ end
 local NametagSystem = {}
 
 function NametagSystem:Start()
-    
     for _, player in ipairs(Players:GetPlayers()) do
         if player == Client then continue end
         playerAdded(player)

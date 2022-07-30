@@ -69,7 +69,6 @@ return {
 	FireMode = "Launcher",
 	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,
-	GadgetStatsPointer = GadgetStats["G25"],
 
 	Damage = 55,
 	CalculateDamage = function(damage, distance)
