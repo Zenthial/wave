@@ -12,7 +12,6 @@ Player.__index = Player
 Player.Name = "ClientPlayer"
 Player.Tag = "Player"
 Player.Ancestor = Players
-Player.Needs = {"Cleaner"}
 
 function Player.new(player: Player)
     return setmetatable({

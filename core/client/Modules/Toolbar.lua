@@ -54,6 +54,7 @@ function Toolbar:Add(item: any, slot: number?): boolean
     local bool = false
 
     if slot and slot <= #self.Slots then
+        print("does this go?")
         self.Slots[slot] = item
         bool = true
     elseif slot and slot > #self.Slots then
@@ -110,6 +111,7 @@ function Toolbar:FeedInput(keyCode: Enum.KeyCode)
 
     print(index)
     if index then
+        print("index?", index, self.EquippedTool)
         if self.EquippedTool ~= nil then
             if self.EquippedTool.Unequip ~= nil then
                 self.EquippedTool:Unequip()

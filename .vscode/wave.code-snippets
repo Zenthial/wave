@@ -7,6 +7,7 @@
         "scope": "lua",
         "description": "autofills the tcs component",
         "body": [
+            "-- ${0:$CURRENT_MONTH}/${0:$CURRENT_DATE}/${0:$CURRENT_YEAR}/",
             "local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
             "",
             "local tcs = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"tcs\"))",

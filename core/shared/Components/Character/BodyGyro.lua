@@ -11,7 +11,7 @@ BodyGyro.Tag = "Character"
 BodyGyro.Ancestor = workspace
 
 function BodyGyro.new(root: any)
-    local hrp = root:FindFirstChild("HumanoidRootPart")
+    local hrp = root:WaitForChild("HumanoidRootPart")
     local humanoid = root:FindFirstChild("Humanoid")
     
     assert(hrp, "No HumanoidRootPart exists on "..root.Name)
