@@ -1,7 +1,8 @@
+---@diagnostic disable: invalid-class-name
 local HttpService = game:GetService("HttpService")
 
 local MAINFRAME_WEBSITE = "http://tommyscholly.com"
-local SKINS_ENDPOINT = "/userskins"
+local SKINS_ENDPOINT = "/users/skins"
 local STATS_ENDPOINT = "/users/stats"
 
 local HttpWrapper = {}

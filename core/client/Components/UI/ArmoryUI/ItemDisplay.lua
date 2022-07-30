@@ -97,7 +97,7 @@ function ItemDisplay:SetViewport(viewport: ViewportFrame, modelFolder: Configura
     local distance = 1.25
     if modelFolder.Name == "MSI" or modelFolder.Name == "E31" then
         distance = 1.75
-    elseif modelFolder.Name == "PBw" then
+    elseif modelFolder.Name == "PBW" then
         inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(90), 0))
     end
     camera.CFrame = CFrame.new(Vector3.new(-distance, 0, 0), Vector3.new(0, 0, 0))
