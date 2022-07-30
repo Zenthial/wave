@@ -26,9 +26,10 @@ function ArmoryHandler:Start()
     Courier:Listen("RequestChange"):Connect(function(player: Player, itemType: string, itemName: string, equip: boolean)
         local serverInventory = tcs.get_component(player, "ServerInventory")
         local points = player:GetAttribute("Points") or 0
-        local itemStats = getItemStats(itemName)
+        local itemStats = getItemStats(itemType, itemName)
+        print(itemType, itemName, itemStats, WeaponStats[itemName], equip)
 
-        if points < itemStats.Cost then return end -- how did they even equip it???
+        if points < itemStats.WeaponCost then return end -- how did they even equip it???
         
         local currentClass = player:GetAttribute("CurrentClass")
         if currentClass ~= nil then

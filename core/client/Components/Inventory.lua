@@ -50,7 +50,12 @@ function Inventory:Start()
     local MainHUDComponent = self.MainHUD
     local skillCleaner = Trove.new() :: typeof(Trove)
 
-    self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model)
+    self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model, equip: boolean)
+        if not equip then
+            self["Equipped"..inventoryKey] = nil
+            return
+        end
+        
         local character = self.Root.Character or self.Root.CharacterAdded:Wait()
         if model == nil and weaponName ~= nil then
             model = character:FindFirstChild(weaponName)
@@ -107,8 +112,9 @@ function Inventory:HandleWeapon(gunPointer)
 
     if self.EquippedWeaponCleaner then
         self.EquippedWeaponCleaner:Clean()
-        self.EquippedWeaponCleaner = nil
     end
+    
+    self.EquippedWeaponCleaner = Trove.new()
 
     if self.EquippedWeapon then
         self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)

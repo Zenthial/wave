@@ -66,7 +66,11 @@ function ItemDisplay:SetViewport(viewport: ViewportFrame, modelFolder: Configura
     viewport.CurrentCamera = camera
     
     local inspectModel
-    if modelFolder:IsA("Configuration") and modelFolder:FindFirstChild("Model") then
+    if modelFolder:IsA("Configuration") and modelFolder:FindFirstChild("DeployableModel") then
+        inspectModel = modelFolder.DeployableModel:Clone() :: Model
+        inspectModel.PrimaryPart = nil
+        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(180), 0))
+    elseif modelFolder:IsA("Configuration") and modelFolder:FindFirstChild("Model") then
         inspectModel = modelFolder.Model:Clone() :: Model
         inspectModel.PrimaryPart = nil
         inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(180), 0))
@@ -81,7 +85,8 @@ function ItemDisplay:SetViewport(viewport: ViewportFrame, modelFolder: Configura
         inspectModel.PrimaryPart = nil
         inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0), Vector3.new(0, 0, 5)))
     end
-
+    
+    assert(inspectModel, "No model for "..modelFolder.Name)
     for _, thing in pairs(inspectModel:GetChildren()) do
         if thing:IsA("BasePart") then thing.Anchored = true thing.Material = Enum.Material.Neon thing.BrickColor = BrickColor.new("Institutional white") end
     end
@@ -91,7 +96,9 @@ function ItemDisplay:SetViewport(viewport: ViewportFrame, modelFolder: Configura
     
     local distance = 1.25
     if modelFolder.Name == "MSI" or modelFolder.Name == "E31" then
-        distance = 1.5
+        distance = 1.75
+    elseif modelFolder.Name == "PBw" then
+        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(90), 0))
     end
     camera.CFrame = CFrame.new(Vector3.new(-distance, 0, 0), Vector3.new(0, 0, 0))
 end

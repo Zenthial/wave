@@ -57,22 +57,24 @@ export type Root = Frame & {
                     StatName: TextLabel,
                     StatValue: TextLabel
                 }
-            }
-        },
-        Buttons: {
-            AchievementsButton: Frame & {
-                Button: TextLabel,
-                Icon: ImageLabel,
-                ButtonName: TextLabel
             },
-            CustomizeButton: Frame & {
-                Button: TextLabel,
-                Icon: ImageLabel,
-                ButtonName: TextLabel
-            }
-        },
-        BarStats: Frame & {
-            UIListLayout: UIListLayout
+
+            Buttons: {
+                AchievementsButton: Frame & {
+                    Button: TextLabel,
+                    Icon: ImageLabel,
+                    ButtonName: TextLabel
+                },
+                CustomizeButton: Frame & {
+                    Button: TextLabel,
+                    Icon: ImageLabel,
+                    ButtonName: TextLabel
+                }
+            },
+
+            BarStats: Frame & {
+                UIListLayout: UIListLayout
+            },
         },
     },
 

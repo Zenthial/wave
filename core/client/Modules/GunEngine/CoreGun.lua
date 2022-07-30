@@ -204,6 +204,10 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         end
     end))
 
+    cleaner:Add(gunModel.Destroying:Connect(function()
+        Player:SetAttribute("EquippedWeapon", "")
+    end))
+
     return setmetatable({
         Model = gunModel,
 

@@ -1,4 +1,6 @@
 return {
+    ServerSideInventoryLoaded = false,
+    
     NumWeaponsEquipped = 0,
     HasPrimaryWeapon = false,
     Spotted = false,
