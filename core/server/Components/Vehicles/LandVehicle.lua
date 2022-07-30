@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -66,6 +67,20 @@ function LandVehicle:Start()
     local driverMansMainTurret = self.Root:GetAttribute("DriverMansTurret") or false
 
     self:InitializeDriverProximityPrompt()
+
+    local vehicleStats = VehicleStats[self.Root.Name]
+    assert(vehicleStats, "No Vehicle Stats for "..self.Root.Name)
+    self.Root:SetAttribute("DefaultHealth", vehicleStats.DefaultHealth or 1000)
+    self.Root:SetAttribute("RegenSpeed", vehicleStats.RegenSpeed or 0)
+    self.Root:SetAttribute("RegenRate", vehicleStats.RegenRate or 0)
+    
+    CollectionService:AddTag(self.Root, "ObjectHealth")
+    local health = tcs.get_component(self.Root, "ObjectHealth")
+    
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Health"):Connect(function()
+        local currentHealth = self.Root:GetAttribute("Health")
+        -- do some fancy stuff to reflect visual health changes
+    end))
 
     local vehicleSeatComponent = tcs.get_component(self.Root.Chassis.VehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)

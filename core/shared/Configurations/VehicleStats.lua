@@ -22,6 +22,10 @@ local Vehicles = {
 		Speed = 25,
 		AccelerateSpeed = 25, --These two are for motors
 		DecelerateSpeed = 100,--This is the other one for motors
+        
+        DefaultHealth = 1000,
+        RegenRate = 0,
+        RegenSpeed = 0
 	},
 	["Pobber"] = {
 		TurnSpeedMax = 2, --Steering, max speed
@@ -29,14 +33,11 @@ local Vehicles = {
 		Speed = 80,
 		AccelerateSpeed = 25, --These two are for motors
 		DecelerateSpeed = 100,--This is the other one for motors
-		CameraType = "Orbit"
-	},
-	["Bob"] = {
-		TurnSpeedMax = 1, --Steering, max speed
-		TurnSpeedRate = 0.25, --Steering direction change speed
-		Speed = 25,
-		AccelerateSpeed = 25, --These two are for motors
-		DecelerateSpeed = 100,--This is the other one for motors
+		CameraType = "Orbit",
+
+        DefaultHealth = 500,
+        RegenRate = 10,
+        RegenSpeed = 2
 	},
 	["Equalizer"] = {
 		TurnSpeedMax = 1, --Steering, max speed
@@ -44,7 +45,11 @@ local Vehicles = {
 		Speed = 25,
 		AccelerateSpeed = 25, --These two are for motors
 		DecelerateSpeed = 100,--This is the other one for motors
-		CameraType = "Orbit"
+		CameraType = "Orbit",
+
+        DefaultHealth = 1500,
+        RegenRate = 0,
+        RegenSpeed = 0
 	},
 	["Thunder"] = {
 		TurnSpeedMax = 1, --Steering, max speed
@@ -52,7 +57,11 @@ local Vehicles = {
 		Speed = 25,
 		AccelerateSpeed = 25, --These two are for motors
 		DecelerateSpeed = 100,--This is the other one for motors
-		CameraType = "Orbit"
+		CameraType = "Orbit",
+
+        DefaultHealth = 2000,
+        RegenRate = 0,
+        RegenSpeed = 0
 	},
 	["Instigator"] = {
 		TurnSpeedMax = 1, --Steering, max speed
@@ -60,7 +69,11 @@ local Vehicles = {
 		Speed = 70,
 		AccelerateSpeed = 25, --These two are for motors
 		DecelerateSpeed = 100,--This is the other one for motors
-		CameraType = "Orbit"
+		CameraType = "Orbit",
+
+        DefaultHealth = 1000,
+        RegenRate = 0,
+        RegenSpeed = 0
 	},
 ------------------------------------------------------------------------------------
 	["Shuttle"] = {
