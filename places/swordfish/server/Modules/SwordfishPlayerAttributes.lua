@@ -1,3 +1,3 @@
 return {
-    CurrentClass = "Assault"
+    _CurrentClass = "Assault"
 }

@@ -7,10 +7,14 @@ local Players = game:GetService("Players")
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
 
 local ICON_TWEEN = 0.1
 local ICON_SIZE = UDim2.fromOffset(15, 15)
 local ICON_CLOSED_SIZE = UDim2.fromOffset(0, 0)
+local HITMARK_DELAY_SPEED = 0.05
+
+local random = Random.new()
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -31,7 +35,7 @@ local Cursor: Cursor_T = {}
 Cursor.__index = Cursor
 Cursor.Name = "Cursor"
 Cursor.Tag = "Cursor"
-Cursor.Ancestor = game
+Cursor.Ancestor = PlayerGui
 Cursor.Needs = {"Cleaner"}
 
 function Cursor.new(root: any)
@@ -87,6 +91,16 @@ function Cursor:ShotBar(bool, waitTime: number)
 		barFill.Position = UDim2.new(0,0,0,0)
 		barFill:TweenSizeAndPosition(UDim2.new(0, 0, 1, 0), UDim2.new(.5, 0, 0, 0), "Out", "Linear", waitTime, true)
 	end
+end
+
+function Cursor:Hitmark()
+    local rotation = random:NextInteger(5, 175)
+    self.Root.Icon.Hitmark.Rotation = rotation
+    self.Root.Icon.Hitmark.Visible = true
+
+    task.delay(HITMARK_DELAY_SPEED, function()
+        self.Root.Icon.Hitmark.Visible = false 
+    end)
 end
 
 function Cursor:Destroy()

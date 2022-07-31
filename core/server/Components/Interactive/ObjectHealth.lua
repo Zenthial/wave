@@ -44,9 +44,9 @@ function ObjectHealth:Start()
     assert(typeof(self.RegenSpeed) == "number", "RegenSpeed was not a number")
     self.RegenRate = self.Root:GetAttribute("RegenRate")
     assert(typeof(self.RegenRate) == "number", "RegenSpeed was not a number")
-    self.DeathRechargeWait = self.Root:GetAttribute("DeathRechargeRate")
+    self.DeathRechargeRate = self.Root:GetAttribute("DeathRechargeRate") or -1
     assert(typeof(self.DeathRechargeRate) == "number", "DeathRechargeRate was not a number")
-    self.CanRegen = self.Root:GetAttribute("CanRegen")
+    self.CanRegen = self.Root:GetAttribute("CanRegen") or false
     assert(typeof(self.CanRegen) == "boolean", "CanRegen was not a boolean")
 
     self.Root:SetAttribute("CurrentHealth", self.DefaultHealth)
@@ -77,8 +77,10 @@ function ObjectHealth:StartRegenLoop(regenSpeed: number, regenRate: number, deat
             self.Dead = true
             self.Root:SetAttribute("Dead", true)
             self.CanRegen = false
-            task.wait(deathRechargeWait)
-            self.CanRegen = true
+            if deathRechargeWait >= 0 then
+                task.wait(deathRechargeWait)
+                self.CanRegen = true
+            end
         end
     end
 end
@@ -91,7 +93,7 @@ function ObjectHealth:TakeDamage(damage)
 
     self.CurrentHealth = newHealth
     self.Root:SetAttribute("CurrentHealth", newHealth)
-    if self.RegenSpeed > 0 and self.RegenRate > 0 then
+    if self.RegenSpeed > 0 and self.RegenRate > 0 and self.CanRegen then
         self.Active = true
         self.Thread = task.spawn(self:StartRegenLoop(self.RegenSpeed, self.RegenRate, self.DeathRechargeRate))
     end

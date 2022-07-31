@@ -15,7 +15,7 @@ local Caches = {
 if RunService:IsClient() then
     local weapon = Weapons:FindFirstChild(script.Name)
     if weapon then
-        local bullet = weapon:FindFirstChild("Bullet") or weapon:FindFirstChild("Projectile")
+        local bullet = weapon:FindFirstChild("Bullet") or weapon:FindFirstChild("Projectile") bullet.CastShadow = false
         if bullet then
             CollectionService:AddTag(bullet, "Ignore")
 

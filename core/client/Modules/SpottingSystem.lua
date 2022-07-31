@@ -52,7 +52,7 @@ local function Spot()
 
     local humanoid = getHumanoid(target)
     local player = humanoid and Players:GetPlayerFromCharacter(humanoid.Parent)
-    local nameTag = player and tcs.getcomponent(humanoid.Parent, "Tag")
+    local nameTag = player and tcs.get_component(humanoid.Parent, "Tag")
 
     if not nameTag then return end
 

@@ -201,7 +201,6 @@ return {
     create_component = create_component,
 	await_component = await_component,
 	get_component = await_component,
-	getcomponent = get_component,
 	debug = set_debug,
 	await_start = await_start,
 	set_timeout = set_timeout,

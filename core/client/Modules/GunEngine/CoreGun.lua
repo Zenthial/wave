@@ -17,6 +17,7 @@ local ClientComm = require(script.Parent.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
 
 local AttackModules = script.Parent.AttackModules
 local AmmoModules = script.Parent.AmmoModules
@@ -149,9 +150,9 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
     
     local weldWeaponFunction = comm:GetFunction("WeldWeapon") :: (BasePart, boolean) -> boolean
     local attemptDealDamageFunction = comm:GetFunction("AttemptDealDamage") :: (BasePart, string, string) -> boolean
-    local attemptDealShieldDamageFunction = comm:GetFunction("AttemptDealShieldDamage")
 
-    local animationComponent = tcs.get_component(Player, "AnimationHandler") --[[:await()]]
+    local animationComponent = tcs.get_component(Player, "AnimationHandler")
+    local cursorComponent = tcs.get_component(PlayerGui:WaitForChild("Cursor"):WaitForChild("Cursor"), "Cursor")
 
     local weaponsFolder = Weapons[weaponStats.Name] :: Folder
     assert(weaponsFolder:FindFirstChild("Anims"), "Anims folder does not exist for "..weaponStats.Name)
@@ -199,7 +200,9 @@ function CoreGun.new(weaponStats: WeaponStats, gunModel: GunModel)
         local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
 
         print(hitPart, hitPart.Parent, healthComponentInstance)
-        if healthComponentInstance ~= nil then
+        if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
+            cursorComponent:Hitmark()
+            gunModel.Handle.Hit:Play()
             attemptDealDamageFunction(healthComponentInstance, weaponStats.Name, hitPart.Name)
         end
     end))
