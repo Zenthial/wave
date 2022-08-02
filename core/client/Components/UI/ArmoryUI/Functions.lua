@@ -57,7 +57,7 @@ local FORMAT = "<font color=\"rgb(255, 255, 255)\">%s</font>"
 
 local function getItems(itemType: string)
     local currentClass = Player:GetAttribute("CurrentClass")
-    print(currentClass)
+    
     if currentClass ~= nil then
         return Courier:SendFunction("GetClassItems", currentClass, itemType)
     end
