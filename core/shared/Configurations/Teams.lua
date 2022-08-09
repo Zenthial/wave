@@ -5,6 +5,10 @@ return {
 
     },
 
+    ["Arenas"] = {
+
+    },
+
     ["Swordfish"] = {
         {
             Name = "Raiders",

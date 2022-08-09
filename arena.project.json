@@ -1,0 +1,43 @@
+{
+    "name": "game",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "Shared": {
+                "$path": "core/shared"
+            },
+            "ArenaShared": {
+                "$path": "places/arena/shared"
+            }
+        },
+        "ServerScriptService": {
+            "Server": {
+                "$path": "core/server"
+            },
+            "ArenaServer": {
+                "$path": "places/arena/server"
+            }
+        },
+        "StarterPlayer": {
+            "StarterPlayerScripts": {
+                "Client": {
+                    "$path": "core/client"
+                },
+                "ArenaClient": {
+                    "$path": "places/arena/client"
+                }
+            }
+        },
+        "SoundService": {
+            "$properties": {
+                "RespectFilteringEnabled": true
+            }
+        },
+        "Chat": {
+            "$properties": {
+                "BubbleChatEnabled": false,
+                "LoadDefaultChat": false
+            }
+        }
+    }
+}

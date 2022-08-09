@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local ViewportCameraPositioner = require(script.Parent.Parent.functions.ViewportCameraPositioner)
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Weapons = Assets:WaitForChild("Weapons")
@@ -86,7 +87,7 @@ function GunToolbar:SetViewport(weaponName: string)
     inspectModel.Name = "InspectModel"..weaponName
     inspectModel.Parent = self.Root.ViewportFrame
 
-    self.Camera.CFrame = CFrame.new(Vector3.new(0, 0, -1.25), Vector3.new(0, 0, 0))
+    self.Camera.CFrame = ViewportCameraPositioner(self.Camera, self.Root.ViewportFrame, inspectModel)
     
     if self.InspectItem ~= nil then self.InspectItem:Destroy() end
     self.InspectItem = inspectModel

@@ -4,7 +4,8 @@ local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
-local Item3DUI = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("Item3DUI")
+-- local Item3DUI = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("Item3DUI")
+local Item3DUI = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("Item3DUI2")
 local Line = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("Line")
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -27,7 +28,7 @@ local function createItem(parent)
     item.Orientation = Vector3.new(0, 15, 0)
     item.Position = Vector3.new(-19, 5.5, -17.8)
     item.Rotation = Vector3.new(0, 15, 0)
-    item.Size = Vector3.new(0.1, 2, 2)
+    item.Size = Vector3.new(0.1, 1, 1)
     item.CanCollide = false
     item.CanQuery = false
     item.CanTouch = false
@@ -35,7 +36,9 @@ local function createItem(parent)
     item.Transparency = 1
     item.Parent = parent
 
-    Item3DUI:Clone().Parent = item
+    local ui = Item3DUI:Clone()
+    ui.Name = "Item3DUI"
+    ui.Parent = item
 
     return item
 end
@@ -104,23 +107,23 @@ function FloatingItems:Start()
     local gadgetName = Player:GetAttribute("EquippedGadget")
 
     local primary = createItem(char)
-    primary.Item3DUI.Frame.ItemName.Text = primaryName
+    -- primary.Item3DUI.Frame.ItemName.Text = primaryName
     primary.Item3DUI.Frame.Keybind.Text = "1"
     primary.CFrame = char.HumanoidRootPart.CFrame:ToWorldSpace(PRIMARY_CFRAME)
     
     local secondary = createItem(char)
-    secondary.Item3DUI.Frame.ItemName.Text = secondaryName
+    -- secondary.Item3DUI.Frame.ItemName.Text = secondaryName
     secondary.Item3DUI.Frame.Keybind.Text = "2"
     secondary.CFrame = char.HumanoidRootPart.CFrame:ToWorldSpace(SECONDARY_CFRAME)
 
     local skill = createItem(char)
-    skill.Item3DUI.Frame.ItemName.Text = skillName
+    -- skill.Item3DUI.Frame.ItemName.Text = skillName
     skill.Item3DUI.Frame.Keybind.Text = Player.Keybinds:GetAttribute("Skill")
     skill.Item3DUI.Frame.Keybind.TextColor3 = Color3.fromRGB(195, 15, 255)
     skill.CFrame = char.HumanoidRootPart.CFrame:ToWorldSpace(SKILL_CFRAME)
 
     local gadget = createItem(char)
-    gadget.Item3DUI.Frame.ItemName.Text = gadgetName
+    -- gadget.Item3DUI.Frame.ItemName.Text = gadgetName
     gadget.Item3DUI.Frame.Keybind.Text = Player.Keybinds:GetAttribute("Gadget")
     gadget.Item3DUI.Frame.Keybind.TextColor3 = Color3.fromRGB(255, 148, 129)
     gadget.CFrame = char.HumanoidRootPart.CFrame:ToWorldSpace(GADGET_CFRAME)
