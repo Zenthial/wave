@@ -52,16 +52,21 @@ Recurse(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Components"), Loa
 
 -- tcs.start().sync()
 
-for _, module in pairs(script.Modules:GetChildren()) do
-    if module:IsA("ModuleScript") then
-        local m = require(module)
-        modules[module.Name] = m
-        if typeof(m) == "table" then
-            if m["Start"] ~= nil and typeof(m["Start"]) == "function" then
-                task.spawn(function()
+function LoadModule(module: ModuleScript)
+    task.spawn(function()
+        if module:IsA("ModuleScript") then
+            local m = require(module)
+            if typeof(m) == "table" then
+                if m["Start"] ~= nil then
                     m:Start()
-                end)
+                end
             end
         end
-    end
+    end)
 end
+
+for _, module in pairs(script.Modules:GetChildren()) do
+   LoadModule(module)
+end
+
+script.Modules.ChildAdded:Connect(LoadModule)
