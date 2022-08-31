@@ -82,6 +82,7 @@ function MountedTurret:Start()
         if newOccupant ~= nil then
             self.Courier:Send("BindToMountedTurret", newOccupant, self.Root)
         else
+            self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true
             self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root)
         end

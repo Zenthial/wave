@@ -13,6 +13,7 @@ local ServerComm = require(script.Parent.ServerComm)
 local comm = ServerComm.GetServerComm()
 
 local Welder = require(Shared.Modules.Welder)
+local Courier = require(Shared.courier)
 
 local DefaultServerPlayerAttributes = require(script.Parent.DefaultServerPlayerAttributes)
 
@@ -135,6 +136,31 @@ function GunEngine:Start()
             player:SetAttribute("GadgetQuantity", quantity - 1)
             renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
         end
+    end)
+
+    Courier:Listen("DrawRay"):Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
+        -- could be spammed fired to cause people to lag, check some kind of script invocation timer thingy, could make sure that the time between shots isn't shorter than the fire rate
+        -- something like LastShot = tick(), if currentShot - LastShot < fireRate then kick, though probably would just want to watch them
+        Courier:SendToAllExcept("DrawRay", player, player, startPosition, endPosition, weaponName)
+    end)
+
+    Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
+        local quantity = player:GetAttribute("GadgetQuantity")
+        if quantity > 0 then
+            player:SetAttribute("GadgetQuantity", quantity - 1)
+            Courier:SendToAllExcept("RenderGrenade", player, player, position, direction, movementSpeed, gadget)
+        end
+    end)
+
+    Courier:Listen("WeldWeapon"):Connect(function(player: Player, weapon: Model, toBack: boolean)
+        -- could be abused somehow?
+        -- actually probably not because you'd have to weld something that exists on the server and has weapon stats
+        -- an intelligent exploiter could possibly give themselves a different cosmetic appearance if someone has a cool weapon, but it wouldn't do much else
+        local character = player.Character
+        if character == nil then
+            return
+        end
+        Welder:WeldWeapon(character, weapon, toBack)
     end)
 end
 

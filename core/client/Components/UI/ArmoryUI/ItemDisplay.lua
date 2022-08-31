@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local Functions = require(script.Parent.Functions)
+local ViewportCameraPositioner = require(script.Parent.Parent.functions.ViewportCameraPositioner)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
@@ -100,7 +101,7 @@ function ItemDisplay:SetViewport(viewport: ViewportFrame, modelFolder: Configura
     elseif modelFolder.Name == "PBW" then
         inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(90), 0))
     end
-    camera.CFrame = CFrame.new(Vector3.new(-distance, 0, 0), Vector3.new(0, 0, 0))
+    camera.CFrame = ViewportCameraPositioner(camera, viewport, inspectModel)
 end
 
 function ItemDisplay:SetWeapon(weaponStats, selected: boolean)

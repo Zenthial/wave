@@ -32,6 +32,7 @@ function ArmoryHandler:Start()
         if points < itemStats.WeaponCost then return end -- how did they even equip it???
         
         local currentClass = player:GetAttribute("CurrentClass")
+        print(currentClass)
         if currentClass ~= nil then
             local inClass = GenericClassHandler:IsItemInClass(currentClass, itemType, itemName)
             if not inClass then return end

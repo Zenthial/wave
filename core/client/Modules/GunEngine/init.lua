@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
 local tcs = require(Shared:WaitForChild("tcs"))
+local Courier = require(Shared:WaitForChild("courier"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
@@ -91,6 +92,10 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     local stats = GadgetStatsModule[grenade]
     assert(stats ~= nil, "No gadget stats for "..grenade)
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
+end
+
+function GunEngine:EquipWeapon(weaponStats, weaponModel)
+    
 end
 
 function GunEngine.CreateGun(weaponName: string, model): Gun

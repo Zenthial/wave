@@ -82,6 +82,7 @@ function AirVehicle:Start()
         if newOccupant ~= nil then
             self.Courier:Send("BindToPlane", newOccupant, self.Root)
         else
+            self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true   
             self.Courier:Send("UnbindFromPlane", oldOccupant, self.Root)
             goFlat()

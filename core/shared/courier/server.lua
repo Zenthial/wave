@@ -75,6 +75,17 @@ function CourierServer:SendToAll(portString: string, ...)
     remote:FireAllClients(...)
 end
 
+function CourierServer:SendToAllExcept(portString: string, player: Player, ...)
+    local remote = self.PortRemotes[portString]
+    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            remote:FireClient(player, ...)        
+        end
+    end
+end
+
 function CourierServer:GetPort(portString: string)
     local remote = self.PortRemotes[portString]
     if remote then

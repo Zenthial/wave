@@ -86,7 +86,7 @@ type FloatingItems_T = {
 local FloatingItems: FloatingItems_T = {}
 FloatingItems.__index = FloatingItems
 FloatingItems.Name = "FloatingItems"
-FloatingItems.Tag = "Player"
+FloatingItems.Tag = "FloatingItems"
 FloatingItems.Ancestor = game
 
 function FloatingItems.new(root: any)

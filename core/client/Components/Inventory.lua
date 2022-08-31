@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
@@ -63,8 +64,9 @@ function Inventory:Start()
 
         if inventoryKey == "Primary" or inventoryKey == "Secondary" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local gun = GunEngine.CreateGun(weaponName, model)
-            self["Equipped"..inventoryKey] = gun
+            local weaponStats = WeaponStats[weaponName]
+            self["Equipped"..inventoryKey] = weaponStats
+            self["Equipped"..inventoryKey.."Model"] = model
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = GunEngine.CreateSkill(weaponName, model)
@@ -97,12 +99,12 @@ function Inventory:Start()
     end))
 end
 
-function Inventory:HandleWeapon(gunPointer)
-    if self.EquippedWeapon == gunPointer then
-        gunPointer:Unequip()
+function Inventory:HandleWeapon(weaponStats, model: Model)
+    if self.EquippedWeapon == weaponStats then
+        GunEngine:UnequipWeapon(weaponStats, model)
         self.EquippedWeapon = nil
     elseif self.EquippedWeapon == nil then
-        self.EquippedWeapon = gunPointer
+        self.EquippedWeapon = weaponStats
         gunPointer:Equip()
     elseif self.EquippedWeapon ~= gunPointer then
         self.EquippedWeapon:Unequip()
@@ -141,9 +143,9 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
         self.EquippedSkill:Equip()
     else
         if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
-            self:HandleWeapon(self.EquippedPrimary)
+            self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel)
         elseif KeyCode == Enum.KeyCode.Two and self.EquippedSecondary ~= nil then
-            self:HandleWeapon(self.EquippedSecondary)
+            self:HandleWeapon(self.EquippedSecondary, self.EquippedSecondaryModel)
         end
     end
 end
