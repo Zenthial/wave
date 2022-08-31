@@ -16,6 +16,12 @@ local CoreSkill = require(script.Skills.CoreSkill)
 local Grenades = require(script.Grenades)
 local BulletModules = script.BulletModules
 
+local Battery = require(script.Modules.Battery)
+local FireModes = require(script.Modules.FireModes)
+
+local chargeWait = require(script.functions.chargeWait)
+local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
+
 local ClientComm = require(script.Parent.ClientComm)
 local comm = ClientComm.GetClientComm()
 
@@ -23,6 +29,18 @@ local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
 type WeaponStats = {}
+
+type LastShotData = {
+    StartPosition: Vector3,
+    EndPosition: Vector3,
+    Timestamp: number,
+}
+type ShotsTable = {
+    NumShots: number,
+    HitShots: number,
+    Headshots: number,
+    LastShot: LastShotData
+}
 
 export type Gun = {
     WeaponStats: WeaponStats
@@ -32,7 +50,9 @@ local Cleaner = Trove.new()
 local KeyboardInput = Input.Keyboard.new()
 local MouseInput = Input.Mouse.new()
 
-local GunEngine = {}
+local GunEngine = {
+    EquippedWeaponModel = nil
+}
 
 function GunEngine:Start()
     if Player.Character == nil then
@@ -94,8 +114,100 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
-function GunEngine:EquipWeapon(weaponStats, weaponModel)
+function GunEngine.EquipWeapon(weaponStats, weaponModel)
+    Courier:Send("WeldWeapon", weaponModel, false)
+
+    if weaponModel.Handle:FindFirstChild("Equip") then
+        weaponModel.Handle.Equip:Play()
+    end
+
+    GunEngine.EquippedWeaponModel = weaponModel
+
+    Player:SetAttribute("EquippedWeapon", weaponStats.Name)
+end
+
+function GunEngine.UnequipWeapon(weaponStats, weaponModel)
+    Courier:Send("WeldWeapon", weaponModel, true)
+
+    if weaponModel.Handle:FindFirstChild("Unequip") then
+        weaponModel.Handle.Unequip:Play()
+    end
+
+    GunEngine.EquippedWeaponModel = nil
+
+    Player:SetAttribute("EquippedWeapon", "")
+end
+
+function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
+    local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
+
+    print(hitPart, hitPart.Parent, healthComponentInstance)
+    if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
+        cursorComponent:Hitmark()
+        GunEngine.EquippedWeaponModel.Handle.Hit:Play()
+        Courier:Send("AttemptDealDamage", healthComponentInstance, weaponStats.Name, hitPart.Name)
+    end
+end
+
+function GunEngine.Attack(weaponStats, mutableStats)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
+end
+
+function GunEngine.MouseDown(weaponStats, mutableStats)
+    mutableStats.MouseDown = true
+
+    if Battery.CanFire(mutableStats) == false then
+        if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
+            GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
+        end
+    end
+
+    Player:SetAttribute("LocalSprinting", false)
+    if weaponStats.ChargeWait > 0 then
+        Player:SetAttribute("ChargeWait", weaponStats.ChargeWait)
+        Player:SetAttribute("Charging", true)
+        if chargeWait(weaponStats.ChargeWait) then
+            GunEngine.Attack(weaponStats, mutableStats)
+        end
+        Player:SetAttribute("Charging", false)
+    else
+        GunEngine.Attack(weaponStats, mutableStats)
+    end
+end
+
+function GunEngine.MouseUp(weaponStats, mutableStats)
     
+end
+
+function GunEngine.GetShotsTable()
+    return {
+        NumShots = 0,
+        HitShots = 0,
+        Headshots = 0,
+        LastShot = {
+            StartPosition = nil,
+            EndPosition = nil,
+            Timestamp = tick()
+        } :: LastShotData
+    } :: ShotsTable
+end
+
+-- mutable stats are the battery stats combined with the shots table and
+-- the standard aiming and default stats
+function GunEngine.GetMutableStats(stats)
+    local mutableStats = Battery.GetStats(stats.HeatRate, stats.CoolTime, stats.CoolWait, stats.BatteryDepletionMin, stats.BatteryDepletionMax, stats.ShotsDeplete, GunEngine.GetShotsTable())
+        
+    mutableStats.AimBuff = 3
+    mutableStats.CurrentRecoil = 0
+
+    mutableStats.Equipped = false
+    mutableStats.Aiming = false
+    mutableStats.MouseDown = false
+
+    mutableStats.CanShoot = true
+    mutableStats.Shooting = false
+
+    return mutableStats
 end
 
 function GunEngine.CreateGun(weaponName: string, model): Gun

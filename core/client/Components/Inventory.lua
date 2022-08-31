@@ -66,6 +66,7 @@ function Inventory:Start()
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local weaponStats = WeaponStats[weaponName]
             self["Equipped"..inventoryKey] = weaponStats
+            self["Equipped"..inventoryKey.."MutableStats"] = GunEngine.GetMutableStats(weaponStats)
             self["Equipped"..inventoryKey.."Model"] = model
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
@@ -99,17 +100,20 @@ function Inventory:Start()
     end))
 end
 
-function Inventory:HandleWeapon(weaponStats, model: Model)
+function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     if self.EquippedWeapon == weaponStats then
-        GunEngine:UnequipWeapon(weaponStats, model)
+        GunEngine.UnequipWeapon(weaponStats, model)
         self.EquippedWeapon = nil
+        self.EquippedStats = mutableStats
     elseif self.EquippedWeapon == nil then
         self.EquippedWeapon = weaponStats
-        gunPointer:Equip()
-    elseif self.EquippedWeapon ~= gunPointer then
-        self.EquippedWeapon:Unequip()
-        self.EquippedWeapon = gunPointer
-        gunPointer:Equip()
+        self.EquippedStats = mutableStats
+        GunEngine.EquipWeapon(weaponStats, model)
+    elseif self.EquippedWeapon ~= weaponStats then
+        GunEngine.UnequipWeapon(weaponStats, model)
+        self.EquippedWeapon = weaponStats
+        self.EquippedStats = mutableStats
+        GunEngine.EquipWeapon(weaponStats, model)
     end
 
     if self.EquippedWeaponCleaner then
@@ -143,9 +147,9 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
         self.EquippedSkill:Equip()
     else
         if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
-            self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel)
+            self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel, self.EquippedPrimaryMutableStats)
         elseif KeyCode == Enum.KeyCode.Two and self.EquippedSecondary ~= nil then
-            self:HandleWeapon(self.EquippedSecondary, self.EquippedSecondaryModel)
+            self:HandleWeapon(self.EquippedSecondary, self.EquippedSecondaryModel, self.EquippedSecondaryMutableStats)
         end
     end
 end
@@ -160,13 +164,13 @@ end
 
 function Inventory:MouseDown()
     if self.EquippedWeapon then
-        self.EquippedWeapon:MouseDown()
+        GunEngine.MouseDown(self.EquippedWeapon, self.EquippedStats)
     end
 end
 
 function Inventory:MouseUp()
     if self.EquippedWeapon then
-        self.EquippedWeapon:MouseUp()
+        GunEngine.MouseUp(self.EquippedWeapon, self.EquippedStats)
     end
 end
 
