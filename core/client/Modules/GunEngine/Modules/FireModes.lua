@@ -33,6 +33,7 @@ function FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel: Mo
             mutableStats.ShotsTable.LastShot.StartPosition = gunModel.Barrel.Position
             mutableStats.ShotsTable.LastShot.EndPosition = target
             mutableStats.ShotsTable.LastShot.Timestamp = tick()
+            mutableStats.NumShots += 1
             BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, gunModel.Barrel.Position, target, weaponStats.BulletCache)
         end
     end)
