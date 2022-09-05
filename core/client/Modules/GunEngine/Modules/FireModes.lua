@@ -3,10 +3,15 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
+local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
+
+local Grenades = require(script.Parent.Parent.Grenades)
 local BulletRenderer = require(script.Parent.BulletRenderer)
 local raycast = require(script.Parent.RaycastFunctions)
 
 local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+local Character = Player.Character or Player.CharacterAdded:Wait()
 
 local FireModes = {}
 
@@ -71,5 +76,15 @@ function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart
     end
 end
 
+function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
+    local gadgetStats = GadgetStats[weaponStats.Name]
+    assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
+
+    local hrp = Character:WaitForChild("HumanoidRootPart")
+    mutableStats.Shooting = true
+    Grenades:RenderNade(Player, gunModel.Barrel.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, gadgetStats)
+    task.wait(1/weaponStats.FireRate)
+    mutableStats.Shooting = false
+end
 
 return FireModes

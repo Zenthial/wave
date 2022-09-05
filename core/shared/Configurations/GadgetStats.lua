@@ -14,7 +14,6 @@ export type GadgetStats_T = {
     DEBUG: boolean,
 
     ProjectileSpeed: number,
-    MaxDistance: number,
 
     NadeRadius: number,
     MaxDamage: number,
@@ -67,7 +66,6 @@ return {
         DEBUG = false,
 
         ProjectileSpeed = 150,
-        MaxDistance = 300,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -126,7 +124,6 @@ return {
         DEBUG = true,
 
         ProjectileSpeed = 150,
-        MaxDistance = 300,
 
         NadeRadius = -1,
         MaxDamage = -1,
@@ -201,7 +198,6 @@ return {
         DEBUG = false,
 
         ProjectileSpeed = 200,
-        MaxDistance = 300,
 
         NadeRadius = 10,
         MaxDamage = 40,
@@ -252,10 +248,10 @@ return {
         Type = "Projectile",
         Quantity = 2,
 
+        Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 500,
-        MaxDistance = 300,
+        ProjectileSpeed = 175,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -266,7 +262,7 @@ return {
         PopTime = 0.6,
         DelayTime = 0.1,
 
-        Gravity = Vector3.new(0, -1000, 0),
+        Gravity = Vector3.new(0, -175, 0),
 
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
@@ -279,30 +275,38 @@ return {
             return math.abs(damage*distanceDamageFactor)
         end,
 
-        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = true
-            grenade.CanCollide = true
-            grenade.CanTouch = false
-            grenade.CanQuery = false
-            task.wait(stats.PopTime)
-            local character = sourcePlayer.Character
-            if character then
-                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
-                local explosion = Instance.new("Explosion")
-                explosion.Position = grenade.Position
-                explosion.BlastRadius = stats.NadeRadius
-                explosion.BlastPressure = 0
-                explosion.DestroyJointRadiusPercent = 0
-                explosion.Parent = workspace
-
-                task.delay(1, function()
-                    explosion:Destroy()
-                end)
-
-                radiusDamage(stats, grenade, nil, false)
-            end
-            task.wait(stats.DelayTime)
+        -- must be wrapped in a task.spawn
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                local grenade = partCache:GetPart()
+                grenade.Anchored = true
+                grenade.CanCollide = true
+                grenade.CanTouch = false
+                grenade.CanQuery = false
+                grenade.CFrame = cframe
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = grenade.Position
+                    explosion.BlastRadius = stats.NadeRadius
+                    explosion.BlastPressure = 0
+                    explosion.DestroyJointRadiusPercent = 0
+                    explosion.Parent = workspace
+    
+                    task.delay(1, function()
+                        explosion:Destroy()
+                    end)
+    
+                    radiusDamage(stats, grenade, nil, false)
+                end
+                task.wait(stats.DelayTime)
+                partCache:ReturnPart(grenade)
+                stats.Exploding = false
+            end)
         end
     },
 } :: {[string]: GadgetStats_T}

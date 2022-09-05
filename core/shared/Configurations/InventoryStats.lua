@@ -6,7 +6,7 @@ export type Inventory = {
 
 
 local DEFAULT_LOADOUT = {
-    Primary = "W17",
+    Primary = "G25",
 
     Secondary = "Y14",
 

@@ -30,11 +30,11 @@ type Some<T> = {
     Value: T
 }
 
-local function functor(f: (any) -> any, ...)
+local function functor(f: (SkillStats, boolean, (SkillStats) -> any, (SkillStats, number) -> any) -> any)
     if f == nil then
         error("functor is nil")
     end
-    return f(...)
+    return f
 end
 
 local SkillEngine = {}

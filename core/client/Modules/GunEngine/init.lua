@@ -13,21 +13,18 @@ local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local Grenades = require(script.Grenades)
-local BulletModules = script.BulletModules
 
+local BulletRenderer = require(script.Modules.BulletRenderer)
 local Battery = require(script.Modules.Battery)
 local FireModes = require(script.Modules.FireModes)
 
 local chargeWait = require(script.functions.chargeWait)
 local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
 
-local ClientComm = require(script.Parent.ClientComm)
-local comm = ClientComm.GetClientComm()
-
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
-type WeaponStats = {}
+type WeaponStats = typeof(WeaponStatsModule)
 
 type LastShotData = {
     StartPosition: Vector3,
@@ -46,8 +43,14 @@ export type Gun = {
 }
 
 local Cleaner = Trove.new()
-local KeyboardInput = Input.Keyboard.new()
 local MouseInput = Input.Mouse.new()
+
+local function functor(f: (Player, Vector3, Vector3, any, WeaponStats) -> any)
+    if f == nil then
+        error("functor is nil")
+    end
+    return f
+end
 
 local GunEngine = {
     EquippedWeaponModel = nil
@@ -57,23 +60,12 @@ function GunEngine:Start()
     if Player.Character == nil then
         Player.CharacterAdded:Wait()
     end
-    local requiredBulletModules = {}
 
-    for _, v in pairs(BulletModules:GetChildren()) do
-        requiredBulletModules[v.Name] = require(v)    
-    end
-
-    local raySignal = comm:GetSignal("DrawRay")
-    local nadeSignal = comm:GetSignal("RenderGrenade")
-
-    Cleaner:Add(raySignal:Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
+    Cleaner:Add(Courier:Listen("DrawRay"):Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
         local weaponStats = WeaponStatsModule[weaponName]
 
         if weaponStats then
-            local mod = requiredBulletModules[weaponStats.BulletType]
-            if mod then
-                mod.StaticDraw(player, startPosition, endPosition, weaponStats.BulletCache, weaponStats)
-            end
+            functor(BulletRenderer["Draw"..weaponStats.BulletType])(player, startPosition, endPosition, weaponStats.BulletCache, weaponStats)
         else
             error("WeaponStats don't exist??")
         end
@@ -83,7 +75,7 @@ function GunEngine:Start()
         
     end))
 
-    Cleaner:Add(nadeSignal:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, grenade: string)
+    Cleaner:Add(Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, grenade: string)
         self:RenderGrenadeForOtherPlayer(player, position, direction, movementSpeed, grenade)
     end))
 end
@@ -98,10 +90,9 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false and Player:GetAttribute("TotalHealth") > 0 then
         Player:SetAttribute("Throwing", true)
         
-        local nadeSignal = comm:GetSignal("RenderGrenade")
         task.wait(.5) -- animation wait
         if Player:GetAttribute("TotalHealth") > 0 then
-            nadeSignal:Fire(leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
+            Courier:Send("RenderGrenade", leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
             Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
         end
     end
