@@ -6,10 +6,20 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 local LocalPlayer = Players.LocalPlayer
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
-return function(skillStats, bool, regenEnergy, depleteEnergy)
+type SkillStats = {
+    SkillName: string,
+    SkillModel: Model,
+
+    Energy: number,
+    Recharging: boolean,
+	Active: boolean,
+}
+
+return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 	local multiplier = 3250
 	
 	if bool then
+		skillStats.Active = true
 		depleteEnergy(skillStats, skillStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
@@ -35,6 +45,7 @@ return function(skillStats, bool, regenEnergy, depleteEnergy)
 			shieldModel.TorsoShield.BodyVelocity.Velocity = Vector3.new(0, 0, 0)
 		end)
 
+		skillStats.Active = false
 		regenEnergy(skillStats)
 	end
 end

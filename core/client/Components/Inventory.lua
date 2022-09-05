@@ -11,6 +11,7 @@ local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChil
 
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
+local SkillEngine = require(Modules.SkillEngine)
 local DeployableEngine = require(Modules.DeployableEngine)
 
 local LocalPlayer = Players.LocalPlayer
@@ -70,21 +71,8 @@ function Inventory:Start()
             self["Equipped"..inventoryKey.."Model"] = model
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local skill = GunEngine.CreateSkill(weaponName, model)
+            local skill = SkillEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
-            
-            if skillCleaner ~= nil then
-                skillCleaner:Clean()
-                skillCleaner = Trove.new()
-            end
-            
-            skillCleaner:Add(skill.Events.EnergyChanged:Connect(function(currentEnergy: number)
-                MainHUDComponent:SkillEnergyChanged(currentEnergy)
-            end))
-
-            skillCleaner:Add(skill.Events.FunctionStarted:Connect(function()
-                MainHUDComponent:SetSkillActive()
-            end))
         elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
             
@@ -144,7 +132,7 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
             DeployableEngine:RenderDeployable(self.EquippedGadgetStats, self.EquippedWeapon)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
-        self.EquippedSkill:Equip()
+        SkillEngine.Use(self.EquippedSkill, not self.EquippedSkill.Active)
     else
         if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
             self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel, self.EquippedPrimaryMutableStats)

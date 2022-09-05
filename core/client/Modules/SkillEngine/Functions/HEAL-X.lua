@@ -5,8 +5,18 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 
 local LocalPlayer = Players.LocalPlayer
 
-return function(skillStats, bool, regenEnergy, depleteEnergy)
+type SkillStats = {
+    SkillName: string,
+    SkillModel: Model,
+
+    Energy: number,
+    Recharging: boolean,
+    Active: boolean
+}
+
+return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
     if bool then
+        skillStats.Active = true
         depleteEnergy(skillStats, skillStats.EnergyDeplete)
         LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
@@ -22,6 +32,7 @@ return function(skillStats, bool, regenEnergy, depleteEnergy)
         LocalPlayer:SetAttribute("FielxActive", false)
         Courier:Send("EffectEnable", skillStats.SkillModel.Reactor.FieldExplosion, false)
 		
+        skillStats.Active = false
 		regenEnergy(skillStats)
     end
 end

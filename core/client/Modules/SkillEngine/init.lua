@@ -23,7 +23,7 @@ type SkillStats = {
 
     Energy: number,
     Recharging: boolean,
-    CanUse: boolean,
+    Active: boolean
 }
 
 type Some<T> = {
@@ -50,12 +50,14 @@ function SkillEngine.CreateSkill(skillName: string, skillModel: Model)
 
         Energy = 100,
         Recharging = false,
-        CanUse = true,
+        Active = false,
     }, weaponStats) :: SkillStats
 end
 
 function SkillEngine.Use(skillStats: SkillStats, bool: boolean)
-    if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= skillStats.WeaponStats.EnergyMin then
+    if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and
+       skillStats.Energy >= skillStats.WeaponStats.EnergyMin
+    then
         functor(Functions[skillStats.Name])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
     end
 end

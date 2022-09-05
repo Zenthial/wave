@@ -10,13 +10,21 @@ local InvisRemote = SkillRemoteFolder:WaitForChild(LocalPlayer.Name.."_InvisRemo
 local TRANSPARENCY = 0.98
 local ENERGY_WAIT_TIME = 0.2
 
-local active = false
 local archivedParts = nil
 
-return function(skillStats, bool, regenEnergy, depleteEnergy)
+type SkillStats = {
+    SkillName: string,
+    SkillModel: Model,
+
+    Energy: number,
+    Recharging: boolean,
+    Active: boolean
+}
+
+return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
     print("here")
-    if not active then
-        active = true
+    if not skillStats.Active then
+        skillStats.Active = true
 
         local partsTable = archivedParts
 
@@ -40,13 +48,15 @@ return function(skillStats, bool, regenEnergy, depleteEnergy)
         InvisRemote:FireServer(partsTable, TRANSPARENCY)
 
         task.spawn(function()
-            while active do
+            while skillStats.Active do
                 depleteEnergy(skillStats, skillStats.EnergyDeplete)
                 task.wait(ENERGY_WAIT_TIME)
             end
+
+            skillStats.Active = false
         end)
-    elseif active or bool == false then
-        active = false
+    elseif skillStats.Active or bool == false then
+        skillStats.Active = false
 
         local partsTable = archivedParts
 

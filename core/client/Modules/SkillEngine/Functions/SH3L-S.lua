@@ -8,24 +8,32 @@ local PlayerFolder = ReplicatedStorage:WaitForChild("PlayerFolders"):WaitForChil
 local SH3L_SRemote = PlayerFolder:WaitForChild(Players.LocalPlayer.Name.."_SH3L_SRemote") :: RemoteEvent
 
 local REGEN_RATE = 0.3
-local active = false
 
-return function(skillStats, bool, regenEnergy, depleteEnergy)
-    if not active then
+type SkillStats = {
+    SkillName: string,
+    SkillModel: Model,
+
+    Energy: number,
+    Recharging: boolean,
+	Active: boolean,
+}
+
+return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
+    if not skillStats.Active then
         if Player:GetAttribute("Health") >= Player:GetAttribute("MaxHealth") then return end
-        active = true
+        skillStats.Active = true
         
         task.spawn(function()
             Player:GetAttributeChangedSignal("Health"):Connect(function()
-                if Player:GetAttribute("Health") >= Player:GetAttribute("MaxHealth") then active = false end
+                if Player:GetAttribute("Health") >= Player:GetAttribute("MaxHealth") then skillStats.Active = false end
             end)
 
-            while active do
+            while skillStats.Active do
                 SH3L_SRemote:FireServer()
                 task.wait(REGEN_RATE)
             end
         end)
-    elseif active or bool == false then
-        active = false
+    elseif skillStats.Active or bool == false then
+        skillStats.Active = false
     end
 end
