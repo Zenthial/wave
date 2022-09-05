@@ -23,7 +23,7 @@ type Some<T> = {
     Value: T
 }
 
-local function falliable(value: (() -> any) | nil)
+local function fallible(value: (() -> any) | nil)
     if value ~= nil then
         return {Value = value} :: Some<value>
     end
@@ -48,7 +48,7 @@ end
 
 function SkillEngine.Use(skillStats: SkillStats)
     if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= skillStats.WeaponStats.EnergyMin then
-        self.SkillFunction(self, true, LocalPlayer.Character, self.Model)
+        fallible([(self, true, LocalPlayer.Character, self.Model)
         -- self.Events.FunctionEnded:Fire()
     end
 end

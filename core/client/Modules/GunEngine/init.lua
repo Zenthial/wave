@@ -176,7 +176,7 @@ function GunEngine.MouseDown(weaponStats, mutableStats)
 end
 
 function GunEngine.MouseUp(weaponStats, mutableStats)
-    
+    mutableStats.MouseDown = false
 end
 
 function GunEngine.GetShotsTable()
