@@ -87,11 +87,11 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
     local GadgetStats = GadgetStatsModule[grenadeName]
     assert(GadgetStats, "No grenade stats for the grenade")
     
-    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false and Player:GetAttribute("TotalHealth") > 0 then
+    if Player.Character ~= nil and leftArm ~= nil and Mouse.UnitRay.Direction ~= nil and hrp ~= nil and Player:GetAttribute("LocalSprinting") == false and Player:GetAttribute("Health") > 0 then
         Player:SetAttribute("Throwing", true)
         
         task.wait(.5) -- animation wait
-        if Player:GetAttribute("TotalHealth") > 0 then
+        if Player:GetAttribute("Health") > 0 then
             Courier:Send("RenderGrenade", leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
             Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
         end
