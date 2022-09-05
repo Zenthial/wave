@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
 local BulletRenderer = require(script.Parent.BulletRenderer)
+local raycast = require(script.Parent.RaycastFunctions)
 
 local Player = Players.LocalPlayer
 
@@ -24,7 +25,7 @@ end
 function FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
     task.spawn(function()
         if gunModel ~= nil and gunModel.Barrel ~= nil then         
-            local hit, target = mouse:Raycast(gunModel.Barrel.Position, weaponStats, mutableStats.Aiming, mutableStats.CurrentRecoil, mutableStats.AimBuff)
+            local hit, target = raycast(weaponStats)
             
             if hit ~= nil and weaponStats.FireMode ~= "Launcher" then
                 task.spawn(checkHitPart, hit, weaponStats, mouse)
@@ -33,7 +34,7 @@ function FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel: Mo
             mutableStats.ShotsTable.LastShot.StartPosition = gunModel.Barrel.Position
             mutableStats.ShotsTable.LastShot.EndPosition = target
             mutableStats.ShotsTable.LastShot.Timestamp = tick()
-            mutableStats.NumShots += 1
+            mutableStats.ShotsTable.NumShots += 1
             BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, gunModel.Barrel.Position, target, weaponStats.BulletCache)
         end
     end)

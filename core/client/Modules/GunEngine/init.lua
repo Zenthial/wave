@@ -11,8 +11,7 @@ local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForC
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
-local CoreGun = require(script.CoreGun)
-local CoreSkill = require(script.Skills.CoreSkill)
+local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local Grenades = require(script.Grenades)
 local BulletModules = script.BulletModules
 
@@ -192,6 +191,17 @@ function GunEngine.GetShotsTable()
     } :: ShotsTable
 end
 
+function GunEngine.LoadAnimations(weaponStats)
+    local animationComponent = tcs.get_component(Player, "AnimationHandler")
+    local weaponsFolder = Weapons[weaponStats.Name] :: Folder
+
+    for _, animation: Animation in pairs(weaponsFolder.Anims:GetChildren()) do
+        local ani = animation:Clone()
+        ani.Name = weaponStats.Name..""..ani.Name
+        animationComponent:Load(ani)
+    end
+end
+
 -- mutable stats are the battery stats combined with the shots table and
 -- the standard aiming and default stats
 function GunEngine.GetMutableStats(stats)
@@ -208,18 +218,6 @@ function GunEngine.GetMutableStats(stats)
     mutableStats.Shooting = false
 
     return mutableStats
-end
-
-function GunEngine.CreateGun(weaponName: string, model): Gun
-    local stats = WeaponStatsModule[weaponName]
-    assert(stats, "No weapon stats for ".. weaponName)
-    return CoreGun.new(stats, model)
-end
-
-function GunEngine.CreateSkill(skillName: string, model)
-    local stats = WeaponStatsModule[skillName]
-    assert(stats, "No skill stats for ".. skillName)
-    return CoreSkill.new(stats, model)
 end
 
 return GunEngine

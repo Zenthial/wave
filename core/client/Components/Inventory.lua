@@ -69,6 +69,10 @@ function Inventory:Start()
             self["Equipped"..inventoryKey] = weaponStats
             self["Equipped"..inventoryKey.."MutableStats"] = GunEngine.GetMutableStats(weaponStats)
             self["Equipped"..inventoryKey.."Model"] = model
+
+            task.spawn(function()
+                GunEngine.LoadAnimations(weaponStats)
+            end)
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = SkillEngine.CreateSkill(weaponName, model)
@@ -110,15 +114,15 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     
     self.EquippedWeaponCleaner = Trove.new()
 
-    if self.EquippedWeapon then
-        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
-            self.MainHUD:UpdateHeat(heat)
-        end))
+    -- if self.EquippedWeapon then
+    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
+    --         self.MainHUD:UpdateHeat(heat)
+    --     end))
 
-        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
-            self.MainHUD:UpdateTriggerBar(trigDelay)
-        end))
-    end
+    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
+    --         self.MainHUD:UpdateTriggerBar(trigDelay)
+    --     end))
+    -- end
 
     local name = self.EquippedWeapon and self.EquippedWeapon.Name or nil
     self.MainHUD:UpdateEquippedWeapon(name)
