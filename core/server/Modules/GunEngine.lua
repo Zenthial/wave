@@ -162,6 +162,19 @@ function GunEngine:Start()
         end
         Welder:WeldWeapon(character, weapon, toBack)
     end)
+
+    Courier:Listen("AoERadius"):Connect(function(player: Player, part: BasePart, weaponName)
+        local stats = GadgetStats[weaponName]
+        if stats == nil then
+            stats = WeaponStats[weaponName]
+        end
+    
+        assert(stats ~= nil, "No stats exist for "..weaponName)
+        local playersToDamage = radiusDamage(stats, part, player, false)
+        for _player: Player, damage: number in pairs(playersToDamage) do
+            attemptDealDamage(player, weaponName, _player, damage)
+        end
+    end)
 end
 
 function GunEngine:WeldWeapon(character: Model, weapon: Model, toBack: boolean)

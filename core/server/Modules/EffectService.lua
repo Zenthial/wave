@@ -1,15 +1,11 @@
-local EffectEnableRemote = Instance.new("RemoteEvent")
-EffectEnableRemote.Name = "EffectEnableRemote"
-EffectEnableRemote.Parent = game.ReplicatedStorage
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local MaterialChangeRemote = Instance.new("RemoteEvent")
-MaterialChangeRemote.Name = "MaterialChangeRemote"
-MaterialChangeRemote.Parent = game.ReplicatedStorage
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local EffectService = {}
 
 function EffectService:Start()
-    EffectEnableRemote.OnServerEvent:Connect(function(player: Player, object: Model, bool: boolean)
+    Courier:Listen("EffectEnable"):Connect(function(player: Player, object: Model, bool: boolean)
         if player.Character then
             if player.Character:IsAncestorOf(object) then
                 object.Enabled = bool
@@ -17,7 +13,7 @@ function EffectService:Start()
         end
     end)
 
-    MaterialChangeRemote.OnServerEvent:Connect(function(player: Player, object: Model, material: Enum.Material)
+    Courier:Listen("MaterialChange"):Connect(function(player: Player, object: Model, material: Enum.Material)
         if player.Character then
             if player.Character:IsAncestorOf(object) then
                 object.Material = material

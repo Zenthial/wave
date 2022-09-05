@@ -10,7 +10,7 @@ local SH3L_SRemote = PlayerFolder:WaitForChild(Players.LocalPlayer.Name.."_SH3L_
 local REGEN_RATE = 0.3
 local active = false
 
-return function(self, bool, character, skillModel)
+return function(skillStats, bool, regenEnergy, depleteEnergy)
     if not active then
         if Player:GetAttribute("Health") >= Player:GetAttribute("MaxHealth") then return end
         active = true

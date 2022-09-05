@@ -1,22 +1,23 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local EffectEnableRemote = ReplicatedStorage:WaitForChild("EffectEnableRemote")
-local MaterialChangeRemote = ReplicatedStorage:WaitForChild("MaterialChangeRemote")
-local LocalPlayer = Players.LocalPlayer
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
-return function(self, bool, character, skillModel)
+local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+return function(skillStats, bool, regenEnergy, depleteEnergy)
 	local multiplier = 3250
 	
 	if bool then
-		self:DepleteEnergy(self.Stats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
+		depleteEnergy(skillStats, skillStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
 		
-		EffectEnableRemote:FireServer(skillModel.Propeller1.Flame, true)
-        EffectEnableRemote:FireServer(skillModel.Propeller2.Flame, true)
-        MaterialChangeRemote:FireServer(skillModel.Propeller1.Material, Enum.Material.Neon)
-        MaterialChangeRemote:FireServer(skillModel.Propeller2.Material, Enum.Material.Neon)
+		Courier:Send("EffectEnable", skillStats.SkillModel.Propeller1.Flame, true)
+        Courier:Send("EffectEnable", skillStats.SkillModel.Propeller2.Flame, true)
+        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1.Material, Enum.Material.Neon)
+        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2.Material, Enum.Material.Neon)
 		
 		character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 
@@ -25,15 +26,15 @@ return function(self, bool, character, skillModel)
 		shieldModel.TorsoShield.BodyVelocity.Velocity = Vector3.new(character.Humanoid.MoveDirection.X * multiplier, 1000, character.Humanoid.MoveDirection.Z * multiplier)
 
 		task.delay(0.8, function()
-			EffectEnableRemote:FireServer(skillModel.Propeller1.Flame, false)
-			EffectEnableRemote:FireServer(skillModel.Propeller2.Flame, false)
-			MaterialChangeRemote:FireServer(skillModel.Propeller1.Material, Enum.Material.SmoothPlastic)
-			MaterialChangeRemote:FireServer(skillModel.Propeller2.Material, Enum.Material.SmoothPlastic)
+			Courier:Send("EffectEnable", skillStats.SkillModel.Propeller1.Flame, false)
+			Courier:Send("EffectEnable", skillStats.SkillModel.Propeller2.Flame, false)
+			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1.Material, Enum.Material.SmoothPlastic)
+			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2.Material, Enum.Material.SmoothPlastic)
 
 			shieldModel.TorsoShield.BodyVelocity.MaxForce = Vector3.new(0, 0, 0)
 			shieldModel.TorsoShield.BodyVelocity.Velocity = Vector3.new(0, 0, 0)
 		end)
 
-		self:RegenEnergy()
+		regenEnergy(skillStats)
 	end
 end
