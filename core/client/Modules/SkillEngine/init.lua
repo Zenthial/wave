@@ -23,10 +23,11 @@ type Some<T> = {
     Value: T
 }
 
-local function fallible(value: (() -> any) | nil)
-    if value ~= nil then
-        return {Value = value} :: Some<value>
+local function functor(f: (any) -> any, value: any | nil)
+    if f == nil then
+        error("functor is nil")
     end
+    return f(value)
 end
 
 local SkillEngine = {}
@@ -48,8 +49,7 @@ end
 
 function SkillEngine.Use(skillStats: SkillStats)
     if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= skillStats.WeaponStats.EnergyMin then
-        fallible([(self, true, LocalPlayer.Character, self.Model)
-        -- self.Events.FunctionEnded:Fire()
+        functor(Functions[skillStats.Name])(skillStats)
     end
 end
 
