@@ -140,6 +140,8 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
 end
 
 function GunEngine.Attack(weaponStats, mutableStats)
+    GunEngine.EquippedWeaponModel.Barrel.Fire:Play()
+    task.spawn(Battery.Heat, weaponStats)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
 end
 
