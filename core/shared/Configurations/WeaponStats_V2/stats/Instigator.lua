@@ -64,7 +64,7 @@ return {
 	BlastRadius = 30,
 	FireRate = 10,
 	ChargeWait = 0,
-	Trigger = "Launcher",
+	Trigger = "Rocket",
 	FireMode = "Launcher",
 	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,

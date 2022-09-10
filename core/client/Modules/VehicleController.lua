@@ -6,6 +6,12 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 
 local Player = Players.LocalPlayer
 
+local function togglePrompts(bool: boolean)
+    for _, prompt in CollectionService:GetTagged("Prompt") do
+        prompt.Enabled = bool
+    end
+end
+
 local VehicleController = {}
 
 function VehicleController:Start()
@@ -19,6 +25,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(vehicle, "LandVehicle") then
             local landVehicleComponent = tcs.get_component(vehicle, "LandVehicle")
             landVehicleComponent:Bind()
+            togglePrompts(false)
         end
     end)
 
@@ -26,6 +33,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(vehicle, "LandVehicle") then
             local landVehicleComponent = tcs.get_component(vehicle, "LandVehicle")
             landVehicleComponent:Unbind()
+            togglePrompts(true)
         end
     end)
 
@@ -33,6 +41,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(vehicle, "AirVehicle") then
             local airVehicleComponent = tcs.get_component(vehicle, "AirVehicle")
             airVehicleComponent:Bind()
+            togglePrompts(false)
         end
     end)
 
@@ -40,6 +49,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(vehicle, "AirVehicle") then
             local airVehicleComponent = tcs.get_component(vehicle, "AirVehicle")
             airVehicleComponent:Unbind()
+            togglePrompts(true)
         end
     end)
 
@@ -47,6 +57,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(turret, "Turret") then
             local turretComponent = tcs.get_component(turret, "Turret")
             turretComponent:Bind(true)
+            togglePrompts(false)
 
             Player:SetAttribute("CurrentTurret", vehicleName)
             inventoryComponent:SetTurretModel(turret)
@@ -57,6 +68,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(turret, "Turret") then
             local turretComponent = tcs.get_component(turret, "Turret")
             turretComponent:Unbind()
+            togglePrompts(true)
 
             Player:SetAttribute("CurrentTurret", "")
             inventoryComponent:SetTurretModel(nil)
@@ -67,6 +79,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(turret, "MountedTurret") then
             local turretComponent = tcs.get_component(turret, "MountedTurret")
             turretComponent:Bind()
+            togglePrompts(false)
 
             Player:SetAttribute("CurrentTurret", vehicleName)
             inventoryComponent:SetTurretModel(turret)
@@ -77,6 +90,7 @@ function VehicleController:Start()
         if CollectionService:HasTag(turret, "MountedTurret") then
             local turretComponent = tcs.get_component(turret, "MountedTurret")
             turretComponent:Unbind()
+            togglePrompts(true)
 
             Player:SetAttribute("CurrentTurret", "")
             inventoryComponent:SetTurretModel(nil)

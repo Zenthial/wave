@@ -87,4 +87,15 @@ function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
     mutableStats.Shooting = false
 end
 
+function FireModes.Rocket(weaponStats, mutableStats, gunModel)
+    local gadgetStats = GadgetStats[weaponStats.Name]
+    assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
+
+    local hrp = Character:WaitForChild("HumanoidRootPart")
+    mutableStats.Shooting = true
+    Grenades:RenderNade(Player, gunModel.Barrel.Position, gunModel.Barrel.CFrame.LookVector, hrp.AssemblyLinearVelocity, gadgetStats)
+    task.wait(1/weaponStats.FireRate)
+    mutableStats.Shooting = false
+end
+
 return FireModes

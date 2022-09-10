@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -100,6 +101,7 @@ function AirVehicle:InitializePilotProximityPrompt()
     prompt.MaxActivationDistance = 25
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
+    CollectionService:AddTag(prompt, "Prompt")
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then
