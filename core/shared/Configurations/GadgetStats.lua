@@ -45,6 +45,7 @@ local Caches = {
     NDG = nil,
     C0S = nil,
     PBW = nil,
+    Tank = nil,
 }
 
 if RunService:IsClient() then
@@ -54,6 +55,7 @@ if RunService:IsClient() then
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
+    Caches.Tank = PartCache.new(Gadgets.TankRay.Projectile, 30, CacheFolder)
     Caches.PBW = PartCache.new(Weapons.PBW.Projectile, 30, CacheFolder)
 end
 
@@ -116,7 +118,7 @@ return {
                         explosion:Destroy()
                     end)
 
-                    radiusDamage(stats, grenade, nil, false)
+                    radiusDamage(stats, cframe.Position, nil, false)
                 end
                 task.wait(stats.DelayTime)
                 partCache:ReturnPart(grenade)
@@ -185,7 +187,7 @@ return {
                 local active = true
                 task.spawn(function()
                     while active do
-                        radiusDamage(stats, grenade, nil, false)
+                        radiusDamage(stats, cframe.Position, nil, false)
                         task.wait(0.05)
                     end
                 end)
@@ -260,7 +262,7 @@ return {
                     grenade.Explode:Play()
                     grenade.Transparency = 1
 
-                    radiusDamage(stats, grenade, nil, false)
+                    radiusDamage(stats, cframe.Position, nil, false)
                 end
                 task.wait(stats.DelayTime)
                 partCache:ReturnPart(grenade)
@@ -327,10 +329,66 @@ return {
                         explosion:Destroy()
                     end)
     
-                    radiusDamage(stats, grenade, nil, false)
+                    radiusDamage(stats, cframe.Position, nil, false)
                 end
                 task.wait(stats.DelayTime)
                 partCache:ReturnPart(grenade)
+                stats.Exploding = false
+            end)
+        end
+    },
+
+    ["Instigator"] = {
+        Name = "Instigator",
+        Type = "Projectile",
+        Quantity = 999,
+
+        Exploding = false,
+        DEBUG = false,
+
+        ProjectileSpeed = 600,
+
+        NadeRadius = 40,
+        MaxDamage = 75,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        Gravity = Vector3.new(0, -1, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.Tank,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/40)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+
+        -- must be wrapped in a task.spawn
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = cframe.Position
+                    explosion.BlastRadius = stats.NadeRadius
+                    explosion.BlastPressure = 0
+                    explosion.DestroyJointRadiusPercent = 0
+                    explosion.Parent = workspace
+    
+                    task.delay(1, function()
+                        explosion:Destroy()
+                    end)
+    
+                    radiusDamage(stats, cframe.Position, nil, false)
+                end
+                task.wait(stats.DelayTime)
                 stats.Exploding = false
             end)
         end

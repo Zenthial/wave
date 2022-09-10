@@ -80,11 +80,11 @@ function MountedTurret:Start()
     local vehicleSeatComponent = tcs.get_component(vehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if newOccupant ~= nil then
-            self.Courier:Send("BindToMountedTurret", newOccupant, self.Root)
+            self.Courier:Send("BindToMountedTurret", newOccupant, self.Root, self.Root.Name)
         else
             self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true
-            self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root)
+            self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root, self.Root.Name)
         end
     end))
 end

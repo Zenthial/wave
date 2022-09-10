@@ -42,6 +42,10 @@ function Inventory.new(root: any)
         EquippedPrimary = nil,
         EquippedSecondary = nil,
 
+        VehicleTurret = nil,
+        VehicleTurretMutableStats = nil,
+        TurretModel = nil,
+
         EquippedWeaponCleaner = nil,
     }, Inventory)
 end
@@ -88,6 +92,18 @@ function Inventory:Start()
 
             self.EquippedGadgetStats = gadgetStats
             self.EquippedGadget = weaponName
+        end
+    end))
+
+    self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("CurrentTurret"):Connect(function()
+        local currentTurret = LocalPlayer:GetAttribute("CurrentTurret")
+
+        if currentTurret == "" then
+            self.VehicleTurret = nil
+            self.VehicleTurretMutableStats = nil
+        else
+            self.VehicleTurret = WeaponStats[currentTurret]
+            self.VehicleTurretMutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
         end
     end))
 end
@@ -157,6 +173,8 @@ end
 function Inventory:MouseDown()
     if self.EquippedWeapon then
         GunEngine.MouseDown(self.EquippedWeapon, self.EquippedStats)
+    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+        GunEngine.TurretAttack(self.VehicleTurret, self.VehicleTurretMutableStats, self.TurretModel)
     end
 end
 
@@ -164,6 +182,10 @@ function Inventory:MouseUp()
     if self.EquippedWeapon then
         GunEngine.MouseUp(self.EquippedWeapon, self.EquippedStats)
     end
+end
+
+function Inventory:SetTurretModel(turretModel: Model)
+    self.TurretModel = turretModel
 end
 
 function Inventory:Destroy()

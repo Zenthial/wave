@@ -99,7 +99,7 @@ function LandVehicle:Start()
             self.Courier:Send("BindToVehicle", newOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("BindToTurret", newOccupant, mainTurret)
+                self.Courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
             end
         else
             self.ProximityPrompt.Enabled = true
@@ -107,7 +107,7 @@ function LandVehicle:Start()
             self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret)
+                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
             end
         end
     end))

@@ -105,6 +105,8 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
 end
 
 function GunEngine.EquipWeapon(weaponStats, weaponModel)
+    if Player:GetAttribute("InSeat") == true then return end
+
     Courier:Send("WeldWeapon", weaponModel, false)
 
     if weaponModel.Handle:FindFirstChild("Equip") then
@@ -143,6 +145,22 @@ function GunEngine.Attack(weaponStats, mutableStats)
     GunEngine.EquippedWeaponModel.Barrel.Fire:Play()
     task.spawn(Battery.Heat, weaponStats)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
+end
+
+function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
+    mutableStats.MouseDown = true
+
+    if Battery.CanFire(mutableStats) == false then
+        if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
+            GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
+        end
+    end
+
+    Player:SetAttribute("LocalSprinting", false)
+
+    turretModel.Barrel.Fire:Play()
+    task.spawn(Battery.Heat, weaponStats)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
