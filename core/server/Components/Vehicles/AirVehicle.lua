@@ -98,7 +98,7 @@ function AirVehicle:InitializePilotProximityPrompt()
     prompt.ObjectText = "Pilot Seat"
     prompt.ActionText = "Pilot the " .. self.Root.Name
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 25
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
     CollectionService:AddTag(prompt, "Prompt")

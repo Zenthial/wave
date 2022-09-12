@@ -120,7 +120,7 @@ function LandVehicle:InitializeDriverProximityPrompt()
     prompt.ObjectText = "Driver Seat"
     prompt.ActionText = "Drive the " .. self.Root.Name
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 25
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
     CollectionService:AddTag(prompt, "Prompt")

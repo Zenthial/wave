@@ -12,7 +12,7 @@ local rng = Random.new()
 
 local RANGE = 1000
 
-return function(weaponStats: typeof(WeaponStats))
+return function(weaponStats: typeof(WeaponStats), model: Model)
 	local target = Mouse.Hit.Position
     local origin = Head.Position
 
@@ -26,9 +26,16 @@ return function(weaponStats: typeof(WeaponStats))
 	)
 	
 	local ray = Ray.new(origin, (aim - origin).unit * RANGE)
+
+	local ignoreList = CollectionService:GetTagged("Ignore")
+	table.insert(ignoreList, model)
+	if model.Parent:IsA("Model") then
+		table.insert(ignoreList, model.Parent)
+	end
+	
 	local part, position = workspace:FindPartOnRayWithIgnoreList(
-		ray, 
-		CollectionService:GetTagged("Ignore"), 
+		ray,
+		ignoreList, 
 		false, -- terrain cells are cubes
 		true   -- ignore water
 	)

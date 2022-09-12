@@ -10,6 +10,8 @@ local BulletRenderer = require(script.Parent.BulletRenderer)
 local raycast = require(script.Parent.RaycastFunctions)
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local CursorUI = PlayerGui:WaitForChild("Cursor"):WaitForChild("Cursor")
 local Mouse = Player:GetMouse()
 local Character = Player.Character or Player.CharacterAdded:Wait()
 
@@ -23,30 +25,50 @@ local function errorWrapper(func: () -> () | nil): ({}, {}, Model, (Instance, {}
     return func
 end
 
+local function changeBarrel(weaponStats, mutableStats)
+    if mutableStats.CurrentBarrel ~= weaponStats.NumBarrels then
+        mutableStats.CurrentBarrel += 1
+    else
+        mutableStats.CurrentBarrel = 1
+    end
+end
+
+local function getBarrel(weaponStats, mutableStats, gunModel)
+    if weaponStats.NumBarrels > 1 then
+        local barrel = gunModel["Barrel"..mutableStats.CurrentBarrel]
+        changeBarrel(weaponStats, mutableStats)
+        return barrel
+    end
+
+    return gunModel.Barrel
+end
+
 function FireModes.GetFireMode(fireMode: string)
     return errorWrapper(FireModes[fireMode])
 end
 
 function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
     task.spawn(function()
-        if gunModel ~= nil and gunModel.Barrel ~= nil then         
-            local hit, target = raycast(weaponStats)
+        local barrel = getBarrel(weaponStats, mutableStats, gunModel)
+        if gunModel ~= nil and barrel ~= nil then         
+            local hit, target = raycast(weaponStats, gunModel)
             
             if hit ~= nil and weaponStats.FireMode ~= "Launcher" then
                 task.spawn(checkHitPart, hit, weaponStats, cursorUIComponent)
             end
 
-            mutableStats.ShotsTable.LastShot.StartPosition = gunModel.Barrel.Position
+            barrel.Fire:Play()
+            mutableStats.ShotsTable.LastShot.StartPosition = barrel.Position
             mutableStats.ShotsTable.LastShot.EndPosition = target
             mutableStats.ShotsTable.LastShot.Timestamp = tick()
             mutableStats.ShotsTable.NumShots += 1
-            BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, gunModel.Barrel.Position, target, weaponStats.BulletCache)
+            BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, barrel.Position, target, weaponStats.BulletCache)
         end
     end)
 end
 
 function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
-    local cursorUIComponent = tcs.get_component(Player, "Cursor")
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
         -- make it a do while because of weird edge cases in function calling

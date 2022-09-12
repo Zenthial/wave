@@ -97,7 +97,7 @@ function MountedTurret:InitializeProximityPrompt()
     prompt.ObjectText = "Turret Seat"
     prompt.ActionText = "Man the Turret"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 20
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
     CollectionService:AddTag(prompt, "Prompt")

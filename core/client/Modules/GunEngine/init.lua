@@ -142,8 +142,7 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
 end
 
 function GunEngine.Attack(weaponStats, mutableStats)
-    GunEngine.EquippedWeaponModel.Barrel.Fire:Play()
-    task.spawn(Battery.Heat, weaponStats)
+    task.spawn(Battery.Heat, mutableStats)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
 end
 
@@ -158,8 +157,7 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
 
     Player:SetAttribute("LocalSprinting", false)
 
-    turretModel.Barrel.Fire:Play()
-    task.spawn(Battery.Heat, weaponStats)
+    task.spawn(Battery.Heat, mutableStats)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart)
 end
 
@@ -227,6 +225,10 @@ function GunEngine.GetMutableStats(stats)
 
     mutableStats.CanShoot = true
     mutableStats.Shooting = false
+
+    if stats.NumBarrels > 1 then
+        mutableStats.CurrentBarrel = 1
+    end
 
     return mutableStats
 end

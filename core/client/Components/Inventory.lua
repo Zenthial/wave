@@ -104,6 +104,7 @@ function Inventory:Start()
         else
             self.VehicleTurret = WeaponStats[currentTurret]
             self.VehicleTurretMutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
+            print(self.VehicleTurretMutableStats)
         end
     end))
 end
@@ -181,6 +182,8 @@ end
 function Inventory:MouseUp()
     if self.EquippedWeapon then
         GunEngine.MouseUp(self.EquippedWeapon, self.EquippedStats)
+    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+        GunEngine.MouseUp(self.VehicleTurret, self.VehicleTurretMutableStats)
     end
 end
 

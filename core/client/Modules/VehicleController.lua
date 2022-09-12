@@ -81,7 +81,8 @@ function VehicleController:Start()
             turretComponent:Bind()
             togglePrompts(false)
 
-            Player:SetAttribute("CurrentTurret", vehicleName)
+            Player:SetAttribute("CurrentTurret", "MountedTurret")
+            print(turret)
             inventoryComponent:SetTurretModel(turret)
         end
     end)
