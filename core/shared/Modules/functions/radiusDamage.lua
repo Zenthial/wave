@@ -9,9 +9,8 @@ if RunService:IsClient() then
     local Comm = ClientComm.GetClientComm()
     local DealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
-    return function(stats, part: Part, sourceTeam: BrickColor, canTK: boolean)
-        local origin = part.Position
-        local radius = if stats.NadeRadius > 0 then stats.NadeRadius else part.Size / 2
+    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean)
+        local radius = stats.NadeRadius
 
         local player = Players.LocalPlayer
         local character = player.Character
@@ -30,16 +29,13 @@ if RunService:IsClient() then
         end
     end
 elseif RunService:IsServer() then
-    return function(stats, part: Part, sourcePlayer: Player, canTK: boolean)
-        local origin = part.Position
+    return function(stats, origin: Vector3, sourcePlayer: Player, canTK: boolean)
         local radius
 
         if stats.NadeRadius and stats.NadeRadius > 0 then 
             radius = stats.NadeRadius
         elseif stats.BlastRadius and stats.BlastRadius > 0 then
             radius = stats.BlastRadius
-        else
-            radius = part.Size / 2
         end
 
         local playersNear = {}

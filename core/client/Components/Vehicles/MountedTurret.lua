@@ -9,6 +9,8 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 
 local CameraLimits = require(script.Parent.CameraLimits)
 
+local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 
 type Cleaner_T = {
@@ -108,6 +110,8 @@ function MountedTurret:Unbind()
     self.SessionCleaner:Clean()
 
     Camera.CameraType = Enum.CameraType.Custom
+    Camera.CameraSubject = Character
+    
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 
     if self.Root.Parent == workspace then

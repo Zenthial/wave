@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
@@ -10,6 +11,7 @@ local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChil
 
 local Modules = StarterPlayerScripts.Client.Modules
 local GunEngine = require(Modules.GunEngine)
+local SkillEngine = require(Modules.SkillEngine)
 local DeployableEngine = require(Modules.DeployableEngine)
 
 local LocalPlayer = Players.LocalPlayer
@@ -40,6 +42,10 @@ function Inventory.new(root: any)
         EquippedPrimary = nil,
         EquippedSecondary = nil,
 
+        VehicleTurret = nil,
+        VehicleTurretMutableStats = nil,
+        TurretModel = nil,
+
         EquippedWeaponCleaner = nil,
     }, Inventory)
 end
@@ -63,25 +69,18 @@ function Inventory:Start()
 
         if inventoryKey == "Primary" or inventoryKey == "Secondary" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local gun = GunEngine.CreateGun(weaponName, model)
-            self["Equipped"..inventoryKey] = gun
+            local weaponStats = WeaponStats[weaponName]
+            self["Equipped"..inventoryKey] = weaponStats
+            self["Equipped"..inventoryKey.."MutableStats"] = GunEngine.GetMutableStats(weaponStats)
+            self["Equipped"..inventoryKey.."Model"] = model
+
+            task.spawn(function()
+                GunEngine.LoadAnimations(weaponStats)
+            end)
         elseif inventoryKey == "Skill" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
-            local skill = GunEngine.CreateSkill(weaponName, model)
+            local skill = SkillEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
-            
-            if skillCleaner ~= nil then
-                skillCleaner:Clean()
-                skillCleaner = Trove.new()
-            end
-            
-            skillCleaner:Add(skill.Events.EnergyChanged:Connect(function(currentEnergy: number)
-                MainHUDComponent:SkillEnergyChanged(currentEnergy)
-            end))
-
-            skillCleaner:Add(skill.Events.FunctionStarted:Connect(function()
-                MainHUDComponent:SetSkillActive()
-            end))
         elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
             
@@ -95,19 +94,35 @@ function Inventory:Start()
             self.EquippedGadget = weaponName
         end
     end))
+
+    self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("CurrentTurret"):Connect(function()
+        local currentTurret = LocalPlayer:GetAttribute("CurrentTurret")
+
+        if currentTurret == "" then
+            self.VehicleTurret = nil
+            self.VehicleTurretMutableStats = nil
+        else
+            self.VehicleTurret = WeaponStats[currentTurret]
+            self.VehicleTurretMutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
+            print(self.VehicleTurretMutableStats)
+        end
+    end))
 end
 
-function Inventory:HandleWeapon(gunPointer)
-    if self.EquippedWeapon == gunPointer then
-        gunPointer:Unequip()
+function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
+    if self.EquippedWeapon == weaponStats then
+        GunEngine.UnequipWeapon(weaponStats, model)
         self.EquippedWeapon = nil
+        self.EquippedStats = mutableStats
     elseif self.EquippedWeapon == nil then
-        self.EquippedWeapon = gunPointer
-        gunPointer:Equip()
-    elseif self.EquippedWeapon ~= gunPointer then
-        self.EquippedWeapon:Unequip()
-        self.EquippedWeapon = gunPointer
-        gunPointer:Equip()
+        self.EquippedWeapon = weaponStats
+        self.EquippedStats = mutableStats
+        GunEngine.EquipWeapon(weaponStats, model)
+    elseif self.EquippedWeapon ~= weaponStats then
+        GunEngine.UnequipWeapon(weaponStats, model)
+        self.EquippedWeapon = weaponStats
+        self.EquippedStats = mutableStats
+        GunEngine.EquipWeapon(weaponStats, model)
     end
 
     if self.EquippedWeaponCleaner then
@@ -116,15 +131,15 @@ function Inventory:HandleWeapon(gunPointer)
     
     self.EquippedWeaponCleaner = Trove.new()
 
-    if self.EquippedWeapon then
-        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
-            self.MainHUD:UpdateHeat(heat)
-        end))
+    -- if self.EquippedWeapon then
+    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
+    --         self.MainHUD:UpdateHeat(heat)
+    --     end))
 
-        self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
-            self.MainHUD:UpdateTriggerBar(trigDelay)
-        end))
-    end
+    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
+    --         self.MainHUD:UpdateTriggerBar(trigDelay)
+    --     end))
+    -- end
 
     local name = self.EquippedWeapon and self.EquippedWeapon.Name or nil
     self.MainHUD:UpdateEquippedWeapon(name)
@@ -138,12 +153,12 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
             DeployableEngine:RenderDeployable(self.EquippedGadgetStats, self.EquippedWeapon)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
-        self.EquippedSkill:Equip()
+        SkillEngine.Use(self.EquippedSkill, not self.EquippedSkill.Active)
     else
         if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
-            self:HandleWeapon(self.EquippedPrimary)
+            self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel, self.EquippedPrimaryMutableStats)
         elseif KeyCode == Enum.KeyCode.Two and self.EquippedSecondary ~= nil then
-            self:HandleWeapon(self.EquippedSecondary)
+            self:HandleWeapon(self.EquippedSecondary, self.EquippedSecondaryModel, self.EquippedSecondaryMutableStats)
         end
     end
 end
@@ -158,14 +173,22 @@ end
 
 function Inventory:MouseDown()
     if self.EquippedWeapon then
-        self.EquippedWeapon:MouseDown()
+        GunEngine.MouseDown(self.EquippedWeapon, self.EquippedStats)
+    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+        GunEngine.TurretAttack(self.VehicleTurret, self.VehicleTurretMutableStats, self.TurretModel)
     end
 end
 
 function Inventory:MouseUp()
     if self.EquippedWeapon then
-        self.EquippedWeapon:MouseUp()
+        GunEngine.MouseUp(self.EquippedWeapon, self.EquippedStats)
+    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+        GunEngine.MouseUp(self.VehicleTurret, self.VehicleTurretMutableStats)
     end
+end
+
+function Inventory:SetTurretModel(turretModel: Model)
+    self.TurretModel = turretModel
 end
 
 function Inventory:Destroy()

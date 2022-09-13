@@ -3,7 +3,6 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PartCache = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("PartCache"))
-local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 -- all of the below tables, except the caches, are just enums
 
@@ -38,51 +37,47 @@ local Holsters = {
 }
 
 return {
-	Name = "G25",
-	FullName = "Plasma Grenade Launcher",
-	Category = "Assault",
-	Description = "The G25 Triggered Grenade Launcher is unlike all other weapons in WIJ's arsenal due to it firing a charged particle as opposed to a directed phaser. The weapon is renowned for being particularly tricky to use however those familiar with its nature can tap into its lethal nature by laying traps and disrupting the movement of enemy units.",
-	QuickDescription = "Single Explosive Projectile",
-	WeaponCost = 3000,
+	Name = "MountedTurret",
+	FullName = "Mounted Turret",
+	Category = "Turret",
+	Description = "",
+	QuickDescription = "Automatic, Single Shot",
+	WeaponCost = 0,
 	AmmoType = "Battery",
 	Slot = 1,
 	Holster = Holsters.Back,
 	NumHandles = 1,
-	NumBarrels = 1,
+	NumBarrels = 2,
 	CanSprint = true,
 	CanCrouch = true,
 	HeadshotMultiplier = 2,
 	CanTeamKill = false,
 	Locked = false,
-	WalkspeedReduce = 2,
-	BatteryDepletionMin = 12.5,
-	BatteryDepletionMax = 12.5,
-	ShotsDeplete = 1,
-	MaxSpread = 1,
-	MinSpread = 1,
-	HeatRate = 100,
-	CoolTime = 4,
-	CoolWait = 1,
-	FireRate = 0,
+	WalkspeedReduce = 0,
+	BatteryDepletionMin = 2,
+	BatteryDepletionMax = 3,
+	ShotsDeplete = 10,
+	MaxSpread = 2.5,
+	MinSpread = 0.5,
+	HeatRate = 2,
+	CoolTime = 3,
+	CoolWait = 0.3,
+	Damage = 7,
+	CalculateDamage = function(damage, distance)
+		return damage
+	end,
+	VehicleMultiplier = 1,
+	FireRate = 11,
 	ChargeWait = 0,
-	Trigger = "Launcher",
-	FireMode = "Launcher",
-	BulletType = "Projectile",
+	Trigger = "Auto",
+	FireMode = "Single",
+	BulletType = "Ray",
 	BulletCache = Caches.DefaultCache,
 
-	Damage = 55,
-	CalculateDamage = function(damage, distance)
-		damage = damage + (60 /distance)
-		return math.clamp(damage, 50, 75)
-	end,
-	VehicleMultiplier = 10,
-	BlastRadius = 20,
 	HandleWelds = {
 		{	limb = "Right Arm",
-			C0 = CFrame.new(0, -.25, -.5) * CFrame.Angles(math.rad(90),0,math.rad(180)),
+			C0 = CFrame.new(0, -0.5, -0.25) * CFrame.Angles(math.rad(-90),math.rad(180),0),
 			C1 = CFrame.new()
-		}
+		},
 	},
-
-    GadgetStatsPointer = GadgetStats["G25"]
 }

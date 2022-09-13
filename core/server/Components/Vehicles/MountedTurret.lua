@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -80,10 +81,11 @@ function MountedTurret:Start()
     local vehicleSeatComponent = tcs.get_component(vehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if newOccupant ~= nil then
-            self.Courier:Send("BindToMountedTurret", newOccupant, self.Root)
+            self.Courier:Send("BindToMountedTurret", newOccupant, self.Root, self.Root.Name)
         else
+            self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true
-            self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root)
+            self.Courier:Send("UnbindFromMountedTurret", oldOccupant, self.Root, self.Root.Name)
         end
     end))
 end
@@ -95,9 +97,10 @@ function MountedTurret:InitializeProximityPrompt()
     prompt.ObjectText = "Turret Seat"
     prompt.ActionText = "Man the Turret"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 20
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
+    CollectionService:AddTag(prompt, "Prompt")
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then

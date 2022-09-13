@@ -23,7 +23,7 @@ end
 function Movement:Start()
 	local keyboard = Keyboard.new()
 	local char = self.Root.Character or self.Root.CharacterAdded:Wait()
-	local hum = char:WaitForChild("Humanoid")
+	local hum = char:WaitForChild("Humanoid") :: Humanoid
 
 	self.Root:SetAttribute("LocalSprinting", false)
 	self.Root:SetAttribute("LocalCrouching", false)
@@ -35,6 +35,7 @@ function Movement:Start()
 		if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Sprint")] then
 			if self.Root:GetAttribute("LocalCanSprint") == false then return end
 			if self.Root:GetAttribute("Firing") == true then return end
+			if hum.MoveDirection == Vector3.new(0, 0, 0) then return end
 
 			self.Root:SetAttribute("LocalSprinting", true)
 		elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Crouch")] then

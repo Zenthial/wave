@@ -3,6 +3,8 @@ return {
     LocalSprinting = false,
     LocalCrouching = false,
 
+    InSeat = false,
+
     LocalCanSprint = true,
     LocalCanCrouch = true,
     LocalCanMove = true,
@@ -12,6 +14,8 @@ return {
     Firing = false,
     FielxActive = false,
     
+    CurrentTurret = "",
+
     EquippedWeapon = "",
     Reloading = false,
     Throwing = false,

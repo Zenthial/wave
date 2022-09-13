@@ -104,7 +104,7 @@ function AnimationHandler:Play(animationName: string): AnimationTrack
         return 
     end
     
-    if not self.AnimationTracks[animationName].IsPlaying == true then
+    if self.AnimationTracks[animationName].IsPlaying == false then
         self.AnimationTracks[animationName]:Play()
         print(string.format("Playing %s", animationName))
     end
