@@ -9,7 +9,6 @@ local Courier = require(Shared:WaitForChild("courier"))
 local WeaponStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
 local GadgetStatsModule = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 local Trove = require(Shared:WaitForChild("util", 5):WaitForChild("Trove", 5))
-local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
 
 local Weapons = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
 local Grenades = require(script.Grenades)
@@ -43,7 +42,6 @@ export type Gun = {
 }
 
 local Cleaner = Trove.new()
-local MouseInput = Input.Mouse.new()
 
 local function functor(f: (Player, Vector3, Vector3, any, WeaponStats) -> any)
     if f == nil then
@@ -69,10 +67,6 @@ function GunEngine:Start()
         else
             error("WeaponStats don't exist??")
         end
-    end))
-
-    Cleaner:Add(MouseInput.LeftDown:Connect(function()
-        
     end))
 
     Cleaner:Add(Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: number, grenade: string)
