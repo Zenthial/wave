@@ -24,12 +24,40 @@ function BulletRenderer.DrawRay(player: Player, startPosition: Vector3, endPosit
     CollectionService:AddTag(bullet, "Ignore")
     
     local iDist = (endPosition - startPosition).Magnitude
+
+    -- local bulletHolder = Instance.new("Model")
+        
+    -- local P = Instance.new("Part")
+    -- P.Size = Vector3.new(.1, .1, iDist)
+    -- P.Transparency = .5
+    -- P.Anchored = true
+    -- P.CanCollide = false
+    -- P.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0,0, iDist/-2)
+    -- P.Material = Enum.Material.Neon
+    -- P.BrickColor = BrickColor.new("Pearl")
     
+    -- local P2 = P:Clone()
+    -- P2.BrickColor = BrickColor.new("Bright blue")
+    -- P2.Material = Enum.Material.Neon
+    -- P2.Transparency = .5
+    -- P2.Size = Vector3.new(.2, .2, iDist)
+    -- P2.CFrame = P.CFrame
+    -- P2.Parent = bulletHolder
+    
+    -- CollectionService:AddTag(P, "Ignore")
+    -- CollectionService:AddTag(P2, "Ignore")
+    -- P.Parent = bulletHolder
+    
+    -- bulletHolder.Parent = workspace
+    -- game.Debris:AddItem(bulletHolder,.04)
+
     local oldBulletScale = bullet.Mesh.Scale
     bullet.Mesh.Scale = Vector3.new(bullet.Mesh.Scale.X, bullet.Mesh.Scale.Y, iDist)
     local oldBulletCFrame = bullet.CFrame
     bullet.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, 0, -iDist / 2)
+    local oldBulletColor = bullet.BrickColor
     
+    bullet.BrickColor = BrickColor.new("Pearl")
     local x = bullet.Mesh.Scale.X
     local y = bullet.Mesh.Scale.Y
     local z = bullet.Mesh.Scale.Z
@@ -43,12 +71,13 @@ function BulletRenderer.DrawRay(player: Player, startPosition: Vector3, endPosit
         scale = z - 50
         offset = -50
     end
-    bullet2.Mesh.Scale = Vector3.new(x, y, scale)
+    bullet2.Mesh.Scale = Vector3.new(x + .2, y + .2, scale)
     bullet2.Mesh.Offset = Vector3.new(0, 0, offset)
     
     task.delay(.05, function()
         bullet.Mesh.Scale = oldBulletScale
         bullet.CFrame = oldBulletCFrame
+        bullet.BrickColor = oldBulletColor
         bulletCache:ReturnPart(bullet)
     end)
 
