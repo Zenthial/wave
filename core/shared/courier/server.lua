@@ -54,6 +54,7 @@ end
 
 function CourierServer:Send(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
+    assert(remote, "Port "..portString.." does not exist")
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireClient(player, ...)
@@ -61,6 +62,7 @@ end
 
 function CourierServer:SendTo(portString: string, players: {Player}, ...)
     local remote = self.PortRemotes[portString]
+    assert(remote, "Port "..portString.." does not exist")
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     for _, player in ipairs(players) do
@@ -70,6 +72,7 @@ end
 
 function CourierServer:SendToAll(portString: string, ...) 
     local remote = self.PortRemotes[portString]
+    assert(remote, "Port "..portString.." does not exist")
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     remote:FireAllClients(...)
