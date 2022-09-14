@@ -80,6 +80,7 @@ end
 
 function CourierServer:SendToAllExcept(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
+    assert(remote, "Port "..portString.." does not exist")
     assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
     for _, plr in ipairs(Players:GetPlayers()) do
