@@ -55,29 +55,15 @@ function BulletRenderer.DrawRay(player: Player, startPosition: Vector3, endPosit
     bullet.Mesh.Scale = Vector3.new(bullet.Mesh.Scale.X, bullet.Mesh.Scale.Y, iDist)
     local oldBulletCFrame = bullet.CFrame
     bullet.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, 0, -iDist / 2)
-    local oldBulletColor = bullet.BrickColor
     
-    bullet.BrickColor = BrickColor.new("Pearl")
-    local x = bullet.Mesh.Scale.X
-    local y = bullet.Mesh.Scale.Y
-    local z = bullet.Mesh.Scale.Z
     local bullet2 = bulletCache:GetPart()
     local oldBullet2Offset = bullet2.Mesh.Offset
     bullet2.Mesh.Scale = Vector3.new(bullet.Mesh.Scale.X, bullet.Mesh.Scale.Y, iDist)
     bullet2.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, 0, -iDist / 2)
-    local scale = z * .5
-    local offset = -z * .25
-    if z > 100 then
-        scale = z - 50
-        offset = -50
-    end
-    bullet2.Mesh.Scale = Vector3.new(x + .2, y + .2, scale)
-    bullet2.Mesh.Offset = Vector3.new(0, 0, offset)
     
     task.delay(.05, function()
         bullet.Mesh.Scale = oldBulletScale
         bullet.CFrame = oldBulletCFrame
-        bullet.BrickColor = oldBulletColor
         bulletCache:ReturnPart(bullet)
     end)
 
