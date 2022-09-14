@@ -40,14 +40,19 @@ end)
 
 local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
     local healthComponent = nil
-    if healthComponentObject:IsA("Player") then
-        healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
-    elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
-        healthComponent = nil -- grab aps health thing later
-    elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
-        healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
-    end 
 
+    if tcs.has_component(healthComponentObject, "Health") then
+        healthComponent = tcs.get_component(healthComponentObject, "Health")
+    else
+        if healthComponentObject:IsA("Player") then
+            healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
+        elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
+            healthComponent = nil -- grab aps health thing later
+        elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
+            healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
+        end 
+    end
+    
     assert(healthComponent, "Health component, VehicleHealth component, or ShieldHealth not found on "..healthComponentObject.Name)
 
 
@@ -76,20 +81,6 @@ local function attemptDealDamage(player: Player, weaponName: string, healthCompo
     end
     healthComponent:TakeDamage(damage)
 end
-
--- healthComponentPart is technically a player now
-comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
-    local stats = WeaponStats[weaponName]
-    if stats and stats.Damage then
-        attemptDealDamage(player, weaponName, healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
-    else
-        error(weaponName .. " does not have weapon stats or weapon stats with damage")
-    end
-end)
-
-comm:BindFunction("AttemptDealShieldDamage", function(player: Player, shieldComponentPart: BasePart, weaponName: string, hitPartName: string)
-    print(player, shieldComponentPart, weaponName, hitPartName)
-end)
 
 comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
     damage = math.clamp(damage, 0, 100)
@@ -173,6 +164,15 @@ function GunEngine:Start()
         local playersToDamage = radiusDamage(stats, part, player, false)
         for _player: Player, damage: number in pairs(playersToDamage) do
             attemptDealDamage(player, weaponName, _player, damage)
+        end
+    end)
+
+    Courier:Listen("AttemptDealDamage"):Connect(function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
+        local stats = WeaponStats[weaponName]
+        if stats and stats.Damage then
+            attemptDealDamage(player, weaponName, healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
+        else
+            error(weaponName .. " does not have weapon stats or weapon stats with damage")
         end
     end)
 end

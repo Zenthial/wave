@@ -1,5 +1,6 @@
 -- tom
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
@@ -20,9 +21,13 @@ local FireModes = require(script.Modules.FireModes)
 
 local chargeWait = require(script.functions.chargeWait)
 local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
+local createDamageIndicator = require(script.functions.createDamageIndicator)
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
+
+local Hit = SoundService.Sounds.Hit
+Hit.Pitch = 2
 
 type WeaponStats = typeof(WeaponStatsModule)
 
@@ -136,8 +141,17 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
     print(hitPart, hitPart.Parent, healthComponentInstance)
     if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
         cursorComponent:Hitmark()
-        GunEngine.EquippedWeaponModel.Handle.Hit:Play()
+        Hit:Play()
         Courier:Send("AttemptDealDamage", healthComponentInstance, weaponStats.Name, hitPart.Name)
+
+        local shields = healthComponentInstance:GetAttribute("Shields")
+        local headshot = hitPart.Name == "Head"
+        local potentialDamage = if headshot then weaponStats.Damage * weaponStats.HeadshotMultiplier else weaponStats.Damage
+        if shields > 0 and shields - potentialDamage <= 0 then
+            SoundService.Sounds.ShieldCrack:Play()
+        end
+
+        createDamageIndicator(hitPart, potentialDamage, shields > 0, headshot)
     end
 end
 
