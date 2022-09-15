@@ -2,8 +2,6 @@
     By tom and preston
 ]=]
 local Players = game:GetService("Players")
-local Modules = script.Parent.Parent.Parent:WaitForChild("Modules")
-local serverComm = require(Modules.ServerComm)
 
 --Shared
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -15,15 +13,6 @@ Movement.Name = "Movement"
 Movement.Tag = "Movement"
 Movement.Ancestor = Players
 Movement.Needs = {"Cleaner"}
-
-serverComm.GetComm():BindFunction("ToggleSprint", function(player: Player, action: boolean)
-    print("here")
-    player:SetAttribute("Sprinting", action)
-end)
-
-serverComm.GetComm():BindFunction("ToggleCrouch", function(player: Player, action: boolean) 
-    player:SetAttribute("Crouching", action)
-end)
 
 function Movement.new(root: Model)
     return setmetatable({

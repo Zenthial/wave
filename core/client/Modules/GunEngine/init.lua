@@ -118,15 +118,15 @@ function GunEngine.EquipWeapon(weaponStats, weaponModel)
 end
 
 function GunEngine.UnequipWeapon(weaponStats, weaponModel)
-    Courier:Send("WeldWeapon", weaponModel, true)
-
     if weaponModel.Handle:FindFirstChild("Unequip") then
         weaponModel.Handle.Unequip:Play()
     end
 
-    GunEngine.EquippedWeaponModel = nil
-
     Player:SetAttribute("EquippedWeapon", "")
+    
+    GunEngine.EquippedWeaponModel = nil
+    
+    Courier:Send("WeldWeapon", weaponModel, true)
 end
 
 function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
