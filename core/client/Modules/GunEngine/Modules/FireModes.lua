@@ -21,7 +21,7 @@ local FireModes = {}
 
 -- little functional monad
 -- obviously isn't pure cause it errors, but it could be made to not error
-local function errorWrapper(func: () -> () | nil): ({}, {}, Model, (Instance, {}, {}) -> ()) -> ()
+local function errorWrapper(func: () -> () | nil): ({}, {}, Model, (Instance, {}, {}) -> (), ({}) -> ()) -> ()
     if func == nil then error("No function found") end
 
     return func
@@ -70,7 +70,7 @@ function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, 
     end)
 end
 
-function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
+function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
@@ -78,6 +78,7 @@ function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart
         repeat
             mutableStats.Shooting = true
     
+            task.spawn(heat, mutableStats)
             FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
     
             task.wait(1/weaponStats.FireRate)
@@ -87,13 +88,14 @@ function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart
     end
 end
 
-function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
+function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     local mouse = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
         -- make it a do while because of weird edge cases in function calling
         mutableStats.Shooting = true
     
+        task.spawn(heat, mutableStats)
         FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel, checkHitPart)
 
         task.wait(1/weaponStats.FireRate)
@@ -104,7 +106,7 @@ end
 
 local ConstantBulletRefreshRate = 20
 
-function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
+function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     local mouse = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
@@ -122,6 +124,7 @@ function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHit
             currentTick = newTick
 
             if mutableStats.MouseDown == true then
+                task.spawn(heat, mutableStats)
                 FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel, checkHitPart)
             else
                 mutableStats.Shooting = false
@@ -133,7 +136,7 @@ function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHit
     end
 end
 
-function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
+function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     if not mutableStats.Shooting then
         local gadgetStats = GadgetStats[weaponStats.Name]
         assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
@@ -146,7 +149,7 @@ function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
     end
 end
 
-function FireModes.Rocket(weaponStats, mutableStats, gunModel)
+function FireModes.Rocket(weaponStats, mutableStats, gunModel, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     if not mutableStats.Shooting then
         local gadgetStats = GadgetStats[weaponStats.Name]
         assert(gadgetStats, "No gadget stats for "..weaponStats.Name)

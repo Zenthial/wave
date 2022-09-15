@@ -51,7 +51,7 @@ function Inventory.new(root: any)
 end
 
 function Inventory:Start()
-    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD") --[[:await()]]
+    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
 
     local MainHUDComponent = self.MainHUD
     local skillCleaner = Trove.new() :: typeof(Trove)
@@ -131,18 +131,17 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     
     self.EquippedWeaponCleaner = Trove.new()
 
-    -- if self.EquippedWeapon then
-    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
-    --         self.MainHUD:UpdateHeat(heat)
-    --     end))
+    if mutableStats then
+        self.EquippedWeaponCleaner:Add(mutableStats.HeatChanged:Connect(function(heat: number)
+            self.MainHUD:UpdateHeat(heat)
+        end))
 
-    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
-    --         self.MainHUD:UpdateTriggerBar(trigDelay)
-    --     end))
-    -- end
+        self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
+            self.MainHUD:UpdateBattery(battery)
+        end))
+    end
 
-    local name = self.EquippedWeapon and self.EquippedWeapon.Name or nil
-    self.MainHUD:UpdateEquippedWeapon(name)
+    self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats)
 end
 
 function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)

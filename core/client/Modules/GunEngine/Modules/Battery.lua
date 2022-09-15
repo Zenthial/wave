@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
+
 type BatteryStats = {
     BatteryMin: number,
     BatteryMax: number,
@@ -14,6 +18,9 @@ type BatteryStats = {
     Overheated: boolean;
 
     CurrentBattery: number;
+
+    BatteryChanged: typeof(Signal.new()),
+    HeatChanged: typeof(Signal.new()),
 }
 
 local Battery = {}
@@ -35,6 +42,9 @@ function Battery.GetStats(heatRate: number, coolTime: number, coolWait: number, 
         Overheated = false;
 
         CurrentBattery = 100;
+
+        BatteryChanged = Signal.new(),
+        HeatChanged = Signal.new(),
     }
 end
 
@@ -49,6 +59,7 @@ function Battery.DepleteBattery(weaponStats: BatteryStats)
     end
 
     weaponStats.CurrentBattery = newBattery
+    weaponStats.BatteryChanged:Fire(weaponStats.CurrentBattery)
 end
 
 function Battery.CanFire(weaponStats: BatteryStats)
@@ -67,21 +78,22 @@ function Battery.Heat(weaponStats: BatteryStats)
 
     if newHeatRate >= 100 then
         weaponStats.CurrentHeat = 100
+        weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
         weaponStats.Overheated = true
 
     else
         weaponStats.CurrentHeat = newHeatRate
+        weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
     end
 
     if not weaponStats.Overheated then
         task.wait(weaponStats.CoolWait)
     end
 
-    local frameWait = 1/10
+    local frameWait = 1 / 10
     local coolRate = 10 / weaponStats.CoolTime :: number
 
     local loopActive = true
-    -- this while loop is only ever spawned in a signal connection, therefore we don't need to spawn a new coroutine
     while loopActive and weaponStats.ShotsTable.LastShot.Timestamp == lastShotTimestamp do
         task.wait(frameWait)
 
@@ -94,6 +106,7 @@ function Battery.Heat(weaponStats: BatteryStats)
         end
 
         weaponStats.CurrentHeat = newHeat
+        weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
     end
 end
 

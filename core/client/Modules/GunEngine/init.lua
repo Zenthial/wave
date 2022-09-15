@@ -56,7 +56,7 @@ local function functor(f: (Player, Vector3, Vector3, any) -> any)
 end
 
 local GunEngine = {
-    EquippedWeaponModel = nil
+    EquippedWeaponModel = nil,
 }
 
 function GunEngine:Start()
@@ -150,8 +150,7 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
 end
 
 function GunEngine.Attack(weaponStats, mutableStats)
-    task.spawn(Battery.Heat, mutableStats)
-    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart, Battery.Heat)
 end
 
 function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
