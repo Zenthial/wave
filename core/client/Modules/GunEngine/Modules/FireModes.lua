@@ -1,7 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 
@@ -63,6 +65,7 @@ function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, 
             mutableStats.ShotsTable.LastShot.Timestamp = tick()
             mutableStats.ShotsTable.NumShots += 1
             BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, barrel.Position, target, weaponStats.BulletCache)
+            Courier:Send("DrawRay", barrel.Position, target, weaponStats.Name)
         end
     end)
 end
@@ -85,7 +88,7 @@ function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart
 end
 
 function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
-    local mouse = tcs.get_component(Player, "Mouse")
+    local mouse = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
         -- make it a do while because of weird edge cases in function calling
@@ -98,26 +101,62 @@ function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart
     end
 end
 
-function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
-    local gadgetStats = GadgetStats[weaponStats.Name]
-    assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
 
-    local hrp = Character:WaitForChild("HumanoidRootPart")
-    mutableStats.Shooting = true
-    Grenades:RenderNade(Player, gunModel.Barrel.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, gadgetStats)
-    task.wait(1/weaponStats.FireRate)
-    mutableStats.Shooting = false
+local ConstantBulletRefreshRate = 20
+
+function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
+    local mouse = tcs.get_component(CursorUI, "Cursor")
+
+    if not mutableStats.Shooting then
+        mutableStats.Shooting = true
+        local currentTick = tick()
+        local heartbeatConnection = nil
+
+        local function updateLoop()
+            local newTick = tick()
+            local deltaTime = newTick - currentTick
+            if deltaTime < 1 / ConstantBulletRefreshRate then
+                return
+            end
+
+            currentTick = newTick
+
+            if mutableStats.MouseDown == true then
+                FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel, checkHitPart)
+            else
+                mutableStats.Shooting = false
+                heartbeatConnection:Disconnect()
+            end
+        end
+
+        heartbeatConnection = RunService.Heartbeat:Connect(updateLoop)
+    end
+end
+
+function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model)
+    if not mutableStats.Shooting then
+        local gadgetStats = GadgetStats[weaponStats.Name]
+        assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
+
+        local hrp = Character:WaitForChild("HumanoidRootPart")
+        mutableStats.Shooting = true
+        Grenades:RenderNade(Player, gunModel.Barrel.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, gadgetStats)
+        task.wait(1/weaponStats.FireRate)
+        mutableStats.Shooting = false
+    end
 end
 
 function FireModes.Rocket(weaponStats, mutableStats, gunModel)
-    local gadgetStats = GadgetStats[weaponStats.Name]
-    assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
+    if not mutableStats.Shooting then
+        local gadgetStats = GadgetStats[weaponStats.Name]
+        assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
 
-    local hrp = Character:WaitForChild("HumanoidRootPart")
-    mutableStats.Shooting = true
-    Grenades:RenderNade(Player, gunModel.Barrel.Position, gunModel.Barrel.CFrame.LookVector, hrp.AssemblyLinearVelocity, gadgetStats)
-    task.wait(1/weaponStats.FireRate)
-    mutableStats.Shooting = false
+        local hrp = Character:WaitForChild("HumanoidRootPart")
+        mutableStats.Shooting = true
+        Grenades:RenderNade(Player, gunModel.Barrel.Position, gunModel.Barrel.CFrame.LookVector, hrp.AssemblyLinearVelocity, gadgetStats)
+        task.wait(1/weaponStats.FireRate)
+        mutableStats.Shooting = false
+    end
 end
 
 return FireModes

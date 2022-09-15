@@ -81,7 +81,7 @@ function CourierServer:SendToAllExcept(portString: string, player: Player, ...)
 
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= player then
-            remote:FireClient(player, ...)        
+            remote:FireClient(plr, ...)        
         end
     end
 end

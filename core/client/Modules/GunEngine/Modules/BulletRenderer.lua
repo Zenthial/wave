@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 
@@ -75,11 +76,14 @@ function BulletRenderer.DrawRay(player: Player, startPosition: Vector3, endPosit
     end)
 end
 
+local ConstantBulletRefreshRate = 20
 local ACTIVE_BULLETS_TABLE = {}
 
 local function getConstantBullets(player: Player, bulletCache: PartCache.PartCache, startTick: number)
     if ACTIVE_BULLETS_TABLE[player] ~= nil then
-        return ACTIVE_BULLETS_TABLE[player]
+        local returnTable = ACTIVE_BULLETS_TABLE[player]
+        returnTable.Tick = startTick
+        return returnTable
     end
 
     local bullet1 = bulletCache:GetPart()
@@ -97,9 +101,11 @@ local function getConstantBullets(player: Player, bulletCache: PartCache.PartCac
     return bulletTable
 end
 
+-- draws one constant bullet, removes if the bullet hasn't been updated, else changes the position
 function BulletRenderer.DrawConstant(player: Player, startPosition: Vector3, endPosition: Vector3, bulletCache: PartCache.PartCache)
     local startTick = tick()
     local bulletInfo = getConstantBullets(player, bulletCache, startTick)
+    
     local bullet = bulletInfo.Bullet1 :: BasePart
     local bullet2 = bulletInfo.Bullet2 :: BasePart
     
@@ -110,20 +116,9 @@ function BulletRenderer.DrawConstant(player: Player, startPosition: Vector3, end
     local oldBulletCFrame = bullet.CFrame
     bullet.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, 0, -iDist / 2)
     
-    local x = bullet.Mesh.Scale.X
-    local y = bullet.Mesh.Scale.Y
-    local z = bullet.Mesh.Scale.Z
     local oldBullet2Offset = bullet2.Mesh.Offset
     bullet2.Mesh.Scale = Vector3.new(bullet.Mesh.Scale.X, bullet.Mesh.Scale.Y, iDist)
     bullet2.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, 0, -iDist / 2)
-    local scale = z * .5
-    local offset = -z * .25
-    if z > 100 then
-        scale = z - 50
-        offset = -50
-    end
-    bullet2.Mesh.Scale = Vector3.new(x, y, scale)
-    bullet2.Mesh.Offset = Vector3.new(0, 0, offset)
 
     task.delay(.1, function()
         if bulletInfo.Tick == startTick then

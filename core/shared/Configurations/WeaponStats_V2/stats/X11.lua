@@ -69,7 +69,7 @@ return {
 	VehicleMultiplier = 1.5,
 	FireRate = 3,
 	ChargeWait = 0.5,
-	Trigger = "Semi",
+	Trigger = "Constant",
 	FireMode = "Constant",
 	BulletType = "Constant",
 	BulletCache = Caches.DefaultCache,
