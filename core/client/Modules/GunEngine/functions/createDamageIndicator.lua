@@ -3,6 +3,8 @@ local CollectionService = game:GetService("CollectionService")
 local PolicyService = game:GetService("PolicyService")
 local TweenService = game:GetService("TweenService")
 
+local Camera = workspace.CurrentCamera
+
 local random = Random.new()
 
 local string_format = "<b><i>%d</i></b>"
@@ -15,8 +17,12 @@ local function chooseOne(one, two)
     end
 end
 
+local getDistance = function(hitPart) return 0.05 * (hitPart.Position - Camera.CFrame.Position).Magnitude end
+
 local function getPosition(hitPart: Part)
-    local cframe = CFrame.new(Vector3.new(chooseOne(-5, 5), math.random(-4, 4), 0))
+    local distanceFactor = getDistance(hitPart)
+    local newPosition = Vector3.new(chooseOne(-5 - distanceFactor, 5 + distanceFactor), math.random(-4 - distanceFactor, 4 + distanceFactor), 0)
+    local cframe = CFrame.new(newPosition)
     return hitPart.CFrame:ToWorldSpace(cframe)
 end
 
@@ -42,8 +48,8 @@ return function(hitPart: Part, damage: number, shieldHit: boolean, headshot: boo
     billboardGui.AlwaysOnTop = true
     billboardGui.ClipsDescendants = true
     billboardGui.LightInfluence = 1
-    billboardGui.MaxDistance = 100
-    billboardGui.Size = UDim2.fromOffset(25, 25)
+    billboardGui.MaxDistance = 1000
+    billboardGui.Size = UDim2.fromOffset(20, 20)
     billboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     local textColor = Color3.fromRGB(255, 255, 255)
@@ -55,7 +61,7 @@ return function(hitPart: Part, damage: number, shieldHit: boolean, headshot: boo
 
     local strokeColor = Color3.fromRGB(255, 149, 79)
     if headshot then
-        strokeColor = Color3.fromRGB(44, 1, 1)
+        strokeColor = Color3.fromRGB(93, 5, 5)
     elseif shieldHit then
         strokeColor = Color3.fromRGB(10, 72, 147)
     end
