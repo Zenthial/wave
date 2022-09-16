@@ -21,6 +21,7 @@ type BatteryStats = {
 
     BatteryChanged: typeof(Signal.new()),
     HeatChanged: typeof(Signal.new()),
+    OverheatChanged: typeof(Signal.new()),
 }
 
 local Battery = {}
@@ -45,6 +46,7 @@ function Battery.GetStats(heatRate: number, coolTime: number, coolWait: number, 
 
         BatteryChanged = Signal.new(),
         HeatChanged = Signal.new(),
+        OverheatChanged = Signal.new(),
     }
 end
 
@@ -66,12 +68,13 @@ function Battery.CanFire(weaponStats: BatteryStats)
     return (not (weaponStats.CurrentBattery == 0) and not weaponStats.Overheated)
 end
 
-function Battery.Heat(weaponStats: BatteryStats)
+function Battery.Heat(weaponStats: BatteryStats, cursorUIComponent)
     if weaponStats.ShotsTable.NumShots % weaponStats.ShotsDeplete == 0 then
         Battery.DepleteBattery(weaponStats)
     end
-
-    local lastShotTimestamp = weaponStats.ShotsTable.LastShot.Timestamp
+    
+    local lastShotTimestamp = tick()
+    weaponStats.ShotsTable.LastShot.Timestamp = lastShotTimestamp
 
     local heatRate = weaponStats.HeatRate :: number
     local newHeatRate = (weaponStats.CurrentHeat + heatRate) :: number
@@ -80,34 +83,35 @@ function Battery.Heat(weaponStats: BatteryStats)
         weaponStats.CurrentHeat = 100
         weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
         weaponStats.Overheated = true
-
+        weaponStats.OverheatChanged:Fire(true)
+        cursorUIComponent:SetOverheated(true)
     else
         weaponStats.CurrentHeat = newHeatRate
         weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
     end
 
-    if not weaponStats.Overheated then
-        task.wait(weaponStats.CoolWait)
-    end
-
-    local frameWait = 1 / 10
-    local coolRate = 10 / weaponStats.CoolTime :: number
-
-    local loopActive = true
-    while loopActive and weaponStats.ShotsTable.LastShot.Timestamp == lastShotTimestamp do
-        task.wait(frameWait)
-
-        local newHeat = weaponStats.CurrentHeat - coolRate
-        if newHeat <= 0 then
-            weaponStats.Overheated = false
-            
-            newHeat = 0
-            loopActive = false
+    task.delay(weaponStats.CoolWait, function()
+        local frameWait = 1 / 10
+        local coolRate = 10 / weaponStats.CoolTime :: number
+    
+        local loopActive = true
+        while loopActive and weaponStats.ShotsTable.LastShot.Timestamp == lastShotTimestamp do
+            task.wait(frameWait)
+    
+            local newHeat = weaponStats.CurrentHeat - coolRate
+            if newHeat <= 0 then
+                weaponStats.Overheated = false
+                weaponStats.OverheatChanged:Fire(false)
+                cursorUIComponent:SetOverheated(false)
+                
+                newHeat = 0
+                loopActive = false
+            end
+    
+            weaponStats.CurrentHeat = newHeat
+            weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
         end
-
-        weaponStats.CurrentHeat = newHeat
-        weaponStats.HeatChanged:Fire(weaponStats.CurrentHeat)
-    end
+    end)
 end
 
 return Battery

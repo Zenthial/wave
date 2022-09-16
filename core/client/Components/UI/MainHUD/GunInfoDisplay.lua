@@ -40,6 +40,9 @@ type GunInfoDisplay_T = {
         WeaponHeat: TextLabel
     },
 
+    HeatValue: IntValue,
+    FireRate: number,
+
     Cleaner: Cleaner_T,
     Courier: Courier_T
 }
@@ -62,6 +65,13 @@ end
 
 function GunInfoDisplay:Start()
     self.Root.Position = OUT_POSITION
+    self.HeatValue = Instance.new("IntValue")
+    self.HeatValue.Parent = self.Root
+    self.HeatValue.Value = 100
+    self.HeatValue:GetPropertyChangedSignal("Value"):Connect(function()
+        self.Root.WeaponHeat.Text = tostring(self.HeatValue.Value) .. "%"
+    end)
+    self.FireRate = 10
 end
 
 function GunInfoDisplay:Open()
@@ -74,16 +84,17 @@ function GunInfoDisplay:Close()
 end
 
 function GunInfoDisplay:ResetInformation()
-    self.Root.ItemName.Text = "--"
     self:SetOverheated(false)
     self:UpdateBattery(100)
-    self:UpdateHeat(0)     
+    self:UpdateHeat(0)
+    self:SetOverheated(false)
 end
 
 function GunInfoDisplay:SetInformation(weaponStats: WeaponStats.WeaponStats_T, mutableStats)
     self.Root.ItemName.Text = weaponStats.Name:upper()
     self:UpdateHeat(mutableStats.CurrentHeat)
     self:UpdateBattery(mutableStats.CurrentBattery)
+    self:SetOverheated(mutableStats.Overheated)
 end
 
 function GunInfoDisplay:UpdateBattery(battery: number)
@@ -94,21 +105,23 @@ function GunInfoDisplay:UpdateBattery(battery: number)
 end
 
 function GunInfoDisplay:UpdateHeat(heat: number)
-    self.Root.WeaponHeat.Text = tostring(calculateCharge(heat)).."%"
-    TweenService:Create(self.Root.Bar.Fill, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {Size = UDim2.fromScale(heat / 100, 1)}):Play()
-    self:SetOverheated(heat == 0)
+    TweenService:Create(self.HeatValue, TweenInfo.new(1 / self.FireRate), {Value = calculateCharge(heat)}):Play()
+    TweenService:Create(self.Root.Bar.Fill, TweenInfo.new(1 / self.FireRate, Enum.EasingStyle.Linear), {Size = UDim2.fromScale(heat / 100, 1)}):Play()
 end
 
 function GunInfoDisplay:SetOverheated(bool: boolean)
     TweenService:Create(self.Root.Bar.Fill, TweenInfo.new(0.2), {
         BackgroundColor3 = if bool then BAR_OVERHEAT else BAR_NORMAL
     }):Play()
+
+    TweenService:Create(self.Root.WeaponHeat, TweenInfo.new(0.2), {TextColor3 = if bool then BAR_OVERHEAT else BAR_NORMAL}):Play()
 end
 
 function GunInfoDisplay:SetWeapon(weaponStats: WeaponStats.WeaponStats_T, mutableStats)
     if weaponStats == nil then
         self:Close()
     else
+        self.FireRate = weaponStats.FireRate
         self:SetInformation(weaponStats, mutableStats)
         self:Open()
     end

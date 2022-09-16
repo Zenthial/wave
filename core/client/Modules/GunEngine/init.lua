@@ -175,6 +175,8 @@ function GunEngine.MouseDown(weaponStats, mutableStats)
         if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
             GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
         end
+
+        return
     end
 
     Player:SetAttribute("LocalSprinting", false)

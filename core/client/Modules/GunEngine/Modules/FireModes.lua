@@ -8,6 +8,7 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 local GadgetStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 
 local Grenades = require(script.Parent.Parent.Grenades)
+local Battery = require(script.Parent.Battery)
 local BulletRenderer = require(script.Parent.BulletRenderer)
 local raycast = require(script.Parent.RaycastFunctions)
 
@@ -62,7 +63,6 @@ function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, 
             barrel.Fire:Play()
             mutableStats.ShotsTable.LastShot.StartPosition = barrel.Position
             mutableStats.ShotsTable.LastShot.EndPosition = target
-            mutableStats.ShotsTable.LastShot.Timestamp = tick()
             mutableStats.ShotsTable.NumShots += 1
             BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, barrel.Position, target, weaponStats.BulletCache)
             Courier:Send("DrawRay", barrel.Position, target, weaponStats.Name)
@@ -73,30 +73,30 @@ end
 function FireModes.Auto(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
     local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
 
-    if not mutableStats.Shooting then
+    if not mutableStats.Shooting and Battery.CanFire(mutableStats) then
         -- make it a do while because of weird edge cases in function calling
         repeat
             mutableStats.Shooting = true
     
-            task.spawn(heat, mutableStats)
+            task.spawn(heat, mutableStats, cursorUIComponent)
             FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
     
             task.wait(1/weaponStats.FireRate)
-        until mutableStats.MouseDown == false or not mutableStats.CanShoot
+        until mutableStats.MouseDown == false or not mutableStats.CanShoot or not Battery.CanFire(mutableStats)
 
         mutableStats.Shooting = false
     end
 end
 
 function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
-    local mouse = tcs.get_component(CursorUI, "Cursor")
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
 
-    if not mutableStats.Shooting then
+    if not mutableStats.Shooting and Battery.CanFire(mutableStats) then
         -- make it a do while because of weird edge cases in function calling
         mutableStats.Shooting = true
     
-        task.spawn(heat, mutableStats)
-        FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel, checkHitPart)
+        task.spawn(heat, mutableStats, cursorUIComponent)
+        FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
 
         task.wait(1/weaponStats.FireRate)
         mutableStats.Shooting = false
@@ -107,7 +107,7 @@ end
 local ConstantBulletRefreshRate = 20
 
 function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
-    local mouse = tcs.get_component(CursorUI, "Cursor")
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
 
     if not mutableStats.Shooting then
         mutableStats.Shooting = true
@@ -123,9 +123,9 @@ function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHit
 
             currentTick = newTick
 
-            if mutableStats.MouseDown == true then
-                task.spawn(heat, mutableStats)
-                FireModes.RaycastAndDraw(mouse, weaponStats, mutableStats, gunModel, checkHitPart)
+            if mutableStats.MouseDown == true and Battery.CanFire(mutableStats) then
+                task.spawn(heat, mutableStats, cursorUIComponent)
+                FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
             else
                 mutableStats.Shooting = false
                 heartbeatConnection:Disconnect()

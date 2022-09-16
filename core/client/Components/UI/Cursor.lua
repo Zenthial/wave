@@ -93,6 +93,15 @@ function Cursor:ShotBar(bool, waitTime: number)
 	end
 end
 
+function Cursor:SetOverheated(bool: boolean)
+    local color = if bool then Color3.fromRGB(150, 150, 150) else Color3.new(1, 1, 1)
+    for _, line: Frame in self.Root.Icon.Outline:GetChildren() do
+        line.BackgroundColor3 = color
+    end
+
+    self.Root.Icon.ImageColor3 = color
+end
+
 function Cursor:Hitmark()
     local rotation = random:NextInteger(5, 175)
     self.Root.Icon.Hitmark.Rotation = rotation

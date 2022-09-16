@@ -59,6 +59,11 @@ function MainHUD:UpdateBattery(battery: number)
     GunToolbarComponent:UpdateBattery(battery)
 end
 
+function MainHUD:SetOverheated(bool: boolean)
+    local GunToolbarComponent = self.GunToolbar
+    GunToolbarComponent:SetOverheated(bool)
+end
+
 function MainHUD:SetSkillActive()
     self.InventoryUI:SetSkillActive()
 end

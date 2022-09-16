@@ -113,7 +113,7 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     if self.EquippedWeapon == weaponStats then
         GunEngine.UnequipWeapon(weaponStats, model)
         self.EquippedWeapon = nil
-        self.EquippedStats = mutableStats
+        self.EquippedStats = nil
     elseif self.EquippedWeapon == nil then
         self.EquippedWeapon = weaponStats
         self.EquippedStats = mutableStats
@@ -139,9 +139,23 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
         self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
             self.MainHUD:UpdateBattery(battery)
         end))
+
+        self.EquippedWeaponCleaner:Add(mutableStats.OverheatChanged:Connect(function(overheat: boolean)
+            self.MainHUD:SetOverheated(overheat)
+        end))
     end
 
-    self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats)
+    if self.EquippedWeapon ~= nil then
+        self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats)
+    else
+        if mutableStats.CurrentHeat > 0 then
+            repeat
+                task.wait(.1)
+            until mutableStats.CurrentHeat == 0
+        end
+
+        self.MainHUD:UpdateEquippedWeapon(nil, nil)
+    end
 end
 
 function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
