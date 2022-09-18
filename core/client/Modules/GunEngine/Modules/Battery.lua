@@ -69,9 +69,9 @@ function Battery.CanFire(weaponStats: BatteryStats)
 end
 
 function Battery.Heat(weaponStats: BatteryStats, cursorUIComponent)
-    if weaponStats.ShotsTable.NumShots % weaponStats.ShotsDeplete == 0 then
-        Battery.DepleteBattery(weaponStats)
-    end
+    -- if weaponStats.ShotsTable.NumShots % weaponStats.ShotsDeplete == 0 then
+    --     Battery.DepleteBattery(weaponStats)
+    -- end
     
     local lastShotTimestamp = tick()
     weaponStats.ShotsTable.LastShot.Timestamp = lastShotTimestamp

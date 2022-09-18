@@ -26,7 +26,7 @@ end
 function MainHUD:Start()
     self.Root.Enabled = false
 
-    self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("AnotherGunToolbar"), "GunInfoDisplay")
+    self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
@@ -40,12 +40,12 @@ function MainHUD:Start()
     end))
 end
 
-function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats)
+function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     local GunToolbar = self.GunToolbar
     if weaponStats == nil and mutableStats == nil then
         GunToolbar:SetWeapon(nil, nil)
     else
-        GunToolbar:SetWeapon(weaponStats, mutableStats)
+        GunToolbar:SetWeapon(weaponStats, mutableStats, primary)
     end
 end
 

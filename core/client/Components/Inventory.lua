@@ -146,7 +146,7 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     end
 
     if self.EquippedWeapon ~= nil then
-        self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats)
+        self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, weaponStats == self.EquippedPrimary)
     else
         if mutableStats.CurrentHeat > 0 then
             repeat
@@ -154,7 +154,7 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
             until mutableStats.CurrentHeat == 0
         end
 
-        self.MainHUD:UpdateEquippedWeapon(nil, nil)
+        self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
     end
 end
 
