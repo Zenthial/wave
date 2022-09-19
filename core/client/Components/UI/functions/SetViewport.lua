@@ -31,10 +31,13 @@ return function(viewport: ViewportFrame, modelFolder: Configuration | Folder)
     -- end
 
     inspectModel.Name = "InspectModel" .. modelFolder.Name
-    inspectModel.Parent = viewport
     
     if modelFolder.Name == "PBW" then
         inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(90), 0))
+    elseif modelFolder.Name == "MountedTurret" then
+        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(180), 0))
     end
+
+    inspectModel.Parent = viewport
     camera.CFrame = ViewportCameraPositioner(camera, viewport, inspectModel)
 end

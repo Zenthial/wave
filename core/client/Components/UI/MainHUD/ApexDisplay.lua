@@ -9,7 +9,7 @@ local Player = Players.LocalPlayer
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
-local setViewport = require(script.Parent.Parent.functions.SetViewport)
+local setViewport = require(script.Parent.Parent.functions.setViewport)
 
 local function calculateCharge(currentHeat: number)
     return math.floor(100 - currentHeat)
@@ -146,12 +146,14 @@ function ApexDisplay:SetInformation(weaponStats, mutableStats)
 end
 
 function ApexDisplay:HandleViewport(weaponModel: Model)
+    print(weaponModel)
     self.Root.ItemContainer.ViewportFrame:ClearAllChildren()
     setViewport(self.Root.ItemContainer.ViewportFrame, weaponModel)
 end
 
 function ApexDisplay:SetWeapon(weaponStats, mutableStats, primary: true | false | nil)
     if weaponStats ~= nil then
+        print(weaponStats.Name)
         self:HandleViewport(Weapons[weaponStats.Name])
         self:SetInformation(weaponStats, mutableStats)
         self:HandleTools(primary)
