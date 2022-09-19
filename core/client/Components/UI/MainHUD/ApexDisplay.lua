@@ -18,7 +18,7 @@ end
 local GREEN = Color3.fromRGB(102, 189, 108)
 local ORANGE = Color3.fromHex("#E1751E")
 local RED = Color3.fromHex("#dc5b63")
-local STEEL = Color3.fromRGB(33, 52, 77)
+local STEEL = Color3.fromRGB(57, 90, 134)
 local BLACK = Color3.fromRGB(5, 8, 12)
 local GREY = Color3.fromRGB(111, 111, 111)
 

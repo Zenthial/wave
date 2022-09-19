@@ -44,7 +44,7 @@ return {
 	QuickDescription = "Automatic, Single Shot",
 	WeaponCost = 0,
 	AmmoType = "Battery",
-	Slot = 1,
+	Slot = "T",
 	Holster = Holsters.Back,
 	NumHandles = 1,
 	NumBarrels = 2,

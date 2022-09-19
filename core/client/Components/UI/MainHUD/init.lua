@@ -49,9 +49,9 @@ function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     end
 end
 
-function MainHUD:UpdateHeat(heat: number)
+function MainHUD:UpdateHeat(heat: number, overheated: boolean)
     local GunToolbarComponent = self.GunToolbar
-    GunToolbarComponent:UpdateHeat(heat)
+    GunToolbarComponent:UpdateHeat(heat, overheated)
 end
 
 function MainHUD:UpdateBattery(battery: number)

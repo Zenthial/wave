@@ -137,12 +137,16 @@ function FireModes.Constant(weaponStats, mutableStats, gunModel: Model, checkHit
 end
 
 function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
+    
     if not mutableStats.Shooting then
         local gadgetStats = GadgetStats[weaponStats.Name]
         assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
 
         local hrp = Character:WaitForChild("HumanoidRootPart")
         mutableStats.Shooting = true
+        
+        task.spawn(heat, mutableStats, cursorUIComponent)
         Grenades:RenderNade(Player, gunModel.Barrel.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, gadgetStats)
         task.wait(1/weaponStats.FireRate)
         mutableStats.Shooting = false
@@ -150,12 +154,16 @@ function FireModes.Launcher(weaponStats, mutableStats, gunModel: Model, checkHit
 end
 
 function FireModes.Rocket(weaponStats, mutableStats, gunModel, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
+    
     if not mutableStats.Shooting then
         local gadgetStats = GadgetStats[weaponStats.Name]
         assert(gadgetStats, "No gadget stats for "..weaponStats.Name)
 
         local hrp = Character:WaitForChild("HumanoidRootPart")
         mutableStats.Shooting = true
+
+        task.spawn(heat, mutableStats, cursorUIComponent)
         Grenades:RenderNade(Player, gunModel.Barrel.Position, gunModel.Barrel.CFrame.LookVector, hrp.AssemblyLinearVelocity, gadgetStats)
         task.wait(1/weaponStats.FireRate)
         mutableStats.Shooting = false

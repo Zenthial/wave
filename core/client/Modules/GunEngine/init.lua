@@ -157,15 +157,16 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
     mutableStats.MouseDown = true
 
     if Battery.CanFire(mutableStats) == false then
-        if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
-            GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
+        if turretModel.Barrel:FindFirstChild("Unavailable") then
+            turretModel.Barrel.Unavailable:Play()
         end
+
+        return
     end
 
     Player:SetAttribute("LocalSprinting", false)
 
-    task.spawn(Battery.Heat, mutableStats)
-    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart, Battery.Heat)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
@@ -224,7 +225,7 @@ end
 -- the standard aiming and default stats
 function GunEngine.GetMutableStats(stats)
     local mutableStats = Battery.GetStats(stats.HeatRate, stats.CoolTime, stats.CoolWait, stats.BatteryDepletionMin, stats.BatteryDepletionMax, stats.ShotsDeplete, GunEngine.GetShotsTable())
-        
+
     mutableStats.AimBuff = 3
     mutableStats.CurrentRecoil = 0
 

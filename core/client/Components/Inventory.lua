@@ -101,10 +101,36 @@ function Inventory:Start()
         if currentTurret == "" then
             self.VehicleTurret = nil
             self.VehicleTurretMutableStats = nil
+            self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
+
+            if self.EquippedWeaponCleaner then
+                self.EquippedWeaponCleaner:Clean()
+            end
         else
+            if self.EquippedWeaponCleaner then
+                self.EquippedWeaponCleaner:Clean()
+            end
+            
+            self.EquippedWeaponCleaner = Trove.new()
+            local mutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
+        
+            if mutableStats then
+                self.EquippedWeaponCleaner:Add(mutableStats.HeatChanged:Connect(function(heat: number)
+                    self.MainHUD:UpdateHeat(heat, mutableStats.Overheated)
+                end))
+        
+                self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
+                    self.MainHUD:UpdateBattery(battery)
+                end))
+        
+                self.EquippedWeaponCleaner:Add(mutableStats.OverheatChanged:Connect(function(overheat: boolean)
+                    self.MainHUD:SetOverheated(overheat)
+                end))
+            end
+
             self.VehicleTurret = WeaponStats[currentTurret]
-            self.VehicleTurretMutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
-            print(self.VehicleTurretMutableStats)
+            self.VehicleTurretMutableStats = mutableStats
+            self.MainHUD:UpdateEquippedWeapon(WeaponStats[currentTurret], self.VehicleTurretMutableStats, nil)
         end
     end))
 end
@@ -133,7 +159,7 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
 
     if mutableStats then
         self.EquippedWeaponCleaner:Add(mutableStats.HeatChanged:Connect(function(heat: number)
-            self.MainHUD:UpdateHeat(heat)
+            self.MainHUD:UpdateHeat(heat, mutableStats.Overheated)
         end))
 
         self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
