@@ -123,9 +123,11 @@ function AirVehicle:Start()
 end
 
 function AirVehicle:Move(maxForce: number, p: number, velocity: Vector3)
-    if maxForce then self.Altitude.MaxForce = maxForce end
-    if p then self.Altitude.P = p end
-    if velocity then self.Altitude.Velocity = velocity end
+    if self.Flying then
+        if maxForce then self.Altitude.MaxForce = maxForce end
+        if p then self.Altitude.P = p end
+        if velocity then self.Altitude.Velocity = velocity end
+    end
 end
 
 function AirVehicle:UpdateCamera()
@@ -153,7 +155,7 @@ function AirVehicle:RunServiceLoop()
     if not self.PreviousMousePosition then
         self.PreviousMousePosition = (EngineC * CFrame.new(0, 0, -1500)).Position
     end
-    if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+    if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and self.Flying then
         self.PreviousMousePosition = (Mouse.Origin * CFrame.new(0,0,-150000)).Position
     end
     if UserInputService:IsKeyDown(Enum.KeyCode.Z) then
@@ -236,7 +238,7 @@ function AirVehicle:Bind()
 
     sessionCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed) inputProcessor(self, input, processed) end))
     sessionCleaner:Add(UserInputService.InputChanged:Connect(function(input, processed)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if input.UserInputType == Enum.UserInputType.MouseMovement and self.Flying then
             self.MouseDeltas = Vector2.new(input.Delta.X, input.Delta.Y)
         end
     end))
@@ -254,11 +256,7 @@ function AirVehicle:Unbind()
     Camera.CameraSubject = Character
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 
-    if self.Flying then
-        self:Move(Vector3.new(500, 500, 500), 500, Vector3.new(0, 0, 0))
-    else
-        self:Move(Vector3.new(0, 0, 0), 0, Vector3.new(0, 0, 0))
-    end
+    self:Move(Vector3.new(0, 0, 0), 0, Vector3.new(0, 0, 0))
 
     local stats = VehicleStats[self.Root.Name]
     assert(stats, "No vehicle stats for " .. self.Root.Name)
@@ -274,6 +272,8 @@ function AirVehicle:Unbind()
 	self.ReactionSpeed = self.Stats.ReactionSpeed
 	self.RiseSpeed = self.Stats.self.RiseSpeed
     self.TakingOffOrLanding = false
+
+    self.Flying = false
 
     self.PreviousMousePosition = nil
 end
