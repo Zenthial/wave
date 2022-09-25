@@ -137,19 +137,24 @@ end
 
 function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     if self.EquippedWeapon == weaponStats then
-        GunEngine.UnequipWeapon(weaponStats, model)
+        if GunEngine.UnequipWeapon(weaponStats, mutableStats, model) == false then return end
         self.EquippedWeapon = nil
         self.EquippedStats = nil
+        self.EquippedWeaponModel = nil
     elseif self.EquippedWeapon == nil then
+        if GunEngine.EquipWeapon(weaponStats, mutableStats, model) == false then return end
         self.EquippedWeapon = weaponStats
         self.EquippedStats = mutableStats
-        GunEngine.EquipWeapon(weaponStats, model)
+        self.EquippedWeaponModel = model
     elseif self.EquippedWeapon ~= weaponStats then
-        GunEngine.UnequipWeapon(weaponStats, model)
+        if GunEngine.UnequipWeapon(self.EquippedWeapon, self.EquippedStats, self.EquippedWeaponModel) == false then return end
+        task.wait(0.35)
         self.EquippedWeapon = weaponStats
         self.EquippedStats = mutableStats
-        GunEngine.EquipWeapon(weaponStats, model)
+        self.EquippedWeaponModel = model
+        if GunEngine.EquipWeapon(weaponStats, mutableStats, model) == false then return end
     end
+
 
     if self.EquippedWeaponCleaner then
         self.EquippedWeaponCleaner:Clean()

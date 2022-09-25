@@ -135,7 +135,7 @@ function LandVehicle:UpdateSteering()
 
     if velocityY == 0 then velocityY = self.IdleSpeed end
 
-    self.SteeringVector = Vector2.new(math.clamp(velocityX, -1, 1), math.clamp(velocityY, self.MinSpeed,self.MaxSpeed))
+    self.SteeringVector = Vector2.new(math.clamp(velocityX, -1, 1), math.clamp(velocityY, self.MinSpeed, self.MaxSpeed))
 end
 
 function LandVehicle:UpdateMovement()

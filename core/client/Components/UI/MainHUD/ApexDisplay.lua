@@ -93,7 +93,6 @@ end
 
 function ApexDisplay:ResetDisplay()
     self.Root.ItemContainer.ItemName.Text = "--"
-    self.Root.ItemContainer.ItemNumber.Text = "-"
     self.Root.ItemContainer.HeatPercentage.Text = "000"
     self.Root.ItemContainer.HeatPercentage.TextColor3 = GREY
 
@@ -141,7 +140,6 @@ end
 function ApexDisplay:SetInformation(weaponStats, mutableStats)
     self.Root.ItemContainer.HeatPercentage.Text = tostring(calculateCharge(mutableStats.CurrentHeat)) .. "%"
     self.Root.ItemContainer.ItemName.Text = weaponStats.Name:upper()
-    self.Root.ItemContainer.ItemNumber.Text = tostring(weaponStats.Slot)
     self:UpdateHeat(mutableStats.CurrentHeat, mutableStats.Overheated)
 end
 

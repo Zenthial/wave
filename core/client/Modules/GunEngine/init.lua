@@ -27,6 +27,9 @@ local Mouse = Player:GetMouse()
 
 local Hit = SoundService.Sounds.Hit
 Hit.Pitch = 2
+local EquipDebounce = false
+
+local EQUIP_WAIT = 0.3
 
 type WeaponStats = typeof(WeaponStatsModule)
 
@@ -103,8 +106,14 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
-function GunEngine.EquipWeapon(weaponStats, weaponModel)
-    if Player:GetAttribute("InSeat") == true then return end
+function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
+    if Player:GetAttribute("InSeat") == true then return false end
+    print("here", EquipDebounce)
+    if EquipDebounce then return false end
+    EquipDebounce = true
+    task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    mutableStats.CanShoot = true
 
     Courier:Send("WeldWeapon", weaponModel, false)
 
@@ -117,7 +126,13 @@ function GunEngine.EquipWeapon(weaponStats, weaponModel)
     Player:SetAttribute("EquippedWeapon", weaponStats.Name)
 end
 
-function GunEngine.UnequipWeapon(weaponStats, weaponModel)
+function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
+    if EquipDebounce then return false end
+    EquipDebounce = true
+    task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    mutableStats.CanShoot = false
+    
     if weaponModel.Handle:FindFirstChild("Unequip") then
         weaponModel.Handle.Unequip:Play()
     end
@@ -170,6 +185,7 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
+    if EquipDebounce then return end
     mutableStats.MouseDown = true
 
     if Battery.CanFire(mutableStats) == false then

@@ -3,6 +3,8 @@ return {
     LocalSprinting = false,
     LocalCrouching = false,
 
+    RollDebounce = 0,
+
     InSeat = false,
 
     LocalCanSprint = true,

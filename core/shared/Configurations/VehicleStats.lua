@@ -168,7 +168,19 @@ local Vehicles = {
 		MaxForce = Vector3.new(0,math.huge,0),
 		PositionP = 100000,
 		Position = 10.34
-	}
+	},
+	-- Boats
+	["Sailfish"] = {
+		TurnSpeedMax = 1, --Steering, max speed
+		TurnSpeedRate = 1, --Steering direction change speed
+		Speed = 80,
+		AccelerateSpeed = 10, --These two are for motors
+		DecelerateSpeed = 10,--This is the other one for motors
+        
+        DefaultHealth = 1000,
+        RegenRate = 0,
+        RegenSpeed = 0
+	},
 }
 
 return Vehicles

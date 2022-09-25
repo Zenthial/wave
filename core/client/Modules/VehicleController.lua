@@ -37,6 +37,22 @@ function VehicleController:Start()
         end
     end)
 
+    Courier:Listen("BindToBoat"):Connect(function(boat: Model)
+        if CollectionService:HasTag(boat, "Boat") then
+            local boatComponent = tcs.get_component(boat, "Boat")
+            boatComponent:Bind()
+            togglePrompts(false)
+        end
+    end)
+
+    Courier:Listen("UnbindFromBoat"):Connect(function(boat: Model)
+        if CollectionService:HasTag(boat, "Boat") then
+            local boatComponent = tcs.get_component(boat, "Boat")
+            boatComponent:Unbind()
+            togglePrompts(true)
+        end
+    end)
+
     Courier:Listen("BindToPlane"):Connect(function(vehicle: Model)
         if CollectionService:HasTag(vehicle, "AirVehicle") then
             local airVehicleComponent = tcs.get_component(vehicle, "AirVehicle")
