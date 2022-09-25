@@ -76,13 +76,8 @@ function ApexDisplay:Start()
     end)
     self.FireRate = 10
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("EquippedPrimary"):Connect(function()
-        self.Root.Primary.TextLabel.Text = Player:GetAttribute("EquippedPrimary"):upper()
-    end))
-
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("EquippedSecondary"):Connect(function()
-        self.Root.Secondary.TextLabel.Text = Player:GetAttribute("EquippedSecondary"):upper()
-    end))
+    self.Root.Primary.TextLabel.Text = "1"
+    self.Root.Secondary.TextLabel.Text = "2"
 
     self:ResetDisplay()
 end

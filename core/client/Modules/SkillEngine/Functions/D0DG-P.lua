@@ -20,14 +20,14 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 	
 	if bool then
 		skillStats.Active = true
-		depleteEnergy(skillStats, skillStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
+		depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
 		
 		Courier:Send("EffectEnable", skillStats.SkillModel.Propeller1.Flame, true)
         Courier:Send("EffectEnable", skillStats.SkillModel.Propeller2.Flame, true)
-        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1.Material, Enum.Material.Neon)
-        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2.Material, Enum.Material.Neon)
+        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1, Enum.Material.Neon)
+        Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2, Enum.Material.Neon)
 		
 		character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 
@@ -38,8 +38,8 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 		task.delay(0.8, function()
 			Courier:Send("EffectEnable", skillStats.SkillModel.Propeller1.Flame, false)
 			Courier:Send("EffectEnable", skillStats.SkillModel.Propeller2.Flame, false)
-			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1.Material, Enum.Material.SmoothPlastic)
-			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2.Material, Enum.Material.SmoothPlastic)
+			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller1, Enum.Material.SmoothPlastic)
+			Courier:Send("MaterialChange", skillStats.SkillModel.Propeller2, Enum.Material.SmoothPlastic)
 
 			shieldModel.TorsoShield.BodyVelocity.MaxForce = Vector3.new(0, 0, 0)
 			shieldModel.TorsoShield.BodyVelocity.Velocity = Vector3.new(0, 0, 0)

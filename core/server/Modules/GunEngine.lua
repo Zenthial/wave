@@ -110,7 +110,7 @@ function GunEngine:Start()
         end
     
         assert(stats ~= nil, "No stats exist for "..weaponName)
-        local playersToDamage = radiusDamage(stats, part, player, false)
+        local playersToDamage = radiusDamage(stats, part.Position, player, false)
         for _player: Player, damage: number in pairs(playersToDamage) do
             attemptDealDamage(player, weaponName, _player, damage)
         end

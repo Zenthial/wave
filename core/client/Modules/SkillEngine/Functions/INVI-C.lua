@@ -49,7 +49,7 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 
         task.spawn(function()
             while skillStats.Active do
-                depleteEnergy(skillStats, skillStats.EnergyDeplete)
+                depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete)
                 task.wait(ENERGY_WAIT_TIME)
             end
 

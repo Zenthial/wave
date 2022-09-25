@@ -58,7 +58,8 @@ function SkillEngine.Use(skillStats: SkillStats, bool: boolean)
     if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and
        skillStats.Energy >= skillStats.WeaponStats.EnergyMin
     then
-        functor(Functions[skillStats.Name])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
+        print(skillStats.SkillName, Functions)
+        functor(Functions[skillStats.SkillName])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
     end
 end
 
@@ -66,7 +67,7 @@ function SkillEngine.DepleteEnergy(skillStats: SkillStats, depletionAmount: numb
     skillStats.Energy = math.clamp(skillStats.Energy - depletionAmount, MIN_ENERGY, MAX_ENERGY)
 
     if skillStats.Energy <= MIN_ENERGY then
-        if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.CurrentEnergy >= MIN_ENERGY then
+        if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= MIN_ENERGY then
             skillStats.Recharging = false
             SkillEngine.Use(skillStats, false)
         end
@@ -78,7 +79,7 @@ function SkillEngine.RegenEnergy(skillStats: SkillStats)
         skillStats.Recharging = true
 
         while skillStats.Energy < 100 and skillStats.Recharging do
-            SkillEngine.DepleteEnergy(skillStats, -skillStats.EnergyRegen)
+            SkillEngine.DepleteEnergy(skillStats, -skillStats.WeaponStats.EnergyRegen)
             task.wait(ENERGY_WAIT_TIME)
         end
 

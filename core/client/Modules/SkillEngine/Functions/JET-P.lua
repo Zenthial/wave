@@ -18,7 +18,7 @@ type SkillStats = {
 return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 	if bool then
 		skillStats.Active = true
-		depleteEnergy(skillStats, skillStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
+		depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
 		
