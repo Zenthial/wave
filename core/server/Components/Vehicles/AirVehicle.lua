@@ -46,16 +46,12 @@ function AirVehicle:Start()
     assert(enginePart, "No engine for " .. self.Root.Name)
     local direction = enginePart.Direction
     assert(direction, "No direction on " .. self.Root.Name)
-    local altitude = enginePart.Altitude
-    assert(altitude, "No altitude on " .. self.Root.Name)
     self.Engine = enginePart
 
     direction.CFrame = enginePart.CFrame
 	direction.D = 150
 	direction.MaxTorque = Vector3.new(300000, 300000, 300000)
 	direction.P = 500
-	
-	altitude.MaxForce = Vector3.new(500000, 1500000, 500000)
 
     local function goFlat()
 		local LookVector = enginePart.CFrame.LookVector

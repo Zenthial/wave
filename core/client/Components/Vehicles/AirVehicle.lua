@@ -89,12 +89,12 @@ end
 function AirVehicle:Start()
     local enginePart = self.Root.Engine
     assert(enginePart, "No engine for " .. self.Root.Name)
-    local altitude = enginePart.Altitude
-    assert(altitude, "No altitude for " .. self.Root.Name)
     local direction = enginePart.Direction
     assert(direction, "No direction for " .. self.Root.Name)
+    local linearVelocity = enginePart.LinearVelocity
+    assert(linearVelocity, "No linearVelocity for ".. self.Root.Name)
     self.Engine = enginePart
-    self.Altitude = altitude
+    self.LinearVelocity = linearVelocity
     self.Direction = direction
     
     local seat = self.Root.PilotSeat
@@ -124,9 +124,10 @@ end
 
 function AirVehicle:Move(maxForce: number, p: number, velocity: Vector3)
     if self.Flying then
-        if maxForce then self.Altitude.MaxForce = maxForce end
-        if p then self.Altitude.P = p end
-        if velocity then self.Altitude.Velocity = velocity end
+        --if maxForce then self.Altitude.MaxForce = maxForce end
+        --if p then self.Altitude.P = p end
+        --if velocity then self.Altitude.Velocity = velocity end
+        self.LinearVelocity.VectorVelocity = self.Seat.CFrame.LookVector * 200
     end
 end
 
@@ -165,12 +166,6 @@ function AirVehicle:RunServiceLoop()
     local coreLook = Vector3.new(EngineC.LookVector.X, EngineC.LookVector.Y * (self.Stats.CounterGravity or .1), EngineC.LookVector.Z)
     local velocity = coreLook
 
-    if UserInputService:IsKeyDown(Enum.KeyCode.E) and self.Flying then
-        velocity += (EngineC.UpVector * self.RiseSpeed.X)
-    elseif UserInputService:IsKeyDown(Enum.KeyCode.Q) and self.Flying then
-        velocity -= (EngineC.UpVector * self.RiseSpeed.Y)
-    end
-
     --[[if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
         velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
         self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
@@ -183,13 +178,12 @@ function AirVehicle:RunServiceLoop()
 
     -- + is right, - is left
     local rollDir = math.floor(EngineC:ToObjectSpace(CFrame.new(self.PreviousMousePosition)).X)
-    print(rollDir)
     if rollDir > 15000 then
         velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+        self.Roll = math.clamp(-1 * math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     elseif rollDir < -15000 then
         velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+        self.Roll = math.clamp(math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     else
         self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
     end
@@ -208,7 +202,7 @@ function AirVehicle:RunServiceLoop()
         velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
     end
     
-    velocity = self.Altitude.Velocity:Lerp(velocity, self.ReactionSpeed)
+    --velocity = self.LinearVe.Velocity:Lerp(velocity, self.ReactionSpeed)
     if self.TakingOffOrLanding then
         velocity = Vector3.new(velocity.X / 8, velocity.Y * 1.025, velocity.Z / 8)
     else
