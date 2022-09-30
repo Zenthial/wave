@@ -166,6 +166,7 @@ end
 
 function GunEngine.Attack(weaponStats, mutableStats)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart, Battery.Heat)
+    Player:SetAttribute("LocalCanSprint", true)
 end
 
 function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
@@ -185,6 +186,7 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
+    if Player:GetAttribute("LocalSprinting") == true or Player:GetAttribute("LocalRolling") == true then return end
     if EquipDebounce then return end
     mutableStats.MouseDown = true
 
@@ -196,7 +198,7 @@ function GunEngine.MouseDown(weaponStats, mutableStats)
         return
     end
 
-    Player:SetAttribute("LocalSprinting", false)
+    Player:SetAttribute("LocalCanSprint", false)
     if weaponStats.ChargeWait > 0 then
         Player:SetAttribute("ChargeWait", weaponStats.ChargeWait)
         Player:SetAttribute("Charging", true)
