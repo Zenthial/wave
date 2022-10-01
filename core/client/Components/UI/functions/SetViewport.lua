@@ -1,6 +1,7 @@
 local ViewportCameraPositioner = require(script.Parent.ViewportCameraPositioner)
 
 return function(viewport: ViewportFrame, modelFolder: Configuration | Folder)
+    print(typeof(modelFolder), modelFolder:IsA("Model"))
     local camera = Instance.new("Camera")
     viewport.CurrentCamera = camera
     
@@ -31,12 +32,6 @@ return function(viewport: ViewportFrame, modelFolder: Configuration | Folder)
     -- end
 
     inspectModel.Name = "InspectModel" .. modelFolder.Name
-    
-    if modelFolder.Name == "PBW" then
-        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(90), 0))
-    elseif modelFolder.Name == "MountedTurret" then
-        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0),  Vector3.new(0, 0, 5)) * CFrame.Angles(0, math.rad(180), 0))
-    end
 
     inspectModel.Parent = viewport
     camera.CFrame = ViewportCameraPositioner(camera, viewport, inspectModel)

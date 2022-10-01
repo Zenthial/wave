@@ -271,7 +271,7 @@ end
 function ApexDisplay:SetWeapon(weaponStats, mutableStats, primary: true | false | nil)
     if weaponStats ~= nil then
         print(weaponStats.Name)
-        self:HandleViewport(Weapons[weaponStats.Name])
+        self:HandleViewport(Weapons[weaponStats.Name].Model)
         self:SetInformation(weaponStats, mutableStats)
         self:HandleTools(primary)
     else
