@@ -54,7 +54,6 @@ function Inventory:Start()
     self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
 
     local MainHUDComponent = self.MainHUD
-    local skillCleaner = Trove.new() :: typeof(Trove)
 
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model, equip: boolean)
         if not equip then
@@ -81,6 +80,13 @@ function Inventory:Start()
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = SkillEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
+            local skillCleaner = Trove.new()
+            self.EquippedSkill.Cleaner = skillCleaner
+
+            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, skill.Energy)
+            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy)
+                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy)
+            end))
         elseif inventoryKey == "Gadget" then
             assert(model == nil, "Why does the grenade have a model?")
             
@@ -92,7 +98,13 @@ function Inventory:Start()
 
             self.EquippedGadgetStats = gadgetStats
             self.EquippedGadget = weaponName
+
+            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Gadget"), true, LocalPlayer:GetAttribute("GadgetQuantity"))
         end
+    end))
+
+    self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("GadgetQuantity"):Connect(function()
+        self.MainHUD:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Gadget"), true, LocalPlayer:GetAttribute("GadgetQuantity"))
     end))
 
     self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("CurrentTurret"):Connect(function()

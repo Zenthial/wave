@@ -49,6 +49,10 @@ function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     end
 end
 
+function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+end
+
 function MainHUD:UpdateHeat(heat: number, overheated: boolean)
     local GunToolbarComponent = self.GunToolbar
     GunToolbarComponent:UpdateHeat(heat, overheated)

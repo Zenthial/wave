@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local FunctionsFolder = script.Functions
 
 local Functions = {}
@@ -23,7 +24,9 @@ type SkillStats = {
 
     Energy: number,
     Recharging: boolean,
-    Active: boolean
+    Active: boolean,
+
+    EnergyChanged: typeof(Signal)
 }
 
 type Some<T> = {
@@ -51,6 +54,8 @@ function SkillEngine.CreateSkill(skillName: string, skillModel: Model)
         Energy = 100,
         Recharging = false,
         Active = false,
+
+        EnergyChanged = Signal.new()
     }, weaponStats) :: SkillStats
 end
 
@@ -65,6 +70,7 @@ end
 
 function SkillEngine.DepleteEnergy(skillStats: SkillStats, depletionAmount: number)
     skillStats.Energy = math.clamp(skillStats.Energy - depletionAmount, MIN_ENERGY, MAX_ENERGY)
+    skillStats.EnergyChanged:Fire(skillStats.Energy)
 
     if skillStats.Energy <= MIN_ENERGY then
         if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= MIN_ENERGY then
