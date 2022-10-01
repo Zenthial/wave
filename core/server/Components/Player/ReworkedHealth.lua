@@ -96,6 +96,7 @@ function Health:SetShields(shields)
 
     if shields == 0 then
         self.DamageTime = tick()
+        self.ShieldModelComponent:ShieldEmpty()
         self:RegenShield(self.DamageTime)
     end
 end
@@ -105,6 +106,7 @@ function Health:SetHealth(health)
 
     if health == 0 and self.Root:GetAttribute("Dead") == false then
         self.Root:SetAttribute("Dead", true)
+        self.ShieldModelComponent:Spawn()
     elseif health > 0 and self.Root:GetAttribute("Dead") == true then
         self.Root:SetAttribute("Dead", false)
     end

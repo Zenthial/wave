@@ -156,9 +156,9 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
         local shields = healthComponentInstance:GetAttribute("Shields")
         local headshot = hitPart.Name == "Head"
         local potentialDamage = if headshot then weaponStats.Damage * weaponStats.HeadshotMultiplier else weaponStats.Damage
-        if shields > 0 and shields - potentialDamage <= 0 then
-            SoundService.Sounds.ShieldCrack:Play()
-        end
+        -- if shields > 0 and shields - potentialDamage <= 0 then
+        --     SoundService.Sounds.ShieldCrack:Play()
+        -- end
 
         createDamageIndicator(hitPart, potentialDamage, shields > 0, headshot)
     end

@@ -33,7 +33,7 @@ function SoundHandler:Start()
         if newShields < oldShields and newShields > 0 then
             SoundService.Sounds.ShieldImpact:Play()
         elseif newShields == 0 then
-            SoundService.Sounds.ShieldCrack:Play()
+            -- SoundService.Sounds.ShieldCrack:Play()
         elseif newShields > oldShields and newShields < Player:GetAttribute("MaxShields") and regenPlaying == false then
             regenPlaying = true
             SoundService.Sounds.ShieldRegen:Play()

@@ -22,6 +22,7 @@ KillNotifier.Parent = ReplicatedStorage
 
 local RESPAWN_TIMER = GlobalOptions.RespawnTime
 local DEATH_BANNER = true
+local CanRespawn = true
 
 type HealthComponent_T = {
     Events: {
@@ -116,18 +117,20 @@ local function playerAdded(player: Player)
                 effect:Destroy()
             end)
 
-            task.delay(RESPAWN_TIMER, function()
-                if workspace:FindFirstChild("Spawns") and workspace.Spawns:FindFirstChild(player.TeamColor.Name) then
-                    local teamSpawn = workspace.Spawns[player.TeamColor.Name]
-                    randPos = getRandomPos(teamSpawn)
-                    character.HumanoidRootPart.Position = randPos
-                else
-                    character.HumanoidRootPart.Position = Vector3.new(0, 3, 0)
-                end
+            if CanRespawn then
+                task.delay(RESPAWN_TIMER, function()
+                    if workspace:FindFirstChild("Spawns") and workspace.Spawns:FindFirstChild(player.TeamColor.Name) then
+                        local teamSpawn = workspace.Spawns[player.TeamColor.Name]
+                        randPos = getRandomPos(teamSpawn)
+                        character.HumanoidRootPart.Position = randPos
+                    else
+                        character.HumanoidRootPart.Position = Vector3.new(0, 3, 0)
+                    end
 
-                health_component:Heal(100) -- probably bad to hardcode this value
-                player:SetAttribute("LastKiller", "")
-            end)
+                    health_component:Heal(100) -- probably bad to hardcode this value
+                    player:SetAttribute("LastKiller", "")
+                end)
+            end
         end))
 
         PlayerCleaners[player] = cleaner
@@ -150,6 +153,22 @@ function DeathEngine:Start()
     Players.PlayerAdded:Connect(playerAdded)
 
     Players.PlayerRemoving:Connect(playerRemoving)
+end
+
+function DeathEngine:SpawnPlayer(player: Player)
+    local character = player.Character
+    local shieldComponent = tcs.get_component(character, "ShieldModel")
+    local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
+    shieldComponent:Spawn()
+    local teamSpawn = workspace.Spawns[player.TeamColor.Name]
+
+    health_component:Heal(100) -- probably bad to hardcode this value
+    player:SetAttribute("LastKiller", "")
+    character.HumanoidRootPart.Position = getRandomPos(teamSpawn)
+end
+
+function DeathEngine:CanRespawn(bool)
+    CanRespawn = bool
 end
 
 return DeathEngine
