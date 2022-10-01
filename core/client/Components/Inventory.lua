@@ -58,6 +58,17 @@ function Inventory:Start()
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model, equip: boolean)
         if not equip then
             self["Equipped"..inventoryKey] = nil
+
+            if inventoryKey == "Gadget" then
+                MainHUDComponent:DeleteItem(LocalPlayer.Keybinds:GetAttribute("Gadget"))
+            elseif inventoryKey == "Skill" then
+                MainHUDComponent:DeleteItem(LocalPlayer.Keybinds:GetAttribute("Skill"))
+            elseif inventoryKey == "Primary" or inventoryKey == "Secondary" then
+                if self.EquippedWeapon ~= nil and self.EquippedWeapon == self["Equipped"..inventoryKey] then 
+                    self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
+                end
+            end
+
             return
         end
         

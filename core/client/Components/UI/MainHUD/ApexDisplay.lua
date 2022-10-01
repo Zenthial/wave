@@ -263,14 +263,12 @@ function ApexDisplay:SetInformation(weaponStats, mutableStats)
 end
 
 function ApexDisplay:HandleViewport(weaponModel: Model)
-    print(weaponModel)
     self.Root.ItemContainer.ViewportFrame:ClearAllChildren()
     setViewport(self.Root.ItemContainer.ViewportFrame, weaponModel)
 end
 
 function ApexDisplay:SetWeapon(weaponStats, mutableStats, primary: true | false | nil)
     if weaponStats ~= nil then
-        print(weaponStats.Name)
         self:HandleViewport(Weapons[weaponStats.Name].Model)
         self:SetInformation(weaponStats, mutableStats)
         self:HandleTools(primary)
@@ -286,7 +284,6 @@ function ApexDisplay:SetItem(keybind: string, hasQuantity: boolean, quantity: nu
     end
 
     local item = createItem(keybind, hasQuantity, quantity)
-    print(self, self.Root)
     if hasQuantity then
         item.LayoutOrder = 1
     else
@@ -329,8 +326,7 @@ function ApexDisplay:UpdateItem(keybind: string, hasQuantity: boolean, chargeOrQ
         end
     else
         local newFill = -((chargeOrQuantity/100) - 0.5) -- goes from 0.5 (empty) -> -0.5 (filled)
-        print(chargeOrQuantity, newFill)
-        TweenService:Create(item.Fill.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Offset = Vector2.new(0, newFill)}):Play()
+        TweenService:Create(item.Fill.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Offset = Vector2.new(0, newFill)}):Play()
     end
 end
 

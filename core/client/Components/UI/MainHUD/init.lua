@@ -53,6 +53,10 @@ function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
     self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
 end
 
+function MainHUD:DeleteItem(keybind)
+    self.GunToolbar:DeleteItem(keybind)
+end
+
 function MainHUD:UpdateHeat(heat: number, overheated: boolean)
     local GunToolbarComponent = self.GunToolbar
     GunToolbarComponent:UpdateHeat(heat, overheated)
