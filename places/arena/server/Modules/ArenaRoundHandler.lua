@@ -8,7 +8,7 @@ local DeathEngine = require(ServerScriptService.Server.Modules.DeathEngine)
 local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local MAX_PLAYERS = 6
+local MAX_PLAYERS = 1
 local MAX_ROUND_WINS = 5
 local INTERMISSION_TIMER = 60
 local ROUND_TIMER = 180
@@ -35,8 +35,9 @@ local function countdown(number: number, folder: Folder, attributeName: string, 
     repeat
         task.wait(1)
         number -= 1
+        print(number)
         folder:SetAttribute(attributeName, number)
-    until number == 0 or folder:GetAttribute(boolCheck) == false
+    until number <= 0 or folder:GetAttribute(boolCheck) == false
 end
 
 local State = {
@@ -66,11 +67,23 @@ end
 
 function RoundHandler:LoadTeams()
     local teams = ArenaDataHandler:GetTeams()
-    for teamName, teamUsers in pairs(teams) do
-        for _, userId in teamUsers do
-            local player = Players:GetPlayerByUserId(userId)
-            player.Team = Teams[teamName]
-            DeathEngine:SpawnPlayer(player)
+    if teams ~= nil then 
+        for teamName, teamUsers in pairs(teams) do
+            for _, userId in teamUsers do
+                local player = Players:GetPlayerByUserId(userId)
+                player.Team = Teams[teamName]
+                DeathEngine:SpawnPlayer(player)
+            end
+        end
+    else
+        for i, player in Players:GetPlayers() do
+            if i % 2 == 0 then
+                player.Team = Teams["Red"]
+                DeathEngine:SpawnPlayer(player)
+            else
+                player.Team = Teams["Blue"]
+                DeathEngine:SpawnPlayer(player)
+            end
         end
     end
 end
@@ -86,8 +99,9 @@ function RoundHandler:RoundSetup()
     self:PlayersIntermission()
     self.RoundAttributes:SetAttribute("Intermission", true)
     self.RoundAttributes:SetAttribute("InRound", false)
-    self.RoundAttributes:SetAttribute("IntermissionClock", 60)
-    countdown(60, self.RoundAttributes, "IntermissionClock", "Intermission")
+    self.RoundAttributes:SetAttribute("IntermissionClock", 5)
+    print("here")
+    countdown(5, self.RoundAttributes, "IntermissionClock", "Intermission")
 
     self.RoundAttributes:SetAttribute("Intermission", false)
     self.RoundAttributes:SetAttribute("InRound", true)

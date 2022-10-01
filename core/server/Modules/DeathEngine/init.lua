@@ -39,12 +39,29 @@ local floor: Part = spawnBox.floor
 local random = Random.new()
 
 local function getRandomPos(part: Part)
-    local minX = floor.Position.X - floor.Size.X/2
-    local maxX = floor.Position.X + floor.Size.X/2
-    local minZ = floor.Position.Z - floor.Size.Z/2
-    local maxZ = floor.Position.Z + floor.Size.Z/2
-    local randPos = Vector3.new(random:NextInteger(minX, maxX), floor.Position.Y + 3, random:NextInteger(minZ, maxZ))
+    local minX = part.Position.X - part.Size.X/2
+    local maxX = part.Position.X + part.Size.X/2
+    local minZ = part.Position.Z - part.Size.Z/2
+    local maxZ = part.Position.Z + part.Size.Z/2
+    local randPos = Vector3.new(random:NextInteger(minX, maxX), part.Position.Y + 3, random:NextInteger(minZ, maxZ))
     return randPos
+end
+
+local function spawnPlayer(player, character)
+    local shieldComponent = tcs.get_component(character, "ShieldModel")
+    shieldComponent:Spawn()
+
+    local health_component = tcs.get_component(player, "Health") :: HealthComponent_T
+    health_component:Heal(100) -- probably bad to hardcode this value
+    player:SetAttribute("LastKiller", "")
+    
+    if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.TeamColor.Name) ~= nil then
+        local teamSpawn = workspace.Spawns[player.TeamColor.Name]
+        local randPos = getRandomPos(teamSpawn)
+        character.HumanoidRootPart.Position = randPos
+    else
+        character.HumanoidRootPart.Position = getRandomPos(floor)
+    end
 end
 
 local PlayerCleaners: {[Player]: typeof(Trove)} = {}
@@ -56,10 +73,12 @@ local function playerAdded(player: Player)
 
     local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
     if health_component ~= nil then
+        local character = player.Character or player.CharacterAdded:Wait()
+        spawnPlayer(player, character)
+
         local cleaner = Trove.new()
         cleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
             if player:GetAttribute("Dead") == false then return end
-            local character = player.Character
             local randPos = getRandomPos(floor)
             local deathPosition = character.HumanoidRootPart.Position
             character.HumanoidRootPart.Position = randPos
@@ -119,16 +138,7 @@ local function playerAdded(player: Player)
 
             if CanRespawn then
                 task.delay(RESPAWN_TIMER, function()
-                    if workspace:FindFirstChild("Spawns") and workspace.Spawns:FindFirstChild(player.TeamColor.Name) then
-                        local teamSpawn = workspace.Spawns[player.TeamColor.Name]
-                        randPos = getRandomPos(teamSpawn)
-                        character.HumanoidRootPart.Position = randPos
-                    else
-                        character.HumanoidRootPart.Position = Vector3.new(0, 3, 0)
-                    end
-
-                    health_component:Heal(100) -- probably bad to hardcode this value
-                    player:SetAttribute("LastKiller", "")
+                    spawnPlayer(player, character)
                 end)
             end
         end))
@@ -156,15 +166,8 @@ function DeathEngine:Start()
 end
 
 function DeathEngine:SpawnPlayer(player: Player)
-    local character = player.Character
-    local shieldComponent = tcs.get_component(character, "ShieldModel")
-    local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
-    shieldComponent:Spawn()
-    local teamSpawn = workspace.Spawns[player.TeamColor.Name]
-
-    health_component:Heal(100) -- probably bad to hardcode this value
-    player:SetAttribute("LastKiller", "")
-    character.HumanoidRootPart.Position = getRandomPos(teamSpawn)
+    local character = player.Character or player.CharacterAdded:Wait()
+    spawnPlayer(player, character)
 end
 
 function DeathEngine:CanRespawn(bool)

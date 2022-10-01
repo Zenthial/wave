@@ -12,7 +12,7 @@ end
 
 -- returns a dictionary with red and blue keys, which contain userid lists
 function ArenaDataHandler:GetTeams(): {["Red"]: {number}, ["Blue"]: {number}}
-    return self.Map:GetAsync("Teams")
+    return nil --self.Map:GetAsync("Teams")
 end
 
 return ArenaDataHandler

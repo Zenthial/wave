@@ -26,7 +26,7 @@ return {
         },
         {
             Name = "Intermission",
-            Color = BrickColor.new("White"),
+            Color = BrickColor.new("Institutional white"),
             AutoAssignable = true,
             Function = function()
                 return true

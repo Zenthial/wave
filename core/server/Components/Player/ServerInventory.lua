@@ -43,17 +43,12 @@ end
 
 function ServerInventory:Start()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
-    print(self.Root, self.Character)
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
         repeat
             task.wait()
         until self.Root:GetAttribute("Loaded") == true and self.Character ~= nil
     end
-
-    print("Inventory loaded")
-    
-    self:LoadServerInventory(InventoryStats)
 end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
