@@ -1,6 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
+
+local CraftingItems = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftItems"))
+local CraftingRequirements = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftingRequirements"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -31,6 +35,8 @@ ArenaPlayer.Ancestor = game
 function ArenaPlayer.new(root: any)
     return setmetatable({
         Root = root,
+
+        CraftingItems = {}
     }, ArenaPlayer)
 end
 
@@ -42,6 +48,37 @@ function ArenaPlayer:Start()
             self.Root:SetAttribute("InRound", self.Root:GetAttribute("Loaded"))
         end))
     end
+
+    local serverInventoryComponent = tcs.get_component(self.Root, "ServerInventory")
+    self.Cleaner:Add(Courier:Listen("CraftingItemPickup"):Connect(function(itemName: string)
+        if table.find(CraftingItems, itemName) then
+            table.insert(self.CraftingItems, itemName)
+        end
+    end))
+
+    self.Cleaner:Add(Courier:Listen("CraftingAttempt"):Connect(function(craftableItem: string)
+        local requirements = CraftingRequirements[craftableItem]
+
+        local indexes = {}
+        for _, requirement in requirements do
+            local index = table.find(self.CraftingItems, requirement)
+            if index == nil then
+                Courier:Send("CraftingAttempt", false)
+                break
+            else
+                table.insert(indexes, index)
+            end
+        end
+
+        if #indexes == #requirements then
+            for _, index in indexes do
+                table.remove(self.CraftingItems, index)
+            end
+
+            serverInventoryComponent:SetItem("Skill", craftableItem)
+            Courier:Send("CraftingAttempt", true)
+        end
+    end))
 end
 
 function ArenaPlayer:Destroy()

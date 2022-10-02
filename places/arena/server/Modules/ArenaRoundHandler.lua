@@ -22,7 +22,9 @@ local function createRoundAttributes()
     roundAttributesFolder:SetAttribute("InRound", false)
     roundAttributesFolder:SetAttribute("RoundClock", -1)
     roundAttributesFolder:SetAttribute("RedScore", 0)
+    roundAttributesFolder:SetAttribute("RedAlive", 3)
     roundAttributesFolder:SetAttribute("BlueScore", 0)
+    roundAttributesFolder:SetAttribute("BlueAlive", 3)
     roundAttributesFolder:SetAttribute("MaxRoundWins", MAX_ROUND_WINS)
     roundAttributesFolder:SetAttribute("Victor", "No one")
 
@@ -100,7 +102,9 @@ function RoundHandler:RoundSetup()
     self.RoundAttributes:SetAttribute("Intermission", true)
     self.RoundAttributes:SetAttribute("InRound", false)
     self.RoundAttributes:SetAttribute("IntermissionClock", 5)
-    print("here")
+    self.RoundAttributes:SetAttribute("RedAlive", #Teams["Red"]:GetPlayers())
+    self.RoundAttributes:SetAttribute("BlueAlive", #Teams["Blue"]:GetPlayers())
+    
     countdown(5, self.RoundAttributes, "IntermissionClock", "Intermission")
 
     self.RoundAttributes:SetAttribute("Intermission", false)
@@ -111,6 +115,7 @@ function RoundHandler:RoundSetup()
     for _, player in Players:GetPlayers() do
         roundCleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
             self.AlivePlayers[player.Team.Name] -= 1
+            self.RoundAttributes:SetAttribute(player.Team.Name.."Alive", self.AlivePlayers[player.Team.Name])
             if self.AlivePlayers[player.Team.Name] == 0 then
                 self.RoundAttributes:SetAttribute("InRound", false)
             end
