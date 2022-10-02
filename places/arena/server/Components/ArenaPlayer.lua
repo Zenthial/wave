@@ -50,13 +50,13 @@ function ArenaPlayer:Start()
     end
 
     local serverInventoryComponent = tcs.get_component(self.Root, "ServerInventory")
-    self.Cleaner:Add(Courier:Listen("CraftingItemPickup"):Connect(function(itemName: string)
+    self.Cleaner:Add(Courier:Listen(self.Root.Name.."CraftingItemPickup"):Connect(function(itemName: string)
         if table.find(CraftingItems, itemName) then
             table.insert(self.CraftingItems, itemName)
         end
     end))
 
-    self.Cleaner:Add(Courier:Listen("CraftingAttempt"):Connect(function(craftableItem: string)
+    self.Cleaner:Add(Courier:Listen(self.Root.Name.."CraftingAttempt"):Connect(function(craftableItem: string)
         local requirements = CraftingRequirements[craftableItem]
 
         local indexes = {}

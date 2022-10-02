@@ -8,7 +8,7 @@ local DeathEngine = require(ServerScriptService.Server.Modules.DeathEngine)
 local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local MAX_PLAYERS = 1
+local MAX_PLAYERS = 2
 local MAX_ROUND_WINS = 5
 local INTERMISSION_TIMER = 60
 local ROUND_TIMER = 180
@@ -63,7 +63,10 @@ function RoundHandler:Start()
         task.wait(1)
     until #Players:GetPlayers() == MAX_PLAYERS
 
+    DeathEngine:CanRespawn(false)
+
     self.RoundAttributes = roundAttributes
+    self:LoadTeams()
     self:RoundSetup()
 end
 
@@ -74,43 +77,39 @@ function RoundHandler:LoadTeams()
             for _, userId in teamUsers do
                 local player = Players:GetPlayerByUserId(userId)
                 player.Team = Teams[teamName]
-                DeathEngine:SpawnPlayer(player)
             end
         end
     else
         for i, player in Players:GetPlayers() do
-            if i % 2 == 0 then
-                player.Team = Teams["Red"]
-                DeathEngine:SpawnPlayer(player)
-            else
-                player.Team = Teams["Blue"]
-                DeathEngine:SpawnPlayer(player)
-            end
+            -- if i % 2 == 0 then
+            --     player.Team = Teams["Red"]
+            -- else
+            --     player.Team = Teams["Blue"]
+            -- end
+
+            player.Team = Teams["Blue"]
         end
     end
 end
 
-function RoundHandler:PlayersIntermission()
+function RoundHandler:LoadPlayers()
     for _, player in Players:GetPlayers() do
-        player.Team = Teams["Intermission"]
         DeathEngine:SpawnPlayer(player)
     end
 end
 
 function RoundHandler:RoundSetup()
-    self:PlayersIntermission()
+    self:LoadPlayers()
     self.RoundAttributes:SetAttribute("Intermission", true)
     self.RoundAttributes:SetAttribute("InRound", false)
     self.RoundAttributes:SetAttribute("IntermissionClock", 5)
-    self.RoundAttributes:SetAttribute("RedAlive", #Teams["Red"]:GetPlayers())
-    self.RoundAttributes:SetAttribute("BlueAlive", #Teams["Blue"]:GetPlayers())
     
     countdown(5, self.RoundAttributes, "IntermissionClock", "Intermission")
-
+    
     self.RoundAttributes:SetAttribute("Intermission", false)
     self.RoundAttributes:SetAttribute("InRound", true)
     self.RoundAttributes:SetAttribute("RoundClock", ROUND_TIMER)
-
+    
     local roundCleaner = Trove.new()
     for _, player in Players:GetPlayers() do
         roundCleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
@@ -121,8 +120,9 @@ function RoundHandler:RoundSetup()
             end
         end))
     end
-
-    self:LoadTeams()
+    
+    self.RoundAttributes:SetAttribute("RedAlive", #Teams["Red"]:GetPlayers())
+    self.RoundAttributes:SetAttribute("BlueAlive", #Teams["Blue"]:GetPlayers())
     countdown(ROUND_TIMER, self.RoundAttributes, "RoundClock", "InRound")
 
     roundCleaner:Clean()
