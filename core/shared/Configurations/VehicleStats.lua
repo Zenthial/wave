@@ -103,7 +103,7 @@ local Vehicles = {
 		--Throttle, -1 to 1, like on vehicleseats, can go over/under but why? Increase/decrease speed instead.
 		MinimumSpeed = 0.2, --S
 		IdleSpeed = 0.6, --(Neither W or S) or (W and S)
-		MaximumSpeed = 1, --W
+		MaximumSpeed = 200, --W
 		
 		--Camera limits
 		CameraMinY = -40,

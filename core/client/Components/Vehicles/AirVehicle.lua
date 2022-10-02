@@ -104,7 +104,7 @@ function AirVehicle:Start()
     local stats = VehicleStats[self.Root.Name]
     assert(stats, "No vehicle stats for " .. self.Root.Name)
     self.Stats = stats
-    self.Speed = stats.Speed
+    self.Speed = 0
     self.MinSpeed = stats.MinimumSpeed or -1
     self.MaxSpeed = stats.MaximumSpeed or 1
     self.IdleSpeed = stats.IdleSpeed or 0
@@ -122,13 +122,12 @@ function AirVehicle:Start()
     self.PreviousMousePosition = nil
 end
 
-function AirVehicle:Move(maxForce: number, p: number, velocity: Vector3)
+function AirVehicle:Move()
     if self.Flying then
-        --if maxForce then self.Altitude.MaxForce = maxForce end
-        --if p then self.Altitude.P = p end
-        --if velocity then self.Altitude.Velocity = velocity end
-        local Vect = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
-        self.LinearVelocity.VectorVelocity = Vect
+        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
+    else
+        self.Speed = math.clamp(self.Speed - 1, 0, self.MaxSpeed)
+        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position - Vector3.new(0, 25, 0)
     end
 end
 
@@ -180,12 +179,15 @@ function AirVehicle:RunServiceLoop()
     -- + is right, - is left
     local rollDir = math.floor(EngineC:ToObjectSpace(CFrame.new(self.PreviousMousePosition)).X)
     if rollDir > 15000 then
+        self.Speed = math.clamp(self.Speed, self.MinSpeed, self.MaxSpeed-20)
         velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
         self.Roll = math.clamp(-1 * math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     elseif rollDir < -15000 then
+        self.Speed = math.clamp(self.Speed, self.MinSpeed, self.MaxSpeed-20)
         velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
         self.Roll = math.clamp(math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     else
+        self.Speed = math.clamp(self.Speed + 1, self.MinSpeed, self.MaxSpeed)
         self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
     end
     
@@ -218,11 +220,7 @@ function AirVehicle:RunServiceLoop()
     
     self:UpdateCamera()
     
-    if self.Flying then
-        self:Move(Vector3.new(500000, 1500000, 500000), 500, velocity)
-    else
-        self:Move(Vector3.new(0, 0, 0), nil, velocity)
-    end
+    self:Move()
 end
 
 local function inputProcessor(self: AirVehicle_T, input: InputObject, processed: boolean)
@@ -237,12 +235,6 @@ function AirVehicle:Bind()
     local sessionCleaner = Trove.new()
     self.Cleaner:Add(sessionCleaner, "Clean")
     self.SessionCleaner = sessionCleaner
-
-    if self.Flying then
-        self:Move(Vector3.new(500, 500, 500), 500, Vector3.new(0, 0, 0))
-    else
-        self:Move(Vector3.new(0, 0, 0), 0, Vector3.new(0, 0, 0))
-    end
 
     sessionCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed) inputProcessor(self, input, processed) end))
     sessionCleaner:Add(UserInputService.InputChanged:Connect(function(input, processed)
