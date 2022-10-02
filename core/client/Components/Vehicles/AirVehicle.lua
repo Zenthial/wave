@@ -127,7 +127,12 @@ function AirVehicle:Move(maxForce: number, p: number, velocity: Vector3)
         --if maxForce then self.Altitude.MaxForce = maxForce end
         --if p then self.Altitude.P = p end
         --if velocity then self.Altitude.Velocity = velocity end
-        self.LinearVelocity.VectorVelocity = self.Seat.CFrame.LookVector * 200
+        --self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * 50).Position
+        self.LinearVelocity.PlaneVelocity = Vector2.new(200, 0)
+       -- local P = Instance.new("Part")
+        --P.Anchored = true
+       -- P.Position = self.LinearVelocity.VectorVelocity
+        --P.Parent = game.Workspace
     end
 end
 
