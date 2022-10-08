@@ -119,12 +119,19 @@ function RoundHandler:MakeCanister()
     return canister
 end
 
+function RoundHandler:ToggleForceFields(bool: boolean)
+    for _, forceField in workspace.Interactive.ForceFields:GetChildren() do
+        forceField.ForceField.CanCollide = bool
+    end
+end
+
 function RoundHandler:RoundSetup()
     if self.Round % 2 == 0 then
         self:SwitchSpawns()
     end
 
     local activeCanister = self:MakeCanister()
+    self:ToggleForceFields(true)
     self:LoadPlayers()
     self.RoundAttributes:SetAttribute("Intermission", true)
     self.RoundAttributes:SetAttribute("InRound", false)
@@ -132,6 +139,7 @@ function RoundHandler:RoundSetup()
     
     countdown(5, self.RoundAttributes, "IntermissionClock", "Intermission")
     
+    self:ToggleForceFields(false)
     self.RoundAttributes:SetAttribute("Intermission", false)
     self.RoundAttributes:SetAttribute("InRound", true)
     self.RoundAttributes:SetAttribute("RoundClock", ROUND_TIMER)
