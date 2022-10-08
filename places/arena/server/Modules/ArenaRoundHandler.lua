@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -8,7 +9,7 @@ local DeathEngine = require(ServerScriptService.Server.Modules.DeathEngine)
 local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local MAX_PLAYERS = 2
+local MAX_PLAYERS = 1
 local MAX_ROUND_WINS = 5
 local INTERMISSION_TIMER = 60
 local ROUND_TIMER = 180
@@ -47,6 +48,8 @@ local State = {
         Red = 0,
         Blue = 0
     },
+
+    Round = 1,
 
     AlivePlayers = {
         Red = MAX_PLAYERS/2,
@@ -98,7 +101,30 @@ function RoundHandler:LoadPlayers()
     end
 end
 
+function RoundHandler:SwitchSpawns()
+    for _, spawn in workspace.Spawns:GetChildren() do
+        if spawn.Name == "Bright red" then
+            spawn.Name = "Bright blue"
+        elseif spawn.Name == "Bright blue" then
+            spawn.Name = "Bright red"
+        end
+    end
+end
+
+function RoundHandler:MakeCanister()
+    local canisters = workspace.Canisters:GetChildren()
+    local canister = canisters[Random.new():NextInteger(1, #canisters)]
+
+    CollectionService:AddTag(canister, "CreditCanister")
+    return canister
+end
+
 function RoundHandler:RoundSetup()
+    if self.Round % 2 == 0 then
+        self:SwitchSpawns()
+    end
+
+    local activeCanister = self:MakeCanister()
     self:LoadPlayers()
     self.RoundAttributes:SetAttribute("Intermission", true)
     self.RoundAttributes:SetAttribute("InRound", false)
@@ -142,6 +168,8 @@ function RoundHandler:RoundSetup()
         return
     end
 
+    CollectionService:RemoveTag(activeCanister, "CreditCanister")
+    self.Round += 1
     self:RoundSetup()
 end
 

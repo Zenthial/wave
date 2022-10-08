@@ -21,6 +21,7 @@ type ArenaPlayer_T = {
     Name: string,
     Tag: string,
     Root: Player,
+    Credits: number,
 
     Cleaner: Cleaner_T,
     Courier: Courier_T
@@ -36,7 +37,8 @@ function ArenaPlayer.new(root: any)
     return setmetatable({
         Root = root,
 
-        CraftingItems = {}
+        CraftingItems = {},
+        Credits = 0
     }, ArenaPlayer)
 end
 
@@ -79,6 +81,14 @@ function ArenaPlayer:Start()
             Courier:Send("CraftingAttempt", true)
         end
     end))
+end
+
+function ArenaPlayer:ResetCredits()
+    self.Credits = 0
+end
+
+function ArenaPlayer:AwardCredits(credits: number)
+    self.Credits += credits
 end
 
 function ArenaPlayer:Destroy()

@@ -58,9 +58,11 @@ local function spawnPlayer(player, character)
     if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.TeamColor.Name) ~= nil then
         local teamSpawn = workspace.Spawns[player.TeamColor.Name]
         local randPos = getRandomPos(teamSpawn)
-        character.HumanoidRootPart.Position = randPos
+        -- character.HumanoidRootPart.Position = randPos
+        character:SetPrimaryPartCFrame(CFrame.new(randPos))
     else
-        character.HumanoidRootPart.Position = getRandomPos(floor)
+        -- character.HumanoidRootPart.Position = getRandomPos(floor)
+        character:SetPrimaryPartCFrame(CFrame.new(getRandomPos(floor)))     
     end
 end
 
@@ -71,7 +73,7 @@ local function playerAdded(player: Player)
     damageFolder.Name = "DamageFolder"
     damageFolder.Parent = player
 
-    local health_component = tcs.get_component(player, "Health") --[[:await()]] :: HealthComponent_T
+    local health_component = tcs.get_component(player, "Health") :: HealthComponent_T
     if health_component ~= nil then
         local character = player.Character or player.CharacterAdded:Wait()
         spawnPlayer(player, character)
