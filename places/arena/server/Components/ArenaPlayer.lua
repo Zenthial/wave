@@ -60,8 +60,8 @@ function ArenaPlayer:Start()
         end))
     end
 
-    self.Root:SetAttribute("Credits", 0)
-    self.Credits:SetChangedFunction(function(value)
+    self.Root:SetAttribute("Credits", 1000)
+    self.Credits.SetChangedFunction(self.Credits, function(value)
         self.Root:SetAttribute("Credits", value)
     end)
 
@@ -136,7 +136,7 @@ end
 
 function ArenaPlayer:ResetCredits()
     self.Credits = NumericalWrapper.new(0)
-    self.Credits:SetChangedFunction(function(value)
+    self.Credits.SetChangedFunction(self.Credits, function(value)
         self.Root:SetAttribute("Credits", value)
     end)
 end

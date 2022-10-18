@@ -69,8 +69,13 @@ function ArenaArmoryUI.new(root: any)
 end
 
 function ArenaArmoryUI:Start()
+    self.Root.Credits.Amount.Text = comma_value(Player:GetAttribute("Credits"))
     self.Cleaner:Add(Player:GetAttributeChangedSignal("Credits"):Connect(function()
         self.Root.Credits.Amount.Text = comma_value(Player:GetAttribute("Credits"))
+    end))
+
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InArenaArmory"):Connect(function()
+        self.Root.Visible = Player:GetAttribute("InArenaArmory")
     end))
 
     self:LoadItems()
