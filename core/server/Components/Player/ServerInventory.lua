@@ -53,6 +53,10 @@ end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
     for key, name in pairs(inv) do
+        if key == "Misc" then continue end
+        if self.ActiveServerInventory[key] ~= "" or self.ActiveServerInventory[key] ~= nil then
+            self:UnequipItem(key)
+        end 
         self:SetItem(key, name)
     end
 
@@ -61,6 +65,7 @@ end
 
 function ServerInventory:UnequipItem(itemKey: string)
     local oldItemName = self.ActiveServerInventory[itemKey]
+    print(oldItemName)
     local model = self.Character:FindFirstChild(oldItemName)
     if model then model:Destroy() end
 

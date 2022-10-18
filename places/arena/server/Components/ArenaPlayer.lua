@@ -3,6 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
+local NumericalWrapper = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("NumericalWrapper"))
+
 local CraftingItems = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftItems"))
 local CraftingRequirements = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftingRequirements"))
 
@@ -38,7 +40,14 @@ function ArenaPlayer.new(root: any)
         Root = root,
 
         CraftingItems = {},
-        Credits = 0
+        Credits = NumericalWrapper.new(0),
+        Items = {
+            Primary = nil,
+            Secondary = "Y14",
+            Gadgets = nil,
+            Skills = nil,
+            Misc = {}
+        }
     }, ArenaPlayer)
 end
 
@@ -50,6 +59,11 @@ function ArenaPlayer:Start()
             self.Root:SetAttribute("InRound", self.Root:GetAttribute("Loaded"))
         end))
     end
+
+    self.Root:SetAttribute("Credits", 0)
+    self.Credits:SetChangedFunction(function(value)
+        self.Root:SetAttribute("Credits", value)
+    end)
 
     local serverInventoryComponent = tcs.get_component(self.Root, "ServerInventory")
     self.Cleaner:Add(Courier:Listen(self.Root.Name.."CraftingItemPickup"):Connect(function(itemName: string)
@@ -81,10 +95,50 @@ function ArenaPlayer:Start()
             Courier:Send("CraftingAttempt", true)
         end
     end))
+
+    self:ResetInventory()
+end
+
+function ArenaPlayer:ResetInventory()
+    self.Items = {
+        Primary = nil,
+        Secondary = "Y14",
+        Gadgets = nil,
+        Skills = nil,
+        Misc = {}
+    }
+
+    local serverInventoryComponent = tcs.get_component(self.Root, "ServerInventory")
+    serverInventoryComponent:LoadServerInventory(self.Items)
+end
+
+function ArenaPlayer:SetItem(itemType, item, itemPrice)
+    if itemType == "Misc" then
+        table.insert(self.Items[itemType], item)
+    else
+        self.Items[itemType] = item
+    end
+    self.Credits = math.clamp(self.Credits - itemPrice, 0, self.Credits)
+end
+
+function ArenaPlayer:RemoveItem(itemType, item, itemPrice)
+    if itemType == "Misc" then
+        table.remove(self.Items[itemType], table.find(self.Items[itemType], item))
+    else
+        self.Items[itemType] = nil
+    end
+    self.Credits += itemPrice
+end
+
+function ArenaPlayer:HasItem(itemType, itemName)
+    return self.Items[itemType][itemName] ~= nil    
 end
 
 function ArenaPlayer:ResetCredits()
-    self.Credits = 0
+    self.Credits = NumericalWrapper.new(0)
+    self.Credits:SetChangedFunction(function(value)
+        self.Root:SetAttribute("Credits", value)
+    end)
 end
 
 function ArenaPlayer:AwardCredits(credits: number)
