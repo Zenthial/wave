@@ -4,6 +4,16 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local ArenaItems = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaItems"))
 
+local function mapItemType(itemType: string)
+    if itemType == "Primaries" then
+        return "Primary"
+    elseif itemType == "Secondaries" then
+        return "Secondary"
+    else
+        return itemType
+    end
+end
+
 local ArenaShop = {}
 
 function ArenaShop:Start()
@@ -12,10 +22,10 @@ function ArenaShop:Start()
         local itemPrice = ArenaItems[itemType][item]
 
         if itemPrice ~= nil and playerComponent.Credits >= itemPrice then
-            if playerComponent:HasItem(itemType, item) then
-                playerComponent:RemoveItem(itemType, item, itemPrice)
+            if playerComponent:HasItem(mapItemType(itemType), item) then
+                playerComponent:RemoveItem(mapItemType(itemType), item, itemPrice)
             else
-                playerComponent:SetItem(itemType, item, itemPrice)
+                playerComponent:SetItem(mapItemType(itemType), item, itemPrice)
             end
         end
     end)
