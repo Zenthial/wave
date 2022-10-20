@@ -56,7 +56,6 @@ function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
         if key == "Misc" then continue end
         print(key, name)
         if (self.ActiveServerInventory[key] ~= "" or self.ActiveServerInventory[key] ~= nil) and self.ActiveServerInventory[key] ~= name then
-            print("unequipping ", key, self.ActiveServerInventory[key])
             self:UnequipItem(key)
         end 
 
@@ -70,7 +69,6 @@ end
 
 function ServerInventory:UnequipItem(itemKey: string)
     local oldItemName = self.ActiveServerInventory[itemKey]
-    print(oldItemName)
     local model = self.Character:FindFirstChild(oldItemName)
     if model then model:Destroy() end
 
@@ -101,7 +99,7 @@ function ServerInventory:SetItem(key: string, name: string)
 
         self.Root:SetAttribute("Equipped"..key, name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
-    elseif key == "Skill" then
+    elseif key == "Skill" or key == "Skills" then
         local stats = SkillStats[name]
         local model = SkillModels[name]:Clone() :: Model
         model.Name = name
@@ -117,12 +115,12 @@ function ServerInventory:SetItem(key: string, name: string)
 
         self.Root:SetAttribute("EquippedSkill", name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
-    elseif key == "Gadget" then
+    elseif key == "Gadget" or key == "Gadgets" then
         local stats = GadgetStats[name]
 
         if stats == nil then
             stats = WeaponStats[name]
-            if not stats.Type == "Deployable" then
+            if not (stats.Type == "Deployable") then
                 stats = nil
             end
         end

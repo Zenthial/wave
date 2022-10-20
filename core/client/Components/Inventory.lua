@@ -87,7 +87,7 @@ function Inventory:Start()
             task.spawn(function()
                 GunEngine.LoadAnimations(weaponStats)
             end)
-        elseif inventoryKey == "Skill" then
+        elseif inventoryKey == "Skill" or inventoryKey == "Skills" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = SkillEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
@@ -98,7 +98,7 @@ function Inventory:Start()
             skillCleaner:Add(skill.EnergyChanged:Connect(function(energy)
                 MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy)
             end))
-        elseif inventoryKey == "Gadget" then
+        elseif inventoryKey == "Gadget" or inventoryKey == "Gadgets" then
             assert(model == nil, "Why does the grenade have a model?")
             
             local gadgetStats = GadgetStats[weaponName]

@@ -46,7 +46,9 @@ function ArenaPlayer.new(root: any)
             Gadgets = "",
             Skills = "",
             Misc = {}
-        }
+        },
+
+        Health = nil,
     }, ArenaPlayer)
 end
 
@@ -90,6 +92,8 @@ function ArenaPlayer:Start()
         end
     end))
 
+    local healthComponent = tcs.get_component(self.Root, "Health")
+    self.Health = healthComponent
     self:ResetCredits()
     self:ResetInventory()
 end
@@ -109,6 +113,14 @@ end
 function ArenaPlayer:LoadInventory()
     local serverInventoryComponent = tcs.get_component(self.Root, "ServerInventory")
     serverInventoryComponent:LoadServerInventory(self.Items)
+
+    self.Health:ResetExtraShields()
+    for _, item in self.Items.Misc do
+        if string.find(item, "Shield") then
+            local amount = tonumber(string.sub(item, 7))
+            self.Health:AddExtraShields(amount)
+        end
+    end
 end
 
 local function mapItemType(itemType: string)

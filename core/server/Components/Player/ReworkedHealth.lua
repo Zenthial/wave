@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -27,7 +28,7 @@ local Health: Health_T = {}
 Health.__index = Health
 Health.Name = "Health"
 Health.Tag = "Health"
-Health.Ancestor = game
+Health.Ancestor = Players
 
 function Health.new(root: any)
     print("creating component heal")
@@ -54,12 +55,12 @@ function Health:Start()
 
     if self.Root.Character ~= nil then
         self.Character = self.Root.Character
-        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel") --[[:await()]]
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel")
     end
 
     self.Cleaner:Add(self.Root.CharacterAdded:Connect(function(char)
         self.Character = char
-        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel") --[[:await()]]
+        self.ShieldModelComponent = tcs.get_component(self.Character, "ShieldModel")
     end))
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Health"):Connect(function()
@@ -99,6 +100,18 @@ function Health:SetShields(shields)
         self.ShieldModelComponent:ShieldEmpty()
         self:RegenShield(self.DamageTime)
     end
+end
+
+function Health:ResetExtraShields()
+    self.Root:SetAttribute("MaxShields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
+    self:SetShields(DEFAULT_HEALTH_STATS.MAX_SHIELD)
+end
+
+function Health:AddExtraShields(extraAmount: number)
+    local oldMax = self.Root:GetAttribute("MaxShields")
+    local newMax = oldMax + extraAmount
+    self.Root:SetAttribute("MaxShields", newMax)
+    self:SetShields(self.Root:GetAttribute("Shields") + extraAmount)
 end
 
 function Health:SetHealth(health)
