@@ -1,5 +1,6 @@
 -- tom
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
@@ -19,9 +20,16 @@ local FireModes = require(script.Modules.FireModes)
 
 local chargeWait = require(script.functions.chargeWait)
 local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
+local createDamageIndicator = require(script.functions.createDamageIndicator)
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
+
+local Hit = SoundService.Sounds.Hit
+Hit.Pitch = 2
+local EquipDebounce = false
+
+local EQUIP_WAIT = 0.3
 
 type WeaponStats = typeof(WeaponStatsModule)
 
@@ -43,7 +51,7 @@ export type Gun = {
 
 local Cleaner = Trove.new()
 
-local function functor(f: (Player, Vector3, Vector3, any, WeaponStats) -> any)
+local function functor(f: (Player, Vector3, Vector3, any) -> any)
     if f == nil then
         error("functor is nil")
     end
@@ -51,7 +59,7 @@ local function functor(f: (Player, Vector3, Vector3, any, WeaponStats) -> any)
 end
 
 local GunEngine = {
-    EquippedWeaponModel = nil
+    EquippedWeaponModel = nil,
 }
 
 function GunEngine:Start()
@@ -63,7 +71,7 @@ function GunEngine:Start()
         local weaponStats = WeaponStatsModule[weaponName]
 
         if weaponStats then
-            functor(BulletRenderer["Draw"..weaponStats.BulletType])(player, startPosition, endPosition, weaponStats.BulletCache, weaponStats)
+            functor(BulletRenderer["Draw"..weaponStats.BulletType])(player, startPosition, endPosition, weaponStats.BulletCache)
         else
             error("WeaponStats don't exist??")
         end
@@ -98,8 +106,14 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
-function GunEngine.EquipWeapon(weaponStats, weaponModel)
-    if Player:GetAttribute("InSeat") == true then return end
+function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
+    if Player:GetAttribute("InSeat") == true then return false end
+    print("here", EquipDebounce)
+    if EquipDebounce then return false end
+    EquipDebounce = true
+    task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    mutableStats.CanShoot = true
 
     Courier:Send("WeldWeapon", weaponModel, false)
 
@@ -112,16 +126,22 @@ function GunEngine.EquipWeapon(weaponStats, weaponModel)
     Player:SetAttribute("EquippedWeapon", weaponStats.Name)
 end
 
-function GunEngine.UnequipWeapon(weaponStats, weaponModel)
-    Courier:Send("WeldWeapon", weaponModel, true)
+function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
+    if EquipDebounce then return false end
+    EquipDebounce = true
+    task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
 
+    mutableStats.CanShoot = false
+    
     if weaponModel.Handle:FindFirstChild("Unequip") then
         weaponModel.Handle.Unequip:Play()
     end
 
-    GunEngine.EquippedWeaponModel = nil
-
     Player:SetAttribute("EquippedWeapon", "")
+    
+    GunEngine.EquippedWeaponModel = nil
+    
+    Courier:Send("WeldWeapon", weaponModel, true)
 end
 
 function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
@@ -130,38 +150,50 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
     print(hitPart, hitPart.Parent, healthComponentInstance)
     if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
         cursorComponent:Hitmark()
-        GunEngine.EquippedWeaponModel.Handle.Hit:Play()
+        Hit:Play()
         Courier:Send("AttemptDealDamage", healthComponentInstance, weaponStats.Name, hitPart.Name)
+
+        local shields = healthComponentInstance:GetAttribute("Shields")
+        local headshot = hitPart.Name == "Head"
+        local potentialDamage = if headshot then weaponStats.Damage * weaponStats.HeadshotMultiplier else weaponStats.Damage
+        if shields > 0 and shields - potentialDamage <= 0 then
+            SoundService.Sounds.ShieldCrack:Play()
+        end
+
+        createDamageIndicator(hitPart, potentialDamage, shields > 0, headshot)
     end
 end
 
 function GunEngine.Attack(weaponStats, mutableStats)
-    task.spawn(Battery.Heat, mutableStats)
-    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, GunEngine.EquippedWeaponModel, GunEngine.CheckHitPart, Battery.Heat)
 end
 
 function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
     mutableStats.MouseDown = true
 
     if Battery.CanFire(mutableStats) == false then
-        if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
-            GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
+        if turretModel.Barrel:FindFirstChild("Unavailable") then
+            turretModel.Barrel.Unavailable:Play()
         end
+
+        return
     end
 
     Player:SetAttribute("LocalSprinting", false)
 
-    task.spawn(Battery.Heat, mutableStats)
-    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart)
+    FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart, Battery.Heat)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
+    if EquipDebounce then return end
     mutableStats.MouseDown = true
 
     if Battery.CanFire(mutableStats) == false then
         if GunEngine.EquippedWeaponModel.Barrel:FindFirstChild("Unavailable") then
             GunEngine.EquippedWeaponModel.Barrel.Unavailable:Play()
         end
+
+        return
     end
 
     Player:SetAttribute("LocalSprinting", false)
@@ -209,7 +241,7 @@ end
 -- the standard aiming and default stats
 function GunEngine.GetMutableStats(stats)
     local mutableStats = Battery.GetStats(stats.HeatRate, stats.CoolTime, stats.CoolWait, stats.BatteryDepletionMin, stats.BatteryDepletionMax, stats.ShotsDeplete, GunEngine.GetShotsTable())
-        
+
     mutableStats.AimBuff = 3
     mutableStats.CurrentRecoil = 0
 

@@ -6,7 +6,7 @@ local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChil
 
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
-local Head = Character.Head or Character:WaitForChild("Head") :: Part
+local Head = Character:WaitForChild("Head") :: Part
 local Mouse = Player:GetMouse()
 local rng = Random.new()
 
@@ -16,16 +16,16 @@ return function(weaponStats: typeof(WeaponStats), model: Model)
 	local target = Mouse.Hit.Position
     local origin = Head.Position
 
-    local spread = rng:NextNumber(weaponStats.MinSpread, weaponStats.MaxSpread)/100 or 0
-	local distance = (origin - target).magnitude
-	local num = spread*distance 
+    local spread = rng:NextNumber(weaponStats.MinSpread, weaponStats.MaxSpread)/500 or 0
+	local distance = (origin - target).Magnitude :: number
+	local num = spread * distance 
 	local aim = Vector3.new(
 		target.X + rng:NextNumber(-num, num),
 		target.Y + rng:NextNumber(-num, num),
 		target.Z + rng:NextNumber(-num, num)
 	)
 	
-	local ray = Ray.new(origin, (aim - origin).unit * RANGE)
+	local ray = Ray.new(origin, (aim - origin).Unit * RANGE)
 
 	local ignoreList = CollectionService:GetTagged("Ignore")
 	table.insert(ignoreList, model)

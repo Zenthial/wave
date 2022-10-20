@@ -121,7 +121,7 @@ function Health:RegenShield(lastDamageTime: number)
                 self.Root:SetAttribute("ShieldRegening", true)
                 while self.Root:GetAttribute("Shields") < self.Root:GetAttribute("MaxShields") and lastDamageTime >= self.DamageTime and not self.Root:GetAttribute("Dead") do
                     self:SetShields(self.Root:GetAttribute("Shields") + 1)
-                    task.wait(0.08) -- probably should not be hard coded
+                    task.wait(0.17) -- probably should not be hard coded
                 end
                 self.Root:SetAttribute("ShieldRegening", false)
                 self:RegenShield(tick())

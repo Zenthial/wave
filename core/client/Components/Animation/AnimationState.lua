@@ -267,9 +267,21 @@ function AnimationState:HandleWeaponChange()
         task.wait(0.3) -- equip time
         self.AnimationHandler:Stop(newWeaponName.."equippingArm")
 
-        self.AnimationHandler:Play(newWeaponName.."equipMiddle")
-        self.AnimationHandler:Play(newWeaponName.."equipTop")
+        if self.State.SprintActive then
+            self.AnimationHandler:Play(newWeaponName .. "sprintingMiddle")
+            self.AnimationHandler:Play(newWeaponName .. "sprintingTop")
+            self.State.SprintPlaying = true
+        else
+            self.AnimationHandler:Play(newWeaponName.."equipMiddle")
+            self.AnimationHandler:Play(newWeaponName.."equipTop")
+        end
     else
+        for _, animationName in pairs(self.State.PlayingAnimations) do
+            if string.find(animationName:lower(), "sprinting") then -- could optimize by storing every sprint animation playing
+                self.AnimationHandler:Stop(animationName)
+            end
+        end
+
         self.AnimationHandler:Stop(oldWeaponName.."equipMiddle")
         self.AnimationHandler:Stop(oldWeaponName.."equipTop")
 

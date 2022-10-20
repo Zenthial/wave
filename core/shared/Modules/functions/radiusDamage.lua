@@ -1,13 +1,11 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
-local StarterPlayer = game:GetService("StarterPlayer")
-local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 local Players = game:GetService("Players")
 
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
+
 if RunService:IsClient() then
-    local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
-    local Comm = ClientComm.GetClientComm()
-    local DealSelfDamage = Comm:GetFunction("DealSelfDamage")
 
     return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean)
         local radius = stats.NadeRadius
@@ -25,7 +23,8 @@ if RunService:IsClient() then
             if not canTK then
                 if player.TeamColor == sourceTeam then return end
             end
-            DealSelfDamage(stats.CalculateDamage(stats.MaxDamage, dist))
+
+            Courier:Send("DealSelfDamage", stats.CalculateDamage(stats.MaxDamage, dist))
         end
     end
 elseif RunService:IsServer() then
@@ -53,7 +52,6 @@ elseif RunService:IsServer() then
             if hit and hit:IsDescendantOf(character) then
                 if stats.Action == "Heal" then
                     if player.TeamColor == sourcePlayer.TeamColor and player ~= sourcePlayer then
-                        print(player)
                         playersNear[player] = stats.CalculateDamage(maxDamage, dist)
                     end
                 else

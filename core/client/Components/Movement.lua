@@ -1,8 +1,10 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
+local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 local Keyboard = Input.Keyboard
 
 local LocalPlayer = Players.LocalPlayer
@@ -42,12 +44,19 @@ function Movement:Start()
 			if self.Root:GetAttribute("LocalCanCrouch") == false then return end
 
 			if not self.Root:GetAttribute("LocalRolling") then
-				if self.Root:GetAttribute("LocalSprinting") then
+				local currentTime = os.time()
+				local timeBetweenRolls = currentTime - self.Root:GetAttribute("RollDebounce")  :: number
+				if self.Root:GetAttribute("LocalSprinting") and timeBetweenRolls >= GlobalOptions.RollDebounce then
 					self.Root:SetAttribute("LocalRolling", true)
 					task.wait(0.55) -- from wace don't ask me
 					self.Root:SetAttribute("LocalRolling", false)
-					self.Root:SetAttribute("LocalCrouching", true)
-					self.Root:SetAttribute("LocalSprinting", false)
+					-- self.Root:SetAttribute("LocalCrouching", true)
+
+					if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+						self.Root:SetAttribute("LocalSprinting", true)
+					else
+						self.Root:SetAttribute("LocalSprinting", false)
+					end
 				else
 					self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
 				end

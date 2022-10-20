@@ -51,7 +51,7 @@ function Inventory.new(root: any)
 end
 
 function Inventory:Start()
-    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD") --[[:await()]]
+    self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
 
     local MainHUDComponent = self.MainHUD
     local skillCleaner = Trove.new() :: typeof(Trove)
@@ -101,29 +101,60 @@ function Inventory:Start()
         if currentTurret == "" then
             self.VehicleTurret = nil
             self.VehicleTurretMutableStats = nil
+            self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
+
+            if self.EquippedWeaponCleaner then
+                self.EquippedWeaponCleaner:Clean()
+            end
         else
+            if self.EquippedWeaponCleaner then
+                self.EquippedWeaponCleaner:Clean()
+            end
+            
+            self.EquippedWeaponCleaner = Trove.new()
+            local mutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
+        
+            if mutableStats then
+                self.EquippedWeaponCleaner:Add(mutableStats.HeatChanged:Connect(function(heat: number)
+                    self.MainHUD:UpdateHeat(heat, mutableStats.Overheated)
+                end))
+        
+                self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
+                    self.MainHUD:UpdateBattery(battery)
+                end))
+        
+                self.EquippedWeaponCleaner:Add(mutableStats.OverheatChanged:Connect(function(overheat: boolean)
+                    self.MainHUD:SetOverheated(overheat)
+                end))
+            end
+
             self.VehicleTurret = WeaponStats[currentTurret]
-            self.VehicleTurretMutableStats = GunEngine.GetMutableStats(WeaponStats[currentTurret])
-            print(self.VehicleTurretMutableStats)
+            self.VehicleTurretMutableStats = mutableStats
+            self.MainHUD:UpdateEquippedWeapon(WeaponStats[currentTurret], self.VehicleTurretMutableStats, nil)
         end
     end))
 end
 
 function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     if self.EquippedWeapon == weaponStats then
-        GunEngine.UnequipWeapon(weaponStats, model)
+        if GunEngine.UnequipWeapon(weaponStats, mutableStats, model) == false then return end
         self.EquippedWeapon = nil
-        self.EquippedStats = mutableStats
+        self.EquippedStats = nil
+        self.EquippedWeaponModel = nil
     elseif self.EquippedWeapon == nil then
+        if GunEngine.EquipWeapon(weaponStats, mutableStats, model) == false then return end
         self.EquippedWeapon = weaponStats
         self.EquippedStats = mutableStats
-        GunEngine.EquipWeapon(weaponStats, model)
+        self.EquippedWeaponModel = model
     elseif self.EquippedWeapon ~= weaponStats then
-        GunEngine.UnequipWeapon(weaponStats, model)
+        if GunEngine.UnequipWeapon(self.EquippedWeapon, self.EquippedStats, self.EquippedWeaponModel) == false then return end
+        task.wait(0.35)
         self.EquippedWeapon = weaponStats
         self.EquippedStats = mutableStats
-        GunEngine.EquipWeapon(weaponStats, model)
+        self.EquippedWeaponModel = model
+        if GunEngine.EquipWeapon(weaponStats, mutableStats, model) == false then return end
     end
+
 
     if self.EquippedWeaponCleaner then
         self.EquippedWeaponCleaner:Clean()
@@ -131,18 +162,31 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
     
     self.EquippedWeaponCleaner = Trove.new()
 
-    -- if self.EquippedWeapon then
-    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.AmmoChanged:Connect(function(heat: number)
-    --         self.MainHUD:UpdateHeat(heat)
-    --     end))
+    if mutableStats then
+        self.EquippedWeaponCleaner:Add(mutableStats.HeatChanged:Connect(function(heat: number)
+            self.MainHUD:UpdateHeat(heat, mutableStats.Overheated)
+        end))
 
-    --     self.EquippedWeaponCleaner:Add(self.EquippedWeapon.Events.Fired:Connect(function(trigDelay: number)
-    --         self.MainHUD:UpdateTriggerBar(trigDelay)
-    --     end))
-    -- end
+        self.EquippedWeaponCleaner:Add(mutableStats.BatteryChanged:Connect(function(battery: number)
+            self.MainHUD:UpdateBattery(battery)
+        end))
 
-    local name = self.EquippedWeapon and self.EquippedWeapon.Name or nil
-    self.MainHUD:UpdateEquippedWeapon(name)
+        self.EquippedWeaponCleaner:Add(mutableStats.OverheatChanged:Connect(function(overheat: boolean)
+            self.MainHUD:SetOverheated(overheat)
+        end))
+    end
+
+    if self.EquippedWeapon ~= nil then
+        self.MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, weaponStats == self.EquippedPrimary)
+    else
+        if mutableStats.CurrentHeat > 0 then
+            repeat
+                task.wait(.1)
+            until mutableStats.CurrentHeat == 0
+        end
+
+        self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
+    end
 end
 
 function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)

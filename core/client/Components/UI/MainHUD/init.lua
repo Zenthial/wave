@@ -25,9 +25,8 @@ end
 
 function MainHUD:Start()
     self.Root.Enabled = false
-    local ReloadingSignal = Player:GetAttributeChangedSignal("Reloading")
 
-    self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("GunToolbar"), "GunToolbar")
+    self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
@@ -36,39 +35,33 @@ function MainHUD:Start()
         self.Root.Enabled = Player:GetAttribute("InRound")
     end))
 
-    self.Cleaner:Add(ReloadingSignal:Connect(function()
-        self.GunToolbar:SetOverheated(Player:GetAttribute("Reloading"))
-    end))
-
     self.Cleaner:Add(RenderDeathEffect.OnClientEvent:Connect(function(effect, victim, killer, color)
         self:RenderDeathEffect(effect, victim, killer, color)
     end))
 end
 
-function MainHUD:UpdateEquippedWeapon(weapon)
+function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     local GunToolbar = self.GunToolbar
-    if weapon == nil then
-        GunToolbar:SetViewport(nil)
-        GunToolbar:SetOverheated(nil)
-        GunToolbar:SetName(nil)
-        GunToolbar:SetHeat(nil)
-        GunToolbar:TriggerBar(0.01)
+    if weaponStats == nil and mutableStats == nil then
+        GunToolbar:SetWeapon(nil, nil)
     else
-        GunToolbar:SetViewport(weapon.WeaponStats.Name)
-        GunToolbar:SetOverheated(false)
-        GunToolbar:SetName(weapon.WeaponStats.Name)
-        GunToolbar:SetHeat(0)
+        GunToolbar:SetWeapon(weaponStats, mutableStats, primary)
     end
 end
 
-function MainHUD:UpdateHeat(heat: number)
+function MainHUD:UpdateHeat(heat: number, overheated: boolean)
     local GunToolbarComponent = self.GunToolbar
-    GunToolbarComponent:SetHeat(heat)
+    GunToolbarComponent:UpdateHeat(heat, overheated)
 end
 
-function MainHUD:UpdateTriggerBar(trigDelay: number)
+function MainHUD:UpdateBattery(battery: number)
     local GunToolbarComponent = self.GunToolbar
-    GunToolbarComponent:TriggerBar(trigDelay)
+    GunToolbarComponent:UpdateBattery(battery)
+end
+
+function MainHUD:SetOverheated(bool: boolean)
+    local GunToolbarComponent = self.GunToolbar
+    GunToolbarComponent:SetOverheated(bool)
 end
 
 function MainHUD:SetSkillActive()
