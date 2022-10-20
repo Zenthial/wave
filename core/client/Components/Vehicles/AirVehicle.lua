@@ -124,10 +124,12 @@ end
 
 function AirVehicle:Move()
     if self.Flying then
+        self.LinearVelocity.MaxForce = 5000000
         self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
     else
-        self.Speed = math.clamp(self.Speed - 1, 0, self.MaxSpeed)
-        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position - Vector3.new(0, 25, 0)
+        --[[self.Speed = math.clamp(self.Speed - 1, 0, self.MaxSpeed)
+        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position - Vector3.new(0, 25, 0)]]
+        self.LinearVelocity.MaxForce = 0
     end
 end
 
@@ -190,16 +192,6 @@ function AirVehicle:RunServiceLoop()
         self.Speed = math.clamp(self.Speed + 1, self.MinSpeed, self.MaxSpeed)
         self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
     end
-    
-    -- if self.Flying then
-    --     if (self.Roll - targetRoll) > 0 then
-    --         self.Roll = targetRoll + math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --     elseif (self.Roll - targetRoll) < 0 then
-    --         self.Roll = targetRoll + math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --     else
-    --         self.Roll = targetRoll
-    --     end
-    -- end
 
     if not self.TakingOffOrLanding then
         velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
@@ -268,10 +260,11 @@ function AirVehicle:Unbind()
 
     self.Roll = 0
 	self.PitchVectors = self.Stats.PitchVectors
-	self.StrafeVectors = self.Stats.self.StrafeVectors
+	self.StrafeVectors = self.Stats.StrafeVectors
 	self.ReactionSpeed = self.Stats.ReactionSpeed
-	self.RiseSpeed = self.Stats.self.RiseSpeed
+	self.RiseSpeed = self.Stats.RiseSpeed
     self.TakingOffOrLanding = false
+    self.LinearVelocity.MaxForce = 0
 
     self.Flying = false
 
