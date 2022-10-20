@@ -21,11 +21,13 @@ function ArenaShop:Start()
         local playerComponent = tcs.get_component(player, "ArenaPlayer")
         local itemPrice = ArenaItems[itemType][item]
 
-        if itemPrice ~= nil and playerComponent.Credits >= itemPrice then
+        if itemPrice ~= nil then
             if playerComponent:HasItem(mapItemType(itemType), item) then
                 playerComponent:RemoveItem(mapItemType(itemType), item, itemPrice)
             else
-                playerComponent:SetItem(mapItemType(itemType), item, itemPrice)
+                if playerComponent.Credits >= itemPrice then
+                    playerComponent:SetItem(mapItemType(itemType), item, itemPrice)
+                end
             end
         end
     end)

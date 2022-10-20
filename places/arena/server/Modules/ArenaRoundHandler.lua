@@ -38,7 +38,7 @@ local function countdown(number: number, folder: Folder, attributeName: string, 
     repeat
         task.wait(1)
         number -= 1
-        print(number)
+        -- print(number)
         folder:SetAttribute(attributeName, number)
     until number <= 0 or folder:GetAttribute(boolCheck) == false
 end

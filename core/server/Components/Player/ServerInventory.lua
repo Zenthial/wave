@@ -54,10 +54,15 @@ end
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
     for key, name in pairs(inv) do
         if key == "Misc" then continue end
-        if self.ActiveServerInventory[key] ~= "" or self.ActiveServerInventory[key] ~= nil then
+        print(key, name)
+        if (self.ActiveServerInventory[key] ~= "" or self.ActiveServerInventory[key] ~= nil) and self.ActiveServerInventory[key] ~= name then
+            print("unequipping ", key, self.ActiveServerInventory[key])
             self:UnequipItem(key)
         end 
-        self:SetItem(key, name)
+
+        if name ~= "" then
+            self:SetItem(key, name)
+        end
     end
 
     self.Root:SetAttribute("ServerSideInventoryLoaded", true)
@@ -130,6 +135,7 @@ function ServerInventory:SetItem(key: string, name: string)
     end
 
     self.ActiveServerInventory[key] = name
+    print(self.ActiveServerInventory[key])
 end
 
 function ServerInventory:Destroy()

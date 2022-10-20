@@ -5,6 +5,7 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 
 local CraftingItems = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftItems"))
 local CraftingRequirements = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaCraftingRequirements"))
+local ArenaItems = require(ReplicatedStorage:WaitForChild("ArenaShared"):WaitForChild("Configurations"):WaitForChild("ArenaItems"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -40,10 +41,10 @@ function ArenaPlayer.new(root: any)
         CraftingItems = {},
         Credits = 0,
         Items = {
-            Primary = nil,
-            Secondary = nil,
-            Gadgets = nil,
-            Skills = nil,
+            Primary = "",
+            Secondary = "",
+            Gadgets = "",
+            Skills = "",
             Misc = {}
         }
     }, ArenaPlayer)
@@ -97,8 +98,8 @@ function ArenaPlayer:ResetInventory()
     self.Items = {
         Primary = "W17",
         Secondary = "Y14",
-        Gadgets = nil,
-        Skills = nil,
+        Gadgets = "",
+        Skills = "",
         Misc = {}
     }
 
@@ -110,10 +111,23 @@ function ArenaPlayer:LoadInventory()
     serverInventoryComponent:LoadServerInventory(self.Items)
 end
 
+local function mapItemType(itemType: string)
+    if itemType == "Primary" then
+        return "Primaries"
+    elseif itemType == "Secondary" then
+        return "Secondaries"
+    else
+        return itemType
+    end
+end
+
 function ArenaPlayer:SetItem(itemType, item, itemPrice)
     if itemType == "Misc" then
         table.insert(self.Items[itemType], item)
     else
+        if self.Items[itemType] ~= "" then
+            self:RemoveItem(itemType, self.Items[itemType], ArenaItems[mapItemType(itemType)][self.Items[itemType]])
+        end
         self.Items[itemType] = item
     end
     self.Credits = math.clamp(self.Credits - itemPrice, 0, self.Credits)
@@ -125,7 +139,7 @@ function ArenaPlayer:RemoveItem(itemType, item, itemPrice)
     if itemType == "Misc" then
         table.remove(self.Items[itemType], table.find(self.Items[itemType], item))
     else
-        self.Items[itemType] = nil
+        self.Items[itemType] = ""
     end
     self.Credits += itemPrice
     self.Root:SetAttribute("Credits", self.Credits)
@@ -133,7 +147,7 @@ function ArenaPlayer:RemoveItem(itemType, item, itemPrice)
 end
 
 function ArenaPlayer:HasItem(itemType, itemName)
-    if self.Items[itemType] ~= nil then return self.Items[itemType] == itemName else return false end    
+    if self.Items[itemType] ~= "" then return self.Items[itemType] == itemName else return false end    
 end
 
 function ArenaPlayer:ResetCredits()
