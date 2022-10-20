@@ -37,6 +37,23 @@ local function makeItem(name: string, cost: number)
     return item
 end
 
+local function makeMiscItem(name: string)
+    local textButton = Instance.new("TextButton")
+    textButton.Name = "TextButton"
+    textButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+    textButton.Text = "+"..name
+    textButton.TextColor3 = Color3.fromRGB(1, 179, 255)
+    textButton.TextScaled = true
+    textButton.TextSize = 14
+    textButton.TextWrapped = true
+    textButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    textButton.BorderSizePixel = 0
+    textButton.LayoutOrder = tonumber(name)
+    textButton.Size = UDim2.fromScale(0.587, 0.5)
+
+    return textButton
+end
+
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
@@ -89,12 +106,17 @@ end
 
 function ArenaArmoryUI:LoadItems()
     for itemType, items in pairs(ArenaItems) do
-        if itemType == "Misc" then continue end
-        local itemContainer = self.Root.ItemContainer[itemType]
         for itemName, itemCost in pairs(items) do
-            local itemFrame = makeItem(itemName, itemCost)
-            self:HookItemButton(itemType, itemName, itemFrame.TextButton)
-            itemFrame.Parent = itemContainer
+            if itemType == "Misc" then 
+                local itemFrame = makeMiscItem(string.sub(itemName, 7))
+                self:HookItemButton(itemType, itemName, itemFrame)
+                itemFrame.Parent = self.Root.Shields
+            else
+                local itemContainer = self.Root.ItemContainer[itemType]
+                local itemFrame = makeItem(itemName, itemCost)
+                self:HookItemButton(itemType, itemName, itemFrame.TextButton)
+                itemFrame.Parent = itemContainer
+            end
         end
     end
 end
