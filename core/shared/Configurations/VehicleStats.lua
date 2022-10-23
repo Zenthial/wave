@@ -91,7 +91,6 @@ local Vehicles = {
 		Speed = 600,
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
 		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
-		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
 		RiseSpeed = Vector2.new(15,20), --Up, Down
 		--BodyGyro
 		DirectionD = 400,

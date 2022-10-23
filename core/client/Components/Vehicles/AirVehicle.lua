@@ -115,7 +115,6 @@ function AirVehicle:Start()
     self.Roll = 0
 	self.PitchVectors = self.Stats.PitchVectors
 	self.StrafeVectors = self.Stats.StrafeVectors
-	self.ReactionSpeed = self.Stats.ReactionSpeed
 	self.RiseSpeed = self.Stats.RiseSpeed
     self.TakingOffOrLanding = false
 
@@ -199,7 +198,6 @@ function AirVehicle:RunServiceLoop()
         velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
     end
     
-    --velocity = self.LinearVe.Velocity:Lerp(velocity, self.ReactionSpeed)
     if self.TakingOffOrLanding then
         velocity = Vector3.new(velocity.X / 8, velocity.Y * 1.025, velocity.Z / 8)
     else
@@ -267,7 +265,6 @@ function AirVehicle:Unbind()
     self.Roll = 0
 	self.PitchVectors = self.Stats.PitchVectors
 	self.StrafeVectors = self.Stats.StrafeVectors
-	self.ReactionSpeed = self.Stats.ReactionSpeed
 	self.RiseSpeed = self.Stats.RiseSpeed
     self.TakingOffOrLanding = false
     self.LinearVelocity.MaxForce = 0
