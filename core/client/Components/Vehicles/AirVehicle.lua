@@ -125,11 +125,13 @@ end
 function AirVehicle:Move()
     if self.Flying then
         self.LinearVelocity.MaxForce = 5000000
+        self.Direction.MaxTorque = self.Stats.DirectionTorque
+        self.Direction.D = self.Stats.DirectionD
+        self.Direction.P = self.Stats.DirectionP
         self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
     else
-        --[[self.Speed = math.clamp(self.Speed - 1, 0, self.MaxSpeed)
-        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position - Vector3.new(0, 25, 0)]]
         self.LinearVelocity.MaxForce = 0
+        self.Direction.MaxTorque = Vector3.new(0,0,0)
     end
 end
 
@@ -228,6 +230,10 @@ function AirVehicle:Bind()
     self.Cleaner:Add(sessionCleaner, "Clean")
     self.SessionCleaner = sessionCleaner
 
+    self.Direction.MaxTorque = self.Stats.DirectionTorque
+    self.Direction.D = self.Stats.DirectionD
+    self.Direction.P = self.Stats.DirectionP
+
     sessionCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed) inputProcessor(self, input, processed) end))
     sessionCleaner:Add(UserInputService.InputChanged:Connect(function(input, processed)
         if input.UserInputType == Enum.UserInputType.MouseMovement and self.Flying then
@@ -266,6 +272,7 @@ function AirVehicle:Unbind()
     self.TakingOffOrLanding = false
     self.LinearVelocity.MaxForce = 0
 
+    self.Direction.MaxTorque = Vector3.new(0,0,0)
     self.Flying = false
 
     self.PreviousMousePosition = nil
