@@ -114,29 +114,6 @@ function VehicleController:Start()
         end
     end)
 
-    Courier:Listen("BindToStaticTurret"):Connect(function(turret: Model, vehicleName: string)
-        if CollectionService:HasTag(turret, "StaticTurret") then
-            local turretComponent = tcs.get_component(turret, "StaticTurret")
-            turretComponent:Bind()
-            togglePrompts(false)
-
-            Player:SetAttribute("CurrentTurret", "StaticTurret")
-            print(turret)
-            inventoryComponent:SetTurretModel(turret)
-        end
-    end)
-
-    Courier:Listen("UnbindFromStaticTurret"):Connect(function(turret: Model, vehicleName: string)
-        if CollectionService:HasTag(turret, "StaticTurret") then
-            local turretComponent = tcs.get_component(turret, "StaticTurret")
-            turretComponent:Unbind()
-            togglePrompts(true)
-
-            Player:SetAttribute("CurrentTurret", "")
-            inventoryComponent:SetTurretModel(nil)
-        end
-    end)
-
     Courier:Listen("UpdateServo"):Connect(function(servo: HingeConstraint, angle: number)
         servo.TargetAngle = angle
     end)
