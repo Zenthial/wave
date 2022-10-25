@@ -138,14 +138,7 @@ function AirVehicle:UpdateCamera()
     Camera.CameraType = Enum.CameraType.Attach
     Camera.CameraSubject = self.Engine
 
-    -- self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
-    -- self.MouseDeltas = Vector2.new(0,0)
-    -- self.CameraAngles = Vector2.new(self.CameraAngles.X, self.CameraAngles.Y)
-    
-    -- local angles1 = CFrame.Angles(0,math.rad(self.CameraAngles.X), 0)
-    -- local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
-
-    Camera.CFrame *= CFrame.new((VehicleStats[self.Root.Name].CameraOut or Vector3.new(0, 15, 65)))
+    Camera.CFrame *= CFrame.new((self.Stats.CameraOut or Vector3.new(0, 15, 65)))
 end
 
 function AirVehicle:RunServiceLoop()

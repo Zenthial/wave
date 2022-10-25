@@ -62,6 +62,8 @@ function AirVehicle:Start()
     assert(pilotSeat, "No pilot seat for " .. self.Root.Name)
     self.Seat = pilotSeat
 
+    CollectionService:AddTag(self.Root, "VehicleHealth")
+
     self:InitializePilotProximityPrompt()
 
     local vehicleSeatComponent = tcs.get_component(pilotSeat, "VehicleSeat")
@@ -85,6 +87,36 @@ function AirVehicle:Start()
             goFlat()
         end
     end))
+
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Dead"):Connect(function()
+        if self.Root:GetAttribute("Dead") then
+            self.Courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
+            local explosion = Instance.new("Explosion")
+            explosion.BlastRadius = 30
+            explosion.ExplosionType = Enum.ExplosionType.NoCraters
+            explosion.Position = self.Engine.Position
+            explosion.DestroyJointRadiusPercent = 0.80
+            explosion.Visible = true
+            explosion.Parent = self.Engine
+            task.wait(25)
+            self.Root:Destroy()
+        end
+    end))
+
+    local health_component = tcs.get_component(self.Root, "VehicleHealth")
+    local partsTable = self.Engine:GetConnectedParts()
+    local touching = false
+    for _, part in pairs(partsTable) do
+        self.Cleaner:Add(part.Touched:Connect(function(hitPart)
+            if not table.find(partsTable, hitPart) and not touching and hitPart.AssemblyRootPart.Name ~= "HumanoidRootPart" then
+                touching = true
+                health_component:TakeDamage(100)
+                task.wait(.1)
+                touching = false
+            end
+        end))
+    end
+    
 end
 
 function AirVehicle:InitializePilotProximityPrompt()

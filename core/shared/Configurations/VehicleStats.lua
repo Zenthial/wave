@@ -88,6 +88,7 @@ local Vehicles = {
 		DirectionP = 500,
 	},
 	["Sweeper"] = {
+		Health = 750, -- Max health
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
 		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
 		RiseSpeed = Vector2.new(15,20), --Up, Down
@@ -95,8 +96,6 @@ local Vehicles = {
 		DirectionD = 400,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
-		--
-		CameraType = "Attach", --Defaults to Scriptable
 		
 		--Throttle, -1 to 1, like on vehicleseats, can go over/under but why? Increase/decrease speed instead.
 		MinimumSpeed = 90, --S
@@ -124,7 +123,7 @@ local Vehicles = {
 		MinimumSpeed = 0.4, --S
 	},
 	["Striker"] = {
-		Speed = 150,
+		Health = 500, -- Max health
 		PitchVectors = Vector2.new(-30,30), --Forward, Backward
 		StrafeVectors = Vector2.new(40,25), --Speed limit, roll angle limit
 		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
@@ -136,9 +135,9 @@ local Vehicles = {
 		--
 		
 		--Throttle, -1 to 1, like on vehicleseats, can go over/under but why? Increase/decrease speed instead.
-		MinimumSpeed = 0.2, --S
-		IdleSpeed = 0.4, --(Neither W or S) or (W and S)
-		MaximumSpeed = 1, --W
+		MinimumSpeed = 200, --S
+		MaximumSpeed = 600, --W
+		SpeedIncreaseRate = 0.5, -- How fast the speed increases (per frame)
 		
 		CounterGravity = .3, --Multiplier of lookVector.Y for BodyVelocity
 	},

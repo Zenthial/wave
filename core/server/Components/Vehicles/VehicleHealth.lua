@@ -36,6 +36,7 @@ function VehicleHealth.new(root: any)
 end
 
 function VehicleHealth:Start()
+    print("Initialized")
     local stats = VehicleStats[self.Root.Name]
     assert(stats, "No Vehicle Stats for " .. self.Root.Name)
     self.Stats = stats
@@ -64,5 +65,7 @@ end
 function VehicleHealth:Destroy()
     self.Cleaner:Clean()
 end
+
+tcs.create_component(VehicleHealth)
 
 return VehicleHealth
