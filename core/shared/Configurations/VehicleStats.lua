@@ -88,7 +88,6 @@ local Vehicles = {
 		DirectionP = 500,
 	},
 	["Sweeper"] = {
-		Speed = 600,
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
 		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
 		RiseSpeed = Vector2.new(15,20), --Up, Down
@@ -100,9 +99,9 @@ local Vehicles = {
 		CameraType = "Attach", --Defaults to Scriptable
 		
 		--Throttle, -1 to 1, like on vehicleseats, can go over/under but why? Increase/decrease speed instead.
-		MinimumSpeed = 0.2, --S
-		IdleSpeed = 0.6, --(Neither W or S) or (W and S)
+		MinimumSpeed = 90, --S
 		MaximumSpeed = 200, --W
+		SpeedIncreaseRate = 0.2, -- How fast the speed increases (per frame)
 		
 		--Camera limits
 		CameraMinY = -40,

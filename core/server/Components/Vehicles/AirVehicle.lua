@@ -58,13 +58,13 @@ function AirVehicle:Start()
 		direction.CFrame = CFrame.new(enginePart.CFrame.Position, enginePart.CFrame.Position + Vector3.new(LookVector.X, 0, LookVector.Z))
 	end
     
-    local seat = self.Root.PilotSeat
-    assert(seat, "No seat for " .. self.Root.Name)
-    self.Seat = seat
+    local pilotSeat = self.Root.PilotSeat
+    assert(pilotSeat, "No pilot seat for " .. self.Root.Name)
+    self.Seat = pilotSeat
 
     self:InitializePilotProximityPrompt()
 
-    local vehicleSeatComponent = tcs.get_component(seat, "VehicleSeat")
+    local vehicleSeatComponent = tcs.get_component(pilotSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if self:IsVehicleFlipped() then
             direction.MaxTorque = Vector3.new(0, 0, 25000000)
