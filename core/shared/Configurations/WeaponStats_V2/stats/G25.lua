@@ -65,7 +65,7 @@ return {
 	CoolWait = 1,
 	FireRate = 0,
 	ChargeWait = 0,
-	Trigger = "Semi",
+	Trigger = "Launcher",
 	FireMode = "Launcher",
 	BulletType = "Projectile",
 	BulletCache = Caches.DefaultCache,

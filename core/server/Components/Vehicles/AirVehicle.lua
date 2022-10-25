@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -82,6 +83,7 @@ function AirVehicle:Start()
         if newOccupant ~= nil then
             self.Courier:Send("BindToPlane", newOccupant, self.Root)
         else
+            self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true   
             self.Courier:Send("UnbindFromPlane", oldOccupant, self.Root)
             goFlat()
@@ -96,9 +98,10 @@ function AirVehicle:InitializePilotProximityPrompt()
     prompt.ObjectText = "Pilot Seat"
     prompt.ActionText = "Pilot the " .. self.Root.Name
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 25
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
+    CollectionService:AddTag(prompt, "Prompt")
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then

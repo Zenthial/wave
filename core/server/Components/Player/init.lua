@@ -1,6 +1,8 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
+local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChild("InventoryStats"))
 
 local tcs = require(Shared:WaitForChild("tcs", 5))
 
@@ -16,8 +18,7 @@ local Player = {}
 Player.__index = Player
 Player.Name = "ServerPlayer"
 Player.Tag = "Player"
--- Player.Ancestor = Players
-Player.Needs = {"Cleaner"}
+Player.Ancestor = Players
 
 function Player.new(player: Player)
     return setmetatable({
@@ -39,6 +40,9 @@ function Player:Start()
     end))
 
     self.Cleaner:Add(playerFolder)
+
+    -- local serverInventoryComponent = tcs.get_component(self.Player, "ServerInventory")
+    -- serverInventoryComponent:LoadServerInventory(InventoryStats)
 end
 
 function Player:Destroy()

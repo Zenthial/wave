@@ -1,17 +1,14 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
-local StarterPlayer = game:GetService("StarterPlayer")
-local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 local Players = game:GetService("Players")
 
-if RunService:IsClient() then
-    local ClientComm = require(StarterPlayerScripts.Client.Modules.ClientComm)
-    local Comm = ClientComm.GetClientComm()
-    local DealSelfDamage = Comm:GetFunction("DealSelfDamage")
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
-    return function(stats, part: Part, sourceTeam: BrickColor, canTK: boolean)
-        local origin = part.Position
-        local radius = if stats.NadeRadius > 0 then stats.NadeRadius else part.Size / 2
+if RunService:IsClient() then
+
+    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean)
+        local radius = stats.NadeRadius
 
         local player = Players.LocalPlayer
         local character = player.Character
@@ -26,20 +23,18 @@ if RunService:IsClient() then
             if not canTK then
                 if player.TeamColor == sourceTeam then return end
             end
-            DealSelfDamage(stats.CalculateDamage(stats.MaxDamage, dist))
+
+            Courier:Send("DealSelfDamage", stats.CalculateDamage(stats.MaxDamage, dist))
         end
     end
 elseif RunService:IsServer() then
-    return function(stats, part: Part, sourcePlayer: Player, canTK: boolean)
-        local origin = part.Position
+    return function(stats, origin: Vector3, sourcePlayer: Player, canTK: boolean)
         local radius
 
         if stats.NadeRadius and stats.NadeRadius > 0 then 
             radius = stats.NadeRadius
         elseif stats.BlastRadius and stats.BlastRadius > 0 then
             radius = stats.BlastRadius
-        else
-            radius = part.Size / 2
         end
 
         local playersNear = {}
@@ -57,7 +52,6 @@ elseif RunService:IsServer() then
             if hit and hit:IsDescendantOf(character) then
                 if stats.Action == "Heal" then
                     if player.TeamColor == sourcePlayer.TeamColor and player ~= sourcePlayer then
-                        print(player)
                         playersNear[player] = stats.CalculateDamage(maxDamage, dist)
                     end
                 else

@@ -88,7 +88,8 @@ local function OnRayTerminated(cast)
 	print(cosmeticBullet)
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
-		gadgetStats.TerminationBehavior(cosmeticBullet, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
+
+		gadgetStats.TerminationBehavior(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end
@@ -116,7 +117,6 @@ local function HandleGadgetStats(player: Player, NadeCaster, CastParams, gadgetS
     end
 
     CastBehavior.RaycastParams = CastParams
-    CastBehavior.MaxDistance = gadgetStats.MaxDistance
     CastBehavior.CosmeticBulletProvider = gadgetStats.Cache
     CastBehavior.CosmeticBulletContainer = gadgetStats.CacheFolder
     CastBehavior.Acceleration = gadgetStats.Gravity

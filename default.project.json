@@ -27,6 +27,9 @@
     "SoundService": {
       "$properties": {
         "RespectFilteringEnabled": true
+      },
+      "Sounds": {
+        "$path": "Sounds.rbxmx"
       }
     },
     "Chat": {

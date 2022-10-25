@@ -14,7 +14,6 @@ export type GadgetStats_T = {
     DEBUG: boolean,
 
     ProjectileSpeed: number,
-    MaxDistance: number,
 
     NadeRadius: number,
     MaxDamage: number,
@@ -46,6 +45,7 @@ local Caches = {
     NDG = nil,
     C0S = nil,
     PBW = nil,
+    Tank = nil,
 }
 
 if RunService:IsClient() then
@@ -55,6 +55,7 @@ if RunService:IsClient() then
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
+    Caches.Tank = PartCache.new(Gadgets.TankRay.Projectile, 30, CacheFolder)
     Caches.PBW = PartCache.new(Weapons.PBW.Projectile, 30, CacheFolder)
 end
 
@@ -62,12 +63,12 @@ return {
     ["NDG"] = {
         Name = "NDG",
         Type = "Projectile",
-        Quantity = 2,
+        Quantity = 3,
 
+        Exploding = false,
         DEBUG = false,
 
         ProjectileSpeed = 150,
-        MaxDistance = 300,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -92,29 +93,37 @@ return {
         end,
 
         -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = false
-            grenade.CanCollide = true
-            grenade.CanTouch = false
-            grenade.CanQuery = false
-            task.wait(stats.PopTime)
-            local character = sourcePlayer.Character
-            if character then
-                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
-                local explosion = Instance.new("Explosion")
-                explosion.Position = grenade.Position
-                explosion.BlastRadius = stats.NadeRadius
-                explosion.BlastPressure = 0
-                explosion.DestroyJointRadiusPercent = 0
-                explosion.Parent = workspace
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                local grenade = partCache:GetPart()
+                grenade.Anchored = false
+                grenade.CanCollide = true
+                grenade.CanTouch = false
+                grenade.CanQuery = false
+                grenade.CFrame = cframe
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = grenade.Position
+                    explosion.BlastRadius = stats.NadeRadius
+                    explosion.BlastPressure = 0
+                    explosion.DestroyJointRadiusPercent = 0
+                    explosion.Parent = workspace
 
-                task.delay(1, function()
-                    explosion:Destroy()
-                end)
+                    task.delay(1, function()
+                        explosion:Destroy()
+                    end)
 
-                radiusDamage(stats, grenade, nil, false)
-            end
-            task.wait(stats.DelayTime)
+                    radiusDamage(stats, cframe.Position, nil, false)
+                end
+                task.wait(stats.DelayTime)
+                partCache:ReturnPart(grenade)
+                stats.Exploding = false
+            end)
         end
     },
 
@@ -123,10 +132,10 @@ return {
         Type = "Projectile",
         Quantity = 2,
 
+        Exploding = false,
         DEBUG = true,
 
         ProjectileSpeed = 150,
-        MaxDistance = 300,
 
         NadeRadius = -1,
         MaxDamage = -1,
@@ -152,44 +161,52 @@ return {
             return math.clamp(damage + (20 * (1 / distance)), 1, 15)
         end,
 
-        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = true
-            grenade.CanCollide = false
-            grenade.CanTouch = false
-            grenade.CanQuery = false
-
-            grenade.BrickColor = sourceTeam
-            local startCFrame = grenade.CFrame
-            local tween = TweenService:Create(grenade, TweenInfo.new(.1, Enum.EasingStyle.Linear), {Size = Vector3.new(stats.Size, stats.Size, stats.Size)})
-            tween:Play()
-            tween.Completed:Wait()
-
-            grenade.CFrame = startCFrame
-            grenade.Transparency = 0.5
-
-            -- this should be moved somewhere
-            -- reminder, implement a
-            local active = true
+        -- task.spawn is required
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
             task.spawn(function()
-                while active do
-                    radiusDamage(stats, grenade, nil, false)
-                    task.wait(0.05)
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                local grenade = partCache:GetPart()
+                grenade.Anchored = true
+                grenade.CanCollide = false
+                grenade.CanTouch = false
+                grenade.CanQuery = false
+                grenade.CFrame = cframe
+
+                grenade.BrickColor = sourceTeam
+                local startCFrame = grenade.CFrame
+                local tween = TweenService:Create(grenade, TweenInfo.new(.1, Enum.EasingStyle.Linear), {Size = Vector3.new(stats.Size, stats.Size, stats.Size)})
+                tween:Play()
+                tween.Completed:Wait()
+
+                grenade.CFrame = startCFrame
+                grenade.Transparency = 0.5
+
+                -- this should be moved somewhere
+                -- reminder, implement a
+                local active = true
+                task.spawn(function()
+                    while active do
+                        radiusDamage(stats, cframe.Position, nil, false)
+                        task.wait(0.05)
+                    end
+                end)
+
+                if stats.DecreaseSize then
+                    local info = TweenInfo.new(stats.DelayTime + .5, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+                    local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
+                    sizeDecrease:Play()
+                    sizeDecrease.Completed:Wait()
+                else
+                    task.wait(stats.DelayTime - .1)
+                    local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
+                    sizeDecrease:Play()
                 end
+
+                active = false
+                partCache:ReturnPart(grenade)
+                stats.Exploding = false
             end)
-
-            if stats.DecreaseSize then
-                local info = TweenInfo.new(stats.DelayTime + .5, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
-                local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
-                sizeDecrease:Play()
-                sizeDecrease.Completed:Wait()
-            else
-                task.wait(stats.DelayTime - .1)
-                local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
-                sizeDecrease:Play()
-            end
-
-            active = false
         end
     },
 
@@ -198,10 +215,10 @@ return {
         Type = "Projectile",
         Quantity = 2,
 
+        Exploding = false,
         DEBUG = false,
 
         ProjectileSpeed = 200,
-        MaxDistance = 300,
 
         NadeRadius = 10,
         MaxDamage = 40,
@@ -225,25 +242,32 @@ return {
             return math.abs(damage*distanceDamageFactor)
         end,
 
-        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = false
-            grenade.CanCollide = true
-            grenade.CanTouch = false
-            grenade.CanQuery = false
-            task.wait(stats.PopTime)
-            local character = sourcePlayer.Character
-            if character then
-                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
-                grenade.ParticleEmitter1:Destroy()
-				grenade.ParticleEmitter2.Enabled = true
-                grenade.Explode:Play()
-				grenade.Transparency = 1
+        -- must be wrapped in a task.spawn
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                local grenade = partCache:GetPart()
+                grenade.Anchored = false
+                grenade.CanCollide = true
+                grenade.CanTouch = false
+                grenade.CanQuery = false
+                grenade.CFrame = cframe
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                    grenade.ParticleEmitter1:Destroy()
+                    grenade.ParticleEmitter2.Enabled = true
+                    grenade.Explode:Play()
+                    grenade.Transparency = 1
 
-                radiusDamage(stats, grenade, nil, false)
-            end
-            task.wait(stats.DelayTime)
-            
+                    radiusDamage(stats, cframe.Position, nil, false)
+                end
+                task.wait(stats.DelayTime)
+                partCache:ReturnPart(grenade)
+                stats.Exploding = false
+            end)
         end
     },
 
@@ -252,10 +276,10 @@ return {
         Type = "Projectile",
         Quantity = 2,
 
+        Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 500,
-        MaxDistance = 300,
+        ProjectileSpeed = 175,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -266,7 +290,7 @@ return {
         PopTime = 0.6,
         DelayTime = 0.1,
 
-        Gravity = Vector3.new(0, -1000, 0),
+        Gravity = Vector3.new(0, -175, 0),
 
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
@@ -279,30 +303,94 @@ return {
             return math.abs(damage*distanceDamageFactor)
         end,
 
-        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(grenade: BasePart, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            grenade.Anchored = true
-            grenade.CanCollide = true
-            grenade.CanTouch = false
-            grenade.CanQuery = false
-            task.wait(stats.PopTime)
-            local character = sourcePlayer.Character
-            if character then
-                local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
-                local explosion = Instance.new("Explosion")
-                explosion.Position = grenade.Position
-                explosion.BlastRadius = stats.NadeRadius
-                explosion.BlastPressure = 0
-                explosion.DestroyJointRadiusPercent = 0
-                explosion.Parent = workspace
+        -- must be wrapped in a task.spawn
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                local grenade = partCache:GetPart()
+                grenade.Anchored = true
+                grenade.CanCollide = true
+                grenade.CanTouch = false
+                grenade.CanQuery = false
+                grenade.CFrame = cframe
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = grenade.Position
+                    explosion.BlastRadius = stats.NadeRadius
+                    explosion.BlastPressure = 0
+                    explosion.DestroyJointRadiusPercent = 0
+                    explosion.Parent = workspace
+    
+                    task.delay(1, function()
+                        explosion:Destroy()
+                    end)
+    
+                    radiusDamage(stats, cframe.Position, nil, false)
+                end
+                task.wait(stats.DelayTime)
+                partCache:ReturnPart(grenade)
+                stats.Exploding = false
+            end)
+        end
+    },
 
-                task.delay(1, function()
-                    explosion:Destroy()
-                end)
+    ["Instigator"] = {
+        Name = "Instigator",
+        Type = "Projectile",
+        Quantity = 999,
 
-                radiusDamage(stats, grenade, nil, false)
-            end
-            task.wait(stats.DelayTime)
+        Exploding = false,
+        DEBUG = false,
+
+        ProjectileSpeed = 600,
+
+        NadeRadius = 40,
+        MaxDamage = 75,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        Gravity = Vector3.new(0, -1, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.Tank,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/40)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+
+        -- must be wrapped in a task.spawn
+        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
+            task.spawn(function()
+                if stats.Exploding == true then return end
+                stats.Exploding = true
+                task.wait(stats.PopTime)
+                local character = sourcePlayer.Character
+                if character then
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = cframe.Position
+                    explosion.BlastRadius = stats.NadeRadius
+                    explosion.BlastPressure = 0
+                    explosion.DestroyJointRadiusPercent = 0
+                    explosion.Parent = workspace
+    
+                    task.delay(1, function()
+                        explosion:Destroy()
+                    end)
+    
+                    radiusDamage(stats, cframe.Position, nil, false)
+                end
+                task.wait(stats.DelayTime)
+                stats.Exploding = false
+            end)
         end
     },
 } :: {[string]: GadgetStats_T}

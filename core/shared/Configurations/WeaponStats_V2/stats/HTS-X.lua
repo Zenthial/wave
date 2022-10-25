@@ -43,7 +43,7 @@ return {
 	Description = "", -- Turret tool for GROWLER, no desc needed,
 	QuickDescription = "Semi Automatic, Single Explosive Shot",
 	WeaponCost = 3000,
-	Slot = 3,
+	Slot = "T",
 	DeltaSlot = 5,
 	Type = "Deployable",
 	NumBarrels = 3,

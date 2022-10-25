@@ -1,25 +1,35 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local Player = Players.LocalPlayer
-local SkillRemoteFolder = ReplicatedStorage:WaitForChild("PlayerFolders"):WaitForChild(Player.Name):WaitForChild("SkillRemoteFolder")
-local InvisRemote = SkillRemoteFolder:WaitForChild(Player.Name.."_InvisRemote") :: RemoteEvent
+local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+local SkillRemoteFolder = ReplicatedStorage:WaitForChild("PlayerFolders"):WaitForChild(LocalPlayer.Name):WaitForChild("SkillRemoteFolder")
+local InvisRemote = SkillRemoteFolder:WaitForChild(LocalPlayer.Name.."_InvisRemote") :: RemoteEvent
 
 local TRANSPARENCY = 0.98
 local ENERGY_WAIT_TIME = 0.2
 
-local active = false
 local archivedParts = nil
 
-return function(self, bool, character, skillModel)
+type SkillStats = {
+    SkillName: string,
+    SkillModel: Model,
+
+    Energy: number,
+    Recharging: boolean,
+    Active: boolean
+}
+
+return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
     print("here")
-    if not active then
-        active = true
+    if not skillStats.Active then
+        skillStats.Active = true
 
         local partsTable = archivedParts
 
         if partsTable == nil then
-            local foldersTable = {character:GetDescendants(), skillModel:GetDescendants()}
+            local foldersTable = {character:GetDescendants(), skillStats.SkillModel:GetDescendants()}
             local parts = {}
 
             for _, v in pairs(foldersTable) do
@@ -38,18 +48,20 @@ return function(self, bool, character, skillModel)
         InvisRemote:FireServer(partsTable, TRANSPARENCY)
 
         task.spawn(function()
-            while active do
-                self:DepleteEnergy(self.Stats.EnergyDeplete)
+            while skillStats.Active do
+                depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete)
                 task.wait(ENERGY_WAIT_TIME)
             end
+
+            skillStats.Active = false
         end)
-    elseif active or bool == false then
-        active = false
+    elseif skillStats.Active or bool == false then
+        skillStats.Active = false
 
         local partsTable = archivedParts
 
         if partsTable == nil then
-            local foldersTable = {character:GetDescendants(), skillModel:GetDescendants()}
+            local foldersTable = {character:GetDescendants(), skillStats.SkillModel:GetDescendants()}
             local parts = {}
 
             for _, v in pairs(foldersTable) do
@@ -66,6 +78,6 @@ return function(self, bool, character, skillModel)
 
         InvisRemote:FireServer(partsTable)
 
-        self:RegenEnergy()
+        regenEnergy(skillStats)
     end
 end

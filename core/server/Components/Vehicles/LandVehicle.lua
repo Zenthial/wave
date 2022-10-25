@@ -99,14 +99,15 @@ function LandVehicle:Start()
             self.Courier:Send("BindToVehicle", newOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("BindToTurret", newOccupant, mainTurret)
+                self.Courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
             end
         else
-            self.ProximityPrompt.Enabled = true   
+            self.ProximityPrompt.Enabled = true
+            self.OccupantPlayer = nil
             self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret)
+                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
             end
         end
     end))
@@ -119,9 +120,10 @@ function LandVehicle:InitializeDriverProximityPrompt()
     prompt.ObjectText = "Driver Seat"
     prompt.ActionText = "Drive the " .. self.Root.Name
     prompt.KeyboardKeyCode = Enum.KeyCode.E
-    prompt.MaxActivationDistance = 25
+    prompt.MaxActivationDistance = 10
     prompt.HoldDuration = 1
     prompt.RequiresLineOfSight = false
+    CollectionService:AddTag(prompt, "Prompt")
 
     self.Cleaner:Add(prompt.Triggered:Connect(function(player: Player)
         if self.OccupantPlayer == nil and player.Character ~= nil and player.Character.Humanoid ~= nil then

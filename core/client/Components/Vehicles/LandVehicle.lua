@@ -1,14 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
-local CameraLimits = require(script.Parent.CameraLimits)
-
+local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 
 type Cleaner_T = {
@@ -135,7 +135,7 @@ function LandVehicle:UpdateSteering()
 
     if velocityY == 0 then velocityY = self.IdleSpeed end
 
-    self.SteeringVector = Vector2.new(math.clamp(velocityX, -1, 1), math.clamp(velocityY, self.MinSpeed,self.MaxSpeed))
+    self.SteeringVector = Vector2.new(math.clamp(velocityX, -1, 1), math.clamp(velocityY, self.MinSpeed, self.MaxSpeed))
 end
 
 function LandVehicle:UpdateMovement()
@@ -230,6 +230,7 @@ function LandVehicle:Unbind()
     self.SessionCleaner = nil
 
     Camera.CameraType = Enum.CameraType.Custom
+    Camera.CameraSubject = Character
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 
     self:Move(0)

@@ -67,6 +67,15 @@ function ShieldModel:ShieldEmpty()
     end)
 end
 
+function ShieldModel:Spawn()
+    self.Model.TorsoShield.Spawn:Play()
+    self.Model.TorsoShield.CharacterSpawn.Enabled = true
+
+    task.delay(0.2, function()
+        self.Model.TorsoShield.CharacterSpawn.Enabled = false
+    end)
+end
+
 function ShieldModel:Destroy()
     self.Model:Destroy()
 end

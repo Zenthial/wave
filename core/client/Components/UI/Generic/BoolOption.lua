@@ -35,7 +35,6 @@ BoolOption.__index = BoolOption
 BoolOption.Name = "BoolOption"
 BoolOption.Tag = "BoolOption"
 BoolOption.Ancestor = game
-BoolOption.Needs = {"Cleaner"}
 
 function BoolOption.new(root: any)
     return setmetatable({

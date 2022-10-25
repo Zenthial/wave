@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 
 type Cleaner_T = {
@@ -62,6 +63,7 @@ function VehicleSeat:Start()
                     end
                     self.Events.OccupantChanged:Fire(player, self.Occupant)
                     self.Occupant = player
+                    Courier:Send("InSeat", player, true)
 
                     local jumpConnection = nil :: RBXScriptSignal
                     jumpConnection = occupant.Jumping:Connect(function()
@@ -84,6 +86,7 @@ function VehicleSeat:Start()
                 end
 
                 self.Events.OccupantChanged:Fire(nil, self.Occupant)
+                Courier:Send("InSeat", self.Occupant, true)
                 self.Occupant = nil
             end
         end

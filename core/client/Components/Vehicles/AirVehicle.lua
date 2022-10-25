@@ -11,6 +11,8 @@ local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("uti
 local CameraLimits = require(script.Parent.CameraLimits)
 
 local Mouse = Players.LocalPlayer:GetMouse()
+local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 
 local function getYPR(ObjectCFrame: CFrame)
@@ -249,6 +251,7 @@ function AirVehicle:Unbind()
     self.SessionCleaner = nil
 
     Camera.CameraType = Enum.CameraType.Custom
+    Camera.CameraSubject = Character
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 
     if self.Flying then

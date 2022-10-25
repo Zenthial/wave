@@ -7,6 +7,9 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 
 local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
@@ -28,8 +31,7 @@ local DeathCamUI: DeathCamUI_T = {}
 DeathCamUI.__index = DeathCamUI
 DeathCamUI.Name = "DeathCamUI"
 DeathCamUI.Tag = "DeathCamUI"
-DeathCamUI.Ancestor = game
-DeathCamUI.Needs = {"Cleaner"}
+DeathCamUI.Ancestor = PlayerGui
 
 function DeathCamUI.new(root: any)
     return setmetatable({

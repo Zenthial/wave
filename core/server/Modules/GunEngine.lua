@@ -9,10 +9,8 @@ local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("
 local Trove = require(Shared:WaitForChild("util"):WaitForChild("Trove"))
 local radiusDamage = require(Shared:WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
 
-local ServerComm = require(script.Parent.ServerComm)
-local comm = ServerComm.GetServerComm()
-
 local Welder = require(Shared.Modules.Welder)
+local Courier = require(Shared.courier)
 
 local DefaultServerPlayerAttributes = require(script.Parent.DefaultServerPlayerAttributes)
 
@@ -22,31 +20,21 @@ local function setupPlayer(player: Player)
     end
 end
 
-local drawRaySignal = comm:CreateSignal("DrawRay")
-local renderGrenade = comm:CreateSignal("RenderGrenade")
-
-comm:BindFunction("WeldWeapon", function(player: Player, weapon: Model, toBack: boolean)
-    -- could be abused somehow?
-    -- actually probably not because you'd have to weld something that exists on the server and has weapon stats
-    -- an intelligent exploiter could possibly give themselves a different cosmetic appearance if someone has a cool weapon, but it wouldn't do much else
-    local character = player.Character
-    if character == nil then
-        return false
-    end
-    local result = Welder:WeldWeapon(character, weapon, toBack)
-    return result
-end)
-
 local function attemptDealDamage(player: Player, weaponName: string, healthComponentObject: Instance, damage: number, hitPartName: string | nil, headshotMultiplier: number | nil)
     local healthComponent = nil
-    if healthComponentObject:IsA("Player") then
-        healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
-    elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
-        healthComponent = nil -- grab aps health thing later
-    elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
-        healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
-    end 
 
+    if tcs.has_component(healthComponentObject, "Health") then
+        healthComponent = tcs.get_component(healthComponentObject, "Health")
+    else
+        if healthComponentObject:IsA("Player") then
+            healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
+        elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
+            healthComponent = nil -- grab aps health thing later
+        elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
+            healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
+        end 
+    end
+    
     assert(healthComponent, "Health component, VehicleHealth component, or ShieldHealth not found on "..healthComponentObject.Name)
 
 
@@ -76,39 +64,6 @@ local function attemptDealDamage(player: Player, weaponName: string, healthCompo
     healthComponent:TakeDamage(damage)
 end
 
--- healthComponentPart is technically a player now
-comm:BindFunction("AttemptDealDamage", function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
-    local stats = WeaponStats[weaponName]
-    if stats and stats.Damage then
-        attemptDealDamage(player, weaponName, healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
-    else
-        error(weaponName .. " does not have weapon stats or weapon stats with damage")
-    end
-end)
-
-comm:BindFunction("AttemptDealShieldDamage", function(player: Player, shieldComponentPart: BasePart, weaponName: string, hitPartName: string)
-    print(player, shieldComponentPart, weaponName, hitPartName)
-end)
-
-comm:BindFunction("DealSelfDamage", function(player: Player, damage: number)
-    damage = math.clamp(damage, 0, 100)
-    local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
-    healthComponent:TakeDamage(damage)
-end)
-
-comm:BindFunction("AoERadius", function(player: Player, part: BasePart, weaponName)
-    local stats = GadgetStats[weaponName]
-    if stats == nil then
-        stats = WeaponStats[weaponName]
-    end
-
-    assert(stats ~= nil, "No stats exist for "..weaponName)
-    local playersToDamage = radiusDamage(stats, part, player, false)
-    for _player: Player, damage: number in pairs(playersToDamage) do
-        attemptDealDamage(player, weaponName, _player, damage)
-    end
-end)
-
 local GunEngine = {}
 
 function GunEngine:Start()
@@ -123,18 +78,58 @@ function GunEngine:Start()
     bulletFolder.Name = "Bullets"
     bulletFolder.Parent = workspace
 
-    drawRaySignal:Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
+    Courier:Listen("DrawRay"):Connect(function(player: Player, startPosition: Vector3, endPosition: Vector3, weaponName: string)
         -- could be spammed fired to cause people to lag, check some kind of script invocation timer thingy, could make sure that the time between shots isn't shorter than the fire rate
         -- something like LastShot = tick(), if currentShot - LastShot < fireRate then kick, though probably would just want to watch them
-        drawRaySignal:FireExcept(player, player, startPosition, endPosition, weaponName)
+        Courier:SendToAllExcept("DrawRay", player, player, startPosition, endPosition, weaponName)
     end)
 
-    renderGrenade:Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
+    Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
         local quantity = player:GetAttribute("GadgetQuantity")
+        print("here", quantity)
         if quantity > 0 then
             player:SetAttribute("GadgetQuantity", quantity - 1)
-            renderGrenade:FireExcept(player, player, position, direction, movementSpeed, gadget)
+            Courier:SendToAllExcept("RenderGrenade", player, player, position, direction, movementSpeed, gadget)
         end
+    end)
+
+    Courier:Listen("WeldWeapon"):Connect(function(player: Player, weapon: Model, toBack: boolean)
+        -- could be abused somehow?
+        -- actually probably not because you'd have to weld something that exists on the server and has weapon stats
+        -- an intelligent exploiter could possibly give themselves a different cosmetic appearance if someone has a cool weapon, but it wouldn't do much else
+        local character = player.Character
+        if character == nil then
+            return
+        end
+        Welder:WeldWeapon(character, weapon, toBack)
+    end)
+
+    Courier:Listen("AoERadius"):Connect(function(player: Player, part: BasePart, weaponName)
+        local stats = GadgetStats[weaponName]
+        if stats == nil then
+            stats = WeaponStats[weaponName]
+        end
+    
+        assert(stats ~= nil, "No stats exist for "..weaponName)
+        local playersToDamage = radiusDamage(stats, part.Position, player, false)
+        for _player: Player, damage: number in pairs(playersToDamage) do
+            attemptDealDamage(player, weaponName, _player, damage)
+        end
+    end)
+
+    Courier:Listen("AttemptDealDamage"):Connect(function(player: Player, healthComponentPart: BasePart, weaponName: string, hitPartName: string)
+        local stats = WeaponStats[weaponName]
+        if stats and stats.Damage then
+            attemptDealDamage(player, weaponName, healthComponentPart, stats.Damage, hitPartName, stats.HeadshotMultiplier)
+        else
+            error(weaponName .. " does not have weapon stats or weapon stats with damage")
+        end
+    end)
+
+    Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number)
+        damage = math.clamp(damage, 0, 100)
+        local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
+        healthComponent:TakeDamage(damage)
     end)
 end
 
