@@ -62,6 +62,8 @@ function MountedTurret:Start()
     local turretComponent = tcs.get_component(self.Root, "Turret")
     self.TurretComponent = turretComponent
 
+    self.Offset = self.Root:GetAttribute("TurretOffset") or Vector3.new(0, 10, 10)
+
     self.CameraAngles = Vector2.new(0, 0)
 	self.MouseDeltas = Vector2.new(0, 0)
 end
@@ -77,7 +79,7 @@ function MountedTurret:UpdateCamera()
     -- local angles1 = CFrame.Angles(0,math.rad(self.CameraAngles.X), 0)
     -- local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
 
-    Camera.CFrame *= CFrame.new(Vector3.new(0, 10, 10))
+    Camera.CFrame *= CFrame.new(self.Offset)
 end
 
 function MountedTurret:RunServiceLoop()
