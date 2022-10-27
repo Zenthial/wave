@@ -86,6 +86,10 @@ local Vehicles = {
 		DirectionD = 150,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
+
+		MinimumSpeed = 100, --S
+		MaximumSpeed = 200, --W
+		SpeedIncreaseRate = 0.5, -- How fast the speed increases (per frame)
 	},
 	["Sweeper"] = {
 		Health = 750, -- Max health
@@ -111,7 +115,7 @@ local Vehicles = {
 		CounterGravity = 1, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Dropship"] = {
-		Speed = 60,
+
 		PitchVectors = Vector2.new(-25,10), --Forward, Backward
 		StrafeVectors = Vector2.new(20,5), --Speed limit, roll angle limit
 		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
@@ -121,6 +125,29 @@ local Vehicles = {
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
 		MinimumSpeed = 0.4, --S
+	},
+	["Whale"] = {
+		Health = 2000, -- Max health
+		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
+		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
+		RiseSpeed = Vector2.new(15,20), --Up, Down
+		--BodyGyro
+		DirectionD = 800,
+		DirectionTorque = Vector3.new(300000, 300000, 300000),
+		DirectionP = 500,
+		
+		--Throttle, -1 to 1, like on vehicleseats, can go over/under but why? Increase/decrease speed instead.
+		MinimumSpeed = 50, --S
+		MaximumSpeed = 150, --W
+		SpeedIncreaseRate = 0.1, -- How fast the speed increases (per frame)
+		
+		--Camera limits
+		CameraMinY = -40,
+		CameraMaxY = 10,
+		CameraMinX = -5,
+		CameraMaxX = 5,
+		
+		CounterGravity = 1, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Striker"] = {
 		Health = 500, -- Max health
@@ -141,7 +168,7 @@ local Vehicles = {
 		
 		CounterGravity = .3, --Multiplier of lookVector.Y for BodyVelocity
 	},
-	["Gunship"] = {
+	["Albatross"] = {
 		Speed = 70,
 		PitchVectors = Vector2.new(-35,20), --Forward, Backward
 		StrafeVectors = Vector2.new(3,35), --Speed limit, roll angle limit
