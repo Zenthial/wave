@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
@@ -103,20 +104,29 @@ function AirVehicle:Start()
         end
     end))
 
+    -- self.Cleaner:Add(RunService.Heartbeat:Connect(function()
+    --     self:RunServiceLoop()
+    -- end))
+end
+
+local lastRan = tick()
+function AirVehicle:RunServiceLoop()
+    if tick() - lastRan < 4 then return end
+    lastRan = tick()
+    if self.OccupantPlayer == nil then return end
+    local hitboxOverlapParams = OverlapParams.new()
+    hitboxOverlapParams.FilterType = Enum.RaycastFilterType.Blacklist 
+    hitboxOverlapParams.FilterDescendantsInstances = { self.Root }
     local health_component = tcs.get_component(self.Root, "VehicleHealth")
     local partsTable = self.Engine:GetConnectedParts()
     local touching = false
     for _, part in pairs(partsTable) do
-        self.Cleaner:Add(part.Touched:Connect(function(hitPart)
-            if not table.find(partsTable, hitPart) and not touching and hitPart.AssemblyRootPart.Name ~= "HumanoidRootPart" then
-                touching = true
+        for _, hitPart in pairs(workspace:GetPartsInPart(part, hitboxOverlapParams)) do
+            if hitPart.AssemblyRootPart.Name ~= "HumanoidRootPart" then
                 health_component:TakeDamage(100)
-                task.wait(.1)
-                touching = false
             end
-        end))
+        end
     end
-    
 end
 
 function AirVehicle:InitializePilotProximityPrompt()
