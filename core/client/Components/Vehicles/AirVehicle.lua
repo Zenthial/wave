@@ -123,12 +123,14 @@ end
 
 function AirVehicle:Move()
     if self.Flying then
-        self.LinearVelocity.MaxForce = 5000000
+        self.LinearVelocity.MaxForce = self.Stats.MaxForce
         self.Direction.MaxTorque = self.Stats.DirectionTorque
         self.Direction.D = self.Stats.DirectionD
         self.Direction.P = self.Stats.DirectionP
-        self.LinearVelocity.VectorVelocity = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
+        local Vect = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
+        self.LinearVelocity.VectorVelocity = Vector3.new(Vect.X, Vect.Y * self.Stats.CounterGravity, Vect.Z)
     else
+        self.Speed = self.MinSpeed
         self.LinearVelocity.MaxForce = 0
         self.Direction.MaxTorque = Vector3.new(0,0,0)
     end
@@ -166,39 +168,15 @@ function AirVehicle:RunServiceLoop()
     end
 
     local targetYaw, targetPitch, targetRoll = getYPR(CFrame.new(EngineC.Position, self.PreviousMousePosition))
-    local coreLook = Vector3.new(EngineC.LookVector.X, EngineC.LookVector.Y * (self.Stats.CounterGravity or .1), EngineC.LookVector.Z)
-    local velocity = coreLook
-
-    --[[if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
-        velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
-       velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
-       self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    else
-       self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
-    end]]--
-
+    
     -- + is right, - is left
     local rollDir = math.floor(EngineC:ToObjectSpace(CFrame.new(self.PreviousMousePosition)).X)
     if rollDir > 15000 then
-        velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
         self.Roll = math.clamp(-1 * math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     elseif rollDir < -15000 then
-        velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
         self.Roll = math.clamp(math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     else
         self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
-    end
-
-    if not self.TakingOffOrLanding then
-        velocity = velocity + (coreLook * self.Speed)
-    end
-    
-    if self.TakingOffOrLanding then
-        velocity = Vector3.new(velocity.X / 8, velocity.Y * 1.025, velocity.Z / 8)
-    else
-        velocity = Vector3.new(velocity.X, velocity.Y * 1.025, velocity.Z)
     end
     
     self.Direction.CFrame =
@@ -208,7 +186,6 @@ function AirVehicle:RunServiceLoop()
             *CFrame.Angles(0, 0, math.rad(self.Roll))
     
     self:UpdateCamera()
-    
     self:Move()
 end
 

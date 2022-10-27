@@ -77,25 +77,26 @@ local Vehicles = {
 	},
 ------------------------------------------------------------------------------------
 	["Shuttle"] = {
-		Speed = 75,
+		Health = 800,
 		PitchVectors = Vector2.new(-25,10), --Forward, Backward
-		StrafeVectors = Vector2.new(50,10), --Speed limit, roll angle limit
-		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
-		RiseSpeed = Vector2.new(15,25), --Up, Down
+		StrafeVectors = Vector2.new(50,12), --Speed limit, roll angle limit
 		--BodyGyro
-		DirectionD = 150,
+		DirectionD = 300,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
+		CameraOut = Vector3.new(0, 15, 50),
 
 		MinimumSpeed = 100, --S
 		MaximumSpeed = 200, --W
 		SpeedIncreaseRate = 0.5, -- How fast the speed increases (per frame)
+		MaxForce = 5000000,
+
+		CounterGravity = 1
 	},
 	["Sweeper"] = {
 		Health = 750, -- Max health
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
 		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
-		RiseSpeed = Vector2.new(15,20), --Up, Down
 		--BodyGyro
 		DirectionD = 400,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
@@ -105,6 +106,7 @@ local Vehicles = {
 		MinimumSpeed = 90, --S
 		MaximumSpeed = 200, --W
 		SpeedIncreaseRate = 0.2, -- How fast the speed increases (per frame)
+		MaxForce = 5000000,
 		
 		--Camera limits
 		CameraMinY = -40,
@@ -112,14 +114,12 @@ local Vehicles = {
 		CameraMinX = -5,
 		CameraMaxX = 5,
 		
-		CounterGravity = 1, --Multiplier of lookVector.Y for BodyVelocity
+		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Dropship"] = {
 
 		PitchVectors = Vector2.new(-25,10), --Forward, Backward
 		StrafeVectors = Vector2.new(20,5), --Speed limit, roll angle limit
-		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
-		RiseSpeed = Vector2.new(15,25), --Up, Down
 		--BodyGyro
 		DirectionD = 150,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
@@ -129,8 +129,9 @@ local Vehicles = {
 	["Whale"] = {
 		Health = 2000, -- Max health
 		PitchVectors = Vector2.new(-20, 20), --Forward, Backward
-		StrafeVectors = Vector2.new(25, 35), --Speed limit, roll angle limit
-		RiseSpeed = Vector2.new(15,20), --Up, Down
+		StrafeVectors = Vector2.new(25, 15), --Speed limit, roll angle limit
+		MaxForce = 9000000000,
+
 		--BodyGyro
 		DirectionD = 800,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
@@ -146,15 +147,16 @@ local Vehicles = {
 		CameraMaxY = 10,
 		CameraMinX = -5,
 		CameraMaxX = 5,
+		CameraOut = Vector3.new(0, 15, 95),
 		
-		CounterGravity = 1, --Multiplier of lookVector.Y for BodyVelocity
+		CounterGravity = 0.95, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Striker"] = {
 		Health = 500, -- Max health
 		PitchVectors = Vector2.new(-30,30), --Forward, Backward
 		StrafeVectors = Vector2.new(40,25), --Speed limit, roll angle limit
-		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
-		RiseSpeed = Vector2.new(10,15), --Up, Down
+		MaxForce = 5000000,
+
 		--BodyGyro
 		DirectionD = 150,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
@@ -166,14 +168,13 @@ local Vehicles = {
 		MaximumSpeed = 600, --W
 		SpeedIncreaseRate = 0.5, -- How fast the speed increases (per frame)
 		
-		CounterGravity = .3, --Multiplier of lookVector.Y for BodyVelocity
+		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Albatross"] = {
 		Speed = 70,
 		PitchVectors = Vector2.new(-35,20), --Forward, Backward
 		StrafeVectors = Vector2.new(3,35), --Speed limit, roll angle limit
 		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
-		RiseSpeed = Vector2.new(10,20), --Up, Down
 		--BodyGyro
 		DirectionD = 250,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
