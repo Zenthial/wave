@@ -74,6 +74,8 @@ function AirVehicle:Start()
 
     CollectionService:AddTag(self.Root, "VehicleHealth")
 
+    self.Root:SetAttribute("VehicleInteractToggle", false)
+
     self:InitializePilotProximityPrompt()
 
     local vehicleSeatComponent = tcs.get_component(pilotSeat, "VehicleSeat")
