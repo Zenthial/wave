@@ -71,7 +71,6 @@ end
 function MountedTurret:UpdateCamera()
     Camera.CameraType = Enum.CameraType.Attach
     Camera.CameraSubject = self.Root.BaseMount
-
     -- self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
     -- self.MouseDeltas = Vector2.new(0,0)
     -- self.CameraAngles = Vector2.new(math.clamp(self.CameraAngles.X, CameraLimits.MinX, CameraLimits.MaxX), math.clamp(self.CameraAngles.Y, CameraLimits.MinY, CameraLimits.MaxY))

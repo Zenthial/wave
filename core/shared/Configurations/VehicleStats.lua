@@ -177,13 +177,14 @@ local Vehicles = {
 		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Albatross"] = {
+		Health = 1200,
 		PitchVectors = Vector2.new(-35,20), --Forward, Backward
 		StrafeVectors = Vector2.new(3,35), --Speed limit, roll angle limit
-		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
 		--BodyGyro
 		DirectionD = 250,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
+		MaxForce = 5000000,
 
 		MinimumSpeed = 10, --S
 		MaximumSpeed = 200, --W
