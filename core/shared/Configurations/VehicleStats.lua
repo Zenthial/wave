@@ -116,15 +116,21 @@ local Vehicles = {
 		
 		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
-	["Dropship"] = {
-
+	["Swan"] = {
+		Health = 750,
 		PitchVectors = Vector2.new(-25,10), --Forward, Backward
 		StrafeVectors = Vector2.new(20,5), --Speed limit, roll angle limit
 		--BodyGyro
 		DirectionD = 150,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
-		MinimumSpeed = 0.4, --S
+
+		MinimumSpeed = 20, --S
+		MaximumSpeed = 300, --W
+		SpeedIncreaseRate = 5, -- How fast the speed increases (per frame)
+		MaxForce = 5000000,
+
+		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Whale"] = {
 		Health = 2000, -- Max health
@@ -171,7 +177,6 @@ local Vehicles = {
 		CounterGravity = 1.025, --Multiplier of lookVector.Y for BodyVelocity
 	},
 	["Albatross"] = {
-		Speed = 70,
 		PitchVectors = Vector2.new(-35,20), --Forward, Backward
 		StrafeVectors = Vector2.new(3,35), --Speed limit, roll angle limit
 		ReactionSpeed = 0.1, --Lerp fraction between previous and current target velocity
@@ -179,9 +184,12 @@ local Vehicles = {
 		DirectionD = 250,
 		DirectionTorque = Vector3.new(300000, 300000, 300000),
 		DirectionP = 500,
-		MinimumSpeed = 0.4, --S
+
+		MinimumSpeed = 10, --S
+		MaximumSpeed = 200, --W
+		SpeedIncreaseRate = 1, -- How fast the speed increases (per frame)
 		
-		CounterGravity = .05,
+		CounterGravity = 0.85,
 	},
 	------------------------------------------------------------------------------------
 	["Crusader"] = {
