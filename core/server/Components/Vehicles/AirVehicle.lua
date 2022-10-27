@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -47,12 +48,20 @@ function AirVehicle:Start()
     assert(enginePart, "No engine for " .. self.Root.Name)
     local direction = enginePart.Direction
     assert(direction, "No direction on " .. self.Root.Name)
+    local linearVelocity = enginePart.LinearVelocity
+    assert(linearVelocity, "No linearVelocity for ".. self.Root.Name)
     self.Engine = enginePart
 
+    local stats = VehicleStats[self.Root.Name]
+    assert(stats, "No vehicle stats for " .. self.Root.Name)
+
+    self.Stats = stats
+    self.LinearVelocity = linearVelocity
+
     direction.CFrame = enginePart.CFrame
-	direction.D = 150
-	direction.MaxTorque = Vector3.new(300000, 300000, 300000)
-	direction.P = 500
+	direction.D = stats.DirectionD
+	direction.MaxTorque = stats.DirectionTorque
+	direction.P = stats.DirectionP
 
     local function goFlat()
 		local LookVector = enginePart.CFrame.LookVector
@@ -70,7 +79,7 @@ function AirVehicle:Start()
     local vehicleSeatComponent = tcs.get_component(pilotSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if self:IsVehicleFlipped() then
-            direction.MaxTorque = Vector3.new(0, 0, 25000000)
+            direction.MaxTorque = self.Stats.DirectionTorque
             repeat
                 task.wait()
             until not self:IsVehicleFlipped()
@@ -80,10 +89,12 @@ function AirVehicle:Start()
         end
 
         if newOccupant ~= nil then
+            self.LinearVelocity.MaxForce = self.Stats.MaxForce
             self.Courier:Send("BindToPlane", newOccupant, self.Root)
         else
             self.OccupantPlayer = nil
-            self.ProximityPrompt.Enabled = true   
+            self.ProximityPrompt.Enabled = true
+            self.LinearVelocity.MaxForce = 0
             self.Courier:Send("UnbindFromPlane", oldOccupant, self.Root)
             goFlat()
         end

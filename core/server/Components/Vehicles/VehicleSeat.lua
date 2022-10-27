@@ -79,12 +79,9 @@ function VehicleSeat:Start()
             else
                 if self.Root:IsA("VehicleSeat") then
                     self.Root:SetNetworkOwner(nil)
-                end
-                if self.Root:IsA("VehicleSeat") then
                     self.Root.Steer = 0
                     self.Root.Throttle = 0
                 end
-
                 self.Events.OccupantChanged:Fire(nil, self.Occupant)
                 Courier:Send("InSeat", self.Occupant, true)
                 self.Occupant = nil
