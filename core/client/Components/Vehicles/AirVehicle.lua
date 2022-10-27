@@ -168,7 +168,7 @@ function AirVehicle:RunServiceLoop()
     end
 
     local targetYaw, targetPitch, targetRoll = getYPR(CFrame.new(EngineC.Position, self.PreviousMousePosition))
-    
+
     -- + is right, - is left
     local rollDir = math.floor(EngineC:ToObjectSpace(CFrame.new(self.PreviousMousePosition)).X)
     if rollDir > 15000 then
@@ -192,8 +192,10 @@ end
 local function inputProcessor(self: AirVehicle_T, input: InputObject, processed: boolean)
     if processed then return end
     
-    if input.KeyCode == Enum.KeyCode.Y then
+    if input.KeyCode == input.KeyCode[Player.Keybinds:GetAttribute("VehicleIgnition")] then
         self.Flying = not self.Flying
+    elseif input.KeyCode == input.KeyCode[Player.Keybinds:GetAttribute("VehicleInteract")] then
+
     end
 end
 
