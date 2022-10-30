@@ -62,7 +62,7 @@ local function spawnPlayer(player, character)
         character:SetPrimaryPartCFrame(CFrame.new(randPos))
     else
         -- character.HumanoidRootPart.Position = getRandomPos(floor)
-        character:SetPrimaryPartCFrame(CFrame.new(getRandomPos(floor)))     
+        character:SetPrimaryPartCFrame(CFrame.new(getRandomPos(floor)))
     end
 end
 
@@ -83,7 +83,7 @@ local function playerAdded(player: Player)
             if player:GetAttribute("Dead") == false then return end
             local randPos = getRandomPos(floor)
             local deathPosition = character.HumanoidRootPart.Position
-            character.HumanoidRootPart.Position = randPos
+            character:SetPrimaryPartCFrame(CFrame.new(randPos))
 
             local effect = Effect:Clone()
             effect.CFrame = CFrame.new(deathPosition)

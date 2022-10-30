@@ -41,8 +41,8 @@ function Player:Start()
 
     self.Cleaner:Add(playerFolder)
 
-    -- local serverInventoryComponent = tcs.get_component(self.Player, "ServerInventory")
-    -- serverInventoryComponent:LoadServerInventory(InventoryStats)
+    local serverInventoryComponent = tcs.get_component(self.Player, "ServerInventory")
+    serverInventoryComponent:LoadServerInventory(InventoryStats)
 end
 
 function Player:Destroy()

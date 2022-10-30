@@ -128,7 +128,10 @@ function GunEngine:Start()
 
     Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number)
         damage = math.clamp(damage, 0, 100)
-        local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
+    
+        player:SetAttribute("LastKiller", "")
+        player:SetAttribute("LastKilledWeapon", "")
+        local healthComponent = tcs.get_component(player, "Health")
         healthComponent:TakeDamage(damage)
     end)
 end

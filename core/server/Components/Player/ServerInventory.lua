@@ -35,14 +35,15 @@ function ServerInventory.new(root: any)
         ActiveServerInventory = {
             Primary = "",
             Secondary = "",
-            Gadgets = "",
-            Skills = ""
+            Gadget = "",
+            Skill = ""
         } :: ServerInventoryType
     }, ServerInventory)
 end
 
 function ServerInventory:Start()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
+    print(self.Character)
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
         repeat
@@ -51,7 +52,16 @@ function ServerInventory:Start()
     end
 end
 
+function ServerInventory:CheckLoaded()
+    if self.Character == nil then
+        repeat
+            task.wait()
+        until self.Character ~= nil
+    end
+end
+
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
+    self:CheckLoaded()
     for key, name in pairs(inv) do
         if key == "Misc" then continue end
         print(key, name)
