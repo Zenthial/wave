@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Configurations = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations")
 local ChatStats = require(Configurations:WaitForChild("ChatStats"))
-local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Courier"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local function chatMiddleware(Player: Player, message: string): string | nil
     local textResultObject: TextFilterResult = nil

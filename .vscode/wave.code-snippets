@@ -58,10 +58,9 @@
     "courier": {
         "prefix": [
             "courier",
-            "Courier"
         ],
         "scope": "lua",
         "description": "autofills courier",
-        "body": "local Courier = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"courier\"))"
+        "body": "local courier = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"courier\"))"
     }
 }

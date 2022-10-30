@@ -6,6 +6,7 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
 local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local Objects = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Objects")
 local Effect = Objects:WaitForChild("HumanoidDeathEffect")
@@ -87,11 +88,13 @@ local function playerAdded(player: Player)
 
             local effect = Effect:Clone()
             effect.CFrame = CFrame.new(deathPosition)
+            effect.Name = player.Name .. "DeathEffect"
             effect.Parent = workspace
             effect["Death" .. math.random(1, 5)]:Play()
             CollectionService:AddTag(effect, "Ignore")
 
             local killer = player:GetAttribute("LastKiller")
+            courier:Send("CameraFollow", player, deathPosition)
 
             task.spawn(function()
                 if killer ~= "" then

@@ -6,6 +6,9 @@ local Shared = ReplicatedStorage:WaitForChild("Shared", 5)
 
 local tcs = require(Shared.tcs)
 local Input = require(Shared:WaitForChild("util", 5):WaitForChild("Input", 5))
+local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
+
+local followPlayer = require(script.Parent.Parent.Modules.CameraFunctions.followPlayer)
 
 local Player = {}
 Player.__index = Player
@@ -43,6 +46,17 @@ function Player:Start()
 
     self.Cleaner:Add(character.DescendantAdded:Connect(function(descendant)
         CollectionService:AddTag(descendant, "Ignore")
+    end))
+
+    self.Cleaner:Add(Courier:Listen("CameraFollow"):Connect(function(optionalPosition)
+        local killer = player:GetAttribute("LastKiller")
+        print(killer)
+        if killer ~= "" then
+            local playerToFollow = Players:FindFirstChild(killer)
+            followPlayer(playerToFollow)
+        else
+            followPlayer(optionalPosition)
+        end
     end))
 end
 
