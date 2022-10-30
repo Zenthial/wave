@@ -7,6 +7,14 @@ local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 
 local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local MainHUD = PlayerGui:WaitForChild("MainHUD")
+local Overlay = MainHUD:WaitForChild("Overlay") :: Frame
+Overlay.Visible = true
+
+local loadText = Overlay:WaitForChild("LoadText") :: TextLabel
+loadText.Text = "INITIALIZING wAVE"
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
@@ -94,5 +102,17 @@ for attribute, value in pairs(modules["DefaultLocalPlayerAttributes"]) do
     Player:SetAttribute(attribute, value)
 end
 
+-- reset bindable
+local resetBindable = Instance.new("BindableEvent")
+resetBindable.Event:Connect(function()
+    courier:Send("DealSelfDamage", 100)
+end)
+StarterGui:SetCore("ResetButtonCallback", resetBindable)
+
 local PlayerLoaded = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PlayerLoaded") :: RemoteEvent
 PlayerLoaded:FireServer()
+
+loadText.Text = "wAVE INITIALIZED"
+loadText.Visible = false
+task.wait(0.2)
+Overlay.Visible = false
