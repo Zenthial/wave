@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Configurations = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations")
 local ChatStats = require(Configurations:WaitForChild("ChatStats"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Courier"))
 
 local function chatMiddleware(Player: Player, message: string): string | nil
     local textResultObject: TextFilterResult = nil
@@ -33,12 +34,12 @@ end
 local ChatService = {}
 
 function ChatService:Start()
-    comm:BindFunction("AttemptChat", function(Player: Player, message: string)
+    courier:Listen("AttemptChat"):Connect(function(Player: Player, message: string)
         local filteredMessage = chatMiddleware(Player, message) 
         if filteredMessage ~= nil then
             local playerTeamColorStats = ChatStats.TeamColors[Player.TeamColor.Name] or ChatStats.TeamColors.Default
             local playerTags = self:GetPlayerTags(Player)
-            self.SendPlayerChatSignal:FireAll(Player.Name, playerTeamColorStats.Text, playerTags, filteredMessage)
+            courier:SendToAll("OnChat", Player.Name, playerTeamColorStats.Text, playerTags, filteredMessage)
         end
     end) 
 end
