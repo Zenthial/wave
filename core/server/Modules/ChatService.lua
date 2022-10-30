@@ -4,9 +4,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Configurations = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations")
 local ChatStats = require(Configurations:WaitForChild("ChatStats"))
 
-local ServerComm = require(script.Parent.ServerComm)
-local comm = ServerComm.GetServerComm()
-
 local function chatMiddleware(Player: Player, message: string): string | nil
     local textResultObject: TextFilterResult = nil
     local success, err = pcall(function()
@@ -36,9 +33,6 @@ end
 local ChatService = {}
 
 function ChatService:Start()
-    self.SendPlayerChatSignal = comm:CreateSignal("SendChat")
-    self.SendSystemChatSignal = comm:CreateSignal("SystemNotification")
-
     comm:BindFunction("AttemptChat", function(Player: Player, message: string)
         local filteredMessage = chatMiddleware(Player, message) 
         if filteredMessage ~= nil then

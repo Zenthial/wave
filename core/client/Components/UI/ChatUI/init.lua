@@ -8,16 +8,10 @@ local tcs = require(ReplicatedStorage.Shared.tcs)
 local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Queue = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Queue"))
 local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
-local ClientComm = require(script.Parent.Parent.Parent.Modules.ClientComm)
 
 local createMessage = require(script.createMessage)
 
 local KeyboardInput = Input.Keyboard.new()
-local comm = ClientComm.GetClientComm()
-
-local sendChat = comm:GetFunction("AttemptChat")
-local sendChatSignal = comm:GetSignal("SendChat")
-local systemNotificationSignal = comm:GetSignal("SystemNotification")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
