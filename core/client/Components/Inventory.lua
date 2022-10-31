@@ -178,7 +178,6 @@ function Inventory:HandleWeapon(weaponStats, model: Model, mutableStats)
         if GunEngine.EquipWeapon(weaponStats, mutableStats, model) == false then return end
     end
 
-
     if self.EquippedWeaponCleaner then
         self.EquippedWeaponCleaner:Clean()
     end

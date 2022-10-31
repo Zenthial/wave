@@ -21,6 +21,8 @@ export type PlayerProfile_T = {
         Chat: string,
         Leaderboard: string,
         ToggleDisplay: string,
+        VehicleIgnition: string,
+        VehicleInteract: string,
     },
 }
 
@@ -57,6 +59,8 @@ local PlayerProfile = {
         Inventory = "B",
         Leaderboard = "Tab",
         ToggleDisplay = "LeftControl",
+        VehicleIgnition = "Y",
+        VehicleInteract = "P",
     },
 
     Stats = {
