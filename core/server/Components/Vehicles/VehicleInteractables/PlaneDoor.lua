@@ -37,7 +37,7 @@ end
 
 function PlaneDoor:Start()
     local plane = self:FindPlane(self.Root)
-    if not plane then return nil end
+    if not plane then return end
 
     self.Plane = plane
     self:UpdateDoor()

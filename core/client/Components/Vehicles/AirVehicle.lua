@@ -248,6 +248,7 @@ function AirVehicle:Unbind()
 
     self.Direction.MaxTorque = Vector3.new(0,0,0)
     self.Flying = false
+    self.Courier:Send("VehicleIgnition", self.Root, false)
 
     self.PreviousMousePosition = nil
 end
