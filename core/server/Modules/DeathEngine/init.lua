@@ -44,7 +44,7 @@ local function getRandomPos(part: Part)
     local maxX = part.Position.X + part.Size.X/2
     local minZ = part.Position.Z - part.Size.Z/2
     local maxZ = part.Position.Z + part.Size.Z/2
-    local randPos = Vector3.new(random:NextInteger(minX, maxX), part.Position.Y + 3, random:NextInteger(minZ, maxZ))
+    local randPos = Vector3.new(random:NextInteger(minX, maxX), (part.Position.Y + part.Size.Y/2) + 3.5, random:NextInteger(minZ, maxZ))
     return randPos
 end
 
@@ -56,14 +56,14 @@ local function spawnPlayer(player, character)
     health_component:Heal(100) -- probably bad to hardcode this value
     player:SetAttribute("LastKiller", "")
     
-    if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.TeamColor.Name) ~= nil then
-        local teamSpawn = workspace.Spawns[player.TeamColor.Name]
+    if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.Team.Name) ~= nil then
+        local teamSpawn = workspace.Spawns[player.Team.Name]
         local randPos = getRandomPos(teamSpawn)
         -- character.HumanoidRootPart.Position = randPos
-        character:SetPrimaryPartCFrame(CFrame.new(randPos))
+        character:PivotTo(CFrame.new(randPos))
     else
         -- character.HumanoidRootPart.Position = getRandomPos(floor)
-        character:SetPrimaryPartCFrame(CFrame.new(getRandomPos(floor)))
+        character:PivotTo(CFrame.new(getRandomPos(floor)))
     end
 end
 

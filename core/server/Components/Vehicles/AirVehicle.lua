@@ -117,6 +117,15 @@ function AirVehicle:Start()
         end
     end))
 
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Health"):Connect(function()
+        print(self.Root:GetDescendants())
+        local currentHealth = self.Root:GetAttribute("Health")
+        local maxHealth = self.Root:GetAttribute("MaxHealth")
+        if currentHealth/maxHealth <= 0.5 then
+            
+        end
+    end))
+
     -- self.Cleaner:Add(RunService.Heartbeat:Connect(function()
     --     self:RunServiceLoop()
     -- end))
