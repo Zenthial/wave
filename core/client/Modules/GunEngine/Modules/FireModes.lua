@@ -36,9 +36,19 @@ local function changeBarrel(weaponStats, mutableStats)
     end
 end
 
+local function findBarrel(gunModel: Model, barrelNum: number)
+    local modelParts = gunModel:GetDescendants()
+    for _, part in pairs(modelParts) do
+        if part:IsA("BasePart") and part.Name == "Barrel"..barrelNum then
+            return part
+        end
+    end
+    return nil
+end
+
 local function getBarrel(weaponStats, mutableStats, gunModel)
     if weaponStats.NumBarrels > 1 then
-        local barrel = gunModel["Barrel"..mutableStats.CurrentBarrel]
+        local barrel = findBarrel(gunModel, mutableStats.CurrentBarrel)
         changeBarrel(weaponStats, mutableStats)
         return barrel
     end
@@ -53,14 +63,16 @@ end
 function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
     task.spawn(function()
         local barrel = getBarrel(weaponStats, mutableStats, gunModel)
-        if gunModel ~= nil and barrel ~= nil then         
+        if gunModel ~= nil and barrel ~= nil then
             local hit, target = raycast(weaponStats, gunModel)
             
             if hit ~= nil and weaponStats.FireMode ~= "Launcher" then
                 task.spawn(checkHitPart, hit, weaponStats, cursorUIComponent)
             end
 
-            barrel.Fire:Play()
+            if barrel:FindFirstChild("Fire") then
+                barrel.Fire:Play()
+            end
             mutableStats.ShotsTable.LastShot.StartPosition = barrel.Position
             mutableStats.ShotsTable.LastShot.EndPosition = target
             mutableStats.ShotsTable.NumShots += 1

@@ -57,6 +57,7 @@ function AirVehicle:Start()
 
     self.Stats = stats
     self.LinearVelocity = linearVelocity
+    self.Direction = direction
 
     direction.CFrame = enginePart.CFrame
 	direction.D = stats.DirectionD
@@ -104,7 +105,9 @@ function AirVehicle:Start()
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Dead"):Connect(function()
         if self.Root:GetAttribute("Dead") then
-            self.Courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
+            if self.OccupantPlayer then
+                self.Courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
+            end
             local explosion = Instance.new("Explosion")
             explosion.BlastRadius = 30
             explosion.ExplosionType = Enum.ExplosionType.NoCraters
@@ -112,6 +115,8 @@ function AirVehicle:Start()
             explosion.DestroyJointRadiusPercent = 0.80
             explosion.Visible = true
             explosion.Parent = self.Engine
+            self.LinearVelocity:Destroy()
+            self.Direction:Destroy()
             task.wait(25)
             self.Root:Destroy()
         end
