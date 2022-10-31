@@ -24,16 +24,16 @@ function MainHUD.new(root: any)
 end
 
 function MainHUD:Start()
-    self.Root.Enabled = false
+    self.Root.Enabled = true
 
     self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
-        self.Root.Enabled = Player:GetAttribute("InRound")
-    end))
+    -- self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
+    --     self.Root.Enabled = Player:GetAttribute("InRound")
+    -- end))
 
     self.Cleaner:Add(RenderDeathEffect.OnClientEvent:Connect(function(effect, victim, killer, color)
         self:RenderDeathEffect(effect, victim, killer, color)
@@ -47,6 +47,14 @@ function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     else
         GunToolbar:SetWeapon(weaponStats, mutableStats, primary)
     end
+end
+
+function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+end
+
+function MainHUD:DeleteItem(keybind)
+    self.GunToolbar:DeleteItem(keybind)
 end
 
 function MainHUD:UpdateHeat(heat: number, overheated: boolean)

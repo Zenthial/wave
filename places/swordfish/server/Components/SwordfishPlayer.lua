@@ -35,13 +35,13 @@ function SwordfishPlayer.new(root: any)
 end
 
 function SwordfishPlayer:Start()
-    if self.Root:GetAttribute("Loaded") == true then
-        self.Root:SetAttribute("InRound", true)
-    else
-        self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Loaded"):Connect(function()
-            self.Root:SetAttribute("InRound", self.Root:GetAttribute("Loaded"))
-        end))
-    end
+    -- if self.Root:GetAttribute("Loaded") == true then
+    --     self.Root:SetAttribute("InRound", true)
+    -- else
+    --     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Loaded"):Connect(function()
+    --         self.Root:SetAttribute("InRound", self.Root:GetAttribute("Loaded"))
+    --     end))
+    -- end
 end
 
 function SwordfishPlayer:Destroy()

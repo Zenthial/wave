@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
+local Signal = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Signal"))
 local FunctionsFolder = script.Functions
 
 local Functions = {}
@@ -23,7 +24,9 @@ type SkillStats = {
 
     Energy: number,
     Recharging: boolean,
-    Active: boolean
+    Active: boolean,
+
+    EnergyChanged: typeof(Signal)
 }
 
 type Some<T> = {
@@ -51,6 +54,8 @@ function SkillEngine.CreateSkill(skillName: string, skillModel: Model)
         Energy = 100,
         Recharging = false,
         Active = false,
+
+        EnergyChanged = Signal.new()
     }, weaponStats) :: SkillStats
 end
 
@@ -58,15 +63,17 @@ function SkillEngine.Use(skillStats: SkillStats, bool: boolean)
     if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and
        skillStats.Energy >= skillStats.WeaponStats.EnergyMin
     then
-        functor(Functions[skillStats.Name])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
+        print(skillStats.SkillName, Functions)
+        functor(Functions[skillStats.SkillName])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
     end
 end
 
 function SkillEngine.DepleteEnergy(skillStats: SkillStats, depletionAmount: number)
     skillStats.Energy = math.clamp(skillStats.Energy - depletionAmount, MIN_ENERGY, MAX_ENERGY)
+    skillStats.EnergyChanged:Fire(skillStats.Energy)
 
     if skillStats.Energy <= MIN_ENERGY then
-        if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.CurrentEnergy >= MIN_ENERGY then
+        if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and skillStats.Energy >= MIN_ENERGY then
             skillStats.Recharging = false
             SkillEngine.Use(skillStats, false)
         end
@@ -78,7 +85,7 @@ function SkillEngine.RegenEnergy(skillStats: SkillStats)
         skillStats.Recharging = true
 
         while skillStats.Energy < 100 and skillStats.Recharging do
-            SkillEngine.DepleteEnergy(skillStats, -skillStats.EnergyRegen)
+            SkillEngine.DepleteEnergy(skillStats, -skillStats.WeaponStats.EnergyRegen)
             task.wait(ENERGY_WAIT_TIME)
         end
 

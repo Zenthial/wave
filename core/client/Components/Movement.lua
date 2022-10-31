@@ -111,7 +111,7 @@ function Movement:UpdateWalkspeed()
 		self.Humanoid.WalkSpeed -= 8
 	end
 	
-	if self.Root:GetAttribute("LocalSprinting") == true or self.Root:GetAttribute("LocalRolling") == true then
+	if (self.Root:GetAttribute("LocalSprinting") == true and self.Root:GetAttribute("LocalCanSprint")) or self.Root:GetAttribute("LocalRolling") == true then
 		self.Humanoid.WalkSpeed += 10
 	end
 	

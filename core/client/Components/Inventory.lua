@@ -54,11 +54,21 @@ function Inventory:Start()
     self.MainHUD = tcs.get_component(PlayerGui:WaitForChild("MainHUD"), "MainHUD")
 
     local MainHUDComponent = self.MainHUD
-    local skillCleaner = Trove.new() :: typeof(Trove)
 
     self.Cleaner:Add(SetWeaponSignal.OnClientEvent:Connect(function(inventoryKey: string, weaponName: string, model: Model, equip: boolean)
         if not equip then
             self["Equipped"..inventoryKey] = nil
+
+            if inventoryKey == "Gadget" then
+                MainHUDComponent:DeleteItem(LocalPlayer.Keybinds:GetAttribute("Gadget"))
+            elseif inventoryKey == "Skill" then
+                MainHUDComponent:DeleteItem(LocalPlayer.Keybinds:GetAttribute("Skill"))
+            elseif inventoryKey == "Primary" or inventoryKey == "Secondary" then
+                if self.EquippedWeapon ~= nil and self.EquippedWeapon == self["Equipped"..inventoryKey] then 
+                    self.MainHUD:UpdateEquippedWeapon(nil, nil, nil)
+                end
+            end
+
             return
         end
         
@@ -77,11 +87,18 @@ function Inventory:Start()
             task.spawn(function()
                 GunEngine.LoadAnimations(weaponStats)
             end)
-        elseif inventoryKey == "Skill" then
+        elseif inventoryKey == "Skill" or inventoryKey == "Skills" then
             assert(model, "Model does not exist on character. Look at server and client inventory components")
             local skill = SkillEngine.CreateSkill(weaponName, model)
             self.EquippedSkill = skill
-        elseif inventoryKey == "Gadget" then
+            local skillCleaner = Trove.new()
+            self.EquippedSkill.Cleaner = skillCleaner
+
+            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, skill.Energy)
+            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy)
+                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy)
+            end))
+        elseif inventoryKey == "Gadget" or inventoryKey == "Gadgets" then
             assert(model == nil, "Why does the grenade have a model?")
             
             local gadgetStats = GadgetStats[weaponName]
@@ -92,7 +109,13 @@ function Inventory:Start()
 
             self.EquippedGadgetStats = gadgetStats
             self.EquippedGadget = weaponName
+
+            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Gadget"), true, LocalPlayer:GetAttribute("GadgetQuantity"))
         end
+    end))
+
+    self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("GadgetQuantity"):Connect(function()
+        self.MainHUD:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Gadget"), true, LocalPlayer:GetAttribute("GadgetQuantity"))
     end))
 
     self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("CurrentTurret"):Connect(function()

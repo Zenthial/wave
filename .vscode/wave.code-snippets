@@ -1,13 +1,12 @@
 {
     "tcs": {
         "prefix": [
-            "tcs, component_tcs",
+            "tcs",
             "component"
         ],
         "scope": "lua",
         "description": "autofills the tcs component",
         "body": [
-            "-- ${0:$CURRENT_MONTH}/${0:$CURRENT_DATE}/${0:$CURRENT_YEAR}/",
             "local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
             "",
             "local tcs = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"tcs\"))",
@@ -55,5 +54,13 @@
             "",
             "return ${0:$TM_FILENAME_BASE}"
         ]
+    },
+    "courier": {
+        "prefix": [
+            "courier",
+        ],
+        "scope": "lua",
+        "description": "autofills courier",
+        "body": "local courier = require(ReplicatedStorage:WaitForChild(\"Shared\"):WaitForChild(\"courier\"))"
     }
 }

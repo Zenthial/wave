@@ -35,30 +35,43 @@ function ServerInventory.new(root: any)
         ActiveServerInventory = {
             Primary = "",
             Secondary = "",
-            Gadgets = "",
-            Skills = ""
+            Gadget = "",
+            Skill = ""
         } :: ServerInventoryType
     }, ServerInventory)
 end
 
 function ServerInventory:Start()
     self.Character = self.Root.Character or self.Root.CharacterAdded:Wait()
-    print(self.Root, self.Character)
+    print(self.Character)
 
     if self.Root:GetAttribute("Loaded") == false or self.Root:GetAttribute("Loaded") == nil then
         repeat
             task.wait()
         until self.Root:GetAttribute("Loaded") == true and self.Character ~= nil
     end
+end
 
-    print("Inventory loaded")
-    
-    self:LoadServerInventory(InventoryStats)
+function ServerInventory:CheckLoaded()
+    if self.Character == nil then
+        repeat
+            task.wait()
+        until self.Character ~= nil
+    end
 end
 
 function ServerInventory:LoadServerInventory(inv: ServerInventoryType)
+    self:CheckLoaded()
     for key, name in pairs(inv) do
-        self:SetItem(key, name)
+        if key == "Misc" then continue end
+        print(key, name)
+        if (self.ActiveServerInventory[key] ~= "" or self.ActiveServerInventory[key] ~= nil) and self.ActiveServerInventory[key] ~= name then
+            self:UnequipItem(key)
+        end 
+
+        if name ~= "" then
+            self:SetItem(key, name)
+        end
     end
 
     self.Root:SetAttribute("ServerSideInventoryLoaded", true)
@@ -96,7 +109,7 @@ function ServerInventory:SetItem(key: string, name: string)
 
         self.Root:SetAttribute("Equipped"..key, name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
-    elseif key == "Skill" then
+    elseif key == "Skill" or key == "Skills" then
         local stats = SkillStats[name]
         local model = SkillModels[name]:Clone() :: Model
         model.Name = name
@@ -112,12 +125,12 @@ function ServerInventory:SetItem(key: string, name: string)
 
         self.Root:SetAttribute("EquippedSkill", name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
-    elseif key == "Gadget" then
+    elseif key == "Gadget" or key == "Gadgets" then
         local stats = GadgetStats[name]
 
         if stats == nil then
             stats = WeaponStats[name]
-            if not stats.Type == "Deployable" then
+            if not (stats.Type == "Deployable") then
                 stats = nil
             end
         end
@@ -130,6 +143,7 @@ function ServerInventory:SetItem(key: string, name: string)
     end
 
     self.ActiveServerInventory[key] = name
+    print(self.ActiveServerInventory[key])
 end
 
 function ServerInventory:Destroy()

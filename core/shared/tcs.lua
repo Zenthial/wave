@@ -47,7 +47,7 @@ local function wait_for_class(component_name: string)
     return class
 end
 
-local function get_component(instance: Instance, component_name: string)
+local function _get_component(instance: Instance, component_name: string)
 	if instance == nil then error("instance is nil") end
     local class = component_name_to_class_module[component_name:lower()]
 	if class == nil then
@@ -76,13 +76,13 @@ local function has_component(instance: Instance, component_name: string)
 end
 
 local function await_component(instance: Instance, component_name: string)
-	local component_instance = get_component(instance, component_name)
+	local component_instance = _get_component(instance, component_name)
 
 	if component_instance == nil then
 		local start = tick()
 		
 		while component_instance == nil do
-			component_instance = get_component(instance, component_name)
+			component_instance = _get_component(instance, component_name)
 			if tick() > (start + TIMEOUT) then
 				if DEBUG_WARN then warn("POTENTIAL INFINITE TIMEOUT ON INSTANCE "..instance.Name.." FOR COMPONENT "..component_name) end
 				return nil
@@ -131,7 +131,7 @@ local function create(instance: Instance, component: ComponentClass)
 end
 
 local function destroy(instance: Instance, component: ComponentClass) -- destruction method wrapper
-    local component_instance = get_component(instance, component.Name)
+    local component_instance = _get_component(instance, component.Name)
 	if component_instance then
 		component_instance:Destroy()
 		component.__Instances[instance] = nil

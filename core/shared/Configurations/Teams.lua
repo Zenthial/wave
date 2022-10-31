@@ -6,7 +6,33 @@ return {
     },
 
     ["Arenas"] = {
-
+        {
+            Name = "Red",
+            Color = BrickColor.new("Bright red"),
+            AutoAssignable = false,
+            Function = function()
+                return false    
+            end,
+            Value = 1
+        },
+        {
+            Name = "Blue",
+            Color = BrickColor.new("Bright blue"),
+            AutoAssignable = false,
+            Function = function()
+                return false    
+            end,
+            Value = 2
+        },
+        {
+            Name = "Intermission",
+            Color = BrickColor.new("Institutional white"),
+            AutoAssignable = true,
+            Function = function()
+                return true
+            end,
+            Value = 3
+        }
     },
 
     ["Swordfish"] = {

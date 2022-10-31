@@ -5,19 +5,11 @@ local UserInputService = game:GetService("UserInputService")
 
 local tcs = require(ReplicatedStorage.Shared.tcs)
 
-local Input = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Input"))
 local Queue = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Queue"))
 local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("ChatStats"))
-local ClientComm = require(script.Parent.Parent.Parent.Modules.ClientComm)
 
 local createMessage = require(script.createMessage)
-
-local KeyboardInput = Input.Keyboard.new()
-local comm = ClientComm.GetClientComm()
-
-local sendChat = comm:GetFunction("AttemptChat")
-local sendChatSignal = comm:GetSignal("SendChat")
-local systemNotificationSignal = comm:GetSignal("SystemNotification")
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -81,7 +73,7 @@ function ChatUI:Start()
     end))
 
     local messageQueue = Queue.new()
-    self.Cleaner:Add(sendChatSignal:Connect(function(username: string, username_color: Color3, tags: {[string]: Color3}, message: string)
+    self.Cleaner:Add(courier:Listen("OnChat"):Connect(function(username: string, username_color: Color3, tags: {[string]: Color3}, message: string)
         local messageUI = createMessage(username, username_color, tags, message)
         messageUI.Parent = self.Container
         TweenService:Create(messageUI.textLabel, TweenInfo.new(ChatStats.DefaultChatTextFadeInTime), {TextTransparency = 0}):Play()
@@ -98,7 +90,7 @@ function ChatUI:Start()
         local contentText = input.ContentText
         if enterPressed and string.len(contentText) > ChatStats.MinimumMessageSize and contentText ~= "" and contentText ~= string.format(ChatStats.DefaultChatFocusedText, DEFAULT_TEAM_CHAT_KEY.Name) then
             input.Text = string.format(ChatStats.DefaultChatText, UserInputService:GetStringForKeyCode(Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Chat")]))
-            sendChat(contentText)
+            courier:Send("AttemptChat", contentText)
         end
     
         TweenService:Create(self.Main, TWEEN_CONSTANTS.ShowTweenInfo, {BackgroundTransparency = TWEEN_CONSTANTS.HideBackgroundTransparency}):Play()

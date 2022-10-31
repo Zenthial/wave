@@ -44,7 +44,7 @@ local function secondsToClock(seconds)
         local secs = string.format("%02.f", math.floor(seconds - mins *60));
         return mins..":"..secs
     end
-  end
+end
 
 local function createModeMarker(mode: string, pointString: string, parent: Frame)
     local marker = ObjectiveMarker:Clone()

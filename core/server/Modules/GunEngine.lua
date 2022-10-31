@@ -86,6 +86,7 @@ function GunEngine:Start()
 
     Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
         local quantity = player:GetAttribute("GadgetQuantity")
+        print("here", quantity)
         if quantity > 0 then
             player:SetAttribute("GadgetQuantity", quantity - 1)
             Courier:SendToAllExcept("RenderGrenade", player, player, position, direction, movementSpeed, gadget)
@@ -110,7 +111,7 @@ function GunEngine:Start()
         end
     
         assert(stats ~= nil, "No stats exist for "..weaponName)
-        local playersToDamage = radiusDamage(stats, part, player, false)
+        local playersToDamage = radiusDamage(stats, part.Position, player, false)
         for _player: Player, damage: number in pairs(playersToDamage) do
             attemptDealDamage(player, weaponName, _player, damage)
         end
@@ -127,7 +128,10 @@ function GunEngine:Start()
 
     Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number)
         damage = math.clamp(damage, 0, 100)
-        local healthComponent = tcs.get_component(player, "Health") --[[:await()]]
+    
+        player:SetAttribute("LastKiller", "")
+        player:SetAttribute("LastKilledWeapon", "")
+        local healthComponent = tcs.get_component(player, "Health")
         healthComponent:TakeDamage(damage)
     end)
 end

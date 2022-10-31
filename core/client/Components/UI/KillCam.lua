@@ -7,13 +7,16 @@ local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs")
 
 local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
     Clean: (Cleaner_T) -> ()
 }
 
-type DeathCamUI_T = {
-    __index: DeathCamUI_T,
+type KillCam_T = {
+    __index: KillCam_T,
     Name: string,
     Tag: string,
     CountDown1: Sound,
@@ -24,20 +27,19 @@ type DeathCamUI_T = {
     Cleaner: Cleaner_T
 }
 
-local DeathCamUI: DeathCamUI_T = {}
-DeathCamUI.__index = DeathCamUI
-DeathCamUI.Name = "DeathCamUI"
-DeathCamUI.Tag = "DeathCamUI"
-DeathCamUI.Ancestor = game
-DeathCamUI.Needs = {"Cleaner"}
+local KillCam: KillCam_T = {}
+KillCam.__index = KillCam
+KillCam.Name = "KillCam"
+KillCam.Tag = "KillCam"
+KillCam.Ancestor = PlayerGui
 
-function DeathCamUI.new(root: any)
+function KillCam.new(root: any)
     return setmetatable({
         Root = root,
-    }, DeathCamUI)
+    }, KillCam)
 end
 
-function DeathCamUI:Start()
+function KillCam:Start()
     local countDown = Instance.new("Sound")
     countDown.SoundId = "rbxassetid://166400843"
     countDown.Parent = self.Root.Parent
@@ -49,18 +51,23 @@ function DeathCamUI:Start()
 
     self.CountDown2 = countDown2
 
-	local deathSignal = Players.LocalPlayer:GetAttributeChangedSignal("Died")
+	local deathSignal = Player:GetAttributeChangedSignal("Dead")
     self.Cleaner:Add(deathSignal:Connect(function()
-        local death = Players.LocalPlayer:GetAttribute("Died")
+        local death = Player:GetAttribute("Dead")
         if death then
             self:ToggleDeathCam()
         else
             self:RemoveOverlay()
         end
     end))
+
+    self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0.004), UDim2.new(.5, 0, .5, 0), "Out", "Quad", .5, true)
+	self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 2000), "Out", "Quad", 1, true)
+	self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, -2000), "Out", "Quad", 1, true)
+    self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0, 1000), "Out", "Quad", .3, true)
 end
 
-function DeathCamUI:ToggleDeathCam()
+function KillCam:ToggleDeathCam()
     if self.Blur then
         self.Blur:Destroy()
         self.Blur = nil
@@ -69,25 +76,27 @@ function DeathCamUI:ToggleDeathCam()
     local blur = Instance.new("BlurEffect")
     blur.Size = 0
     blur.Parent = Lighting
+    self.Blur = blur
     TweenService:Create(blur, TweenInfo.new(0.15), {Size = 20}):Play()
 
+    local killer = Player:GetAttribute("LastKiller")
+    local weapon = Player:GetAttribute("LastKilledWeapon")
 
-    local killer = Players.LocalPlayer:GetAttribute("LastKiller")
-    local weapon = Players.LocalPlayer:GetAttribute("LastKilledWeapon")
-
+    self.Root.Visible = true
     if killer ~= "" and weapon ~= "" then
         self.Root.KillerName.Text = "ELIMINATED BY " .. string.upper(killer)
         self.Root.WeaponName.Text = "WITH THEIR " .. string.upper(weapon)
-        self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(1, -200, 0, 1), UDim2.new(0, 100, 0.5, 0), "Out", "Quad", .5, true)
-        self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 30), "Out", "Quad", .5, true)
-        self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, 10), "Out", "Quad", .5, true)
+        self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(.85, 0, 0.004, 0), UDim2.new(0.081, 0, 0.5, 0), "Out", "Quad", .5, true)
+        self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0.515, 0), "Out", "Quad", .5, true)
+        self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0.475, 0), "Out", "Quad", .5, true)
     else
         self.Root.KillerName.Text = "ELIMINATED BY THE VOID"
-        self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, 10), "Out", "Quad", .5, true)
+        self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(.85, 0, 0.004, 0), UDim2.new(0.081, 0, 0.5, 0), "Out", "Quad", .5, true)
+        self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0.46, 0), "Out", "Quad", .5, true)
     end
 
     task.delay(GlobalOptions.RespawnTime - 3, function()
-        self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0, 250), "Out", "Quad", .3, true)
+        self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0.6, 0), "Out", "Quad", .3, true)
         self.Root.RespawnTime.Text = "RESPAWNING IN 3"
         self.CountDown1:Play()
         task.wait(1)
@@ -99,26 +108,29 @@ function DeathCamUI:ToggleDeathCam()
         
         task.wait(1)
         self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0, 1000), "Out", "Quad", .3, true)
-        self.Countdown2:Play()
+        self.CountDown2:Play()
     end)
 
+    task.wait(GlobalOptions.RespawnTime - 1)
     self:Hide()
 end
 
-function DeathCamUI:Hide()
-    self.Root.Top:TweenPosition(UDim2.new(0, 0, 0, -30), "Out", "Quad", .5, true)
-	self.Root.Bottom:TweenPosition(UDim2.new(0, 0, .5, 0), "Out", "Quad", .5, true)
-	self.Root.KillCam.GuiPart:TweenSizeAndPosition(UDim2.new(0, 0, 0, 1), UDim2.new(.5, 0, .5, 0), "Out", "Quad", .5, true)
-	self.Root.KillCam.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 2000), "Out", "Quad", 1, true)
-	self.Root.KillCam.KillerName:TweenPosition(UDim2.new(0, 0, 0, -2000), "Out", "Quad", 1, true)
+function KillCam:Hide()
+    -- self.Root.Top:TweenPosition(UDim2.new(0, 0, 0, -30), "Out", "Quad", .5, true)
+	-- self.Root.Bottom:TweenPosition(UDim2.new(0, 0, .5, 0), "Out", "Quad", .5, true)
+	self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0.004), UDim2.new(.5, 0, .5, 0), "Out", "Quad", .5, true)
+	self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 2000), "Out", "Quad", 1, true)
+	self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, -2000), "Out", "Quad", 1, true)
 
+    self.Root.Parent.Overlay.BackgroundTransparency = 1
+    self.Root.Parent.Overlay.Visible = true
     self.CurrentDeathTween = TweenService:Create(self.Root.Parent.Overlay, TweenInfo.new(.1), {BackgroundTransparency = 0})
     self.CurrentDeathTween:Play()
     self.CurrentDeathTween.Completed:Wait()
     self.CurrentDeathTween = nil
 end
 
-function DeathCamUI:RemoveOverlay()
+function KillCam:RemoveOverlay()
     if self.CurrentDeathTween ~= nil then
         self.CurrentDeathTween:Pause()
         self.CurrentDeathTween:Destroy()
@@ -141,12 +153,13 @@ function DeathCamUI:RemoveOverlay()
     self.CurrentDeathTween:Play()
     self.CurrentDeathTween.Completed:Wait()
     self.CurrentDeathTween = nil
+    self.Root.Parent.Overlay.Visible = false
 end
 
-function DeathCamUI:Destroy()
+function KillCam:Destroy()
     self.Cleaner:Clean()
 end
 
-tcs.create_component(DeathCamUI)
+tcs.create_component(KillCam)
 
-return DeathCamUI
+return KillCam

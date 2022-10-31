@@ -63,7 +63,7 @@ return {
     ["NDG"] = {
         Name = "NDG",
         Type = "Projectile",
-        Quantity = 2,
+        Quantity = 3,
 
         Exploding = false,
         DEBUG = false,

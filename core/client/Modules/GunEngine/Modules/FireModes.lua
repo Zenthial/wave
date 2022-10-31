@@ -98,9 +98,7 @@ function FireModes.Semi(weaponStats, mutableStats, gunModel: Model, checkHitPart
         task.spawn(heat, mutableStats, cursorUIComponent)
         FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
 
-        print("cant fire")
         task.wait(1/weaponStats.FireRate)
-        print("can fire")
         mutableStats.Shooting = false
     end
 end
