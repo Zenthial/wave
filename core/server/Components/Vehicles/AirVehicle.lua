@@ -76,6 +76,7 @@ function AirVehicle:Start()
     CollectionService:AddTag(self.Root, "VehicleHealth")
 
     self.Root:SetAttribute("VehicleInteractToggle", false)
+    self.Root:SetAttribute("Flying", false)
 
     self:InitializePilotProximityPrompt()
 

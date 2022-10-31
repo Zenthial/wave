@@ -18,6 +18,17 @@ function VehicleController:Start()
 
         VehicleModel:SetAttribute("VehicleInteractToggle", not VehicleModel:GetAttribute("VehicleInteractToggle"))
     end)
+
+    Courier:Listen("VehicleIgnition"):Connect(function(Player: Player, VehicleModel)
+        if not CollectionService:HasTag(VehicleModel, "AirVehicle") or not VehicleModel.PilotSeat or not CollectionService:HasTag(VehicleModel.PilotSeat, "VehicleSeat") then return end
+
+        local isVehicleComponent = tcs.has_component(VehicleModel, "AirVehicle")
+        local vehicleSeatComponent = tcs.get_component(VehicleModel.PilotSeat, "VehicleSeat")
+
+        if not isVehicleComponent or not vehicleSeatComponent.Occupant == Player then return end
+
+        VehicleModel:SetAttribute("Flying", not VehicleModel:GetAttribute("Flying"))
+    end)
 end
 
 return VehicleController

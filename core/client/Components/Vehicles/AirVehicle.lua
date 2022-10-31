@@ -194,6 +194,7 @@ local function inputProcessor(self: AirVehicle_T, input: InputObject, processed:
     
     if input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleIgnition")] then
         self.Flying = not self.Flying
+        self.Courier:Send("VehicleIgnition", self.Root)
     elseif input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleInteract")] then
         self.Courier:Send("ToggleVehicleInteraction", self.Root)
     end
