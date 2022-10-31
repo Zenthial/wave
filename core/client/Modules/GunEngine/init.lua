@@ -153,7 +153,7 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
         Hit:Play()
         Courier:Send("AttemptDealDamage", healthComponentInstance, weaponStats.Name, hitPart.Name)
 
-        local shields = healthComponentInstance:GetAttribute("Shields")
+        local shields = healthComponentInstance:GetAttribute("Shields") or 0
         local headshot = hitPart.Name == "Head"
         local potentialDamage = if headshot then weaponStats.Damage * weaponStats.HeadshotMultiplier else weaponStats.Damage
         -- if shields > 0 and shields - potentialDamage <= 0 then
