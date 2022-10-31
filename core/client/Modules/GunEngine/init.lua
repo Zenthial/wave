@@ -186,7 +186,10 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
-    if Player:GetAttribute("LocalSprinting") == true or Player:GetAttribute("LocalRolling") == true then return end
+    if Player:GetAttribute("LocalRolling") == true then return end
+    if Player:GetAttribute("LocalSprinting") == true then
+        Player:SetAttribute("LocalSprinting", false)
+    end
     if EquipDebounce then return end
     mutableStats.MouseDown = true
 
