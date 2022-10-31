@@ -84,7 +84,7 @@ local function playerAdded(player: Player)
             if player:GetAttribute("Dead") == false then return end
             local randPos = getRandomPos(floor)
             local deathPosition = character.HumanoidRootPart.Position
-            character:SetPrimaryPartCFrame(CFrame.new(randPos))
+            character:PivotTo(CFrame.new(randPos))
 
             local effect = Effect:Clone()
             effect.CFrame = CFrame.new(deathPosition)
