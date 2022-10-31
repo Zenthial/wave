@@ -112,7 +112,7 @@ function MountedTurret:InitializeProximityPrompt()
         end
     end))
 
-    prompt.Parent = self.Root.BaseMount
+    prompt.Parent = self.Root.Seat
     self.ProximityPrompt = prompt
 end
 

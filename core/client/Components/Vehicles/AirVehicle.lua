@@ -89,12 +89,12 @@ end
 function AirVehicle:Start()
     local enginePart = self.Root.Engine
     assert(enginePart, "No engine for " .. self.Root.Name)
-    local altitude = enginePart.Altitude
-    assert(altitude, "No altitude for " .. self.Root.Name)
     local direction = enginePart.Direction
     assert(direction, "No direction for " .. self.Root.Name)
+    local linearVelocity = enginePart.LinearVelocity
+    assert(linearVelocity, "No linearVelocity for ".. self.Root.Name)
     self.Engine = enginePart
-    self.Altitude = altitude
+    self.LinearVelocity = linearVelocity
     self.Direction = direction
     
     local seat = self.Root.PilotSeat
@@ -104,10 +104,10 @@ function AirVehicle:Start()
     local stats = VehicleStats[self.Root.Name]
     assert(stats, "No vehicle stats for " .. self.Root.Name)
     self.Stats = stats
-    self.Speed = stats.Speed
+    self.Speed = stats.MinimumSpeed or -1
     self.MinSpeed = stats.MinimumSpeed or -1
     self.MaxSpeed = stats.MaximumSpeed or 1
-    self.IdleSpeed = stats.IdleSpeed or 0
+    self.SpeedIncreaseRate = stats.SpeedIncreaseRate or 0.1
 
     self.CameraAngles = Vector2.new(0, 0)
 	self.MouseDeltas = Vector2.new(0, 0)
@@ -115,31 +115,32 @@ function AirVehicle:Start()
     self.Roll = 0
 	self.PitchVectors = self.Stats.PitchVectors
 	self.StrafeVectors = self.Stats.StrafeVectors
-	self.ReactionSpeed = self.Stats.ReactionSpeed
 	self.RiseSpeed = self.Stats.RiseSpeed
     self.TakingOffOrLanding = false
 
     self.PreviousMousePosition = nil
 end
 
-function AirVehicle:Move(maxForce: number, p: number, velocity: Vector3)
-    if maxForce then self.Altitude.MaxForce = maxForce end
-    if p then self.Altitude.P = p end
-    if velocity then self.Altitude.Velocity = velocity end
+function AirVehicle:Move()
+    if self.Flying then
+        self.LinearVelocity.MaxForce = self.Stats.MaxForce
+        self.Direction.MaxTorque = self.Stats.DirectionTorque
+        self.Direction.D = self.Stats.DirectionD
+        self.Direction.P = self.Stats.DirectionP
+        local Vect = (self.Seat.CFrame + self.Seat.CFrame.LookVector * self.Speed).Position - self.Seat.Position
+        self.LinearVelocity.VectorVelocity = Vector3.new(Vect.X, Vect.Y * self.Stats.CounterGravity, Vect.Z)
+    else
+        self.Speed = self.MinSpeed
+        self.LinearVelocity.MaxForce = 0
+        self.Direction.MaxTorque = Vector3.new(0,0,0)
+    end
 end
 
 function AirVehicle:UpdateCamera()
     Camera.CameraType = Enum.CameraType.Attach
     Camera.CameraSubject = self.Engine
 
-    -- self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
-    -- self.MouseDeltas = Vector2.new(0,0)
-    -- self.CameraAngles = Vector2.new(self.CameraAngles.X, self.CameraAngles.Y)
-    
-    -- local angles1 = CFrame.Angles(0,math.rad(self.CameraAngles.X), 0)
-    -- local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
-
-    Camera.CFrame *= CFrame.new((VehicleStats[self.Root.Name].CameraOut or Vector3.new(0, 15, 65)))
+    Camera.CFrame *= CFrame.new((self.Stats.CameraOut or Vector3.new(0, 15, 65)))
 end
 
 function AirVehicle:RunServiceLoop()
@@ -153,51 +154,29 @@ function AirVehicle:RunServiceLoop()
     if not self.PreviousMousePosition then
         self.PreviousMousePosition = (EngineC * CFrame.new(0, 0, -1500)).Position
     end
-    if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+    if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and self.Flying then
         self.PreviousMousePosition = (Mouse.Origin * CFrame.new(0,0,-150000)).Position
     end
     if UserInputService:IsKeyDown(Enum.KeyCode.Z) then
         self.PreviousMousePosition = Vector3.new(self.PreviousMousePosition.X,EngineC.p.Y,self.PreviousMousePosition.Z)
     end
+    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+        self.Speed = math.clamp(self.Speed + self.SpeedIncreaseRate, self.MinSpeed, self.MaxSpeed)
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+        self.Speed = math.clamp(self.Speed - self.SpeedIncreaseRate, self.MinSpeed, self.MaxSpeed)
+    end
+
     local targetYaw, targetPitch, targetRoll = getYPR(CFrame.new(EngineC.Position, self.PreviousMousePosition))
-    local coreLook = Vector3.new(EngineC.LookVector.X, EngineC.LookVector.Y * (self.Stats.CounterGravity or .1), EngineC.LookVector.Z)
-    local velocity = coreLook
 
-    if UserInputService:IsKeyDown(Enum.KeyCode.E) and self.Flying then
-        velocity += (EngineC.UpVector * self.RiseSpeed.X)
-    elseif UserInputService:IsKeyDown(Enum.KeyCode.Q) and self.Flying then
-        velocity -= (EngineC.UpVector * self.RiseSpeed.Y)
-    end
-
-    if not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.D) and self.Flying then
-        velocity = velocity + (EngineC.RightVector * self.StrafeVectors.X)
-        self.Roll = math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    elseif not self.TakingOffOrLanding and UserInputService:IsKeyDown(Enum.KeyCode.A) and self.Flying then
-       velocity = velocity - (EngineC.RightVector * self.StrafeVectors.X)
-       self.Roll = math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    -- + is right, - is left
+    local rollDir = math.floor(EngineC:ToObjectSpace(CFrame.new(self.PreviousMousePosition)).X)
+    if rollDir > 15000 then
+        self.Roll = math.clamp(-1 * math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
+    elseif rollDir < -15000 then
+        self.Roll = math.clamp(math.abs(rollDir/2500), -self.StrafeVectors.Y, self.StrafeVectors.Y)
     else
-       self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
-    end
-    
-    -- if self.Flying then
-    --     if (self.Roll - targetRoll) > 0 then
-    --         self.Roll = targetRoll + math.clamp(self.Roll - 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --     elseif (self.Roll - targetRoll) < 0 then
-    --         self.Roll = targetRoll + math.clamp(self.Roll + 1, -self.StrafeVectors.Y, self.StrafeVectors.Y)
-    --     else
-    --         self.Roll = targetRoll
-    --     end
-    -- end
-
-    if not self.TakingOffOrLanding then
-        velocity = velocity + (coreLook * (self.IdleSpeed * self.Stats.Speed))
-    end
-    
-    velocity = self.Altitude.Velocity:Lerp(velocity, self.ReactionSpeed)
-    if self.TakingOffOrLanding then
-        velocity = Vector3.new(velocity.X / 8, velocity.Y * 1.025, velocity.Z / 8)
-    else
-        velocity = Vector3.new(velocity.X, velocity.Y * 1.025, velocity.Z)
+        self.Roll = math.clamp(self.Roll - math.sign(self.Roll),-self.StrafeVectors.Y,self.StrafeVectors.Y)
     end
     
     self.Direction.CFrame =
@@ -207,19 +186,16 @@ function AirVehicle:RunServiceLoop()
             *CFrame.Angles(0, 0, math.rad(self.Roll))
     
     self:UpdateCamera()
-    
-    if self.Flying then
-        self:Move(Vector3.new(500000, 1500000, 500000), 500, velocity)
-    else
-        self:Move(Vector3.new(0, 0, 0), nil, velocity)
-    end
+    self:Move()
 end
 
 local function inputProcessor(self: AirVehicle_T, input: InputObject, processed: boolean)
     if processed then return end
     
-    if input.KeyCode == Enum.KeyCode.Y then
+    if input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleIgnition")] then
         self.Flying = not self.Flying
+    elseif input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleInteract")] then
+        self.Courier:Send("ToggleVehicleInteraction", self.Root)
     end
 end
 
@@ -228,15 +204,13 @@ function AirVehicle:Bind()
     self.Cleaner:Add(sessionCleaner, "Clean")
     self.SessionCleaner = sessionCleaner
 
-    if self.Flying then
-        self:Move(Vector3.new(500, 500, 500), 500, Vector3.new(0, 0, 0))
-    else
-        self:Move(Vector3.new(0, 0, 0), 0, Vector3.new(0, 0, 0))
-    end
+    self.Direction.MaxTorque = self.Stats.DirectionTorque
+    self.Direction.D = self.Stats.DirectionD
+    self.Direction.P = self.Stats.DirectionP
 
     sessionCleaner:Add(UserInputService.InputBegan:Connect(function(input, processed) inputProcessor(self, input, processed) end))
     sessionCleaner:Add(UserInputService.InputChanged:Connect(function(input, processed)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if input.UserInputType == Enum.UserInputType.MouseMovement and self.Flying then
             self.MouseDeltas = Vector2.new(input.Delta.X, input.Delta.Y)
         end
     end))
@@ -254,11 +228,7 @@ function AirVehicle:Unbind()
     Camera.CameraSubject = Character
     UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 
-    if self.Flying then
-        self:Move(Vector3.new(500, 500, 500), 500, Vector3.new(0, 0, 0))
-    else
-        self:Move(Vector3.new(0, 0, 0), 0, Vector3.new(0, 0, 0))
-    end
+    self:Move()
 
     local stats = VehicleStats[self.Root.Name]
     assert(stats, "No vehicle stats for " .. self.Root.Name)
@@ -270,10 +240,13 @@ function AirVehicle:Unbind()
 
     self.Roll = 0
 	self.PitchVectors = self.Stats.PitchVectors
-	self.StrafeVectors = self.Stats.self.StrafeVectors
-	self.ReactionSpeed = self.Stats.ReactionSpeed
-	self.RiseSpeed = self.Stats.self.RiseSpeed
+	self.StrafeVectors = self.Stats.StrafeVectors
+	self.RiseSpeed = self.Stats.RiseSpeed
     self.TakingOffOrLanding = false
+    self.LinearVelocity.MaxForce = 0
+
+    self.Direction.MaxTorque = Vector3.new(0,0,0)
+    self.Flying = false
 
     self.PreviousMousePosition = nil
 end

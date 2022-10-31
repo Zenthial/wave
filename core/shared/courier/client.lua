@@ -32,7 +32,7 @@ function CourierClient:SendFunction(portString: string, ...)
     end
 
     if portRemote ~= nil then
-        portRemote:InvokeServer(...)
+        return portRemote:InvokeServer(...)
     end
 end
 

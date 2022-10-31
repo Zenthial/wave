@@ -1,7 +1,9 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -46,32 +48,40 @@ function AirVehicle:Start()
     assert(enginePart, "No engine for " .. self.Root.Name)
     local direction = enginePart.Direction
     assert(direction, "No direction on " .. self.Root.Name)
-    local altitude = enginePart.Altitude
-    assert(altitude, "No altitude on " .. self.Root.Name)
+    local linearVelocity = enginePart.LinearVelocity
+    assert(linearVelocity, "No linearVelocity for ".. self.Root.Name)
     self.Engine = enginePart
 
+    local stats = VehicleStats[self.Root.Name]
+    assert(stats, "No vehicle stats for " .. self.Root.Name)
+
+    self.Stats = stats
+    self.LinearVelocity = linearVelocity
+
     direction.CFrame = enginePart.CFrame
-	direction.D = 150
-	direction.MaxTorque = Vector3.new(300000, 300000, 300000)
-	direction.P = 500
-	
-	altitude.MaxForce = Vector3.new(500000, 1500000, 500000)
+	direction.D = stats.DirectionD
+	direction.MaxTorque = stats.DirectionTorque
+	direction.P = stats.DirectionP
 
     local function goFlat()
 		local LookVector = enginePart.CFrame.LookVector
 		direction.CFrame = CFrame.new(enginePart.CFrame.Position, enginePart.CFrame.Position + Vector3.new(LookVector.X, 0, LookVector.Z))
 	end
     
-    local seat = self.Root.PilotSeat
-    assert(seat, "No seat for " .. self.Root.Name)
-    self.Seat = seat
+    local pilotSeat = self.Root.PilotSeat
+    assert(pilotSeat, "No pilot seat for " .. self.Root.Name)
+    self.Seat = pilotSeat
+
+    CollectionService:AddTag(self.Root, "VehicleHealth")
+
+    self.Root:SetAttribute("VehicleInteractToggle", false)
 
     self:InitializePilotProximityPrompt()
 
-    local vehicleSeatComponent = tcs.get_component(seat, "VehicleSeat")
+    local vehicleSeatComponent = tcs.get_component(pilotSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if self:IsVehicleFlipped() then
-            direction.MaxTorque = Vector3.new(0, 0, 25000000)
+            direction.MaxTorque = self.Stats.DirectionTorque
             repeat
                 task.wait()
             until not self:IsVehicleFlipped()
@@ -81,14 +91,55 @@ function AirVehicle:Start()
         end
 
         if newOccupant ~= nil then
+            self.LinearVelocity.MaxForce = self.Stats.MaxForce
             self.Courier:Send("BindToPlane", newOccupant, self.Root)
         else
             self.OccupantPlayer = nil
-            self.ProximityPrompt.Enabled = true   
+            self.ProximityPrompt.Enabled = true
+            self.LinearVelocity.MaxForce = 0
             self.Courier:Send("UnbindFromPlane", oldOccupant, self.Root)
             goFlat()
         end
     end))
+
+    self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Dead"):Connect(function()
+        if self.Root:GetAttribute("Dead") then
+            self.Courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
+            local explosion = Instance.new("Explosion")
+            explosion.BlastRadius = 30
+            explosion.ExplosionType = Enum.ExplosionType.NoCraters
+            explosion.Position = self.Engine.Position
+            explosion.DestroyJointRadiusPercent = 0.80
+            explosion.Visible = true
+            explosion.Parent = self.Engine
+            task.wait(25)
+            self.Root:Destroy()
+        end
+    end))
+
+    -- self.Cleaner:Add(RunService.Heartbeat:Connect(function()
+    --     self:RunServiceLoop()
+    -- end))
+end
+
+local lastRan = tick()
+function AirVehicle:RunServiceLoop()
+    if tick() - lastRan < 4 then return end
+    lastRan = tick()
+    if self.OccupantPlayer == nil then return end
+    local hitboxOverlapParams = OverlapParams.new()
+    hitboxOverlapParams.FilterType = Enum.RaycastFilterType.Blacklist 
+    hitboxOverlapParams.FilterDescendantsInstances = { self.Root }
+    local health_component = tcs.get_component(self.Root, "VehicleHealth")
+    local partsTable = self.Engine:GetConnectedParts()
+    local touching = false
+    for _, part in pairs(partsTable) do
+        for _, hitPart in pairs(workspace:GetPartsInPart(part, hitboxOverlapParams)) do
+            if hitPart.AssemblyRootPart.Name ~= "HumanoidRootPart" then
+                health_component:TakeDamage(100)
+            end
+        end
+    end
 end
 
 function AirVehicle:InitializePilotProximityPrompt()

@@ -9,7 +9,7 @@ local Player = Players.LocalPlayer
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 
-local setViewport = require(script.Parent.Parent.functions.setViewport)
+local setViewport = require(script.Parent.Parent.functions.SetViewport)
 
 local function calculateCharge(currentHeat: number)
     return math.floor(100 - currentHeat)
