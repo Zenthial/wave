@@ -104,7 +104,7 @@ local function playerAdded(player: Player)
                         KillNotifier:FireClient(killerPlayer, "Kill", player)
                     end
     
-                    for _, folder in pairs(damageFolder) do
+                    for _, folder in pairs(damageFolder:GetChildren()) do
                         local damagePlayer = Players:FindFirstChild(folder.Name):: Player
                         if damagePlayer == nil then continue end
     

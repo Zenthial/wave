@@ -33,6 +33,16 @@ function Movement:Start()
 	self.Character = char
 	self.Humanoid = hum
 
+	self.Cleaner:Add(hum.Changed:Connect(function(prop)
+		if prop == "MoveDirection" then
+			if hum.MoveDirection.Magnitude == 0 then
+				self.Root:SetAttribute("LocalSprinting", false)
+			elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+				self.Root:SetAttribute("LocalSprinting", true)
+			end
+		end
+	end))
+
 	self.Cleaner:Add(keyboard.KeyDown:Connect(function(keyCode: Enum.KeyCode)
 		if keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Sprint")] then
 			if self.Root:GetAttribute("LocalCanSprint") == false then return end
@@ -57,6 +67,7 @@ function Movement:Start()
 					else
 						self.Root:SetAttribute("LocalSprinting", false)
 					end
+					self:UpdateWalkspeed()
 				else
 					self.Root:SetAttribute("LocalCrouching", not self.Root:GetAttribute("LocalCrouching"))
 				end

@@ -60,6 +60,7 @@ end
 
 local GunEngine = {
     EquippedWeaponModel = nil,
+    EquippedWeaponOverheatSignal = nil,
 }
 
 function GunEngine:Start()
@@ -108,7 +109,6 @@ end
 
 function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     if Player:GetAttribute("InSeat") == true then return false end
-    print("here", EquipDebounce)
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
@@ -122,6 +122,14 @@ function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     end
 
     GunEngine.EquippedWeaponModel = weaponModel
+    GunEngine.EquippedWeaponOverheatSignal = mutableStats.OverheatChanged:Connect(function(overheated)
+        if overheated then
+            if weaponModel.Barrel:FindFirstChild("Overheat") then
+                weaponModel.Barrel.Overheat.Volume = 1
+                weaponModel.Barrel.Overheat:Play()
+            end
+        end
+    end)
 
     Player:SetAttribute("EquippedWeapon", weaponStats.Name)
 end
@@ -140,6 +148,10 @@ function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
     Player:SetAttribute("EquippedWeapon", "")
     
     GunEngine.EquippedWeaponModel = nil
+    if GunEngine.EquippedWeaponOverheatSignal then
+        GunEngine.EquippedWeaponOverheatSignal:Disconnect()
+        GunEngine.EquippedWeaponOverheatSignal = nil
+    end
     
     Courier:Send("WeldWeapon", weaponModel, true)
 end
@@ -147,7 +159,6 @@ end
 function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
     local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
 
-    print(hitPart, hitPart.Parent, healthComponentInstance)
     if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
         cursorComponent:Hitmark()
         Hit:Play()
