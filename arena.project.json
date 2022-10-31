@@ -18,6 +18,14 @@
                 "$path": "places/arena/server"
             }
         },
+        "StarterGui": {
+            "MainHUD": {
+                "$path": "assets/MainHUD.rbxm"
+            },
+            "Cursor": {
+                "$path": "assets/Cursor.rbxm"
+            }
+        },
         "StarterPlayer": {
             "StarterPlayerScripts": {
                 "Client": {

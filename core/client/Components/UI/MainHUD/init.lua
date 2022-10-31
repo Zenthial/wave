@@ -24,16 +24,16 @@ function MainHUD.new(root: any)
 end
 
 function MainHUD:Start()
-    self.Root.Enabled = false
+    self.Root.Enabled = true
 
     self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
     self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
-        self.Root.Enabled = Player:GetAttribute("InRound")
-    end))
+    -- self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
+    --     self.Root.Enabled = Player:GetAttribute("InRound")
+    -- end))
 
     self.Cleaner:Add(RenderDeathEffect.OnClientEvent:Connect(function(effect, victim, killer, color)
         self:RenderDeathEffect(effect, victim, killer, color)

@@ -3,7 +3,8 @@
   "servePlaceIds": [
     9452951872,
     10172158061,
-    10168072912
+    10168072912,
+    10173656380
   ],
   "tree": {
     "$className": "DataModel",
@@ -30,6 +31,14 @@
       },
       "Sounds": {
         "$path": "Sounds.rbxmx"
+      }
+    },
+    "StarterGui": {
+      "MainHUD": {
+        "$path": "assets/MainHUD.rbxm"
+      },
+      "Cursor": {
+        "$path": "assets/Cursor.rbxm"
       }
     },
     "Chat": {

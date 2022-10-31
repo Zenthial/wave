@@ -12,6 +12,7 @@ function SoundHandler:Start()
 
     local lowHealthPlaying = false
     Player:GetAttributeChangedSignal("Health"):Connect(function()
+        if Player:GetAttribute("Dead") then return end
         local newHealth = Player:GetAttribute("Health")
         local newShields = Player:GetAttribute("Shields")
 
@@ -24,8 +25,15 @@ function SoundHandler:Start()
         end
     end)
 
+    Player:GetAttributeChangedSignal("Dead"):Connect(function()
+        if Player:GetAttribute("Dead") == true then
+            SoundService.Sounds.LowHealth:Stop()
+        end
+    end)
+
     local regenPlaying = false
     Player:GetAttributeChangedSignal("Shields"):Connect(function()
+        if Player:GetAttribute("Dead") then return end
         local newHealth = Player:GetAttribute("Health")
         local newShields = Player:GetAttribute("Shields")
         local oldShields = Player:GetAttribute("OldShields")

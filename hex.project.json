@@ -28,6 +28,14 @@
         }
       }
     },
+    "StarterGui": {
+      "MainHUD": {
+        "$path": "assets/MainHUD.rbxm"
+      },
+      "Cursor": {
+        "$path": "assets/Cursor.rbxm"
+      }
+    },
     "SoundService": {
       "$properties": {
         "RespectFilteringEnabled": true
