@@ -56,8 +56,8 @@ local function spawnPlayer(player, character)
     health_component:Heal(100) -- probably bad to hardcode this value
     player:SetAttribute("LastKiller", "")
     
-    if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.Team.Name) ~= nil then
-        local teamSpawn = workspace.Spawns[player.Team.Name]
+    if workspace:FindFirstChild("Spawns") ~= nil and workspace.Spawns:FindFirstChild(player.TeamColor.Name) ~= nil then
+        local teamSpawn = workspace.Spawns[player.TeamColor.Name]
         local randPos = getRandomPos(teamSpawn)
         -- character.HumanoidRootPart.Position = randPos
         character:PivotTo(CFrame.new(randPos))

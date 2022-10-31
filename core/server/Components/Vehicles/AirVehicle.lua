@@ -118,11 +118,19 @@ function AirVehicle:Start()
     end))
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Health"):Connect(function()
-        print(self.Root:GetDescendants())
         local currentHealth = self.Root:GetAttribute("Health")
         local maxHealth = self.Root:GetAttribute("MaxHealth")
-        if currentHealth/maxHealth <= 0.5 then
-            
+        
+        if currentHealth/maxHealth <= 0.5  and currentHealth/maxHealth > 0.15 then
+            local randomBricks = math.random(0, 3)
+            local planeParts = self.Root.Engine:GetConnectedParts()
+            for i=1, randomBricks do
+                local rand = math.random(1, #planeParts)
+                while (planeParts[rand].Material == Enum.Material.CorrodedMetal) do
+                    rand = math.random(1, #planeParts)
+                end
+                planeParts[rand].Material = Enum.Material.CorrodedMetal
+            end
         end
     end))
 
