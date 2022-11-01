@@ -77,6 +77,7 @@ function AirVehicle:Start()
 
     self.Root:SetAttribute("VehicleInteractToggle", false)
     self.Root:SetAttribute("Flying", false)
+    self.Root:SetAttribute("Scraping", false)
 
     self:InitializePilotProximityPrompt()
 
@@ -140,28 +141,27 @@ function AirVehicle:Start()
         end
     end))
 
-    -- self.Cleaner:Add(RunService.Heartbeat:Connect(function()
-    --     self:RunServiceLoop()
-    -- end))
-end
-
-local lastRan = tick()
-function AirVehicle:RunServiceLoop()
-    if tick() - lastRan < 4 then return end
-    lastRan = tick()
-    if self.OccupantPlayer == nil then return end
-    local hitboxOverlapParams = OverlapParams.new()
-    hitboxOverlapParams.FilterType = Enum.RaycastFilterType.Blacklist 
-    hitboxOverlapParams.FilterDescendantsInstances = { self.Root }
-    local health_component = tcs.get_component(self.Root, "VehicleHealth")
-    local partsTable = self.Engine:GetConnectedParts()
-    local touching = false
-    for _, part in pairs(partsTable) do
-        for _, hitPart in pairs(workspace:GetPartsInPart(part, hitboxOverlapParams)) do
-            if hitPart.AssemblyRootPart.Name ~= "HumanoidRootPart" then
-                health_component:TakeDamage(100)
+    
+    local function partInCharacter(part: any)
+        if part.Name == "Workspace" then
+            return false
+        end
+        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            if part.Name == player.Name then
+                return true
             end
         end
+        return partInCharacter(part.Parent)
+    end
+
+    local health_component = tcs.get_component(self.Root, "VehicleHealth")
+    for _, part in pairs(self.Engine:GetConnectedParts()) do
+        self.Cleaner:Add(part.Touched:Connect(function(hitPart)
+            if self.Root:GetAttribute("Dead") or self.OccupantPlayer == nil or math.abs(self.Engine.AssemblyLinearVelocity.Magnitude) <= Vector3.new(0.3, 0.3, 0.3).Magnitude then return end
+            if not table.find(self.Engine:GetConnectedParts(), hitPart) and not partInCharacter(hitPart) then
+                health_component:TakeDamage(1)
+            end
+        end))
     end
 end
 
