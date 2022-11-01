@@ -47,6 +47,9 @@ function Health:Start()
     self.Root:SetAttribute("OldShields", DEFAULT_HEALTH_STATS.MAX_SHIELD)
     self.Root:SetAttribute("Dead", false)
 
+    self.Root:SetAttribute("TotalHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH + DEFAULT_HEALTH_STATS.MAX_SHIELD)
+    self.Root:SetAttribute("TotalMaxHealth", DEFAULT_HEALTH_STATS.MAX_HEALTH + DEFAULT_HEALTH_STATS.MAX_SHIELD)
+
     self.RechargeTime = DEFAULT_HEALTH_STATS.RECHARGE_TIME
     self.RechargeWait = DEFAULT_HEALTH_STATS.RECHARGE_WAIT
 
@@ -85,6 +88,7 @@ end
 function Health:SetShields(shields)
     self.Root:SetAttribute("OldShields", self.Root:GetAttribute("Shields"))
     self.Root:SetAttribute("Shields", shields)
+    self.Root:SetAttribute("TotalHealth", self.Root:GetAttribute("Health") + shields)
 
     if self.ShieldModelComponent ~= nil then
         self.ShieldModelComponent:UpdateShieldTransparency(self.Root:GetAttribute("Shields") / self.Root:GetAttribute("MaxShields"))
@@ -126,6 +130,7 @@ function Health:SetHealth(health)
 
     self.Root:SetAttribute("OldHealth", self.Root:GetAttribute("Health"))
     self.Root:SetAttribute("Health", health)
+    self.Root:SetAttribute("TotalHealth", health + self.Root:GetAttribute("Shields"))
 end
 
 function Health:RegenShield(lastDamageTime: number)
