@@ -23,6 +23,8 @@ local recursivelyFindHealthComponentInstance = require(script.functions.recursiv
 local createDamageIndicator = require(script.functions.createDamageIndicator)
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local CursorUI = PlayerGui:WaitForChild("Cursor"):WaitForChild("Cursor")
 local Mouse = Player:GetMouse()
 
 local Hit = SoundService.Sounds.Hit
@@ -107,11 +109,20 @@ function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3
     Grenades:RenderNade(player, position, direction, movementSpeed, stats)
 end
 
+function GunEngine.SetOverheated(bool)
+    local cursorComponent = tcs.get_component(CursorUI, "Cursor")
+    cursorComponent:SetOverheated(bool)
+end
+
 function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     if Player:GetAttribute("InSeat") == true then return false end
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    task.spawn(function()
+        GunEngine.SetOverheated(mutableStats.Overheated)
+    end)
 
     mutableStats.CanShoot = true
 
@@ -138,6 +149,10 @@ function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    task.spawn(function()
+        GunEngine.SetOverheated(false)
+    end)
 
     mutableStats.CanShoot = false
     
