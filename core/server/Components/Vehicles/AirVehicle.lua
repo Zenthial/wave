@@ -73,6 +73,7 @@ function AirVehicle:Start()
     assert(pilotSeat, "No pilot seat for " .. self.Root.Name)
     self.Seat = pilotSeat
 
+    self:InitializeHitbox()
     CollectionService:AddTag(self.Root, "VehicleHealth")
 
     self.Root:SetAttribute("VehicleInteractToggle", false)
@@ -154,15 +155,18 @@ function AirVehicle:Start()
         return partInCharacter(part.Parent)
     end
 
-    local health_component = tcs.get_component(self.Root, "VehicleHealth")
-    for _, part in pairs(self.Engine:GetConnectedParts()) do
-        self.Cleaner:Add(part.Touched:Connect(function(hitPart)
-            if self.Root:GetAttribute("Dead") or self.OccupantPlayer == nil or math.abs(self.Engine.AssemblyLinearVelocity.Magnitude) <= Vector3.new(0.3, 0.3, 0.3).Magnitude then return end
-            if not table.find(self.Engine:GetConnectedParts(), hitPart) and not partInCharacter(hitPart) then
-                health_component:TakeDamage(1)
-            end
-        end))
+    while (task.wait(1)) do
+        self:RunServiceLoop()
     end
+end
+
+local overlapParam = OverlapParams.new()
+overlapParam.FilterType = Enum.RaycastFilterType.Blacklist
+function AirVehicle:RunServiceLoop()
+    overlapParam.FilterDescendantsInstances = {self.Root, CollectionService:GetTagged("Character")}
+    local health_component = tcs.get_component(self.Root, "VehicleHealth")
+    local hit = game.Workspace:GetPartsInPart(self.Hitbox)
+    print(hit)
 end
 
 function AirVehicle:InitializePilotProximityPrompt()
@@ -189,6 +193,35 @@ function AirVehicle:InitializePilotProximityPrompt()
 
     prompt.Parent = self.Root.PilotSeat
     self.ProximityPrompt = prompt
+end
+
+function AirVehicle:InitializeHitbox()
+    local partClone = Instance.new("Part")
+    partClone.CanCollide = false
+    partClone.Transparency = .9
+    partClone.Anchored = true
+    local parts = {}
+    for _, part in pairs(self.Root:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name ~= "Engine" then
+            local newPart = partClone:Clone()
+            newPart.Size = part.Size + Vector3.new(0.2, 0.2, 0.2)
+            newPart:PivotTo(part.CFrame)
+            newPart.Parent = self.Root
+            table.insert(parts, newPart)
+        end
+    end
+    local newPart = partClone:Clone()
+    newPart.Size = self.Root.Engine.Size + Vector3.new(0.2, 0.2, 0.2)
+    newPart:PivotTo(self.Root.Engine.CFrame)
+    newPart.Parent = self.Root
+    newPart:UnionAsync(parts)
+    newPart.Name = "Hitbox"
+    local WeldConstraint = Instance.new("WeldConstraint")
+    WeldConstraint.Part0 = newPart
+    WeldConstraint.Part1 = self.Root.Engine
+    WeldConstraint.Parent = newPart
+    newPart.Anchored = false
+    self.Hitbox = newPart
 end
 
 function AirVehicle:IsVehicleFlipped()
