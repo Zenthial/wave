@@ -142,19 +142,6 @@ function AirVehicle:Start()
         end
     end))
 
-    
-    local function partInCharacter(part: any)
-        if part.Name == "Workspace" then
-            return false
-        end
-        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-            if part.Name == player.Name then
-                return true
-            end
-        end
-        return partInCharacter(part.Parent)
-    end
-
     while (task.wait(1)) do
         self:RunServiceLoop()
     end
@@ -165,8 +152,10 @@ overlapParam.FilterType = Enum.RaycastFilterType.Blacklist
 function AirVehicle:RunServiceLoop()
     overlapParam.FilterDescendantsInstances = {self.Root, CollectionService:GetTagged("Character")}
     local health_component = tcs.get_component(self.Root, "VehicleHealth")
-    local hit = game.Workspace:GetPartsInPart(self.Hitbox)
-    print(hit)
+    if self.Root.Engine.AssemblyLinearVelocity.Magnitude > Vector3.new(0.3, 0.3, 0.3).Magnitude then
+        local hit = game.Workspace:GetPartsInPart(self.Hitbox)
+        print(hit)
+    end
 end
 
 function AirVehicle:InitializePilotProximityPrompt()
@@ -214,14 +203,20 @@ function AirVehicle:InitializeHitbox()
     newPart.Size = self.Root.Engine.Size + Vector3.new(0.2, 0.2, 0.2)
     newPart:PivotTo(self.Root.Engine.CFrame)
     newPart.Parent = self.Root
-    newPart:UnionAsync(parts)
-    newPart.Name = "Hitbox"
+    local newPart2 = newPart:UnionAsync(parts)
+    newPart2.Anchored = true
+    newPart2.Name = "Hitbox"
+    newPart2.Parent = self.Root
     local WeldConstraint = Instance.new("WeldConstraint")
-    WeldConstraint.Part0 = newPart
+    WeldConstraint.Part0 = newPart2
     WeldConstraint.Part1 = self.Root.Engine
-    WeldConstraint.Parent = newPart
-    newPart.Anchored = false
-    self.Hitbox = newPart
+    WeldConstraint.Parent = newPart2
+    newPart2.Anchored = false
+    self.Hitbox = newPart2
+    newPart:Destroy()
+    for _, part in pairs(parts) do
+        part:Destroy()
+    end
 end
 
 function AirVehicle:IsVehicleFlipped()
