@@ -234,6 +234,8 @@ function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
         if self.EquippedGadgetStats.Type == "Deployable" then
             DeployableEngine:CancelDeployable()
         end
+    elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil and self.EquippedSkill.WeaponStats.Trigger == "Hold" then
+        SkillEngine.Use(self.EquippedSkill, false)
     end
 end
 

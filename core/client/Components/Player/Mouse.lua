@@ -16,7 +16,6 @@ local Mouse = {}
 Mouse.__index = Mouse
 Mouse.Name = "Mouse"
 Mouse.Tag = "Player"
-Mouse.Needs = {"Cleaner"}
 Mouse.Ancestor = Players
 
 function Mouse.new(Player: Player)

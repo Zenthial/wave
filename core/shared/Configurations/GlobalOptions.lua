@@ -7,4 +7,5 @@ return {
     AssistHitsThreshold = 2, -- how many times you need to damage the player in order to get an assist
     DeployableDestroyTime = 300, -- how long it takes until a deployable is automatically destroyed
     RollDebounce = 2, -- 2 seconds between rolls
+    SpottedDuration = 4,
 }

@@ -44,6 +44,8 @@ function Player:Start()
         end
     end
 
+    -- CollectionService:AddTag(self.Player, "SpottingComponent")
+
     self.Cleaner:Add(character.DescendantAdded:Connect(function(descendant)
         CollectionService:AddTag(descendant, "Ignore")
     end))

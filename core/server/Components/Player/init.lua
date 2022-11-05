@@ -39,6 +39,12 @@ function Player:Start()
         local character = self.Player.Character or self.Player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid") :: Humanoid
         humanoid.NameDisplayDistance = 0
+
+        for _, thing in character:GetDescendants() do
+            if thing:IsA("Accessory") then
+                CollectionService:AddTag(thing, "Ignore")
+            end
+        end
     end)
 
     self.Cleaner:Add(playerLoadedSignal.OnServerEvent:Connect(function(player: Player)

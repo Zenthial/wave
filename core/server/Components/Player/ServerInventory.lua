@@ -10,7 +10,6 @@ local GunEngine = require(Modules:WaitForChild("GunEngine"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local InventoryStats = require(Shared:WaitForChild("Configurations"):WaitForChild("InventoryStats"))
 local WeaponStats = require(Shared:WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
-local SkillStats = require(Shared:WaitForChild("Configurations"):WaitForChild("SkillStats"))
 local GadgetStats = require(Shared:WaitForChild("Configurations"):WaitForChild("GadgetStats"))
 
 local WeaponModels = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Weapons")
@@ -110,7 +109,7 @@ function ServerInventory:SetItem(key: string, name: string)
         self.Root:SetAttribute("Equipped"..key, name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
     elseif key == "Skill" or key == "Skills" then
-        local stats = SkillStats[name]
+        local stats = WeaponStats[name]
         local model = SkillModels[name]:Clone() :: Model
         model.Name = name
         model.Parent = self.Character

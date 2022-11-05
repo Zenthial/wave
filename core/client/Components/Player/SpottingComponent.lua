@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
--- local tcl = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcl"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local Player = Players.LocalPlayer
 
@@ -21,10 +21,15 @@ local SpottingComponent = {}
 SpottingComponent.__index = SpottingComponent
 SpottingComponent.Ancestor = Players
 SpottingComponent.Name = "SpottingComponent"
-SpottingComponent.Tag = "SpottingComponent"
+SpottingComponent.Tag = "Player"
+
+function SpottingComponent.new(root)
+    return setmetatable({Root = root}, SpottingComponent)
+end
 
 function SpottingComponent:Start()
-    self.MouseComponent = tcs.get_component("Mouse")
+    print("creating")
+    self.MouseComponent = tcs.get_component(Player, "Mouse")
     
     local character = Player.Character or Player.CharacterAdded:Wait()
     self.hrp = character:WaitForChild("HumanoidRootPart")
@@ -37,7 +42,7 @@ function SpottingComponent:FeedInput()
         local spottedPlayer = recursivelyFindHealthComponent(hitPart)
 
         if spottedPlayer then
-            -- tcl:Send("Spot", spottedPlayer)
+            courier:Send("Spot", spottedPlayer)
         end
     end    
 end
@@ -46,5 +51,5 @@ function SpottingComponent:Destroy()
     self.Cleaner:Clean()
 end
 
+tcs.create_component(SpottingComponent)
 return SpottingComponent
-

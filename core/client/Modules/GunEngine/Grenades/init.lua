@@ -1,3 +1,11 @@
+--[[
+	BEWARE, UGLY CODE AHEAD!
+
+	MANY HOURS HAVE BEEN SPENT HERE TRYING TO MAKE THIS LOOK BETTER
+
+    THE FACT IS IT WORKS
+]]
+
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -20,7 +28,7 @@ local Grenades = {}
 
 local CastParams = RaycastParams.new()
 
-function Grenades:RenderNade(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadgetStats: GadgetStats.GadgetStats_T)
+function Grenades:RenderNade(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadgetStats: GadgetStats.GadgetStats_T, gadgetFunction)
 	if not player.Character then print("returning") return end
     HandleGadgetStats(player, NadeCaster, CastParams, gadgetStats)
 
@@ -32,6 +40,7 @@ function Grenades:RenderNade(player: Player, position: Vector3, direction: Vecto
 	activeCast.UserData.SourceTeam = player.TeamColor
 	activeCast.UserData.SourcePlayer = player
     activeCast.UserData.GadgetStats = gadgetStats
+    activeCast.UserData.TerminationFunction = coroutine.wrap(gadgetFunction)
 end
 
 return Grenades

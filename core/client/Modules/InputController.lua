@@ -21,7 +21,7 @@ function InputController:Start()
     local InventoryComponent = tcs.get_component(LocalPlayer, "Inventory")
     -- local MenuStateComponent = tcs.get_component(LocalPlayer, "MenuState")
     -- local MainMenuComponent = tcs.get_component(MainMenu, "MainMenu")
-    -- local SpottingComponent = tcs.get_component(LocalPlayer, "Spotting")
+    local SpottingComponent = tcs.get_component(LocalPlayer, "SpottingComponent")
 
     cleaner:Add(mouseInput.LeftDown:Connect(function()
         InventoryComponent:MouseDown()
@@ -43,8 +43,8 @@ function InputController:Start()
         --     end
         -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Inventory")] then
         --     MenuStateComponent:FeedInput()
-        -- elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
-        --     SpottingComponent:FeedInput()
+        elseif keyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Spot")] then
+            SpottingComponent:FeedInput()
         else
             InventoryComponent:FeedKeyDown(keyCode)
         end

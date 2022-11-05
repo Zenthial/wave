@@ -69,6 +69,16 @@ function HealthTag:CreateTag()
         end    
     end)
 
+    self.Root:GetAttributeChangedSignal("Spotted"):Connect(function()
+        if self:OnTeam() == false then
+            if self.Root:GetAttribute("Spotted") == true then
+                self:DisplayTag(true, true)
+            else
+                self:DisplayTag(false, false)
+            end
+        end
+    end)
+
     self.NameTag = tag
 
     self.Cleaner:Add(self.Root.Changed:Connect(function(prop)

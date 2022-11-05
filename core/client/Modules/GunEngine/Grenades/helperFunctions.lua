@@ -1,3 +1,9 @@
+--[[
+	BEWARE, UGLY CODE AHEAD!
+
+	MANY HOURS HAVE BEEN SPENT HERE TRYING TO MAKE THIS LOOK BETTER
+]]
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 
@@ -84,12 +90,12 @@ end
 
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
-    local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
+	local terminationFunction = cast.UserData.TerminationFunction
 	print(cosmeticBullet)
 	if cosmeticBullet ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 
-		gadgetStats.TerminationBehavior(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
+		terminationFunction(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end

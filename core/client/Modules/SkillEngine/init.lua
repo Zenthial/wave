@@ -60,12 +60,16 @@ function SkillEngine.CreateSkill(skillName: string, skillModel: Model)
 end
 
 function SkillEngine.Use(skillStats: SkillStats, bool: boolean)
-    if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and
-       skillStats.Energy >= skillStats.WeaponStats.EnergyMin
-    then
-        print(skillStats.SkillName, Functions)
-        functor(Functions[skillStats.SkillName])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
+    if bool then
+        if SkillEngine.Character ~= nil and SkillEngine.Character.Humanoid ~= nil and
+            skillStats.Energy >= skillStats.WeaponStats.EnergyMin
+        then
+            functor(Functions[skillStats.SkillName])(skillStats, bool, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
+        end
+    else
+        functor(Functions[skillStats.SkillName])(skillStats, false, SkillEngine.RegenEnergy, SkillEngine.DepleteEnergy)
     end
+    
 end
 
 function SkillEngine.DepleteEnergy(skillStats: SkillStats, depletionAmount: number)

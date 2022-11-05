@@ -21,6 +21,7 @@ local FireModes = require(script.Modules.FireModes)
 local chargeWait = require(script.functions.chargeWait)
 local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
 local createDamageIndicator = require(script.functions.createDamageIndicator)
+local GadgetFunctions = require(script.GadgetFunctions)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -98,7 +99,7 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
         task.wait(.5) -- animation wait
         if Player:GetAttribute("Health") > 0 then
             Courier:Send("RenderGrenade", leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
-            Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
+            Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats, GadgetFunctions[GadgetStats.Name])
         end
     end
 end
@@ -106,7 +107,7 @@ end
 function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, grenade: string)
     local stats = GadgetStatsModule[grenade]
     assert(stats ~= nil, "No gadget stats for "..grenade)
-    Grenades:RenderNade(player, position, direction, movementSpeed, stats)
+    Grenades:RenderNade(player, position, direction, movementSpeed, stats, GadgetFunctions[stats.Name])
 end
 
 function GunEngine.SetOverheated(bool)
