@@ -150,11 +150,13 @@ end
 local overlapParam = OverlapParams.new()
 overlapParam.FilterType = Enum.RaycastFilterType.Blacklist
 function AirVehicle:RunServiceLoop()
-    overlapParam.FilterDescendantsInstances = {self.Root, CollectionService:GetTagged("Character")}
+    overlapParam.FilterDescendantsInstances = {self.Root:GetDescendants(), CollectionService:GetTagged("Character")}
     local health_component = tcs.get_component(self.Root, "VehicleHealth")
     if self.Root.Engine.AssemblyLinearVelocity.Magnitude > Vector3.new(0.3, 0.3, 0.3).Magnitude then
-        local hit = game.Workspace:GetPartsInPart(self.Hitbox)
-        print(hit)
+        local hit = game.Workspace:GetPartsInPart(self.Hitbox, overlapParam)
+        if hit ~= {} then
+            health_component:TakeDamage(1)
+        end
     end
 end
 
@@ -213,6 +215,7 @@ function AirVehicle:InitializeHitbox()
     WeldConstraint.Parent = newPart2
     newPart2.Anchored = false
     self.Hitbox = newPart2
+    partClone:Destroy()
     newPart:Destroy()
     for _, part in pairs(parts) do
         part:Destroy()
