@@ -37,7 +37,7 @@ function EffectService:Start()
             local sourcePlayerLeftArm = sourcePlayerCharacter:FindFirstChild("Left Arm")
             local beamPlayerTorso = beamPlayerCharacter:FindFirstChild("Torso")
 
-            if sourcePlayer.TeamColor == beamPlayer.TeamColor then
+            if sourcePlayer.TeamColor == beamPlayer.TeamColor then -- this wont run cause pois-n isn't healing currently, but we could have beam healing stuff eventually
                 local healBeam = BeamHeal:Clone()
                 healBeam.Attachment0 = sourcePlayerLeftArm.LeftGripAttachment
                 healBeam.Attachment1 = beamPlayerTorso.BodyFrontAttachment

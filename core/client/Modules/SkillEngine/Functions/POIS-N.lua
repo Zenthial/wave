@@ -35,23 +35,21 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
                 local playersNear = radiusRaycast(character.HumanoidRootPart.Position, 10)
                 Courier:Send("PoisonDamage", playersNear)
 
-                local beamPlayers = table.clone(previousBeamPlayers)
+                local currentTime = os.time()
                 for _, player in pairs(playersNear) do
-                    if beamPlayers[player] == nil then
+                    if player.TeamColor == LocalPlayer.TeamColor then continue end
+                    if previousBeamPlayers[player] == nil then
                         Courier:Send("MakeBeam", player)
-                        beamPlayers[player] = true
-                    else
-                        previousBeamPlayers[player] = nil                        
                     end
+                    previousBeamPlayers[player] = currentTime
                 end
 
-                if #previousBeamPlayers > 0 then
-                    for player, _ in pairs(previousBeamPlayers) do
+                for player, time in pairs(previousBeamPlayers) do
+                    if time ~= currentTime then
                         Courier:Send("RemoveBeam", player)
+                        previousBeamPlayers[player] = nil
                     end
                 end
-
-                previousBeamPlayers = beamPlayers
 
                 depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete)
                 task.wait(POISON_RATE)

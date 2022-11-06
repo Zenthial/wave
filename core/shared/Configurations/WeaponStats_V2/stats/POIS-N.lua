@@ -19,7 +19,7 @@ return {
 	Holster = Holsters.LeftArmModule,
 	Trigger = "Hold",
 	Damage = 4,
-    Heal = 2,
+    HealFactor = .25,
 	VehicleMultiplier = 2,
 	BlastRadius = 15,
 	EnergyDeplete = 4,

@@ -17,9 +17,9 @@ return function(origin: Vector3, radius: number)
         local character = player.Character
         local hrp = character.HumanoidRootPart
 
-        local result =  workspace:Raycast(origin, (hrp.Position - origin).Unit * radius, RayParams)
+        local result = workspace:Raycast(origin, (hrp.Position - origin).Unit * radius, RayParams)
 
-        if result.Instance and result.Instance:IsDescendantOf(character) then
+        if result and result.Instance and result.Instance:IsDescendantOf(character) then
             table.insert(playersNear, player)
         end
     end

@@ -87,6 +87,12 @@ function HealthTag:CreateTag()
         end
     end))
 
+    self.Cleaner:Add(Player.Changed:Connect(function(prop)
+        if prop == "TeamColor" then
+            self:UpdateTag()
+        end
+    end))
+
     self:DisplayTag(true)
 end
 
