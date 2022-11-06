@@ -8,8 +8,6 @@ local PoisonParticles = Particles:WaitForChild("PoisonParticles")
 
 local BeamHeal = PoisonParticles:WaitForChild("BeamHeal") :: Beam
 local BeamDamage = PoisonParticles:WaitForChild("BeamDamage") :: Beam
-local Bits = PoisonParticles:WaitForChild("Bits") :: ParticleEmitter
-local Core = PoisonParticles:WaitForChild("Core") :: ParticleEmitter
 
 local EffectService = {}
 
@@ -37,7 +35,7 @@ function EffectService:Start()
             local sourcePlayerLeftArm = sourcePlayerCharacter:FindFirstChild("Left Arm")
             local beamPlayerTorso = beamPlayerCharacter:FindFirstChild("Torso")
 
-            if sourcePlayer.TeamColor == beamPlayer.TeamColor then -- this wont run cause pois-n isn't healing currently, but we could have beam healing stuff eventually
+            if sourcePlayer.TeamColor == beamPlayer.TeamColor then -- this wont run cause siph-n isn't healing currently, but we could have beam healing stuff eventually
                 local healBeam = BeamHeal:Clone()
                 healBeam.Attachment0 = sourcePlayerLeftArm.LeftGripAttachment
                 healBeam.Attachment1 = beamPlayerTorso.BodyFrontAttachment

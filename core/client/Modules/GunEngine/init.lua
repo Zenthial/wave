@@ -217,6 +217,7 @@ function GunEngine.MouseDown(weaponStats, mutableStats)
     if Player:GetAttribute("LocalSprinting") == true then
         Player:SetAttribute("LocalSprinting", false)
     end
+    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") then return end
     if EquipDebounce then return end
     mutableStats.MouseDown = true
 

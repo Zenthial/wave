@@ -15,6 +15,7 @@ return {
 
     Firing = false,
     FielxActive = false,
+    SiphnActive = false,
     
     CurrentTurret = "",
 

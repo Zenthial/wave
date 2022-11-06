@@ -8,10 +8,10 @@ local radiusRaycast = require(ReplicatedStorage:WaitForChild("Shared"):WaitForCh
 local LocalPlayer = Players.LocalPlayer
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
-local poisonActive = false
+local siphonActive = false
 local previousBeamPlayers = {}
 
-local POISON_RATE = 0.3
+local SIPHON_RATE = 0.3
 
 type SkillStats = {
     SkillName: string,
@@ -24,16 +24,18 @@ type SkillStats = {
 
 return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
     if bool then
-        poisonActive = true
+        siphonActive = true
+        LocalPlayer:SetAttribute("SiphnActive", true)
+        LocalPlayer:SetAttribute("CanFire", false)
 
         task.spawn(function()
             for _, particle in skillStats.SkillModel["Lime green"].Sphere:GetChildren() do
                 Courier:Send("EffectEnable", particle, true)
             end
 
-            while poisonActive do
+            while siphonActive do
                 local playersNear = radiusRaycast(character.HumanoidRootPart.Position, 10)
-                Courier:Send("PoisonDamage", playersNear)
+                Courier:Send("SiphonDamage", playersNear)
 
                 local currentTime = os.time()
                 for _, player in pairs(playersNear) do
@@ -45,18 +47,20 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
                 end
 
                 for player, time in pairs(previousBeamPlayers) do
-                    if time ~= currentTime then
+                    if time ~= currentTime or player:GetAttribute("TotalHealth") - skillStats.WeaponStats.Damage <= 0 then
                         Courier:Send("RemoveBeam", player)
                         previousBeamPlayers[player] = nil
                     end
                 end
 
                 depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete)
-                task.wait(POISON_RATE)
+                task.wait(SIPHON_RATE)
             end
         end)
     else
-        poisonActive = false
+        siphonActive = false
+        LocalPlayer:SetAttribute("SiphnActive", false)
+        LocalPlayer:SetAttribute("CanFire", true)
 
         for _, particle in skillStats.SkillModel["Lime green"].Sphere:GetChildren() do
             Courier:Send("EffectEnable", particle, false)

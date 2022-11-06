@@ -93,6 +93,9 @@ function AnimationState:Start()
         FielxActive = false,
         FielxPlaying = false,
 
+        SiphnActive = false,
+        SiphnPlaying = false,
+
         DeployableActive = false,
         DeployablePlaying = false,
 
@@ -112,6 +115,7 @@ function AnimationState:Start()
     local ThrowingChangedSignal = Player:GetAttributeChangedSignal("Throwing")
     local PlacingDeployableChangedSignal = Player:GetAttributeChangedSignal("PlacingDeployable")
     local FielxPunchSignal = Player:GetAttributeChangedSignal("FielxActive")
+    local SiphnSignal = Player:GetAttributeChangedSignal("SiphnActive")
 
     cleaner:Add(SprintChangedSignal:Connect(function()
         state.SprintActive = Player:GetAttribute("LocalSprinting")
@@ -145,6 +149,12 @@ function AnimationState:Start()
         state.FielxActive = Player:GetAttribute("FielxActive")
 
         self:HandleFielxChange()
+    end))
+
+    cleaner:Add(SiphnSignal:Connect(function()
+        state.SiphnActive = Player:GetAttribute("SiphnActive")
+
+        self:HandleSiphnChange()
     end))
 
     cleaner:Add(PlacingDeployableChangedSignal:Connect(function()
@@ -306,6 +316,22 @@ function AnimationState:HandleFielxChange()
 		self.AnimationHandler:Stop("globalfdTop")
 
         self.State.FielxPlaying = false
+    end
+end
+
+function AnimationState:HandleSiphnChange()
+    if self.State.SiphnActive and not self.State.SiphnPlaying then
+        self.State.SiphnPlaying = true
+        local track = self.AnimationHandler:Play("SiphonActive")
+        print(track.Length)
+		task.wait(track.Length)
+		self.AnimationHandler:Play("SiphonIdle")
+
+    elseif not self.State.SiphnActive and self.State.SiphnPlaying then
+        self.AnimationHandler:Stop("SiphonActive")
+		self.AnimationHandler:Stop("SiphonIdle")
+
+        self.State.SiphnPlaying = false
     end
 end
 
