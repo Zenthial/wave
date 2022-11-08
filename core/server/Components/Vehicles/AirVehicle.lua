@@ -154,8 +154,8 @@ function AirVehicle:RunServiceLoop()
     local health_component = tcs.get_component(self.Root, "VehicleHealth")
     if self.Root.Engine.AssemblyLinearVelocity.Magnitude > Vector3.new(0.3, 0.3, 0.3).Magnitude then
         local hit = game.Workspace:GetPartsInPart(self.Hitbox, overlapParam)
-        if hit ~= {} then
-            health_component:TakeDamage(1)
+        if #hit ~= 0 then
+            health_component:TakeDamage(2)
         end
     end
 end
@@ -189,7 +189,7 @@ end
 function AirVehicle:InitializeHitbox()
     local partClone = Instance.new("Part")
     partClone.CanCollide = false
-    partClone.Transparency = .9
+    partClone.Transparency = 1
     partClone.Anchored = true
     local parts = {}
     for _, part in pairs(self.Root:GetDescendants()) do
