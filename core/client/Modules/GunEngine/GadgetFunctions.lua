@@ -54,27 +54,32 @@ function GadgetFunctions.NDG(partCache, cframe: CFrame, sourceTeam: BrickColor, 
 end
 
 function GadgetFunctions.H3G(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats)
+    print("here", stats.Exploding, cframe)
     if stats.Exploding == true then return end
     stats.Exploding = true
     local grenade = getGrenade(partCache, cframe)
     
     task.wait(stats.PopTime)
     local explosion = grenade.ParticleEmitter2
+    local explosion1 = grenade.ParticleEmitter1
     explosion.Enabled = true
+    explosion:Emit(10)
+    explosion1.Enabled = false
 
-    task.delay(1, function()
-        explosion.Enabled = false
-    end)
+    grenade.Explode:Play()
 
     local character = sourcePlayer.Character or sourcePlayer.CharacterAdded:Wait()
     local isNear = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
-        return player == LocalPlayer
+        return player == LocalPlayer and player ~= sourcePlayer
     end)
 
     if #isNear > 0 then
         courier:Send("H3GRequest")
     end
     task.wait(stats.DelayTime)
+    explosion.Enabled = false
+    explosion:Clear()
+    explosion1.Enabled = true
     partCache:ReturnPart(grenade)
     stats.Exploding = false
 end

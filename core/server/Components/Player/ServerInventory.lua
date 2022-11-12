@@ -88,10 +88,10 @@ end
 
 function ServerInventory:SetItem(key: string, name: string)
     if key == "Primary" or key == "Secondary" then
-        local stats = WeaponStats[name]
+        local weaponStats = WeaponStats[name]
         local model = WeaponModels[name].Model:Clone() :: Model
 
-        assert(stats, "No Weapon Stats for " .. name)
+        assert(weaponStats, "No Weapon Stats for " .. name)
         assert(model, "No model for " .. name)
 
         for _, thing in pairs(model:GetChildren()) do
@@ -109,12 +109,12 @@ function ServerInventory:SetItem(key: string, name: string)
         self.Root:SetAttribute("Equipped"..key, name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
     elseif key == "Skill" or key == "Skills" then
-        local stats = WeaponStats[name]
+        local skillStats = WeaponStats[name]
         local model = SkillModels[name]:Clone() :: Model
         model.Name = name
         model.Parent = self.Character
 
-        assert(stats, "No Skill Stats for " .. name)
+        assert(skillStats, "No Skill Stats for " .. name)
         assert(model, "No model for " .. name)
 
         local success = GunEngine:WeldWeapon(self.Character, model, true)
@@ -125,19 +125,20 @@ function ServerInventory:SetItem(key: string, name: string)
         self.Root:SetAttribute("EquippedSkill", name)
         SetWeaponSignal:FireClient(self.Root, key, name, model, true)
     elseif key == "Gadget" or key == "Gadgets" then
-        local stats = GadgetStats[name]
+        local gadgetStats = GadgetStats[name]
 
-        if stats == nil then
-            stats = WeaponStats[name]
-            if not (stats.Type == "Deployable") then
-                stats = nil
+        if gadgetStats == nil then
+            gadgetStats = WeaponStats[name]
+            if gadgetStats.Type ~= "Deployable" and gadgetStats.Action ~= "Heal" then
+                gadgetStats = nil
             end
         end
-
-        assert(stats, "No Grenade Stats for " .. name)
+        
+        print("h3g stats", gadgetStats)
+        assert(gadgetStats, "No Grenade Stats for " .. name)
         self.Root:SetAttribute("EquippedGadget", name)
-        self.Root:SetAttribute("GadgetQuantity", stats.Quantity or 2)
-        self.Root:SetAttribute("MaxGadgetQuantity", stats.Quantity or 2)
+        self.Root:SetAttribute("GadgetQuantity", gadgetStats.Quantity or 2)
+        self.Root:SetAttribute("MaxGadgetQuantity", gadgetStats.Quantity or 2)
         SetWeaponSignal:FireClient(self.Root, key, name, nil, true)
     end
 

@@ -55,6 +55,7 @@ if RunService:IsClient() then
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
+    Caches.H3G = PartCache.new(Gadgets.H3G.Projectile, 30, CacheFolder)
     Caches.Tank = PartCache.new(Gadgets.TankRay.Projectile, 30, CacheFolder)
     Caches.PBW = PartCache.new(Weapons.PBW.Projectile, 30, CacheFolder)
 end
@@ -91,6 +92,34 @@ return {
             local distanceDamageFactor = 1-(dist/20)
             return math.abs(damage*distanceDamageFactor)
         end,
+    },
+
+    ["H3G"] = {
+        Name = "H3G",
+        Type = "Projectile",
+        Quantity = 3,
+
+        Exploding = false,
+        DEBUG = false,
+
+        ProjectileSpeed = 100,
+
+        NadeRadius = 20,
+        MaxDamage = 50,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 0,
+        DelayTime = 0.5,
+
+        Gravity = Vector3.new(0, -150, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.H3G,
+        CacheFolder = CacheFolder,
     },
 
     ["C0S"] = {

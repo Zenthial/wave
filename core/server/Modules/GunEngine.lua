@@ -86,7 +86,6 @@ function GunEngine:Start()
 
     Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
         local quantity = player:GetAttribute("GadgetQuantity")
-        print("here", quantity)
         if quantity > 0 then
             player:SetAttribute("GadgetQuantity", quantity - 1)
             Courier:SendToAllExcept("RenderGrenade", player, player, position, direction, movementSpeed, gadget)

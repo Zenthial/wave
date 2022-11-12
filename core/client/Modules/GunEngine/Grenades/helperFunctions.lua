@@ -92,7 +92,7 @@ local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
 	local terminationFunction = cast.UserData.TerminationFunction
 	print(cosmeticBullet)
-	if cosmeticBullet ~= nil then
+	if cosmeticBullet ~= nil and cosmeticBullet.Position ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 
 		terminationFunction(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
@@ -109,10 +109,10 @@ local function HandleGadgetStats(player: Player, NadeCaster, CastParams, gadgetS
     CastParams.FilterType = Enum.RaycastFilterType.Blacklist
 
     local ignoreTable = {}
-    for _, part in next, player.Character:GetChildren() do
+    for _, part in player.Character:GetChildren() do
         table.insert(ignoreTable, part)
     end
-    for _, thing in next, CollectionService:GetTagged("Ignore") do
+    for _, thing in CollectionService:GetTagged("Ignore") do
         table.insert(ignoreTable, thing)
     end
 
