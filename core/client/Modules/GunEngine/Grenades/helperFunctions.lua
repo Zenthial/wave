@@ -91,7 +91,6 @@ end
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
 	local terminationFunction = cast.UserData.TerminationFunction
-	print(cosmeticBullet)
 	if cosmeticBullet ~= nil and cosmeticBullet.Position ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 

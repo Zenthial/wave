@@ -36,95 +36,101 @@ end
 local GadgetFunctions = {}
 
 function GadgetFunctions.NDG(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats)
-    if stats.Exploding == true then return end
-    stats.Exploding = true
-    local grenade = getGrenade(partCache, cframe)
-    
-    task.wait(stats.PopTime)
-    local explosion = makeExplosion(grenade, stats)
+    task.spawn(function()
+        if stats.Exploding == true then return end
+        stats.Exploding = true
+        local grenade = getGrenade(partCache, cframe)
+        
+        task.wait(stats.PopTime)
+        local explosion = makeExplosion(grenade, stats)
 
-    task.delay(1, function()
-        explosion:Destroy()
+        task.delay(1, function()
+            explosion:Destroy()
+        end)
+
+        radiusDamage(stats, cframe.Position, nil, false)
+        task.wait(stats.DelayTime)
+        partCache:ReturnPart(grenade)
+        stats.Exploding = false
     end)
-
-    radiusDamage(stats, cframe.Position, nil, false)
-    task.wait(stats.DelayTime)
-    partCache:ReturnPart(grenade)
-    stats.Exploding = false
 end
 
 function GadgetFunctions.H3G(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats)
-    print("here", stats.Exploding, cframe)
-    if stats.Exploding == true then return end
-    stats.Exploding = true
-    local grenade = getGrenade(partCache, cframe)
-    
-    task.wait(stats.PopTime)
-    local explosion = grenade.ParticleEmitter2
-    local explosion1 = grenade.ParticleEmitter1
-    explosion.Enabled = true
-    explosion:Emit(10)
-    explosion1.Enabled = false
+    task.spawn(function()
+        if stats.Exploding == true then return end
+        stats.Exploding = true
+        local grenade = getGrenade(partCache, cframe)
+        
+        task.wait(stats.PopTime)
+        local explosion = grenade.ParticleEmitter2
+        local explosion1 = grenade.ParticleEmitter1
+        explosion:Emit(30)
+        explosion1.Enabled = false
+        explosion1:Clear()
+        grenade.Transparency = 1
+        grenade.Explode:Play()
 
-    grenade.Explode:Play()
+        local character = sourcePlayer.Character or sourcePlayer.CharacterAdded:Wait()
+        local isNear = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
+            return player == LocalPlayer and player ~= sourcePlayer
+        end)
 
-    local character = sourcePlayer.Character or sourcePlayer.CharacterAdded:Wait()
-    local isNear = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
-        return player == LocalPlayer and player ~= sourcePlayer
+        if #isNear > 0 then
+            courier:Send("H3GRequest")
+        end
+        task.wait(stats.DelayTime)
+        explosion.Enabled = false
+        explosion:Clear()
+        explosion1.Enabled = true
+        grenade.Transparency = 0
+        partCache:ReturnPart(grenade)
+        stats.Exploding = false
     end)
-
-    if #isNear > 0 then
-        courier:Send("H3GRequest")
-    end
-    task.wait(stats.DelayTime)
-    explosion.Enabled = false
-    explosion:Clear()
-    explosion1.Enabled = true
-    partCache:ReturnPart(grenade)
-    stats.Exploding = false
 end
 
 function GadgetFunctions.C0S(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats)
-    if stats.Exploding == true then return end
-    stats.Exploding = true
-    local grenade = getGrenade(partCache, cframe)
-
-    grenade.BrickColor = sourceTeam
-    local startCFrame = grenade.CFrame
-    local tween = TweenService:Create(grenade, TweenInfo.new(.1, Enum.EasingStyle.Linear), {Size = Vector3.new(stats.Size, stats.Size, stats.Size)})
-    tween:Play()
-    tween.Completed:Wait()
-
-    grenade.CFrame = startCFrame
-    grenade.Transparency = 0.5
-
-    grenade.Buzzing:Play()
-    -- this should be moved somewhere
-    -- reminder, implement a
-    -- implement a what tom??
-    local active = true
     task.spawn(function()
-        while active do
-            radiusDamage(stats, cframe.Position, nil, false)
-            task.wait(0.05)
+        if stats.Exploding == true then return end
+        stats.Exploding = true
+        local grenade = getGrenade(partCache, cframe)
+
+        grenade.BrickColor = sourceTeam
+        local startCFrame = grenade.CFrame
+        local tween = TweenService:Create(grenade, TweenInfo.new(.1, Enum.EasingStyle.Linear), {Size = Vector3.new(stats.Size, stats.Size, stats.Size)})
+        tween:Play()
+        tween.Completed:Wait()
+
+        grenade.CFrame = startCFrame
+        grenade.Transparency = 0.5
+
+        grenade.Buzzing:Play()
+        -- this should be moved somewhere
+        -- reminder, implement a
+        -- implement a what tom??
+        local active = true
+        task.spawn(function()
+            while active do
+                radiusDamage(stats, cframe.Position, nil, false)
+                task.wait(0.05)
+            end
+        end)
+
+        if stats.DecreaseSize then
+            local info = TweenInfo.new(stats.DelayTime + .5, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+            local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
+            sizeDecrease:Play()
+            sizeDecrease.Completed:Wait()
+        else
+            task.wait(stats.DelayTime - .1)
+            local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
+            sizeDecrease:Play()
         end
+
+        grenade.Buzzing:Stop()
+        active = false
+        partCache:ReturnPart(grenade)
+        stats.Exploding = false
     end)
-
-    if stats.DecreaseSize then
-        local info = TweenInfo.new(stats.DelayTime + .5, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
-        local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
-        sizeDecrease:Play()
-        sizeDecrease.Completed:Wait()
-    else
-        task.wait(stats.DelayTime - .1)
-        local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
-        sizeDecrease:Play()
-    end
-
-    grenade.Buzzing:Stop()
-    active = false
-    partCache:ReturnPart(grenade)
-    stats.Exploding = false
 end
 
 return GadgetFunctions

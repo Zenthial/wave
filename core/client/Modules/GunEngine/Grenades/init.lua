@@ -40,7 +40,7 @@ function Grenades:RenderNade(player: Player, position: Vector3, direction: Vecto
 	activeCast.UserData.SourceTeam = player.TeamColor
 	activeCast.UserData.SourcePlayer = player
     activeCast.UserData.GadgetStats = gadgetStats
-    activeCast.UserData.TerminationFunction = coroutine.wrap(gadgetFunction)
+    activeCast.UserData.TerminationFunction = gadgetFunction
 end
 
 return Grenades

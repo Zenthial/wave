@@ -111,7 +111,7 @@ return {
         NumBounces = 0,
 
         PopTime = 0,
-        DelayTime = 0.5,
+        DelayTime = 0.3,
 
         Gravity = Vector3.new(0, -150, 0),
 
