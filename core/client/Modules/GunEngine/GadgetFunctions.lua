@@ -8,7 +8,6 @@ local radiusRaycast = require(ReplicatedStorage:WaitForChild("Shared"):WaitForCh
 local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local LocalPlayer = Players.LocalPlayer
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 local function getGrenade(partCache, cframe)
     local grenade = partCache:GetPart()
@@ -67,11 +66,14 @@ function GadgetFunctions.H3G(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         explosion.Enabled = false
     end)
 
-    local teamMates = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
-        return player.TeamColor == LocalPlayer.TeamColor
+    local character = sourcePlayer.Character or sourcePlayer.CharacterAdded:Wait()
+    local isNear = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
+        return player == LocalPlayer
     end)
 
-    courier:Send("Heal", teamMates)
+    if #isNear > 0 then
+        courier:Send("H3GRequest")
+    end
     task.wait(stats.DelayTime)
     partCache:ReturnPart(grenade)
     stats.Exploding = false

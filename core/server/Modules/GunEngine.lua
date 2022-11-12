@@ -135,13 +135,11 @@ function GunEngine:Start()
         healthComponent:TakeDamage(damage)
     end)
 
-    Courier:Listen("Heal"):Connect(function(player: Player, teamMates: {Player})
+    Courier:Listen("H3GRequest"):Connect(function(player: Player)
         assert(player:GetAttribute("EquippedGadget") == "H3G", "Player" .. player.Name.. " is not using the H3G")
         local h3gStats = WeaponStats["H3G"]
-        for _, teammate in teamMates do
-            local healthComponent = tcs.get_component(teammate, "Health")
-            healthComponent:Heal(h3gStats.Heal)
-        end
+        local healthComponent = tcs.get_component(player, "Health")
+        healthComponent:Heal(h3gStats.Heal)
     end)
 end
 
