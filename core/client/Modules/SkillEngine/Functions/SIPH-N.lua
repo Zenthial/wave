@@ -34,7 +34,9 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
             end
 
             while siphonActive do
-                local playersNear = radiusRaycast(character.HumanoidRootPart.Position, 10)
+                local playersNear = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
+                    return player.TeamColor ~= LocalPlayer.TeamColor
+                end)
                 Courier:Send("SiphonDamage", playersNear)
 
                 local currentTime = os.time()

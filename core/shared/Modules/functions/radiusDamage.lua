@@ -7,7 +7,7 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 
 if RunService:IsClient() then
 
-    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean, shouldHeal: boolean)
+    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean)
         local radius = stats.NadeRadius
 
         local player = Players.LocalPlayer

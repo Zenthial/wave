@@ -9,11 +9,12 @@ RayParams.FilterDescendantsInstances = {Character, CollectionService:GetTagged("
 RayParams.FilterType = Enum.RaycastFilterType.Blacklist
 RayParams.IgnoreWater = false
 
-return function(origin: Vector3, radius: number)
+return function(origin: Vector3, radius: number, comparisonFunction: (Player) -> boolean)
     local playersNear = {}
 
     for _, player: Player in pairs(Players:GetPlayers()) do
         if player == Players.LocalPlayer then continue end
+        if not comparisonFunction(player) then continue end
         local character = player.Character
         local hrp = character.HumanoidRootPart
 

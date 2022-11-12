@@ -1,7 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
 local radiusDamage = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusDamage"))
+local radiusRaycast = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("radiusRaycast"))
+
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
+
+local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 local function getGrenade(partCache, cframe)
     local grenade = partCache:GetPart()
@@ -60,7 +67,11 @@ function GadgetFunctions.H3G(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         explosion.Enabled = false
     end)
 
-    radiusDamage(stats, cframe.Position, nil, false)
+    local teamMates = radiusRaycast(character.HumanoidRootPart.Position, 10, function(player)
+        return player.TeamColor == LocalPlayer.TeamColor
+    end)
+
+    courier:Send("Heal", teamMates)
     task.wait(stats.DelayTime)
     partCache:ReturnPart(grenade)
     stats.Exploding = false
