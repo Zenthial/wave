@@ -216,6 +216,12 @@ function AirVehicle:Bind()
         end
     end))
 
+    if self.Root.Name == "Striker" then
+        local inventory = tcs.get_component(Player, "Inventory")
+        Player:SetAttribute("CurrentTurret", "MountedTurret")
+        inventory:SetTurretModel(self.Root)
+    end
+
     sessionCleaner:Add(RunService.RenderStepped:Connect(function()
         self:RunServiceLoop()
     end))
@@ -224,6 +230,12 @@ end
 function AirVehicle:Unbind()
     self.SessionCleaner:Clean()
     self.SessionCleaner = nil
+
+    if self.Root.Name == "Striker" then
+        local inventory = tcs.get_component(Player, "Inventory")
+        Player:SetAttribute("CurrentTurret", "")
+        inventory:SetTurretModel(nil)
+    end
 
     Camera.CameraType = Enum.CameraType.Custom
     Camera.CameraSubject = Character
