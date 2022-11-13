@@ -112,6 +112,15 @@ function ServerInventory:SetItem(key: string, name: string)
         local skillStats = WeaponStats[name]
         local model = SkillModels[name]:Clone() :: Model
         model.Name = name
+
+        if skillStats.Type == "Health" then
+            model:SetAttribute("DefaultHealth", skillStats.DefaultHealth)
+            model:SetAttribute("RegenSpeed", skillStats.RegenSpeed)
+            model:SetAttribute("RegenRate", skillStats.RegenRate)
+            model:SetAttribute("DeathRechargeRate", skillStats.DeathRechargeRate)
+            model:SetAttribute("CanRegen", skillStats.CanRegen)
+        end
+
         model.Parent = self.Character
 
         assert(skillStats, "No Skill Stats for " .. name)

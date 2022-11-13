@@ -27,7 +27,29 @@ end
 function Mouse:Start()
     self.MouseObject = self.Player:GetMouse()
 
+    self:BodyGyroHooks()
     print("mouse initialized")
+end
+
+function Mouse:BodyGyroHooks()
+    local character = self.Player.Character or self.Player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+    local bodyGyro = tcs.get_component(character, "BodyGyro")
+
+    local moveConnection = nil
+    self.Cleaner:Add(humanoid.Changed:Connect(function(prop)
+        if prop == "AutoRotate" then
+            if humanoid.AutoRotate == false then
+                moveConnection = self.MouseObject.Move:Connect(function()
+                    bodyGyro:SetRotationTarget(self.MouseObject.Hit.Position)
+                end)
+            else
+                if moveConnection then
+                    moveConnection:Disconnect()
+                end
+            end
+        end
+    end))
 end
 
 function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming: boolean, currentRecoil: number?, aimBuff: number?): Vector3

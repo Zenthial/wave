@@ -29,7 +29,7 @@ local function attemptDealDamage(player: Player, weaponName: string, healthCompo
         if healthComponentObject:IsA("Player") then
             healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
         elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
-            healthComponent = nil -- grab aps health thing later
+            healthComponent = tcs.get_component(healthComponentObject, "ObjectHealth")
         elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
             healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
         end 

@@ -27,7 +27,7 @@ local ObjectHealth: ObjectHealth_T = {}
 ObjectHealth.__index = ObjectHealth
 ObjectHealth.Name = "ObjectHealth"
 ObjectHealth.Tag = "ObjectHealth"
-ObjectHealth.Ancestor = game
+ObjectHealth.Ancestor = workspace
 
 function ObjectHealth.new(root: any)
     return setmetatable({

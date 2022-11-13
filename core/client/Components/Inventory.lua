@@ -95,8 +95,8 @@ function Inventory:Start()
             self.EquippedSkill.Cleaner = skillCleaner
 
             MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, skill.Energy, skill.WeaponStats.EnergyMin)
-            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy)
-                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy, skill.WeaponStats.EnergyMin)
+            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy, min)
+                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy, if min ~= nil then min else skill.WeaponStats.EnergyMin)
             end))
         elseif inventoryKey == "Gadget" or inventoryKey == "Gadgets" then
             assert(model == nil, "Why does the grenade have a model?")

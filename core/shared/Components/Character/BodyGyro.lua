@@ -23,7 +23,7 @@ function BodyGyro.new(root: any)
         HumanoidRootPart = hrp,
         Humanoid = humanoid,
 
-        Gyro = Instance.new("BodyGyro"),
+        Gyro = nil,
         Enabled = false,
     }, BodyGyro)
 end
@@ -34,19 +34,20 @@ end
 
 function BodyGyro:SetGyro(bool: boolean)
     if bool then
-        if self.Gyro == nil then
-            self.Gyro = Instance.new("BodyGyro")
-        end
+        local gyro = Instance.new("BodyGyro")
 
-        self.Gyro.D = 500
-        self.Gyro.MaxTorque = Vector3.new(0, math.huge, 0)
-        self.Gyro.P = 5000
-        self.Gyro.Parent = self.HumanoidRootPart
+        gyro.D = 500
+        gyro.MaxTorque = Vector3.new(0, math.huge, 0)
+        gyro.P = 5000
+        gyro.Parent = self.HumanoidRootPart
+        self.Gyro = gyro
 
         self.Humanoid.AutoRotate = false
     else
         self.Humanoid.AutoRotate = true
-        self.Gyro:Destroy()
+        if self.Gyro then
+            self.Gyro:Destroy()
+        end
     end
 
     self.Enabled = bool
