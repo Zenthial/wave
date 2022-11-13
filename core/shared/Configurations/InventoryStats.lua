@@ -12,7 +12,7 @@ local DEFAULT_LOADOUT = {
 
     Gadget = "H3G",
 
-    Skill = "SIPH-N",
+    Skill = "BL1N-K",
 }
 
 return DEFAULT_LOADOUT

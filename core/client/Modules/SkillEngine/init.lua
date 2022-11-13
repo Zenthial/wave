@@ -88,7 +88,7 @@ function SkillEngine.RegenEnergy(skillStats: SkillStats)
     if skillStats.Recharging == false then
         skillStats.Recharging = true
 
-        while skillStats.Energy < 100 and skillStats.Recharging do
+        while skillStats.Energy < 100 and skillStats.Recharging and not skillStats.Active do
             SkillEngine.DepleteEnergy(skillStats, -skillStats.WeaponStats.EnergyRegen)
             task.wait(ENERGY_WAIT_TIME)
         end
