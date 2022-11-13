@@ -60,7 +60,9 @@ function BodyGyro:SetRotationTarget(position: Vector3)
 end
 
 function BodyGyro:Destroy()
-    self.Gyro:Destroy()
+    if self.Gyro then
+        self.Gyro:Destroy()
+    end
 end
 
 tcs.create_component(BodyGyro)
