@@ -20,6 +20,6 @@ return {
 	Holster = Holsters.TorsoModule,
 	Trigger = "Press",
 	EnergyDeplete = 33,
-	EnergyRegen = 1,
-	EnergyMin = 33,
+	EnergyRegen = 2,
+	EnergyMin = 50,
 }

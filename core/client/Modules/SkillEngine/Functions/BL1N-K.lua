@@ -26,6 +26,8 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 		depleteEnergy(skillStats, skillStats.WeaponStats.EnergyDeplete) -- replace this line with hardcoded d0dg-p energy depletion stats
 		LocalPlayer:SetAttribute("LocalSprinting", false)
 		LocalPlayer:SetAttribute("LocalCrouching", false)
+
+		-- Courier:Send("EffectEnable", skillStats.SkillModel.Handle.DashTrail, true)
 		
 		local raycastResult = workspace:Raycast(character.HumanoidRootPart.Position, character.HumanoidRootPart.CFrame.LookVector * skillStats.WeaponStats.Distance, raycastParams)
 		if raycastResult and raycastResult.Position then
@@ -33,6 +35,10 @@ return function(skillStats: SkillStats, bool, regenEnergy, depleteEnergy)
 		else
 			character:PivotTo(character.PrimaryPart.CFrame + (character.HumanoidRootPart.CFrame.LookVector * skillStats.WeaponStats.Distance))
 		end
+
+		-- task.delay(0.4, function()
+		-- 	Courier:Send("EffectEnable", skillStats.SkillModel.Handle.DashTrail, false)
+		-- end)
 
 		skillStats.Active = false
 		regenEnergy(skillStats)

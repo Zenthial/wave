@@ -49,8 +49,8 @@ function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     end
 end
 
-function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
-    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity, energyMin)
+    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity, energyMin)
 end
 
 function MainHUD:DeleteItem(keybind)

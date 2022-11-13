@@ -309,7 +309,7 @@ function ApexDisplay:DeleteItem(keybind)
     end
 end
 
-function ApexDisplay:UpdateItem(keybind: string, hasQuantity: boolean, chargeOrQuantity: number)
+function ApexDisplay:UpdateItem(keybind: string, hasQuantity: boolean, chargeOrQuantity: number, energyMin: number)
     local item = self:GetItem(keybind, hasQuantity, chargeOrQuantity)
     if hasQuantity then
         for _, frame in item.QuantityHolder:GetChildren() do
@@ -327,6 +327,11 @@ function ApexDisplay:UpdateItem(keybind: string, hasQuantity: boolean, chargeOrQ
     else
         local newFill = -((chargeOrQuantity/100) - 0.5) -- goes from 0.5 (empty) -> -0.5 (filled)
         TweenService:Create(item.Fill.UIGradient, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Offset = Vector2.new(0, newFill)}):Play()
+        if energyMin and chargeOrQuantity < energyMin then
+            item.Fill.UIGradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, RED), ColorSequenceKeypoint.new(1, RED)})
+        else
+            item.Fill.UIGradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, STEEL), ColorSequenceKeypoint.new(1, STEEL)})
+        end
     end
 end
 
