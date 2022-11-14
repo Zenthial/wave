@@ -94,6 +94,39 @@ return {
         end,
     },
 
+    ["STK"] = {
+        Name = "STK",
+        Type = "Projectile",
+        Quantity = 3,
+
+        Exploding = false,
+        DEBUG = false,
+
+        ProjectileSpeed = 100,
+
+        NadeRadius = 15,
+        MaxDamage = 50,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 1.5,
+        DelayTime = 0.1,
+
+        Gravity = Vector3.new(0, -150, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.NDG,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/20)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+    },
+
     ["H3G"] = {
         Name = "H3G",
         Type = "Projectile",

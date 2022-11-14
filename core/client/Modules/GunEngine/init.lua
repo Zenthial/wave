@@ -117,6 +117,7 @@ end
 
 function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     if Player:GetAttribute("InSeat") == true then return false end
+    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") or Player:GetAttribute("APSActive") then return end
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
@@ -217,7 +218,7 @@ function GunEngine.MouseDown(weaponStats, mutableStats)
     if Player:GetAttribute("LocalSprinting") == true then
         Player:SetAttribute("LocalSprinting", false)
     end
-    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") then return end
+    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") or Player:GetAttribute("APSActive") then return end
     if EquipDebounce then return end
     mutableStats.MouseDown = true
 

@@ -55,12 +55,9 @@ local function OnRayHit(cast, raycastResult, segmentVelocity, cosmeticBulletObje
 	-- This function will be connected to the Caster's "RayHit" event.
 	local hitPart = raycastResult.Instance
 	local hitPoint = raycastResult.Position
-	local normal = raycastResult.Normal
-	if hitPart ~= nil and hitPart.Parent ~= nil then -- Test if we hit something
-		local humanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid") -- Is there a humanoid?
-		if humanoid then
-			-- Deal 1 damage like CSGO?
-		end
+	if hitPart ~= nil and hitPart.Parent ~= nil and cast.UserData.WeldFunction then -- Test if we hit something
+		cast.UserData.LastHitPart = hitPart
+		cast.UserData.LastHitPoint = hitPoint
 	end
 end
 
@@ -94,7 +91,7 @@ local function OnRayTerminated(cast)
 	if cosmeticBullet ~= nil and cosmeticBullet.Position ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 
-		terminationFunction(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
+		terminationFunction(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats, cast.UserData.LastHitPart, cast.UserData.LastHitPoint)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end

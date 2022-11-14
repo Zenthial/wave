@@ -88,6 +88,39 @@ function GadgetFunctions.H3G(partCache, cframe: CFrame, sourceTeam: BrickColor, 
     end)
 end
 
+function GadgetFunctions.STK(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats, lastHitPart: Part, lastHitPoint: Vector3)
+    task.spawn(function()
+        if stats.Exploding == true then return end
+        stats.Exploding = true
+        local grenade = getGrenade(partCache, cframe)
+
+        local weld = Instance.new("WeldConstraint")
+        if lastHitPoint and lastHitPart then
+            grenade.Position = lastHitPoint
+            weld.Part0 = lastHitPart
+            weld.Part1 = grenade
+            weld.Parent = lastHitPart
+
+            if LocalPlayer == sourcePlayer then
+                -- SANITY CHECK HERE TO MAKE SURE EVERYONE WELDS TO THE SAME POINT
+            end
+        end
+
+        task.wait(stats.PopTime)
+        local explosion = makeExplosion(grenade, stats)
+
+        task.delay(1, function()
+            explosion:Destroy()
+        end)
+
+        radiusDamage(stats, cframe.Position, nil, false)
+        task.wait(stats.DelayTime)
+        weld:Destroy()
+        partCache:ReturnPart(grenade)
+        stats.Exploding = false
+    end)
+end
+
 function GadgetFunctions.C0S(partCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats)
     task.spawn(function()
         if stats.Exploding == true then return end
