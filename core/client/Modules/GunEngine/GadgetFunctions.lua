@@ -28,7 +28,7 @@ local function makeExplosion(grenade, stats)
     explosion.DestroyJointRadiusPercent = 0
     explosion.Parent = workspace
 
-    grenade.Explosion:Play()
+    grenade.Explode:Play()
 
     return explosion
 end

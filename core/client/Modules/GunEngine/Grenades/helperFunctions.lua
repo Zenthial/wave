@@ -55,7 +55,7 @@ local function OnRayHit(cast, raycastResult, segmentVelocity, cosmeticBulletObje
 	-- This function will be connected to the Caster's "RayHit" event.
 	local hitPart = raycastResult.Instance
 	local hitPoint = raycastResult.Position
-	if hitPart ~= nil and hitPart.Parent ~= nil and cast.UserData.WeldFunction then -- Test if we hit something
+	if hitPart ~= nil and hitPart.Parent ~= nil then -- Test if we hit something
 		cast.UserData.LastHitPart = hitPart
 		cast.UserData.LastHitPoint = hitPoint
 	end

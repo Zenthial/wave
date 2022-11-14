@@ -48,6 +48,8 @@ local Caches = {
     Tank = nil,
 }
 
+local DEFAULT_THROW_SPEED = 120
+
 if RunService:IsClient() then
     CacheFolder = Instance.new("Folder")
     CacheFolder.Name = "GrenadeCacheFolder"
@@ -69,7 +71,7 @@ return {
         Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 100,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -102,7 +104,7 @@ return {
         Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 100,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = 15,
         MaxDamage = 50,
@@ -135,7 +137,7 @@ return {
         Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 100,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -163,7 +165,7 @@ return {
         Exploding = false,
         DEBUG = true,
 
-        ProjectileSpeed = 100,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = -1,
         MaxDamage = -1,
