@@ -93,10 +93,24 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats?, aiming:
     local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread or 0, weaponStats.MaxSpread or 0, aiming or false, currentRecoil, aimBuff)
     local start = head.Position
 
-    local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
-    local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, CollectionService:GetTagged("Ignore"))
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = CollectionService:GetTagged("Ignore")
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.IgnoreWater = false
 
-    return hit, position
+    local raycastResult = workspace:Raycast(start, (aim-start).Unit * RAYCAST_MAX_DISTANCE, raycastParams)
+    if raycastResult then
+        if raycastResult.Position then
+            if raycastResult.Instance then
+                return raycastResult.Instance, raycastResult.Position
+            end
+
+            return nil, raycastResult.Position
+        end
+    end
+
+    local miss = (aim-start).Unit * RAYCAST_MAX_DISTANCE
+    return nil, miss
 end
 
 function Mouse:Destroy()

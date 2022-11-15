@@ -188,7 +188,7 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
         --     SoundService.Sounds.ShieldCrack:Play()
         -- end
 
-        createDamageIndicator(hitPart, potentialDamage, shields > 0, headshot)
+        createDamageIndicator(hitPart, potentialDamage, if shields then shields > 0 else false, headshot)
     end
 end
 
