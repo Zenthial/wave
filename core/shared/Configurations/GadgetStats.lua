@@ -56,6 +56,7 @@ if RunService:IsClient() then
     CacheFolder.Parent = workspace
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
+    Caches.STK = PartCache.new(Gadgets.STK.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
     Caches.H3G = PartCache.new(Gadgets.H3G.Projectile, 30, CacheFolder)
     Caches.Tank = PartCache.new(Gadgets.TankRay.Projectile, 30, CacheFolder)
@@ -120,7 +121,7 @@ return {
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
 
-        Cache = Caches.NDG,
+        Cache = Caches.STK,
         CacheFolder = CacheFolder,
 
         CalculateDamage = function(damage, dist)

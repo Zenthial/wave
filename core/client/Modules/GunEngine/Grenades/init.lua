@@ -33,7 +33,7 @@ function Grenades:RenderNade(player: Player, position: Vector3, direction: Vecto
     HandleGadgetStats(player, NadeCaster, CastParams, gadgetStats)
 
     local directionalCF = CFrame.new(Vector3.new(), direction)
-	direction = (directionalCF * CFrame.fromOrientation(0, 0, RNG:NextNumber(0, TAU)) * CFrame.fromOrientation(math.rad(RNG:NextNumber(gadgetStats.MinSpreadAngle, gadgetStats.MaxSpreadAngle)), 0, 0)).LookVector
+	-- direction = (directionalCF * CFrame.fromOrientation(0, 0, RNG:NextNumber(0, TAU)) * CFrame.fromOrientation(math.rad(RNG:NextNumber(gadgetStats.MinSpreadAngle, gadgetStats.MaxSpreadAngle)), 0, 0)).LookVector
     -- local modifiedBulletSpeed = (direction * gadgetStats.ProjectileSpeed) + movementSpeed	-- We multiply our direction unit by the bullet speed. This creates a Vector3 version of the bullet's velocity at the given speed. We then add MyMovementSpeed to add our body's motion to the velocity.
 
     local activeCast = NadeCaster:Fire(position, direction, gadgetStats.ProjectileSpeed, CastBehavior)
