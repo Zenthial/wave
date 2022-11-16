@@ -48,7 +48,9 @@ function GadgetFunctions.NDG(partCache, cframe: CFrame, sourceTeam: BrickColor, 
             explosion:Destroy()
         end)
 
-        radiusDamage(stats, cframe.Position, nil, false)
+        if sourcePlayer ~= LocalPlayer then
+            radiusDamage(stats, cframe.Position, nil, false)
+        end
         task.wait(stats.DelayTime)
         partCache:ReturnPart(grenade)
         stats.Exploding = false
@@ -113,7 +115,9 @@ function GadgetFunctions.STK(partCache, cframe: CFrame, sourceTeam: BrickColor, 
             explosion:Destroy()
         end)
 
-        radiusDamage(stats, cframe.Position, nil, false)
+        if sourcePlayer ~= LocalPlayer then
+            radiusDamage(stats, cframe.Position, nil, false)
+        end
         task.wait(stats.DelayTime)
         weld:Destroy()
         partCache:ReturnPart(grenade)
@@ -142,7 +146,7 @@ function GadgetFunctions.C0S(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         -- implement a what tom??
         local active = true
         task.spawn(function()
-            while active do
+            while active and sourcePlayer ~= LocalPlayer do
                 radiusDamage(stats, cframe.Position, nil, false)
                 task.wait(0.05)
             end
