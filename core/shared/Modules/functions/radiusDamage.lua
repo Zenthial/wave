@@ -7,7 +7,7 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 
 if RunService:IsClient() then
 
-    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean)
+    return function(stats, origin: Vector3, sourceTeam: BrickColor, canTK: boolean, sourcePlayer: Player)
         local radius = stats.NadeRadius
 
         local player = Players.LocalPlayer
@@ -24,7 +24,7 @@ if RunService:IsClient() then
                 if player.TeamColor == sourceTeam then return end
             end
 
-            Courier:Send("DealSelfDamage", stats.CalculateDamage(stats.MaxDamage, dist))
+            Courier:Send("DealSelfDamage", stats.CalculateDamage(stats.MaxDamage, dist), sourcePlayer, stats.Name)
         end
     end
 elseif RunService:IsServer() then

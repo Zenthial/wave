@@ -49,7 +49,7 @@ function GadgetFunctions.NDG(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         end)
 
         if sourcePlayer ~= LocalPlayer then
-            radiusDamage(stats, cframe.Position, nil, false)
+            radiusDamage(stats, cframe.Position, nil, false, sourcePlayer)
         end
         task.wait(stats.DelayTime)
         partCache:ReturnPart(grenade)
@@ -116,7 +116,7 @@ function GadgetFunctions.STK(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         end)
 
         if sourcePlayer ~= LocalPlayer then
-            radiusDamage(stats, cframe.Position, nil, false)
+            radiusDamage(stats, cframe.Position, nil, false, sourcePlayer)
         end
         task.wait(stats.DelayTime)
         weld:Destroy()
@@ -147,7 +147,7 @@ function GadgetFunctions.C0S(partCache, cframe: CFrame, sourceTeam: BrickColor, 
         local active = true
         task.spawn(function()
             while active and sourcePlayer ~= LocalPlayer do
-                radiusDamage(stats, cframe.Position, nil, false)
+                radiusDamage(stats, cframe.Position, nil, false, sourcePlayer)
                 task.wait(0.05)
             end
         end)

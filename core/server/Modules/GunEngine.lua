@@ -125,11 +125,11 @@ function GunEngine:Start()
         end
     end)
 
-    Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number)
+    Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number, sourcePlayer: Player, weaponName: string)
         damage = math.clamp(damage, 0, 100)
     
-        player:SetAttribute("LastKiller", "")
-        player:SetAttribute("LastKilledWeapon", "")
+        player:SetAttribute("LastKiller", if sourcePlayer then sourcePlayer.Name else "")
+        player:SetAttribute("LastKilledWeapon", if weaponName then weaponName else "")
         local healthComponent = tcs.get_component(player, "Health")
         healthComponent:TakeDamage(damage)
     end)

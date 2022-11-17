@@ -137,14 +137,13 @@ function Health:RegenShield(lastDamageTime: number)
     task.spawn(function()
         if not self.Root:GetAttribute("ShieldRegening") and self.Root:GetAttribute("Shields") < self.Root:GetAttribute("MaxShields") and not self.Root:GetAttribute("Dead") then
             task.wait(self.RechargeTime)
-            if lastDamageTime >= self.DamageTime then
+            if lastDamageTime == self.DamageTime then
                 self.Root:SetAttribute("ShieldRegening", true)
-                while self.Root:GetAttribute("Shields") < self.Root:GetAttribute("MaxShields") and lastDamageTime >= self.DamageTime and not self.Root:GetAttribute("Dead") do
+                while self.Root:GetAttribute("Shields") < self.Root:GetAttribute("MaxShields") and lastDamageTime == self.DamageTime and not self.Root:GetAttribute("Dead") do
                     self:SetShields(self.Root:GetAttribute("Shields") + 1)
                     task.wait(0.17) -- probably should not be hard coded
                 end
                 self.Root:SetAttribute("ShieldRegening", false)
-                self:RegenShield(tick())
             end
         end
     end)

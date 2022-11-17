@@ -73,7 +73,6 @@ function Arsenal:Start()
     repeat task.wait() until Player:GetAttribute("Loaded") == true
     task.wait(0.5)
 
-    local MainHUD
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
@@ -104,10 +103,10 @@ function Arsenal:Start()
         self:ArmorySelection()
     end))
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
-        local inRound = Player:GetAttribute("InRound")
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InClassSelection"):Connect(function()
+        local inClassSelection = Player:GetAttribute("InClassSelection")
 
-        if not inRound then
+        if not inClassSelection then
             Camera.CameraType = Enum.CameraType.Scriptable
             Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
         else
