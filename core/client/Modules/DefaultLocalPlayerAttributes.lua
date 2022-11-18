@@ -10,6 +10,9 @@ return {
     LocalCanSprint = true,
     LocalCanCrouch = true,
     LocalCanMove = true,
+
+    InArsenalSelection = false,
+    InClassSelection = false,
     
     Chatting = false,
 

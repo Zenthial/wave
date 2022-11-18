@@ -8,9 +8,38 @@ local GenericClassHandler = {
     Classes = {}
 }
 
+local function convertNumberToItemType(number)
+    if number == 1 then
+        return "Primaries"
+    elseif number == 2 then
+        return "Secondaries"
+    elseif number == 3 then
+        return "Gadgets"
+    elseif number == 4 then
+        return "Skills"
+    end
+end
+
 function GenericClassHandler:Start()
-    Courier:ListenFunction("GetClassItems", function(player: Player, itemType: string)
-        return self:GetClassItems(player, itemType)
+    Courier:ListenFunction("GetClassItems", function(player: Player, itemType: number)
+        return self:GetClassItems(player, convertNumberToItemType(itemType))
+    end)
+
+    Courier:ListenFunction("GetClasses", function()
+        return self.Classes
+    end)
+
+    Courier:ListenFunction("CanJoin", function(player: Player, className: string)
+        return self:CanJoin(className)
+    end)
+
+    Courier:ListenFunction("RequestChangeClass", function(player: Player, className: string)
+        if self:CanJoin(className) then
+            self:ChangeClass(player, className, self.Classes[className])
+            return true
+        end
+
+        return false
     end)
 end
 
@@ -50,6 +79,7 @@ function GenericClassHandler:ChangeClass(player: Player, newClass: string, class
     serverInventory:UnequipItem("Gadget", player:GetAttribute("EquippedGadget"))
     serverInventory:UnequipItem("Skill", player:GetAttribute("EquippedSKill"))
 
+    player:SetAttribute("CurrentClass", newClass)
     local currentPoints = player:GetAttribute("Points")
     self.PlayersPoints[player.Name][newClass] = currentPoints
 

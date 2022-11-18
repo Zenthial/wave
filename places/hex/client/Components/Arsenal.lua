@@ -93,18 +93,15 @@ function Arsenal:Start()
     self:LoadCharacter()
     self:SetupInspectTable(Player:GetAttribute("EquippedPrimary"))
 
-    Camera.CameraType = Enum.CameraType.Scriptable
-    Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
-
-    self.ArmoryUI = tcs.get_component(self.Root.Armory, "ArmoryUI")
+    self.ArmoryUI = tcs.get_component(self.Root.Armory, "ClassArmoryUI")
     local Overlay = tcs.get_component(self.Root, "Overlay")
 
     self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
         self:ArmorySelection()
     end))
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("InClassSelection"):Connect(function()
-        local inClassSelection = Player:GetAttribute("InClassSelection")
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InArsenalSelection"):Connect(function()
+        local inClassSelection = Player:GetAttribute("InArsenalSelection")
 
         if not inClassSelection then
             Camera.CameraType = Enum.CameraType.Scriptable
