@@ -118,6 +118,7 @@ function Arsenal:Start()
 
     self.Cleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
         self.Root.Back.Visible = false
+        self.Root.EditButton.Visible = false
         self.Root.ArmoryText.Visible = false
 
         if self.MouseCleaner then
@@ -137,6 +138,24 @@ function Arsenal:Start()
     self.ArmoryUI.Events.InspectItem:Connect(function(itemName: string)
         self:SetupInspectTable(itemName)
     end)
+
+    self.Cleaner:Add(self.Root.EditButton.Edit.Button.MouseButton1Click:Connect(function()
+        self.Root.ArmoryText.Visible = false
+        self.Root.Back.Visible = false
+
+        self.ArmoryUI:Populate(1)
+        self.Root.EditButton.Visible = false
+
+        TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
+    end))
+
+    self.Cleaner:Add(self.ArmoryUI.Events.Back:Connect(function()
+        self.Root.ArmoryText.Visible = true
+        self.Root.Back.Visible = true
+
+        self:LoadCharacter()
+        self:ArmorySelection()
+    end))
 end
 
 function Arsenal:ArmorySelection()
@@ -148,7 +167,8 @@ function Arsenal:ArmorySelection()
     }):Play()
 
     self.InventoryPlayerRotationCleaner = self:InventoryPlayerRotation()
-    self.MouseCleaner = self:HandleMouse()
+    self.Root.EditButton.Visible = true
+    -- self.MouseCleaner = self:HandleMouse()
 end
 
 function Arsenal:InventoryPlayerRotation()
@@ -336,6 +356,7 @@ function Arsenal:CleanupHighlights()
     end
 end
 
+-- unused now
 function Arsenal:HandleMouse()
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
@@ -392,6 +413,7 @@ function Arsenal:HandleMouse()
     return internalCleaner
 end
 
+-- unused now
 function Arsenal:HandleSelected()
     self.Root.ArmoryText.Visible = false
     self.Root.Back.Visible = false
