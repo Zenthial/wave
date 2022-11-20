@@ -36,7 +36,7 @@ local killstreakDictionary = {
 -- this variable states the max amount of seconds that can occur between kills and still result in a kill streak
 local TIME_BETWEEN_KILLS = 2
 
-return function(player: Player, action: string)
+return function(player: Player, action: string, killedPlayer: Player)
 	local points = 0
 	local pointAwards = {action}
 	if os.time() - player:GetAttribute("LastKillTime") <= TIME_BETWEEN_KILLS and action == "Kill" then
@@ -52,7 +52,21 @@ return function(player: Player, action: string)
 		player:SetAttribute("CurrentKillstreak", 0)
 	end
 
+	if player:GetAttribute("Health") <= 10 and player:GetAttribute("Shields") <= 5 then
+		points += pointsArray["Close call"]
+		table.insert(pointAwards, "Close call")
+	end
+
+	if player:GetAttribute("Dead") == true then
+		points += pointsArray["Kill from the grave"]
+		table.insert(pointAwards, "Kill from the grave")
+	end
 	
+	if player:GetAttribute("ActualLastKiller") == killedPlayer.Name then
+		points += pointsArray["Revenge"]
+		table.insert(pointAwards, "Revenge")
+	end
+
     points += pointsArray[action] or 0
 
 	return points, pointsArray

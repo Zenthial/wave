@@ -89,28 +89,29 @@ local function playerAdded(player: Player)
                 local lastKiller = player:GetAttribute("LastKiller")
                 if lastKiller ~= "" then
                     local killer = Players:FindFirstChild(lastKiller)
-                    local points, pointsToAward = getPointsForAction(killer, "Kill")
+                    player:SetAttribute("ActualLastKiller", lastKiller)
+                    local points, pointsToAward = getPointsForAction(killer, "Kill", player)
                     killer:SetAttribute("LastKillTime", os.time())
                     killer:SetAttribute("Kills", killer:GetAttribute("Kills") + 1)
                     killer:SetAttribute("Points", killer:GetAttribute("Points") + points)
                     courier:Send("AwardPoints", killer, pointsToAward)
                 end
 
-                if player:FindFirstChild("DamageFolder") then
-                    for _, playerFolder: Folder in player.DamageFolder:GetChildren() do
-                        local damagePlayer = Players:FindFirstChild(playerFolder.Name) :: Player
-                        if damagePlayer ~= nil then
-                            if playerFolder:GetAttribute("Damage") >= 80 then                            
-                                local points, pointsToAward = getPointsForAction(damagePlayer, "AssistAsKill")
-                                damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
-                                damagePlayer:SetAttribute("AssistsAsKills", damagePlayer:GetAttribute("AssistsAsKills") + 1)
-                                courier:Send("AwardPoints", damagePlayer, pointsToAward)
-                            elseif playerFolder:GetAttribute("Damage") >= 40 then
-                                local points, pointsToAward = getPointsForAction(damagePlayer, "Assist")
-                                damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
-                                damagePlayer:SetAttribute("Assists", damagePlayer:GetAttribute("Assists") + 1)
-                                courier:Send("AwardPoints", damagePlayer, pointsToAward)
-                            end
+                if player:FindFirstChild("DamageFolder") == nil then return end
+
+                for _, playerFolder: Folder in player.DamageFolder:GetChildren() do
+                    local damagePlayer = Players:FindFirstChild(playerFolder.Name) :: Player
+                    if damagePlayer ~= nil then
+                        if playerFolder:GetAttribute("Damage") >= 80 then                            
+                            local points, pointsToAward = getPointsForAction(damagePlayer, "AssistAsKill", player)
+                            damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
+                            damagePlayer:SetAttribute("AssistsAsKills", damagePlayer:GetAttribute("AssistsAsKills") + 1)
+                            courier:Send("AwardPoints", damagePlayer, pointsToAward)
+                        elseif playerFolder:GetAttribute("Damage") >= 40 then
+                            local points, pointsToAward = getPointsForAction(damagePlayer, "Assist", player)
+                            damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
+                            damagePlayer:SetAttribute("Assists", damagePlayer:GetAttribute("Assists") + 1)
+                            courier:Send("AwardPoints", damagePlayer, pointsToAward)
                         end
                     end
                 end
