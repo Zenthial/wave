@@ -104,11 +104,12 @@ function Arsenal:Start()
     -- end))
 
     self.Cleaner:Add(Player:GetAttributeChangedSignal("InArsenalSelection"):Connect(function()
-        local inClassSelection = Player:GetAttribute("InArsenalSelection")
+        local inArmorySelection = Player:GetAttribute("InArsenalSelection")
 
-        if not inClassSelection then
+        if inArmorySelection then
             Camera.CameraType = Enum.CameraType.Scriptable
             Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
+            self:ArmorySelection()
         else
             Camera.CameraType = Enum.CameraType.Custom
             Camera.CameraSubject = Player.Character
@@ -232,33 +233,41 @@ function Arsenal:LoadCharacter()
     if not primaryFolder then error("No weapon folder for "..primaryName) end
     local secondaryFolder = Weapons[secondaryName] :: Folder
     if not secondaryFolder then error("No weapon folder for "..secondaryName) end
-    local skillModel = Skills[skillName] :: Model
-    if not skillModel then error("No skill model for "..skillName) end
+
+    if skillName ~= "" then
+        local skillModel = Skills[skillName] :: Model
+        if not skillModel then error("No skill model for "..skillName) end
+        skillModel = skillModel:Clone()
+        self:SetupCollisionGroups(skillModel, skillName)
+        skillModel.Parent = InventoryPlayer
+        
+        if self.SkillModel then self.SkillModel:Destroy() end
+        self.SkillModel = skillModel
+
+        Welder:WeldWeapon(InventoryPlayer, skillModel, true)
+        self.Cleaner:Add(function()
+            skillModel:Destroy()
+        end)
+    end
     
     local primaryModel = primaryFolder.Model:Clone() :: Model
     primaryModel.Name = primaryName
     local secondaryModel = secondaryFolder.Model:Clone() :: Model
     secondaryModel.Name = secondaryName
-    skillModel = skillModel:Clone()
 
     self:SetupCollisionGroups(primaryModel, primaryName)
     self:SetupCollisionGroups(secondaryModel, secondaryName)
-    self:SetupCollisionGroups(skillModel, skillName)
 
     primaryModel.Parent = InventoryPlayer
     secondaryModel.Parent = InventoryPlayer
-    skillModel.Parent = InventoryPlayer
 
     if self.PrimaryModel then self.PrimaryModel:Destroy() end
     if self.SecondaryModel then self.SecondaryModel:Destroy() end
-    if self.SkillModel then self.SkillModel:Destroy() end
     self.PrimaryModel = primaryModel
     self.SecondaryModel = secondaryModel
-    self.SkillModel = skillModel
 
     Welder:WeldWeapon(InventoryPlayer, primaryModel, false)
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
-    Welder:WeldWeapon(InventoryPlayer, skillModel, true)
 
     local animationComponent = self.AnimationComponent
     self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
@@ -271,7 +280,6 @@ function Arsenal:LoadCharacter()
 
         primaryModel:Destroy()
         secondaryModel:Destroy()
-        skillModel:Destroy()
         InventoryPlayer:Destroy()
     end)
 end
@@ -440,8 +448,8 @@ function Arsenal:HandleSelected()
                     Player:SetAttribute("EquippedSkill", itemName)
                 end
                 self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
-                self:LoadCharacter()
             end
+            self:LoadCharacter()
             self:ArmorySelection()
             internalCleaner:Clean()
         end))

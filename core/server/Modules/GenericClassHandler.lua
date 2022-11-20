@@ -30,6 +30,12 @@ function GenericClassHandler:Start()
         end
     end)
 
+    for _, player in Players:GetPlayers() do
+        if self.DefaultClass then
+            self:ChangeClass(player, self.DefaultClass, self.Classes[self.DefaultClass])
+        end
+    end
+
     Courier:ListenFunction("GetClassItems", function(player: Player, itemType: number)
         return self:GetClassItems(player, convertNumberToItemType(itemType))
     end)
@@ -42,7 +48,7 @@ function GenericClassHandler:Start()
         return self:CanJoin(className)
     end)
 
-    Courier:ListenFunction("RequestChangeClass", function(player: Player, className: string)
+    Courier:ListenFunction("RequestClassChange", function(player: Player, className: string)
         if self:CanJoin(className) then
             self:ChangeClass(player, className, self.Classes[className])
             return true
@@ -85,6 +91,7 @@ function GenericClassHandler:IsItemInClass(className: string, itemType: string, 
 end
 
 function GenericClassHandler:ChangeClass(player: Player, newClass: string, classInfo)
+    print("here")
     local serverInventory = tcs.get_component(player, "ServerInventory")
 
     local defaultPrimary = classInfo.Primaries[1]
@@ -99,6 +106,9 @@ function GenericClassHandler:ChangeClass(player: Player, newClass: string, class
 
     player:SetAttribute("CurrentClass", newClass)
     local currentPoints = player:GetAttribute("Points")
+    if self.PlayersPoints[player.Name] == nil then
+        self.PlayersPoints[player.Name] = {}
+    end
     self.PlayersPoints[player.Name][newClass] = currentPoints
 
     local classPoints = self.PlayersPoints[player.Name][newClass] or 0

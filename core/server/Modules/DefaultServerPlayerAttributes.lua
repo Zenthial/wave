@@ -27,6 +27,8 @@ return {
 
     Dead = false,
 
+    CurrentClass = "",
+
     LastKiller = "",
     LastKilledWeapon = "",
 

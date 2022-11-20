@@ -63,9 +63,6 @@ function ClassSelection:Open()
 end
 
 function ClassSelection:Close()
-    Camera.CameraType = Enum.CameraType.Custom
-    Camera.CameraSubject = LocalPlayer.Character.Humanoid
-
     self.Root.Visible = false
 end
 
@@ -151,7 +148,8 @@ function ClassSelection:LoadClasses()
         local currentClass = LocalPlayer:GetAttribute("CurrentClass")
 
         if currentClass == selectedClass then
-            LocalPlayer:SetAttribute("InClassSelection", true)
+            LocalPlayer:SetAttribute("InArsenalSelection", true)
+            LocalPlayer:SetAttribute("InClassSelection", false)
         end
     end))
 end

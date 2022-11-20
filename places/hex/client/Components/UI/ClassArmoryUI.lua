@@ -137,22 +137,30 @@ function ClassArmoryUI:HandleButtonVisibility(itemSlot, weaponInfo)
 end
 
 function ClassArmoryUI:Populate(itemSlot: number)
+    self.Root.Visible = true
     local currentClass = LocalPlayer:GetAttribute("CurrentClass")
 
     local weapons = self.SortedSlots[itemSlot]
     if currentClass ~= "" or currentClass ~= nil then
-        weapons = courier:SendFunction("GetClassItems", itemSlot)
+        local classWeapons = courier:SendFunction("GetClassItems", itemSlot)
+        weapons = {}
+        for _, weaponName in classWeapons do
+            table.insert(weapons, WeaponStats[weaponName])
+        end
     end
 
     table.sort(weapons, function(a, b)
         return a.WeaponCost < b.WeaponCost
     end)
 
+    self.Root.List.Container:ClearAllChildren()
+    Instance.new("UIListLayout", self.Root.List.Container)
+
     self.SelectedItem = nil
     for _, weaponInfo in weapons do
         local weaponFrame = createWeaponFrame(weaponInfo.Name)
         weaponFrame.LayoutOrder = weaponInfo.LayoutOrder
-        weaponFrame.WeaponName.Text = weaponInfo.Name
+        weaponFrame.Button.Text = weaponInfo.Name
 
         if self.SelectedItem == nil then
             self:HandleButtonVisibility(itemSlot, weaponInfo)
@@ -165,6 +173,8 @@ function ClassArmoryUI:Populate(itemSlot: number)
 
         weaponFrame.Parent = self.Root.List.Container
     end
+
+    return self.Root.EquipButton.MouseButton1Click
 end
 
 function ClassArmoryUI:Destroy()
