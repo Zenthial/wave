@@ -34,10 +34,10 @@ end
 function Mouse:BodyGyroHooks()
     local character = self.Player.Character or self.Player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
-    local bodyGyro = tcs.get_component(character, "BodyGyro")
-
+    
     local moveConnection = nil
     self.Cleaner:Add(humanoid.Changed:Connect(function(prop)
+        local bodyGyro = tcs.get_component(character, "BodyGyro")
         if prop == "AutoRotate" then
             if humanoid.AutoRotate == false then
                 moveConnection = self.MouseObject.Move:Connect(function()

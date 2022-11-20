@@ -27,7 +27,7 @@ function MainHUD:Start()
     self.Root.Enabled = true
 
     self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
-    self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
+    -- self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
@@ -73,11 +73,11 @@ function MainHUD:SetOverheated(bool: boolean)
 end
 
 function MainHUD:SetSkillActive()
-    self.InventoryUI:SetSkillActive()
+    -- self.InventoryUI:SetSkillActive()
 end
 
 function MainHUD:SkillEnergyChanged(energy: number)
-    self.InventoryUI:SetSkillCharge(energy)
+    -- self.InventoryUI:SetSkillCharge(energy)
 end
 
 function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)

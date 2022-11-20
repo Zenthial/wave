@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
@@ -5,7 +6,8 @@ local Courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("c
 
 local GenericClassHandler = {
     PlayersPoints = {},
-    Classes = {}
+    Classes = {},
+    DefaultClass = nil
 }
 
 local function convertNumberToItemType(number)
@@ -21,6 +23,13 @@ local function convertNumberToItemType(number)
 end
 
 function GenericClassHandler:Start()
+    Players.PlayerAdded:Connect(function(player)
+        print("here", self.DefaultClass)
+        if self.DefaultClass then
+            self:ChangeClass(player, self.DefaultClass, self.Classes[self.DefaultClass])
+        end
+    end)
+
     Courier:ListenFunction("GetClassItems", function(player: Player, itemType: number)
         return self:GetClassItems(player, convertNumberToItemType(itemType))
     end)
@@ -46,6 +55,15 @@ end
 function GenericClassHandler:RegisterClass(className, classInfo)
     if classInfo.PlayerLimit == nil then
         classInfo.PlayerLimit = 999
+    end
+
+    if classInfo.Default then
+        self.DefaultClass = className
+
+        for _, player in pairs(Players:GetPlayers()) do
+            print(player)
+            self:ChangeClass(player, className, classInfo)
+        end
     end
 
     classInfo.MaxPlayers = classInfo.PlayerLimit

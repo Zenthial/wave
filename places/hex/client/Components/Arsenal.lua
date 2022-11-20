@@ -23,8 +23,11 @@ local UI = Assets:WaitForChild("UI")
 
 local InspectFrame = UI:WaitForChild("InspectFrame")
 local Camera = workspace.CurrentCamera
+
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local MainHUD = PlayerGui:WaitForChild("MainHUD")
+
 local InventoryPlayer = nil
 local ArsenalModel = workspace:WaitForChild("Arsenal") :: Model
 local InspectPart = ArsenalModel:WaitForChild("InspectPart") :: Part
@@ -93,12 +96,12 @@ function Arsenal:Start()
     self:LoadCharacter()
     self:SetupInspectTable(Player:GetAttribute("EquippedPrimary"))
 
-    self.ArmoryUI = tcs.get_component(self.Root.Armory, "ClassArmoryUI")
-    local Overlay = tcs.get_component(self.Root, "Overlay")
+    self.ArmoryUI = tcs.get_component(MainHUD:WaitForChild("ClassArmory"), "ClassArmoryUI")
+    -- local Overlay = tcs.get_component(self.Root, "Overlay")
 
-    self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
-        self:ArmorySelection()
-    end))
+    -- self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
+    --     self:ArmorySelection()
+    -- end))
 
     self.Cleaner:Add(Player:GetAttributeChangedSignal("InArsenalSelection"):Connect(function()
         local inClassSelection = Player:GetAttribute("InArsenalSelection")
