@@ -131,11 +131,18 @@ function ClassArmoryUI:Start()
     end))
 end
 
-function ClassArmoryUI:HandleButtonVisibility(itemSlot, weaponInfo)
-    if LocalPlayer:GetAttribute("Equipped"..convertNumberToItemType(itemSlot)) ~= weaponInfo.Name then
+function ClassArmoryUI:HandleButtonVisibility(itemSlot, weaponInfo, hasClass, weaponIndex: number)
+    local points = LocalPlayer:GetAttribute("Points")
+    if points < weaponInfo.WeaponCost and not (hasClass and weaponIndex == 1)then
+        self.Root.Locked.Visible = true
+        self.Root.UnequipButton.Visible = false
+        self.Root.EquipButton.Visible = false
+    elseif LocalPlayer:GetAttribute("Equipped"..convertNumberToItemType(itemSlot)) ~= weaponInfo.Name then
+        self.Root.Locked.Visible = false
         self.Root.EquipButton.Visible = true
         self.Root.UnequipButton.Visible = false
     else
+        self.Root.Locked.Visible = false
         self.Root.EquipButton.Visible = false
         self.Root.UnequipButton.Visible = true
     end
@@ -145,6 +152,7 @@ end
 
 function ClassArmoryUI:Populate(itemSlot: number)
     local currentClass = LocalPlayer:GetAttribute("CurrentClass")
+    local hasClass = if currentClass ~= "" or currentClass ~= nil then true else false
 
     local weapons = self.SortedSlots[itemSlot]
     if currentClass ~= "" or currentClass ~= nil then
@@ -163,17 +171,17 @@ function ClassArmoryUI:Populate(itemSlot: number)
     Instance.new("UIListLayout", self.Root.List.Container)
 
     self.SelectedItem = nil
-    for _, weaponInfo in weapons do
+    for weaponIndex, weaponInfo in weapons do
         local weaponFrame = createWeaponFrame(weaponInfo.Name)
         weaponFrame.LayoutOrder = weaponInfo.LayoutOrder
         weaponFrame.Button.Text = weaponInfo.Name
 
         if self.SelectedItem == nil then
-            self:HandleButtonVisibility(itemSlot, weaponInfo)
+            self:HandleButtonVisibility(itemSlot, weaponInfo, hasClass, weaponIndex)
         end
 
         self.Cleaner:Add(weaponFrame.Button.MouseButton1Click:Connect(function()
-            self:HandleButtonVisibility(itemSlot, weaponInfo)
+            self:HandleButtonVisibility(itemSlot, weaponInfo, hasClass, weaponIndex)
             self.Events.InspectItem:Fire(weaponInfo.Name)
         end))
 
