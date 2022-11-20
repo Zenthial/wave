@@ -9,6 +9,7 @@ local ClassFrame = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):W
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local MainHUD = PlayerGui:WaitForChild("MainHUD")
 
 local Arsenal = workspace:WaitForChild("Arsenal")
 
@@ -52,12 +53,22 @@ function ClassSelection:Start()
             self:Close()
         end
     end))
+
+    self.Cleaner:Add(self.Root.BackButton.Button.MouseButton1Click:Connect(function()
+        Camera.CameraType = Enum.CameraType.Custom
+        Camera.CameraSubject = LocalPlayer.Character.Humanoid
+        LocalPlayer:SetAttribute("InClassSelection", false)
+        MainHUD.Top.Visible = true
+        MainHUD.Bottom.Visible = true
+    end))
 end
 
 function ClassSelection:Open()
     Camera.CameraType = Enum.CameraType.Scriptable
     Camera.CFrame = CFrame.new(Arsenal.ClassCameraPart.Position, Arsenal.ClassInspectPart.Position)
 
+    MainHUD.Top.Visible = false
+    MainHUD.Bottom.Visible = false
     self:LoadClasses()
     self.Root.Visible = true
 end
@@ -101,9 +112,7 @@ function ClassSelection:LoadClasses()
         viewportCamera.Parent = classFrame.ViewportFrame
         viewportCamera.CFrame = CFrame.new(hatPosition - Vector3.new(0, 0, 2), hatPosition)
 
-        print(className, LocalPlayer:GetAttribute("CurrentClass"))
         if selectedClass == nil and className == LocalPlayer:GetAttribute("CurrentClass") then
-            print(className)
             selectedClass = className
             self:HandleClassDisplay(className, classInfo)
         end
@@ -151,12 +160,6 @@ function ClassSelection:LoadClasses()
             LocalPlayer:SetAttribute("InArsenalSelection", true)
             LocalPlayer:SetAttribute("InClassSelection", false)
         end
-    end))
-
-    self.Cleaner:Add(self.Root.BackButton.Button.MouseButton1Click:Connect(function()
-        Camera.CameraType = Enum.CameraType.Custom
-        Camera.CameraSubject = LocalPlayer.Character.Humanoid
-        LocalPlayer:SetAttribute("InClassSelection", false)
     end))
 end
 

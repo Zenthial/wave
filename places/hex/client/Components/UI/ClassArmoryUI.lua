@@ -102,6 +102,11 @@ function ClassArmoryUI:Start()
         self.Root.UnequipButton.Visible = true
         courier:Send("RequestChange", convertNumberToItemType(self.SelectedItem.Slot), self.SelectedItem.Name, true)
     end))
+
+    self.Root.PointsLabel.Text = "Points: " .. LocalPlayer:GetAttribute("Points")
+    self.Cleaner:Add(LocalPlayer:GetAttributeChangedSignal("Points"):Connect(function()
+        self.Root.PointsLabel.Text = "Points: " .. LocalPlayer:GetAttribute("Points")
+    end))
     
     self.Cleaner:Add(self.Root.UnequipButton.MouseButton1Click:Connect(function()
         self.Root.EquipButton.Visible = true
