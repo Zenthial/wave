@@ -152,6 +152,12 @@ function ClassSelection:LoadClasses()
             LocalPlayer:SetAttribute("InClassSelection", false)
         end
     end))
+
+    self.Cleaner:Add(self.Root.BackButton.Button.MouseButton1Click:Connect(function()
+        Camera.CameraType = Enum.CameraType.Custom
+        Camera.CameraSubject = LocalPlayer.Character.Humanoid
+        LocalPlayer:SetAttribute("InClassSelection", false)
+    end))
 end
 
 function ClassSelection:Destroy()

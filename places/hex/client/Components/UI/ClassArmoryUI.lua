@@ -32,7 +32,8 @@ type ClassArmoryUI_T = {
     Tag: string,
     SelectedItem: string | nil,
     Events: {
-        InspectItem: typeof(Signal)
+        InspectItem: typeof(Signal),
+        Back: typeof(Signal)
     },
 
     Cleaner: Cleaner_T,
@@ -83,7 +84,8 @@ function ClassArmoryUI.new(root: any)
         Root = root,
         SelectedItem = nil,
         Events = {
-            InspectItem = Signal.new()
+            InspectItem = Signal.new(),
+            Back = Signal.new()
         }
     }, ClassArmoryUI)
 end
@@ -105,6 +107,11 @@ function ClassArmoryUI:Start()
         self.Root.EquipButton.Visible = true
         self.Root.UnequipButton.Visible = false
         courier:Send("RequestChange", convertNumberToItemType(self.SelectedItem.Slot), self.SelectedItem.Name, false)
+    end))
+
+    self.Cleaner:Add(self.Root.BackButton.MouseButton1Click:Connect(function()
+        self.Events.Back:Fire()
+        self.Root.Visible = false
     end))
 
     self.Cleaner:Add(self.Root.Buttons.Primary.MouseButton1Click:Connect(function()
@@ -137,7 +144,6 @@ function ClassArmoryUI:HandleButtonVisibility(itemSlot, weaponInfo)
 end
 
 function ClassArmoryUI:Populate(itemSlot: number)
-    self.Root.Visible = true
     local currentClass = LocalPlayer:GetAttribute("CurrentClass")
 
     local weapons = self.SortedSlots[itemSlot]
@@ -168,13 +174,13 @@ function ClassArmoryUI:Populate(itemSlot: number)
 
         self.Cleaner:Add(weaponFrame.Button.MouseButton1Click:Connect(function()
             self:HandleButtonVisibility(itemSlot, weaponInfo)
-            self.Events.InspectItem:Fire(weaponInfo)
+            self.Events.InspectItem:Fire(weaponInfo.Name)
         end))
 
         weaponFrame.Parent = self.Root.List.Container
     end
 
-    return self.Root.EquipButton.MouseButton1Click
+    self.Root.Visible = true
 end
 
 function ClassArmoryUI:Destroy()
