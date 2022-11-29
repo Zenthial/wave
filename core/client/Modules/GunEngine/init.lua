@@ -185,6 +185,22 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
     FireModes.GetFireMode(weaponStats.Trigger)(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart, Battery.Heat)
 end
 
+function GunEngine.StrikerAttack(weaponStats, mutableStats, turretModel: Model)
+    mutableStats.MouseDown = true
+
+    if Battery.CanFire(mutableStats) == false then
+        if turretModel.Barrel:FindFirstChild("Unavailable") then
+            turretModel.Barrel.Unavailable:Play()
+        end
+
+        return
+    end
+
+    Player:SetAttribute("LocalSprinting", false)
+
+    FireModes.AerialRocket(weaponStats, mutableStats, turretModel, GunEngine.CheckHitPart, Battery.Heat)
+end
+
 function GunEngine.MouseDown(weaponStats, mutableStats)
     if Player:GetAttribute("LocalSprinting") == true or Player:GetAttribute("LocalRolling") == true then return end
     if EquipDebounce then return end

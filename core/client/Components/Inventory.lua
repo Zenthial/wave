@@ -220,6 +220,8 @@ function Inventory:FeedKeyDown(KeyCode: Enum.KeyCode)
         end
     elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil then
         SkillEngine.Use(self.EquippedSkill, not self.EquippedSkill.Active)
+    elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("VehicleInteract")] and LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+        GunEngine.StrikerAttack(self.VehicleTurret, self.VehicleTurretMutableStats, self.TurretModel)
     else
         if KeyCode == Enum.KeyCode.One and self.EquippedPrimary ~= nil then
             self:HandleWeapon(self.EquippedPrimary, self.EquippedPrimaryModel, self.EquippedPrimaryMutableStats)
@@ -240,7 +242,7 @@ end
 function Inventory:MouseDown()
     if self.EquippedWeapon then
         GunEngine.MouseDown(self.EquippedWeapon, self.EquippedStats)
-    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil then
+    elseif LocalPlayer:GetAttribute("CurrentTurret") ~= "" and self.TurretModel ~= nil and self.TurretModel.Name ~= "Striker" then
         GunEngine.TurretAttack(self.VehicleTurret, self.VehicleTurretMutableStats, self.TurretModel)
     end
 end

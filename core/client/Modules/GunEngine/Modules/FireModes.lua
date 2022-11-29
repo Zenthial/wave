@@ -182,4 +182,26 @@ function FireModes.Rocket(weaponStats, mutableStats, gunModel, checkHitPart: (In
     end
 end
 
+function FireModes.AerialRocket(weaponStats, mutableStats, gunModel, checkHitPart: (Instance, {}, {}) -> (), heat: ({}) -> ())
+    local cursorUIComponent = tcs.get_component(CursorUI, "Cursor")
+    
+    if not mutableStats.Shooting then
+        --[[local gadgetStats = GadgetStats["IMP"]
+
+        local hrp = Character:WaitForChild("HumanoidRootPart")
+        mutableStats.Shooting = true
+
+        task.spawn(heat, mutableStats, cursorUIComponent)
+        Grenades:RenderNade(Player, gunModel.Barrel.Position, gunModel.Barrel.CFrame.LookVector, hrp.AssemblyLinearVelocity, gadgetStats)
+        task.wait(1/weaponStats.FireRate)]]--
+        mutableStats.Shooting = true
+
+        task.spawn(heat, mutableStats, cursorUIComponent)
+        FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
+
+        task.wait(1/weaponStats.FireRate)
+        mutableStats.Shooting = false
+    end
+end
+
 return FireModes
