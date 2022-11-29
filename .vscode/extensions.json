@@ -2,6 +2,7 @@
     "recommendations": [
         "ms-vsliveshare.vsliveshare",
         "nightrains.robloxlsp",
-        "TabNine.tabnine-vscode"
+        "tabnine.tabnine-vscode",
+        "github.copilot"
     ]
 }
