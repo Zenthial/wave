@@ -11,6 +11,7 @@ local Grenades = require(script.Parent.Parent.Grenades)
 local Battery = require(script.Parent.Battery)
 local BulletRenderer = require(script.Parent.BulletRenderer)
 local raycast = require(script.Parent.RaycastFunctions)
+local staticRaycast = require(script.Parent.StaticRaycastFunctions)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -65,6 +66,28 @@ function FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, 
         local barrel = getBarrel(weaponStats, mutableStats, gunModel)
         if gunModel ~= nil and barrel ~= nil then
             local hit, target = raycast(weaponStats, gunModel)
+            
+            if hit ~= nil and weaponStats.FireMode ~= "Launcher" then
+                task.spawn(checkHitPart, hit, weaponStats, cursorUIComponent)
+            end
+
+            if barrel:FindFirstChild("Fire") then
+                barrel.Fire:Play()
+            end
+            mutableStats.ShotsTable.LastShot.StartPosition = barrel.Position
+            mutableStats.ShotsTable.LastShot.EndPosition = target
+            mutableStats.ShotsTable.NumShots += 1
+            BulletRenderer.GetDrawFunction(weaponStats.BulletType)(Player, barrel.Position, target, weaponStats.BulletCache)
+            Courier:Send("DrawRay", barrel.Position, target, weaponStats.Name)
+        end
+    end)
+end
+
+function FireModes.StaticRaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel: Model, checkHitPart: (Instance, {}, {}) -> ())
+    task.spawn(function()
+        local barrel = getBarrel(weaponStats, mutableStats, gunModel)
+        if gunModel ~= nil and barrel ~= nil then
+            local hit, target = staticRaycast(weaponStats, gunModel, barrel)
             
             if hit ~= nil and weaponStats.FireMode ~= "Launcher" then
                 task.spawn(checkHitPart, hit, weaponStats, cursorUIComponent)
@@ -197,7 +220,7 @@ function FireModes.AerialRocket(weaponStats, mutableStats, gunModel, checkHitPar
         mutableStats.Shooting = true
 
         task.spawn(heat, mutableStats, cursorUIComponent)
-        FireModes.RaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
+        FireModes.StaticRaycastAndDraw(cursorUIComponent, weaponStats, mutableStats, gunModel, checkHitPart)
 
         task.wait(1/weaponStats.FireRate)
         mutableStats.Shooting = false
