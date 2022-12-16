@@ -1,11 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local types = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Types"):WaitForChild("GenericTypes"))
 local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local ClassFrame = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("UI"):WaitForChild("ClassFrame")
+
+local DEFAULT_COLOR = Color3.fromRGB(57, 90, 134)
+local MOUSE_OVER_COLOR = Color3.fromRGB(143, 191, 255)
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -124,10 +128,15 @@ function ClassSelection:LoadClasses()
 
         -- animation entering and leaving
         self.Cleaner:Add(classFrame.Button.MouseEnter:Connect(function()
-        
+            TweenService:Create(classFrame, TweenInfo.new(0.5), {
+                BackgroundColor3 = MOUSE_OVER_COLOR
+            }):Play()
         end))
 
         self.Cleaner:Add(classFrame.Button.MouseLeave:Connect(function()
+            TweenService:Create(classFrame, TweenInfo.new(0.5), {
+                BackgroundColor3 = DEFAULT_COLOR
+            }):Play()
             
         end))
 

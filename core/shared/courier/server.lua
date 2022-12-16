@@ -54,38 +54,47 @@ end
 
 function CourierServer:Send(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
-    assert(remote, "Port "..portString.." does not exist")
-    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+    -- assert(remote, "Port "..portString.." does not exist")
+    -- assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
-    remote:FireClient(player, ...)
+    if remote ~= nil and remote:IsA("RemoteEvent") then
+        remote:FireClient(player, ...)
+    end
 end
 
 function CourierServer:SendTo(portString: string, players: {Player}, ...)
     local remote = self.PortRemotes[portString]
-    assert(remote, "Port "..portString.." does not exist")
-    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+    -- assert(remote, "Port "..portString.." does not exist")
+    -- assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
-    for _, player in ipairs(players) do
-        remote:FireClient(player, ...)        
+    
+    if remote ~= nil and remote:IsA("RemoteEvent") then
+        for _, player in ipairs(players) do
+            remote:FireClient(player, ...)        
+        end
     end
 end
 
 function CourierServer:SendToAll(portString: string, ...) 
     local remote = self.PortRemotes[portString]
-    assert(remote, "Port "..portString.." does not exist")
-    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+    -- assert(remote, "Port "..portString.." does not exist")
+    -- assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
-    remote:FireAllClients(...)
+    if remote ~= nil and remote:IsA("RemoteEvent") then
+        remote:FireAllClients(...)
+    end
 end
 
 function CourierServer:SendToAllExcept(portString: string, player: Player, ...)
     local remote = self.PortRemotes[portString]
-    assert(remote, "Port "..portString.." does not exist")
-    assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
+    -- assert(remote, "Port "..portString.." does not exist")
+    -- assert(remote:IsA("RemoteEvent"), "Port "..portString.." does not exist")
 
-    for _, plr in ipairs(Players:GetPlayers()) do
-        if plr ~= player then
-            remote:FireClient(plr, ...)        
+    if remote ~= nil and remote:IsA("RemoteEvent") then
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= player then
+                remote:FireClient(plr, ...)        
+            end
         end
     end
 end
