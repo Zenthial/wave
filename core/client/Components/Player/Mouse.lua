@@ -37,8 +37,8 @@ function Mouse:BodyGyroHooks()
     
     local moveConnection = nil
     self.Cleaner:Add(humanoid.Changed:Connect(function(prop)
-        local bodyGyro = tcs.get_component(character, "BodyGyro")
         if prop == "AutoRotate" then
+            local bodyGyro = tcs.get_component(character, "BodyGyro")
             if humanoid.AutoRotate == false then
                 moveConnection = self.MouseObject.Move:Connect(function()
                     bodyGyro:SetRotationTarget(self.MouseObject.Hit.Position)

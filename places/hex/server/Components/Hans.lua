@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -54,7 +55,6 @@ end
 function Hans:Start()
     local rootPart = self.Root:WaitForChild("TorsoJoint")
     self.RootPart = rootPart
-    -- local animationComponent = tcs.get_component(self.Root, "AnimationHandler")
 
     local nodes = workspace:WaitForChild("Map"):WaitForChild("Nodes")
     self.Nodes = nodes
@@ -163,7 +163,7 @@ function Hans:UpdateNode()
             if newNextNode == nil then
                 self.CurrentNode = currentNode
 			    self.NextNode = nextNode
-                self:Stop()
+                self:Stop(1)
             else
                 self.PayloadAngle = CFrame.new(self.CurrentNode.Position, self.NextNode.Position)
 			    self.PayloadAngle -= self.PayloadAngle.p
@@ -176,6 +176,7 @@ function Hans:UpdateNode()
             if newCurrentNode == nil then
                 -- at the start of the track
                 self.LerpFraction = 0
+                self:Stop(-1)
                 self.CurrentNode = currentNode
 				self.NextNode = nextNode
             else
@@ -237,6 +238,15 @@ function Hans:RuntimeLoop()
     end)
 end
 
+function Hans:Stop(winner: number)
+    self.Active = false
+    self.Root:SetPrimaryPartCFrame(self.CurrentCFrame)
+    if winner == 1 then
+        courier:SendToAll("HansWin", winner) 
+    elseif winner == -1 then
+        courier:SendToAll("HansWin", winner)
+    end
+end
 -- function Hans:Move()
 --     print(self.Direction)
 --     if self.Direction == 1 then

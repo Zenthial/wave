@@ -94,6 +94,8 @@ function GenericClassHandler:ChangeClass(player: Player, newClass: string, class
     print("here")
     local serverInventory = tcs.get_component(player, "ServerInventory")
 
+    print(self.Classes)
+    assert(classInfo, "ClassInfo for ".. newClass.."  does not exist")
     local defaultPrimary = classInfo.Primaries[1]
     local defaultSecondary = classInfo.Secondaries[1]
 
