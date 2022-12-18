@@ -3,6 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -96,18 +97,18 @@ function LandVehicle:Start()
         end
 
         if newOccupant ~= nil then
-            self.Courier:Send("BindToVehicle", newOccupant, self.Root)
+            courier:Send("BindToVehicle", newOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
+                courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
             end
         else
             self.ProximityPrompt.Enabled = true
             self.OccupantPlayer = nil
-            self.Courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
+            courier:Send("UnbindFromVehicle", oldOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
+                courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
             end
         end
     end))

@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -92,19 +93,19 @@ function AirVehicle:Start()
 
         if newOccupant ~= nil then
             self.LinearVelocity.MaxForce = self.Stats.MaxForce
-            self.Courier:Send("BindToPlane", newOccupant, self.Root)
+            courier:Send("BindToPlane", newOccupant, self.Root)
         else
             self.OccupantPlayer = nil
             self.ProximityPrompt.Enabled = true
             self.LinearVelocity.MaxForce = 0
-            self.Courier:Send("UnbindFromPlane", oldOccupant, self.Root)
+            courier:Send("UnbindFromPlane", oldOccupant, self.Root)
             goFlat()
         end
     end))
 
     self.Cleaner:Add(self.Root:GetAttributeChangedSignal("Dead"):Connect(function()
         if self.Root:GetAttribute("Dead") then
-            self.Courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
+            courier:Send("UnbindFromPlane", self.OccupantPlayer, self.Root)
             local explosion = Instance.new("Explosion")
             explosion.BlastRadius = 30
             explosion.ExplosionType = Enum.ExplosionType.NoCraters

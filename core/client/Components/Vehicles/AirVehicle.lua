@@ -7,6 +7,7 @@ local UserInputService = game:GetService("UserInputService")
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local VehicleStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("VehicleStats"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local CameraLimits = require(script.Parent.CameraLimits)
 
@@ -195,7 +196,7 @@ local function inputProcessor(self: AirVehicle_T, input: InputObject, processed:
     if input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleIgnition")] then
         self.Flying = not self.Flying
     elseif input.KeyCode == Enum.KeyCode[Player.Keybinds:GetAttribute("VehicleInteract")] then
-        self.Courier:Send("ToggleVehicleInteraction", self.Root)
+        courier:Send("ToggleVehicleInteraction", self.Root)
     end
 end
 

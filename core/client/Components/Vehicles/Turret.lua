@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local Mouse = Players.LocalPlayer:GetMouse()
 
@@ -119,8 +120,8 @@ function Turret:Bind(networkOwner: boolean)
             self.HingeXZ.TargetAngle = positionXZ
             self.HingeY.TargetAngle = positionY
         else
-            self.Courier:SendToOthers("UpdateServo", self.HingeXZ, positionXZ)
-            self.Courier:SendToOthers("UpdateServo", self.HingeY, positionY)
+            courier:SendToOthers("UpdateServo", self.HingeXZ, positionXZ)
+            courier:SendToOthers("UpdateServo", self.HingeY, positionY)
         end
     end))
 end

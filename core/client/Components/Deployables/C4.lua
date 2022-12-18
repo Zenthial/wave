@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -55,7 +56,7 @@ function C4:Trigger()
         end
     end
 
-    self.Courier:Send("C4Damage", playersNear)
+    courier:Send("C4Damage", playersNear)
     self:Destroy()
 end
 

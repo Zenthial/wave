@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -60,18 +61,18 @@ function Boat:Start()
     local vehicleSeatComponent = tcs.get_component(self.Root.VehicleSeat, "VehicleSeat")
     self.Cleaner:Add(vehicleSeatComponent.Events.OccupantChanged:Connect(function(newOccupant, oldOccupant)
         if newOccupant ~= nil then
-            self.Courier:Send("BindToBoat", newOccupant, self.Root)
+            courier:Send("BindToBoat", newOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
+                courier:Send("BindToTurret", newOccupant, mainTurret, self.Root.Name)
             end
         else
             self.ProximityPrompt.Enabled = true
             self.OccupantPlayer = nil
-            self.Courier:Send("UnbindFromBoat", oldOccupant, self.Root)
+            courier:Send("UnbindFromBoat", oldOccupant, self.Root)
 
             if mainTurret ~= nil and driverMansMainTurret == true then
-                self.Courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
+                courier:Send("UnbindFromTurret", oldOccupant, mainTurret, self.Root.Name)
             end
         end
     end))
