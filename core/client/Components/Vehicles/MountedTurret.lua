@@ -54,6 +54,8 @@ MountedTurret.Ancestor = game
 function MountedTurret.new(root: any)
     return setmetatable({
         Root = root,
+
+        HasCameraPart = false,
     }, MountedTurret)
 end
 
@@ -62,6 +64,9 @@ function MountedTurret:Start()
     local turretComponent = tcs.get_component(self.Root, "Turret")
     self.TurretComponent = turretComponent
 
+    if self.Root:FindFirstChild("CameraPart") then
+        self.HasCameraPart = true
+    end
     self.Offset = self.Root:GetAttribute("TurretOffset") or Vector3.new(0, 10, 10)
 
     self.CameraAngles = Vector2.new(0, 0)
@@ -69,16 +74,21 @@ function MountedTurret:Start()
 end
 
 function MountedTurret:UpdateCamera()
-    Camera.CameraType = Enum.CameraType.Attach
-    Camera.CameraSubject = self.Root.BaseMount
-    -- self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
-    -- self.MouseDeltas = Vector2.new(0,0)
-    -- self.CameraAngles = Vector2.new(math.clamp(self.CameraAngles.X, CameraLimits.MinX, CameraLimits.MaxX), math.clamp(self.CameraAngles.Y, CameraLimits.MinY, CameraLimits.MaxY))
-    
-    -- local angles1 = CFrame.Angles(0,math.rad(self.CameraAngles.X), 0)
-    -- local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
+    if not self.HasCameraPart then
+        Camera.CameraType = Enum.CameraType.Follow
+        Camera.CameraSubject = self.Root.Y.Core
+        -- self.CameraAngles = self.CameraAngles - (self.MouseDeltas/5)
+        -- self.MouseDeltas = Vector2.new(0,0)
+        -- self.CameraAngles = Vector2.new(math.clamp(self.CameraAngles.X, CameraLimits.MinX, CameraLimits.MaxX), math.clamp(self.CameraAngles.Y, CameraLimits.MinY, CameraLimits.MaxY))
+        
+        -- local angles1 = CFrame.Angles(0,math.rad(self.CameraAngles.X), 0)
+        -- local angles2 = CFrame.Angles(math.rad(self.CameraAngles.Y), 0, 0)
 
-    Camera.CFrame *= CFrame.new(self.Offset)
+        Camera.CFrame *= CFrame.new(self.Offset)
+    else
+        Camera.CameraType = Enum.CameraType.Attach
+        Camera.CameraSubject = self.Root.CameraPart
+    end
 end
 
 function MountedTurret:RunServiceLoop()
