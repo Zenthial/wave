@@ -1,10 +1,13 @@
 local Tiles = workspace:WaitForChild("FinishedTiles")
 local TileChildren = Tiles:GetChildren()
+local Corners = workspace:WaitForChild("CornerTiles")
+local CornerChildren = Corners:GetChildren()
 local EndTiles = workspace:WaitForChild("EndTiles")
 local EndChildren = EndTiles:GetChildren()
 
-local MAX_TILES = 3
-local shouldFlip = true
+local MAX_TILES = 10
+local CORNER_CHANCE = 0.5
+local RNG = Random.new()
 
 type Tile = Model & {
     Start: Part,
@@ -22,29 +25,30 @@ local DungeonGeneration: DungeonGeneration = {
 }
 
 function DungeonGeneration:Start()
-    local startTile = EndChildren[Random.new():NextInteger(1, #EndChildren)]:Clone()
+    table.clear(self.Tiles)
+    local startTile = EndChildren[RNG:NextInteger(1, #EndChildren)]:Clone()
 
     startTile:PivotTo(CFrame.new(Vector3.new(0, 30, 0)))
     startTile.Parent = workspace
     table.insert(self.Tiles, startTile)
 
-    self.NumTiles += 1
+    self.NumTiles = 1
     self:HandleTile(startTile)
 end
 
 function DungeonGeneration:HandleTile(currentTile: Tile)
     local endPart = currentTile.End
     
-    local newTile = TileChildren[Random.new():NextInteger(1, #TileChildren)]:Clone() :: Tile
-    -- if shouldFlip then
-    --     newTile:PivotTo(endPart.CFrame * CFrame.Angles(0, math.rad(180), 0))
-    --     shouldFlip = false
-    -- else
-    --     newTile:PivotTo(endPart.CFrame)
-    --     shouldFlip = true
-    -- end
-    newTile:PivotTo(endPart.CFrame * CFrame.Angles(0, math.rad(180), 0))
+    local newTile = TileChildren[RNG:NextInteger(1, #TileChildren)] :: Tile
+    local shouldGenerateCorner = RNG:NextNumber()
+    if shouldGenerateCorner <= CORNER_CHANCE then
+        newTile = CornerChildren[RNG:NextInteger(1, #CornerChildren)] :: Tile
+    end
+
+    newTile = newTile:Clone()
+    newTile:PivotTo(endPart.CFrame)
     newTile.Parent = workspace
+    print(newTile.Name)
     
     table.insert(self.Tiles, newTile)
 
