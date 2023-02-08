@@ -1,6 +1,7 @@
-local CollectionService = game:GetService("CollectionService")
 local Tiles = workspace:WaitForChild("FinishedTiles")
 local TileChildren = Tiles:GetChildren()
+local MultipleExits = workspace:WaitForChild("MultipleExitTiles")
+local MultipleExitChildren= MultipleExits:GetChildren()
 local LeftCorners = workspace:WaitForChild("LeftCornerTiles")
 local LeftCornerChildren = LeftCorners:GetChildren()
 local RightCorners = workspace:WaitForChild("RightCornerTiles")
@@ -8,7 +9,7 @@ local RightCornerChildren = RightCorners:GetChildren()
 local EndTiles = workspace:WaitForChild("EndTiles")
 local EndChildren = EndTiles:GetChildren()
 
-local MAX_TILES = 10
+local MAX_TILES = 5
 local MAX_TILE_ITERATIONS = 3
 local SAME_TILE_CHANCE = 0.33
 local MAX_SAME_TURNS = 2                
@@ -25,6 +26,7 @@ type DungeonGeneration = {
 }
 
 type State = {
+    MultipleExits: boolean,
     NumTiles: number,
     CurrentTileIterations: number,
     Direction: string, -- Left, Right
@@ -38,6 +40,20 @@ local DungeonGeneration: DungeonGeneration = {
 }
 
 function DungeonGeneration:Start()
+    workspace:SetAttribute("Regenerate", false)
+    workspace:GetAttributeChangedSignal("Regenerate"):Connect(function()
+        workspace:SetAttribute("Regenerate", false)
+        for _, tile in self.Tiles do
+            tile:Destroy()
+        end
+
+        self:Load()
+    end)
+
+    self:Load()
+end
+
+function DungeonGeneration:Load()
     table.clear(self.Tiles)
     local startTile = EndChildren[RNG:NextInteger(1, #EndChildren)]:Clone()
 
@@ -67,7 +83,9 @@ function DungeonGeneration:ChooseTile(currentTile: Tile, state: State): Tile
     local newTile: Tile = nil
 
     local generationChance = RNG:NextNumber()
-    if state.CurrentTileIterations < MAX_TILE_ITERATIONS and state.NumTiles > 1 and state.JustTurned == false and generationChance <= SAME_TILE_CHANCE then
+    state.MultipleExits = false
+
+    if state.CurrentTileIterations < MAX_TILE_ITERATIONS and state.NumTiles > 2 and state.JustTurned == false and generationChance <= SAME_TILE_CHANCE and Tiles:FindFirstChild(currentTile.Name) ~= nil then
         state.CurrentTileIterations += 1
         newTile = Tiles:FindFirstChild(currentTile.Name):Clone()
     elseif state.MustGoStraight == false and state.NumTiles > 1 and state.JustTurned == false and 1 - generationChance <= 1 - CORNER_CHANCE then
@@ -89,6 +107,11 @@ function DungeonGeneration:ChooseTile(currentTile: Tile, state: State): Tile
             newTile = RightCornerChildren[RNG:NextInteger(1, #RightCornerChildren)]:Clone()
         end
         state.NumInLastDirection += 1
+    elseif state.NumTiles % 3 == 0 then
+        state.CurrentTileIterations = 1
+        state.JustTurned = false
+        state.MultipleExits = true
+        newTile = MultipleExitChildren[RNG:NextInteger(1, #MultipleExitChildren)]:Clone() :: Tile
     else
         state.CurrentTileIterations = 1
         state.JustTurned = false
@@ -98,8 +121,8 @@ function DungeonGeneration:ChooseTile(currentTile: Tile, state: State): Tile
     return newTile
 end
 
-function DungeonGeneration:HandleTile(currentTile: Tile, state: State)
-    local endPart = currentTile.End
+function DungeonGeneration:HandleTile(currentTile: Tile, state: State, exit: Part?)
+    local endPart = if exit ~= nil then exit else currentTile.End
     cleanPart(endPart)
     if currentTile:FindFirstChild("Start") then
         cleanPart(currentTile.Start)
@@ -114,7 +137,15 @@ function DungeonGeneration:HandleTile(currentTile: Tile, state: State)
 
     if state.NumTiles < MAX_TILES then
         state.NumTiles += 1
-        self:HandleTile(newTile, state)
+        if state.MultipleExits then
+            for _, exitPart in newTile.Exits:GetChildren() do
+                local numTiles = state.NumTiles
+                self:HandleTile(newTile, state, exitPart)
+                state.NumTiles = numTiles
+            end
+        else
+            self:HandleTile(newTile, state)
+        end
     else
         for _, thing in self.Tiles do
             for _, part: Part in thing:GetDescendants() do
