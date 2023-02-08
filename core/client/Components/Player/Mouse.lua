@@ -16,7 +16,6 @@ local Mouse = {}
 Mouse.__index = Mouse
 Mouse.Name = "Mouse"
 Mouse.Tag = "Player"
-Mouse.Needs = {"Cleaner"}
 Mouse.Ancestor = Players
 
 function Mouse.new(Player: Player)
@@ -28,7 +27,29 @@ end
 function Mouse:Start()
     self.MouseObject = self.Player:GetMouse()
 
+    self:BodyGyroHooks()
     print("mouse initialized")
+end
+
+function Mouse:BodyGyroHooks()
+    local character = self.Player.Character or self.Player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+    
+    local moveConnection = nil
+    self.Cleaner:Add(humanoid.Changed:Connect(function(prop)
+        if prop == "AutoRotate" then
+            local bodyGyro = tcs.get_component(character, "BodyGyro")
+            if humanoid.AutoRotate == false then
+                moveConnection = self.MouseObject.Move:Connect(function()
+                    bodyGyro:SetRotationTarget(self.MouseObject.Hit.Position)
+                end)
+            else
+                if moveConnection then
+                    moveConnection:Disconnect()
+                end
+            end
+        end
+    end))
 end
 
 function Mouse:Spread(dist: number, minSpread: number, maxSpread: number, aiming: boolean, currentRecoil: number?, aimBuff: number?): Vector3
@@ -72,10 +93,24 @@ function Mouse:Raycast(raycastStart: Vector3, weaponStats: WeaponStats?, aiming:
     local aim = mouseObject.Hit.Position + self:Spread(preDistance, weaponStats.MinSpread or 0, weaponStats.MaxSpread or 0, aiming or false, currentRecoil, aimBuff)
     local start = head.Position
 
-    local raycast = Ray.new(start, (aim - start).Unit * RAYCAST_MAX_DISTANCE)
-    local hit, position = workspace:FindPartOnRayWithIgnoreList(raycast, CollectionService:GetTagged("Ignore"))
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = CollectionService:GetTagged("Ignore")
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.IgnoreWater = false
 
-    return hit, position
+    local raycastResult = workspace:Raycast(start, (aim-start).Unit * RAYCAST_MAX_DISTANCE, raycastParams)
+    if raycastResult then
+        if raycastResult.Position then
+            if raycastResult.Instance then
+                return raycastResult.Instance, raycastResult.Position
+            end
+
+            return nil, raycastResult.Position
+        end
+    end
+
+    local miss = (aim-start).Unit * RAYCAST_MAX_DISTANCE
+    return nil, miss
 end
 
 function Mouse:Destroy()

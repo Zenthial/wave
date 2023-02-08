@@ -62,9 +62,9 @@ function KillCam:Start()
     end))
 
     self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0.004), UDim2.new(.5, 0, .5, 0), "Out", "Quad", .5, true)
-	self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 2000), "Out", "Quad", 1, true)
-	self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, -2000), "Out", "Quad", 1, true)
-    self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0, 1000), "Out", "Quad", .3, true)
+	self.Root.WeaponName:TweenPosition(UDim2.new(2, 0, 0, 0), "Out", "Quad", 1, true)
+	self.Root.KillerName:TweenPosition(UDim2.new(-2, 0, 0, 0), "Out", "Quad", 1, true)
+    self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 1.6, 0), "Out", "Quad", .3, true)
 end
 
 function KillCam:ToggleDeathCam()
@@ -107,7 +107,7 @@ function KillCam:ToggleDeathCam()
         self.CountDown1:Play()
         
         task.wait(1)
-        self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 0, 1000), "Out", "Quad", .3, true)
+        self.Root.RespawnTime:TweenPosition(UDim2.new(0, 0, 1.6, 0), "Out", "Quad", .3, true)
         self.CountDown2:Play()
     end)
 
@@ -119,8 +119,8 @@ function KillCam:Hide()
     -- self.Root.Top:TweenPosition(UDim2.new(0, 0, 0, -30), "Out", "Quad", .5, true)
 	-- self.Root.Bottom:TweenPosition(UDim2.new(0, 0, .5, 0), "Out", "Quad", .5, true)
 	self.Root.GuiPart:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0.004), UDim2.new(.5, 0, .5, 0), "Out", "Quad", .5, true)
-	self.Root.WeaponName:TweenPosition(UDim2.new(0, 0, 0, 2000), "Out", "Quad", 1, true)
-	self.Root.KillerName:TweenPosition(UDim2.new(0, 0, 0, -2000), "Out", "Quad", 1, true)
+	self.Root.WeaponName:TweenPosition(UDim2.new(2, 0, 0, 0), "Out", "Quad", 1, true)
+	self.Root.KillerName:TweenPosition(UDim2.new(-2, 0, 0, 0), "Out", "Quad", 1, true)
 
     self.Root.Parent.Overlay.BackgroundTransparency = 1
     self.Root.Parent.Overlay.Visible = true

@@ -10,11 +10,16 @@ return {
     LocalCanSprint = true,
     LocalCanCrouch = true,
     LocalCanMove = true,
+
+    InArsenalSelection = false,
+    InClassSelection = false,
     
     Chatting = false,
 
     Firing = false,
     FielxActive = false,
+    SiphnActive = false,
+    APSActive = false,
     
     CurrentTurret = "",
 

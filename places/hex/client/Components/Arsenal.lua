@@ -23,8 +23,11 @@ local UI = Assets:WaitForChild("UI")
 
 local InspectFrame = UI:WaitForChild("InspectFrame")
 local Camera = workspace.CurrentCamera
+
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local MainHUD = PlayerGui:WaitForChild("MainHUD")
+
 local InventoryPlayer = nil
 local ArsenalModel = workspace:WaitForChild("Arsenal") :: Model
 local InspectPart = ArsenalModel:WaitForChild("InspectPart") :: Part
@@ -73,7 +76,6 @@ function Arsenal:Start()
     repeat task.wait() until Player:GetAttribute("Loaded") == true
     task.wait(0.5)
 
-    local MainHUD
     InventoryPlayer = Assets:WaitForChild("InventoryPlayer"):Clone()
     InventoryPlayer.Parent = workspace
     ArmoryUtil:LoadCharacterAppearance(Player, InventoryPlayer)
@@ -94,22 +96,20 @@ function Arsenal:Start()
     self:LoadCharacter()
     self:SetupInspectTable(Player:GetAttribute("EquippedPrimary"))
 
-    Camera.CameraType = Enum.CameraType.Scriptable
-    Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
+    self.ArmoryUI = tcs.get_component(MainHUD:WaitForChild("ClassArmory"), "ClassArmoryUI")
+    -- local Overlay = tcs.get_component(self.Root, "Overlay")
 
-    self.ArmoryUI = tcs.get_component(self.Root.Armory, "ArmoryUI")
-    local Overlay = tcs.get_component(self.Root, "Overlay")
+    -- self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
+    --     self:ArmorySelection()
+    -- end))
 
-    self.Cleaner:Add(Overlay.Events.ArmorySelected:Connect(function()
-        self:ArmorySelection()
-    end))
+    self.Cleaner:Add(Player:GetAttributeChangedSignal("InArsenalSelection"):Connect(function()
+        local inArmorySelection = Player:GetAttribute("InArsenalSelection")
 
-    self.Cleaner:Add(Player:GetAttributeChangedSignal("InRound"):Connect(function()
-        local inRound = Player:GetAttribute("InRound")
-
-        if not inRound then
+        if inArmorySelection then
             Camera.CameraType = Enum.CameraType.Scriptable
             Camera.CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)
+            self:ArmorySelection()
         else
             Camera.CameraType = Enum.CameraType.Custom
             Camera.CameraSubject = Player.Character
@@ -117,9 +117,8 @@ function Arsenal:Start()
     end))
 
     self.Cleaner:Add(self.Root.Back.Button.MouseButton1Click:Connect(function()
-        self.Root.Main.Visible = true
-        self.Root.Voting.Visible = true
         self.Root.Back.Visible = false
+        self.Root.EditButton.Visible = false
         self.Root.ArmoryText.Visible = false
 
         if self.MouseCleaner then
@@ -132,12 +131,31 @@ function Arsenal:Start()
             self.InventoryPlayerRotationCleaner = nil
         end
 
-        TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InventoryPlayer.HumanoidRootPart.Position + Vector3.new(12, 0, 0), InventoryPlayer.HumanoidRootPart.Position)}):Play()
+        Player:SetAttribute("InArsenalSelection", false)
+        Player:SetAttribute("InClassSelection", true)
     end))
 
     self.ArmoryUI.Events.InspectItem:Connect(function(itemName: string)
         self:SetupInspectTable(itemName)
     end)
+
+    self.Cleaner:Add(self.Root.EditButton.Edit.Button.MouseButton1Click:Connect(function()
+        self.Root.ArmoryText.Visible = false
+        self.Root.Back.Visible = false
+
+        self.ArmoryUI:Populate(1)
+        self.Root.EditButton.Visible = false
+
+        TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
+    end))
+
+    self.Cleaner:Add(self.ArmoryUI.Events.Back:Connect(function()
+        self.Root.ArmoryText.Visible = true
+        self.Root.Back.Visible = true
+
+        self:LoadCharacter()
+        self:ArmorySelection()
+    end))
 end
 
 function Arsenal:ArmorySelection()
@@ -149,7 +167,8 @@ function Arsenal:ArmorySelection()
     }):Play()
 
     self.InventoryPlayerRotationCleaner = self:InventoryPlayerRotation()
-    self.MouseCleaner = self:HandleMouse()
+    self.Root.EditButton.Visible = true
+    -- self.MouseCleaner = self:HandleMouse()
 end
 
 function Arsenal:InventoryPlayerRotation()
@@ -233,33 +252,41 @@ function Arsenal:LoadCharacter()
     if not primaryFolder then error("No weapon folder for "..primaryName) end
     local secondaryFolder = Weapons[secondaryName] :: Folder
     if not secondaryFolder then error("No weapon folder for "..secondaryName) end
-    local skillModel = Skills[skillName] :: Model
-    if not skillModel then error("No skill model for "..skillName) end
+
+    if skillName ~= "" then
+        local skillModel = Skills[skillName] :: Model
+        if not skillModel then error("No skill model for "..skillName) end
+        skillModel = skillModel:Clone()
+        self:SetupCollisionGroups(skillModel, skillName)
+        skillModel.Parent = InventoryPlayer
+        
+        if self.SkillModel then self.SkillModel:Destroy() end
+        self.SkillModel = skillModel
+
+        Welder:WeldWeapon(InventoryPlayer, skillModel, true)
+        self.Cleaner:Add(function()
+            skillModel:Destroy()
+        end)
+    end
     
     local primaryModel = primaryFolder.Model:Clone() :: Model
     primaryModel.Name = primaryName
     local secondaryModel = secondaryFolder.Model:Clone() :: Model
     secondaryModel.Name = secondaryName
-    skillModel = skillModel:Clone()
 
     self:SetupCollisionGroups(primaryModel, primaryName)
     self:SetupCollisionGroups(secondaryModel, secondaryName)
-    self:SetupCollisionGroups(skillModel, skillName)
 
     primaryModel.Parent = InventoryPlayer
     secondaryModel.Parent = InventoryPlayer
-    skillModel.Parent = InventoryPlayer
 
     if self.PrimaryModel then self.PrimaryModel:Destroy() end
     if self.SecondaryModel then self.SecondaryModel:Destroy() end
-    if self.SkillModel then self.SkillModel:Destroy() end
     self.PrimaryModel = primaryModel
     self.SecondaryModel = secondaryModel
-    self.SkillModel = skillModel
 
     Welder:WeldWeapon(InventoryPlayer, primaryModel, false)
     Welder:WeldWeapon(InventoryPlayer, secondaryModel, true)
-    Welder:WeldWeapon(InventoryPlayer, skillModel, true)
 
     local animationComponent = self.AnimationComponent
     self:LoadAnimationFolder(animationComponent, primaryFolder, primaryName)
@@ -272,7 +299,6 @@ function Arsenal:LoadCharacter()
 
         primaryModel:Destroy()
         secondaryModel:Destroy()
-        skillModel:Destroy()
         InventoryPlayer:Destroy()
     end)
 end
@@ -330,6 +356,7 @@ function Arsenal:CleanupHighlights()
     end
 end
 
+-- unused now
 function Arsenal:HandleMouse()
     local primaryName = Player:GetAttribute("EquippedPrimary")
     local secondaryName = Player:GetAttribute("EquippedSecondary")
@@ -386,6 +413,7 @@ function Arsenal:HandleMouse()
     return internalCleaner
 end
 
+-- unused now
 function Arsenal:HandleSelected()
     self.Root.ArmoryText.Visible = false
     self.Root.Back.Visible = false
@@ -422,27 +450,15 @@ function Arsenal:HandleSelected()
         TweenService:Create(Camera, TweenInfo.new(0.5), {CFrame = CFrame.new(InspectPart.Position - Vector3.new(0, 0, 5), InspectPart.Position)}):Play()
         local itemCleaner = self:HandleItemRotation()
         inspectFrame:Destroy()
-        internalCleaner:Add(self.ArmoryUI:Populate(self.CurrentlySelected):Connect(function(itemName: string)
+        self.ArmoryUI:Populate(self.CurrentlySelected)
+
+        internalCleaner:Add(self.ArmoryUI.Events.Back:Connect(function()
             itemCleaner:Clean()
 
             self.Root.ArmoryText.Visible = true
             self.Root.Back.Visible = true
 
-            if itemName ~= nil then
-                local oldWeapon
-                if self.CurrentlySelected == 1 then
-                    oldWeapon = Player:GetAttribute("EquippedPrimary")
-                    Player:SetAttribute("EquippedPrimary", itemName)
-                elseif self.CurrentlySelected == 2 then
-                    oldWeapon = Player:GetAttribute("EquippedSecondary")
-                    Player:SetAttribute("EquippedSecondary", itemName)
-                elseif self.CurrentlySelected == 4 then
-                    oldWeapon = Player:GetAttribute("EquippedSkill")
-                    Player:SetAttribute("EquippedSkill", itemName)
-                end
-                self:RemoveWeapon(oldWeapon, self.CurrentlySelected == 1)
-                self:LoadCharacter()
-            end
+            self:LoadCharacter()
             self:ArmorySelection()
             internalCleaner:Clean()
         end))

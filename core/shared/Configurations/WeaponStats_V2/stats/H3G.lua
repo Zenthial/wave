@@ -48,7 +48,7 @@ return {
 	Action = "Heal",
 	CanTeamKill = true,
 	Locked = false,
-	Damage = -50,
+	Heal = 50,
 	CalculateDamage = function(damage, distance)
 		return damage
 	end,

@@ -27,8 +27,12 @@ return {
 
     Dead = false,
 
+    CurrentClass = "",
+
     LastKiller = "",
     LastKilledWeapon = "",
+    LastKillTime = 0,
+    CurrentKillStreak = 0,
 
     Kills = 0,
     Deaths = 0,

@@ -27,7 +27,7 @@ function MainHUD:Start()
     self.Root.Enabled = true
 
     self.GunToolbar = tcs.get_component(self.Bottom:WaitForChild("ApexFrame2"), "ApexDisplay")
-    self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
+    -- self.InventoryUI = tcs.get_component(self.Bottom:WaitForChild("InventoryToolbar"), "InventoryUI") --[[:await()]]
 
     local RenderDeathEffect = ReplicatedStorage:WaitForChild("RenderDeathEffect") :: RemoteEvent
 
@@ -49,8 +49,8 @@ function MainHUD:UpdateEquippedWeapon(weaponStats, mutableStats, primary)
     end
 end
 
-function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
-    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity)
+function MainHUD:UpdateItem(keybind, hasQuantity, chargeOrQuantity, energyMin)
+    self.GunToolbar:UpdateItem(keybind, hasQuantity, chargeOrQuantity, energyMin)
 end
 
 function MainHUD:DeleteItem(keybind)
@@ -73,11 +73,11 @@ function MainHUD:SetOverheated(bool: boolean)
 end
 
 function MainHUD:SetSkillActive()
-    self.InventoryUI:SetSkillActive()
+    -- self.InventoryUI:SetSkillActive()
 end
 
 function MainHUD:SkillEnergyChanged(energy: number)
-    self.InventoryUI:SetSkillCharge(energy)
+    -- self.InventoryUI:SetSkillCharge(energy)
 end
 
 function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
@@ -96,26 +96,27 @@ function MainHUD:PromptKeyboardInput(inputText: string, inputKey: string?)
 end
 
 function MainHUD:RenderDeathEffect(effect, victim, killer, color)
-	effect.NotifierGui.Frame.VictimName.Text = string.upper(victim) .. " DOWNED"
-	effect.NotifierGui.Frame.VictimName.TextColor3 = color
+    local notifierGui = effect:WaitForChild("NotifierGui")
+	notifierGui.Frame.VictimName.Text = string.upper(victim) .. " DOWNED"
+	notifierGui.Frame.VictimName.TextColor3 = color
 	if killer then
-		effect.NotifierGui.Frame.KillerName.Text = "BY " .. string.upper(killer)
+		notifierGui.Frame.KillerName.Text = "BY " .. string.upper(killer)
 	end
 
-	effect.NotifierGui.Frame:TweenSizeAndPosition(UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .3, true)
-	effect.NotifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .1, true)
-	effect.NotifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(1, -1, 0, 0), "Out", "Quad", .1, true)
+	notifierGui.Frame:TweenSizeAndPosition(UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .3, true)
+	notifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(0, 0, 0, 0), "Out", "Quad", .1, true)
+	notifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 1, 0), UDim2.new(1, -1, 0, 0), "Out", "Quad", .1, true)
 	
 	task.wait(GlobalOptions.DeathNotifierTime - .7)
 	
-	effect.NotifierGui.Frame:TweenSizeAndPosition(UDim2.new(0, 0, 1, 0), UDim2.new(.5, 0, 0, 0), "Out", "Quad", .3, true)
+	notifierGui.Frame:TweenSizeAndPosition(UDim2.new(0, 0, 1, 0), UDim2.new(.5, 0, 0, 0), "Out", "Quad", .3, true)
 	task.wait(.2)
 	-- Tween error occurs here
-	effect.NotifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(0, 0, .5, 0), "Out", "Quad", .1, true)
-	effect.NotifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(1, -1, .5, 0), "Out", "Quad", .1, true)
+	notifierGui.Frame.GuiPart1:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(0, 0, .5, 0), "Out", "Quad", .1, true)
+	notifierGui.Frame.GuiPart2:TweenSizeAndPosition(UDim2.new(0, 1, 0, 0), UDim2.new(1, -1, .5, 0), "Out", "Quad", .1, true)
 	
 	task.wait(.1)
-	effect.NotifierGui.Frame.KillerName.Text = ""
+	notifierGui.Frame.KillerName.Text = ""
 end
 
 function MainHUD:Destroy()

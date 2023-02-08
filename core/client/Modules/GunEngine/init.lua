@@ -21,8 +21,11 @@ local FireModes = require(script.Modules.FireModes)
 local chargeWait = require(script.functions.chargeWait)
 local recursivelyFindHealthComponentInstance = require(script.functions.recursivelyFindHealthComponentInstance)
 local createDamageIndicator = require(script.functions.createDamageIndicator)
+local GadgetFunctions = require(script.GadgetFunctions)
 
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local CursorUI = PlayerGui:WaitForChild("Cursor"):WaitForChild("Cursor")
 local Mouse = Player:GetMouse()
 
 local Hit = SoundService.Sounds.Hit
@@ -60,6 +63,7 @@ end
 
 local GunEngine = {
     EquippedWeaponModel = nil,
+    EquippedWeaponOverheatSignal = nil,
 }
 
 function GunEngine:Start()
@@ -95,7 +99,7 @@ function GunEngine:RenderGrenadeForLocalPlayer(grenadeName: string)
         task.wait(.5) -- animation wait
         if Player:GetAttribute("Health") > 0 then
             Courier:Send("RenderGrenade", leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, grenadeName)
-            Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats)
+            Grenades:RenderNade(Player, leftArm.Position, Mouse.UnitRay.Direction, hrp.AssemblyLinearVelocity, GadgetStats, GadgetFunctions[GadgetStats.Name])
         end
     end
 end
@@ -103,15 +107,24 @@ end
 function GunEngine:RenderGrenadeForOtherPlayer(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, grenade: string)
     local stats = GadgetStatsModule[grenade]
     assert(stats ~= nil, "No gadget stats for "..grenade)
-    Grenades:RenderNade(player, position, direction, movementSpeed, stats)
+    Grenades:RenderNade(player, position, direction, movementSpeed, stats, GadgetFunctions[stats.Name])
+end
+
+function GunEngine.SetOverheated(bool)
+    local cursorComponent = tcs.get_component(CursorUI, "Cursor")
+    cursorComponent:SetOverheated(bool)
 end
 
 function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     if Player:GetAttribute("InSeat") == true then return false end
-    print("here", EquipDebounce)
+    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") or Player:GetAttribute("APSActive") then return end
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    task.spawn(function()
+        GunEngine.SetOverheated(mutableStats.Overheated)
+    end)
 
     mutableStats.CanShoot = true
 
@@ -122,6 +135,14 @@ function GunEngine.EquipWeapon(weaponStats, mutableStats, weaponModel)
     end
 
     GunEngine.EquippedWeaponModel = weaponModel
+    GunEngine.EquippedWeaponOverheatSignal = mutableStats.OverheatChanged:Connect(function(overheated)
+        if overheated then
+            if weaponModel.Barrel:FindFirstChild("Overheat") then
+                weaponModel.Barrel.Overheat.Volume = 1
+                weaponModel.Barrel.Overheat:Play()
+            end
+        end
+    end)
 
     Player:SetAttribute("EquippedWeapon", weaponStats.Name)
 end
@@ -130,6 +151,10 @@ function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
     if EquipDebounce then return false end
     EquipDebounce = true
     task.delay(EQUIP_WAIT, function() EquipDebounce = false end)
+
+    task.spawn(function()
+        GunEngine.SetOverheated(false)
+    end)
 
     mutableStats.CanShoot = false
     
@@ -140,6 +165,10 @@ function GunEngine.UnequipWeapon(weaponStats, mutableStats, weaponModel)
     Player:SetAttribute("EquippedWeapon", "")
     
     GunEngine.EquippedWeaponModel = nil
+    if GunEngine.EquippedWeaponOverheatSignal then
+        GunEngine.EquippedWeaponOverheatSignal:Disconnect()
+        GunEngine.EquippedWeaponOverheatSignal = nil
+    end
     
     Courier:Send("WeldWeapon", weaponModel, true)
 end
@@ -147,7 +176,6 @@ end
 function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
     local healthComponentInstance = recursivelyFindHealthComponentInstance(hitPart)
 
-    print(hitPart, hitPart.Parent, healthComponentInstance)
     if healthComponentInstance ~= nil and healthComponentInstance ~= Player then
         cursorComponent:Hitmark()
         Hit:Play()
@@ -160,7 +188,7 @@ function GunEngine.CheckHitPart(hitPart: Instance, weaponStats, cursorComponent)
         --     SoundService.Sounds.ShieldCrack:Play()
         -- end
 
-        createDamageIndicator(hitPart, potentialDamage, shields > 0, headshot)
+        createDamageIndicator(hitPart, potentialDamage, if shields then shields > 0 else false, headshot)
     end
 end
 
@@ -186,7 +214,11 @@ function GunEngine.TurretAttack(weaponStats, mutableStats, turretModel: Model)
 end
 
 function GunEngine.MouseDown(weaponStats, mutableStats)
-    if Player:GetAttribute("LocalSprinting") == true or Player:GetAttribute("LocalRolling") == true then return end
+    if Player:GetAttribute("LocalRolling") == true then return end
+    if Player:GetAttribute("LocalSprinting") == true then
+        Player:SetAttribute("LocalSprinting", false)
+    end
+    if Player:GetAttribute("FielxActive") or Player:GetAttribute("PoisnActive") or Player:GetAttribute("APSActive") then return end
     if EquipDebounce then return end
     mutableStats.MouseDown = true
 

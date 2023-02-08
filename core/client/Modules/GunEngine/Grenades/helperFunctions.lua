@@ -1,3 +1,9 @@
+--[[
+	BEWARE, UGLY CODE AHEAD!
+
+	MANY HOURS HAVE BEEN SPENT HERE TRYING TO MAKE THIS LOOK BETTER
+]]
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 
@@ -49,12 +55,9 @@ local function OnRayHit(cast, raycastResult, segmentVelocity, cosmeticBulletObje
 	-- This function will be connected to the Caster's "RayHit" event.
 	local hitPart = raycastResult.Instance
 	local hitPoint = raycastResult.Position
-	local normal = raycastResult.Normal
 	if hitPart ~= nil and hitPart.Parent ~= nil then -- Test if we hit something
-		local humanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid") -- Is there a humanoid?
-		if humanoid then
-			-- Deal 1 damage like CSGO?
-		end
+		cast.UserData.LastHitPart = hitPart
+		cast.UserData.LastHitPoint = hitPoint
 	end
 end
 
@@ -84,12 +87,11 @@ end
 
 local function OnRayTerminated(cast)
 	local cosmeticBullet: BasePart = cast.RayInfo.CosmeticBulletObject
-    local gadgetStats = cast.UserData.GadgetStats :: GadgetStats.GadgetStats_T
-	print(cosmeticBullet)
-	if cosmeticBullet ~= nil then
+	local terminationFunction = cast.UserData.TerminationFunction
+	if cosmeticBullet ~= nil and cosmeticBullet.Position ~= nil then
 		cast:SetPosition(cosmeticBullet.Position)
 
-		gadgetStats.TerminationBehavior(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats)
+		terminationFunction(CastBehavior.CosmeticBulletProvider, cosmeticBullet.CFrame, cast.UserData.SourceTeam, cast.UserData.SourcePlayer, cast.UserData.GadgetStats, cast.UserData.LastHitPart, cast.UserData.LastHitPoint)
 		CastBehavior.CosmeticBulletProvider:ReturnPart(cosmeticBullet)
 	end
 end
@@ -103,10 +105,10 @@ local function HandleGadgetStats(player: Player, NadeCaster, CastParams, gadgetS
     CastParams.FilterType = Enum.RaycastFilterType.Blacklist
 
     local ignoreTable = {}
-    for _, part in next, player.Character:GetChildren() do
+    for _, part in player.Character:GetChildren() do
         table.insert(ignoreTable, part)
     end
-    for _, thing in next, CollectionService:GetTagged("Ignore") do
+    for _, thing in CollectionService:GetTagged("Ignore") do
         table.insert(ignoreTable, thing)
     end
 

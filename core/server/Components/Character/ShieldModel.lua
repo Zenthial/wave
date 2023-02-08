@@ -36,7 +36,7 @@ function ShieldModel:UpdateShieldTransparency(trans)
     task.spawn(function()
         if not (trans ~= 1 and self.Root and self.Root.Torso.Transparency > 0) then
         
-            if self.Model then
+            if self.Model and self.Model:FindFirstChild("TorsoShield") then
                 local brickcolor = tostring(self.Model.TorsoShield.BrickColor)
     
                 for _, part in pairs(self.Model:GetChildren()) do

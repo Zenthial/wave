@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -28,10 +29,23 @@ end
 
 function Player:Start()
     self.Player:SetAttribute("Loaded", false)
+    CollectionService:AddTag(self.Player, "HealthTag")
 
     local playerFolder = Instance.new("Folder")
     playerFolder.Name = self.Player.Name
     playerFolder.Parent = PlayerFolders
+
+    task.spawn(function()
+        local character = self.Player.Character or self.Player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+        humanoid.NameDisplayDistance = 0
+
+        for _, thing in character:GetDescendants() do
+            if thing:IsA("Accessory") then
+                CollectionService:AddTag(thing, "Ignore")
+            end
+        end
+    end)
 
     self.Cleaner:Add(playerLoadedSignal.OnServerEvent:Connect(function(player: Player)
         if self.Player == player then

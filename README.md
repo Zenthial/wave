@@ -1,3 +1,8 @@
+# wAVE
+wAVE was an attempt at making new tech for the ROBLOX group WIJ. It failed. If you're at all interested in what we attempted to accomplish, the code is opensource.
+
+The contributors were tomspell, Conmmander, and seliso (in order of contribution)
+
 # Practices Notes
 
 One of my main goals is to add some abstraction to event handling, like using the Input module inside util for UserInput handling, rather than writing the low level code yourself each time

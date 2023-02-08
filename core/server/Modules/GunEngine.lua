@@ -29,7 +29,7 @@ local function attemptDealDamage(player: Player, weaponName: string, healthCompo
         if healthComponentObject:IsA("Player") then
             healthComponent = tcs.get_component(healthComponentObject, "Health") --[[:await()]]
         elseif healthComponentObject:IsA("Model") and healthComponentObject.Name == "APS" then
-            healthComponent = nil -- grab aps health thing later
+            healthComponent = tcs.get_component(healthComponentObject, "ObjectHealth")
         elseif healthComponentObject:IsA("Model") and healthComponentObject:GetAttribute("Health") ~= nil then
             healthComponent = tcs.get_component(healthComponentObject, "VehicleHealth")
         end 
@@ -86,7 +86,6 @@ function GunEngine:Start()
 
     Courier:Listen("RenderGrenade"):Connect(function(player: Player, position: Vector3, direction: Vector3, movementSpeed: Vector3, gadget: string)
         local quantity = player:GetAttribute("GadgetQuantity")
-        print("here", quantity)
         if quantity > 0 then
             player:SetAttribute("GadgetQuantity", quantity - 1)
             Courier:SendToAllExcept("RenderGrenade", player, player, position, direction, movementSpeed, gadget)
@@ -126,13 +125,20 @@ function GunEngine:Start()
         end
     end)
 
-    Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number)
+    Courier:Listen("DealSelfDamage"):Connect(function(player: Player, damage: number, sourcePlayer: Player, weaponName: string)
         damage = math.clamp(damage, 0, 100)
     
-        player:SetAttribute("LastKiller", "")
-        player:SetAttribute("LastKilledWeapon", "")
+        player:SetAttribute("LastKiller", if sourcePlayer then sourcePlayer.Name else "")
+        player:SetAttribute("LastKilledWeapon", if weaponName then weaponName else "")
         local healthComponent = tcs.get_component(player, "Health")
         healthComponent:TakeDamage(damage)
+    end)
+
+    Courier:Listen("H3GRequest"):Connect(function(player: Player)
+        assert(player:GetAttribute("EquippedGadget") == "H3G", "Player" .. player.Name.. " is not using the H3G")
+        local h3gStats = WeaponStats["H3G"]
+        local healthComponent = tcs.get_component(player, "Health")
+        healthComponent:Heal(h3gStats.Heal)
     end)
 end
 

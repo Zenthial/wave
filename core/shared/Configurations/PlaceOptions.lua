@@ -9,7 +9,7 @@ local defaultPlaceStats = {
         {
             Name = "Red",
             Color = BrickColor.new("Bright red"),
-            AutoAssignable = false,
+            AutoAssignable = true,
             Function = function()
                 return true    
             end,
@@ -18,7 +18,7 @@ local defaultPlaceStats = {
         {
             Name = "Blue",
             Color = BrickColor.new("Bright blue"),
-            AutoAssignable = false,
+            AutoAssignable = true,
             Function = function()
                 return true    
             end,

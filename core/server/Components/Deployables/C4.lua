@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local tcs = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("tcs"))
 local WeaponStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("WeaponStats_V2"))
+local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
 
 type Cleaner_T = {
     Add: (Cleaner_T, any) -> (),
@@ -35,7 +36,7 @@ function C4.new(root: any)
 end
 
 function C4:Start()
-    self.Courier:Listen("C4Damage"):Connect(function(player: Player, playerTable: {Player})
+    courier:Listen("C4Damage"):Connect(function(player: Player, playerTable: {Player})
         if player:GetAttribute("EquippedGadget") == "C4" then
             for _, plr in pairs(playerTable) do
                 task.spawn(function()

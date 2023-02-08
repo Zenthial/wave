@@ -98,7 +98,7 @@ local function playerAdded(player: Player)
         --tag setup
         CollectionService:AddTag(character, "Tag")
         local nameTag = tcs.await_component(character, "Tag")
-        nameTag:SetAdornee(character.Head)
+        nameTag:SetAdornee(character:WaitForChild("Head"))
 
         CollectionService:AddTag(nameTag.Tag, "PlayerInfoTag")
         local playerInfoTag = tcs.await_component(nameTag.Tag, "PlayerInfoTag")
@@ -152,16 +152,16 @@ end
 local NametagSystem = {}
 
 function NametagSystem:Start()
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player == Client then continue end
-        playerAdded(player)
-    end
-    Players.PlayerAdded:Connect(playerAdded)
+    -- for _, player in ipairs(Players:GetPlayers()) do
+    --     if player == Client then continue end
+    --     playerAdded(player)
+    -- end
+    -- Players.PlayerAdded:Connect(playerAdded)
 
-    clientTeamChange("TeamColor")
-    clientChangeStrikeTeam()
-    Client.Changed:Connect(clientTeamChange)
-    Client:GetAttributeChangedSignal("StrikeTeam"):Connect(clientChangeStrikeTeam)
+    -- clientTeamChange("TeamColor")
+    -- clientChangeStrikeTeam()
+    -- Client.Changed:Connect(clientTeamChange)
+    -- Client:GetAttributeChangedSignal("StrikeTeam"):Connect(clientChangeStrikeTeam)
 end
 
 return NametagSystem

@@ -7,6 +7,7 @@ local ChatStats = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild(
 local GlobalOptions = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Configurations"):WaitForChild("GlobalOptions"))
 local Trove = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("util"):WaitForChild("Trove"))
 local courier = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("courier"))
+local getPointsForAction = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"):WaitForChild("functions"):WaitForChild("getPointsForAction"))
 
 local Objects = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"):WaitForChild("Objects")
 local Effect = Objects:WaitForChild("HumanoidDeathEffect")
@@ -82,6 +83,41 @@ local function playerAdded(player: Player)
         local cleaner = Trove.new()
         cleaner:Add(player:GetAttributeChangedSignal("Dead"):Connect(function()
             if player:GetAttribute("Dead") == false then return end
+            
+            -- award points based on player's death
+            task.spawn(function()
+                local lastKiller = player:GetAttribute("LastKiller")
+                if lastKiller ~= "" then
+                    local killer = Players:FindFirstChild(lastKiller)
+                    player:SetAttribute("ActualLastKiller", lastKiller)
+                    local points, pointsToAward = getPointsForAction(killer, "Kill", player)
+                    killer:SetAttribute("LastKillTime", os.time())
+                    killer:SetAttribute("Kills", killer:GetAttribute("Kills") + 1)
+                    killer:SetAttribute("Points", killer:GetAttribute("Points") + points)
+                    courier:Send("AwardPoints", killer, pointsToAward)
+                end
+
+                if player:FindFirstChild("DamageFolder") == nil then return end
+
+                for _, playerFolder: Folder in player.DamageFolder:GetChildren() do
+                    local damagePlayer = Players:FindFirstChild(playerFolder.Name) :: Player
+                    if damagePlayer ~= nil then
+                        if playerFolder:GetAttribute("Damage") >= 80 then                            
+                            local points, pointsToAward = getPointsForAction(damagePlayer, "AssistAsKill", player)
+                            damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
+                            damagePlayer:SetAttribute("AssistsAsKills", damagePlayer:GetAttribute("AssistsAsKills") + 1)
+                            courier:Send("AwardPoints", damagePlayer, pointsToAward)
+                        elseif playerFolder:GetAttribute("Damage") >= 40 then
+                            local points, pointsToAward = getPointsForAction(damagePlayer, "Assist", player)
+                            damagePlayer:SetAttribute("Points", damagePlayer:GetAttribute("Points") + points)
+                            damagePlayer:SetAttribute("Assists", damagePlayer:GetAttribute("Assists") + 1)
+                            courier:Send("AwardPoints", damagePlayer, pointsToAward)
+                        end
+                    end
+                end
+            end)            
+
+
             local randPos = getRandomPos(floor)
             local deathPosition = character.HumanoidRootPart.Position
             character:SetPrimaryPartCFrame(CFrame.new(randPos))
@@ -104,7 +140,7 @@ local function playerAdded(player: Player)
                         KillNotifier:FireClient(killerPlayer, "Kill", player)
                     end
     
-                    for _, folder in pairs(damageFolder) do
+                    for _, folder in pairs(damageFolder:GetChildren()) do
                         local damagePlayer = Players:FindFirstChild(folder.Name):: Player
                         if damagePlayer == nil then continue end
     

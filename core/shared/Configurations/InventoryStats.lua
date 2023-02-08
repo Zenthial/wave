@@ -10,9 +10,9 @@ local DEFAULT_LOADOUT = {
 
     Secondary = "Y14",
 
-    Gadget = "NDG",
+    Gadget = "STK",
 
-    Skill = "FIEL-X",
+    Skill = "APS",
 }
 
 return DEFAULT_LOADOUT

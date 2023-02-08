@@ -24,14 +24,13 @@ local GenericTeamCreator = {}
 local function playerJoin(player: Player, playerJoinFunctions)
     playerJoinFunctions = shuffleArray(playerJoinFunctions)
     for teamObject: Team, func in pairs(playerJoinFunctions) do
-        if func(player) then
+        if --[[teamObject.AutoAssignable == false and ]]func(player) then
             player.Team = teamObject
         end
-    end    
+    end
 end
 
 function GenericTeamCreator:Start()
-    print("here")
     local placeId = game.PlaceId
 
     local teamsStats = PlaceOptions(placeId).Teams

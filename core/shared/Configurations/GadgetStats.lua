@@ -48,13 +48,17 @@ local Caches = {
     Tank = nil,
 }
 
+local DEFAULT_THROW_SPEED = 120
+
 if RunService:IsClient() then
     CacheFolder = Instance.new("Folder")
     CacheFolder.Name = "GrenadeCacheFolder"
     CacheFolder.Parent = workspace
 
     Caches.NDG = PartCache.new(Gadgets.NDG.Projectile, 30, CacheFolder)
+    Caches.STK = PartCache.new(Gadgets.STK.Projectile, 30, CacheFolder)
     Caches.C0S = PartCache.new(Gadgets.C0S.Projectile, 30, CacheFolder)
+    Caches.H3G = PartCache.new(Gadgets.H3G.Projectile, 30, CacheFolder)
     Caches.Tank = PartCache.new(Gadgets.TankRay.Projectile, 30, CacheFolder)
     Caches.PBW = PartCache.new(Weapons.PBW.Projectile, 30, CacheFolder)
 end
@@ -68,7 +72,7 @@ return {
         Exploding = false,
         DEBUG = false,
 
-        ProjectileSpeed = 150,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = 20,
         MaxDamage = 50,
@@ -91,40 +95,67 @@ return {
             local distanceDamageFactor = 1-(dist/20)
             return math.abs(damage*distanceDamageFactor)
         end,
+    },
 
-        -- this is intended to yield. this is called in a new thread, so we can yield. if we don't yield, the bullet/grenade will be cleaned up before we want it to be
-        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            task.spawn(function()
-                if stats.Exploding == true then return end
-                stats.Exploding = true
-                local grenade = partCache:GetPart()
-                grenade.Anchored = false
-                grenade.CanCollide = true
-                grenade.CanTouch = false
-                grenade.CanQuery = false
-                grenade.CFrame = cframe
-                task.wait(stats.PopTime)
-                local character = sourcePlayer.Character
-                if character then
-                    local distance = (character.HumanoidRootPart.Position - grenade.Position).Magnitude
-                    local explosion = Instance.new("Explosion")
-                    explosion.Position = grenade.Position
-                    explosion.BlastRadius = stats.NadeRadius
-                    explosion.BlastPressure = 0
-                    explosion.DestroyJointRadiusPercent = 0
-                    explosion.Parent = workspace
+    ["STK"] = {
+        Name = "STK",
+        Type = "Projectile",
+        Quantity = 3,
 
-                    task.delay(1, function()
-                        explosion:Destroy()
-                    end)
+        Exploding = false,
+        DEBUG = false,
 
-                    radiusDamage(stats, cframe.Position, nil, false)
-                end
-                task.wait(stats.DelayTime)
-                partCache:ReturnPart(grenade)
-                stats.Exploding = false
-            end)
-        end
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
+
+        NadeRadius = 15,
+        MaxDamage = 50,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 1.5,
+        DelayTime = 0.1,
+
+        Gravity = Vector3.new(0, -150, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.STK,
+        CacheFolder = CacheFolder,
+
+        CalculateDamage = function(damage, dist)
+            local distanceDamageFactor = 1-(dist/20)
+            return math.abs(damage*distanceDamageFactor)
+        end,
+    },
+
+    ["H3G"] = {
+        Name = "H3G",
+        Type = "Projectile",
+        Quantity = 3,
+
+        Exploding = false,
+        DEBUG = false,
+
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
+
+        NadeRadius = 20,
+        MaxDamage = 50,
+
+        Bounce = false,
+        NumBounces = 0,
+
+        PopTime = 0,
+        DelayTime = 0.3,
+
+        Gravity = Vector3.new(0, -150, 0),
+
+        MinSpreadAngle = 0,
+        MaxSpreadAngle = 0,
+
+        Cache = Caches.H3G,
+        CacheFolder = CacheFolder,
     },
 
     ["C0S"] = {
@@ -135,7 +166,7 @@ return {
         Exploding = false,
         DEBUG = true,
 
-        ProjectileSpeed = 150,
+        ProjectileSpeed = DEFAULT_THROW_SPEED,
 
         NadeRadius = -1,
         MaxDamage = -1,
@@ -149,7 +180,7 @@ return {
         PopTime = 0,
         DelayTime = 5,
 
-        Gravity = Vector3.new(0, -175, 0),
+        Gravity = Vector3.new(0, -275, 0),
 
         MinSpreadAngle = 0,
         MaxSpreadAngle = 0,
@@ -160,54 +191,6 @@ return {
         CalculateDamage = function(damage, distance)
             return math.clamp(damage + (20 * (1 / distance)), 1, 15)
         end,
-
-        -- task.spawn is required
-        TerminationBehavior = function(partCache: PartCache.PartCache, cframe: CFrame, sourceTeam: BrickColor, sourcePlayer: Player, stats: GadgetStats_T)
-            task.spawn(function()
-                if stats.Exploding == true then return end
-                stats.Exploding = true
-                local grenade = partCache:GetPart()
-                grenade.Anchored = true
-                grenade.CanCollide = false
-                grenade.CanTouch = false
-                grenade.CanQuery = false
-                grenade.CFrame = cframe
-
-                grenade.BrickColor = sourceTeam
-                local startCFrame = grenade.CFrame
-                local tween = TweenService:Create(grenade, TweenInfo.new(.1, Enum.EasingStyle.Linear), {Size = Vector3.new(stats.Size, stats.Size, stats.Size)})
-                tween:Play()
-                tween.Completed:Wait()
-
-                grenade.CFrame = startCFrame
-                grenade.Transparency = 0.5
-
-                -- this should be moved somewhere
-                -- reminder, implement a
-                local active = true
-                task.spawn(function()
-                    while active do
-                        radiusDamage(stats, cframe.Position, nil, false)
-                        task.wait(0.05)
-                    end
-                end)
-
-                if stats.DecreaseSize then
-                    local info = TweenInfo.new(stats.DelayTime + .5, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
-                    local sizeDecrease = TweenService:Create(grenade, info, {Size = Vector3.new(0, 0, 0)})
-                    sizeDecrease:Play()
-                    sizeDecrease.Completed:Wait()
-                else
-                    task.wait(stats.DelayTime - .1)
-                    local sizeDecrease = TweenService:Create(grenade, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)})
-                    sizeDecrease:Play()
-                end
-
-                active = false
-                partCache:ReturnPart(grenade)
-                stats.Exploding = false
-            end)
-        end
     },
 
     ["PBW"] = {

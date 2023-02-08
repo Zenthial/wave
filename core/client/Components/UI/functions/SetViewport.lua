@@ -23,7 +23,7 @@ return function(viewport: ViewportFrame, modelFolder: Configuration | Folder)
     elseif modelFolder:IsA("Model") then -- skill
         inspectModel = modelFolder:Clone()
         inspectModel.PrimaryPart = nil
-        inspectModel:PivotTo(CFrame.new(Vector3.new(0, 0, 0), Vector3.new(0, 0, 5)))
+        inspectModel:PivotTo(CFrame.new(Vector3.new(2, 0, 0), Vector3.new(0, 0, -2)))
     end
     
     assert(inspectModel, "No model for "..modelFolder.Name)

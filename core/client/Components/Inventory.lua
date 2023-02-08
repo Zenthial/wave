@@ -94,9 +94,9 @@ function Inventory:Start()
             local skillCleaner = Trove.new()
             self.EquippedSkill.Cleaner = skillCleaner
 
-            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, skill.Energy)
-            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy)
-                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy)
+            MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, skill.Energy, skill.WeaponStats.EnergyMin)
+            skillCleaner:Add(skill.EnergyChanged:Connect(function(energy, min)
+                MainHUDComponent:UpdateItem(LocalPlayer.Keybinds:GetAttribute("Skill"), false, energy, if min ~= nil then min else skill.WeaponStats.EnergyMin)
             end))
         elseif inventoryKey == "Gadget" or inventoryKey == "Gadgets" then
             assert(model == nil, "Why does the grenade have a model?")
@@ -234,6 +234,8 @@ function Inventory:FeedKeyUp(KeyCode: Enum.KeyCode)
         if self.EquippedGadgetStats.Type == "Deployable" then
             DeployableEngine:CancelDeployable()
         end
+    elseif KeyCode == Enum.KeyCode[LocalPlayer.Keybinds:GetAttribute("Skill")] and self.EquippedSkill ~= nil and self.EquippedSkill.WeaponStats.Trigger == "Hold" then
+        SkillEngine.Use(self.EquippedSkill, false)
     end
 end
 

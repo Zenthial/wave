@@ -64,8 +64,10 @@ function AnimationHandler:Start()
         self.Animator = humanoid:WaitForChild("Animator", 30)
     end
 
-    for _, animation in pairs(DefaultAnimations) do
-        self:Load(animation)
+    if self.Player:IsA("Player") then
+        for _, animation in pairs(DefaultAnimations) do
+            self:Load(animation)
+        end
     end
     
     self.Loaded = true
